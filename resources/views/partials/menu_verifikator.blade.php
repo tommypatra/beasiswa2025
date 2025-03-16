@@ -6,8 +6,8 @@
   <span class="hide-menu">Verifikator Dokumen</span>
 </li>
 <li class="sidebar-item menu-verifikator">
-    <a class="sidebar-link justify-content-between" target="_blank"
-      href="https://bootstrapdemos.wrappixel.com/materialM/dist/main/index2.html" aria-expanded="false">
+    <a class="sidebar-link justify-content-between" 
+      href="{{ route('verifikasi-berkas') }}" aria-expanded="false">
       <div class="d-flex align-items-center gap-3">
         <span class="d-flex">
           <iconify-icon icon="solar:checklist-minimalistic-outline" class=""></iconify-icon>

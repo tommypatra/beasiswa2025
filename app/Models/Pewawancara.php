@@ -13,9 +13,14 @@ class Pewawancara extends Model
         return $this->hasMany(WawancaraNilai::class);
     }
 
-    public function pendaftar()
+    public function beasiswa()
     {
-        return $this->belongsTo(Pendaftar::class);
+        return $this->belongsTo(Beasiswa::class);
+    }
+
+    public function pesertaWawancara()
+    {
+        return $this->hasMany(PesertaWawancara::class);
     }
 
     public function user()

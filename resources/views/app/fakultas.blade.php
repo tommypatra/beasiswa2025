@@ -182,7 +182,7 @@
                 const url = (id === '') ? endpoint : endpoint + '/' + id;
                 saveData(url, type, $(form).serialize(), function(response) {
                     //jika berhasil
-                    appShowNotification(true,['operasi berhasil dilakukan!']);
+                    appShowNotification(true,['berhasil dilakukan!']);
                     if(type=='POST'){
                         formReset();
                     }

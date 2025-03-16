@@ -74,24 +74,13 @@ async function initPage() { // agar di load secara berurutan
 }
 
 async function dataLoad() {
-    var url = `${base_url}/api/pendaftar/${id}`;
     try {
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`, 
-                'Content-Type': 'application/json'
-            }
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const result = await response.json();
+        let result = await execAsync(`${base_url}/api/pendaftar/${id}`, 'GET', token);
         renderData(result.data);
     } catch (error) {
-        console.error('Error:', error);
+        console.error("Terjadi kesalahan:", error);
     }
-}
+}       
 
 function renderData(data){
     if (data.pendaftar.length>0) {
@@ -112,7 +101,7 @@ function renderData(data){
         is_finalisasi=pendaftar.is_finalisasi;
         $.each(syarat, function(index, dt) {
             var is_wajib=(dt.is_wajib)?`<span class="badge rounded-pill fs-2 bg-danger">wajib</span>`:`<span class="badge rounded-pill fs-2 bg-warning">tidak wajib</span>`;
-            const contoh=(dt.contoh)?`<div class="mb-2"><i>Wajib sama dengan format berikut <a href="${base_url}/storage/${dt.contoh}" target="_blank"><span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">Download Contoh Format</span></a></i></div>`:"";
+            const contoh=(dt.contoh)?`<div class="mb-2"><i>Wajib sama dengan format berikut <a href="${base_url}/${dt.contoh}" target="_blank"><span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">Download Contoh Format</span></a></i></div>`:"";
 
             const jenis_dokumen=(dt.jenis.toLowerCase()==='pdf')?`application/pdf`:`image/png, image/jpeg, image/jpg`;
             var upload_syarat="";
@@ -131,7 +120,7 @@ function renderData(data){
                                         <div>
                                             <h6 class="mb-1 fs-3">Dokumen Upload ${dt.nama}</h6>
                                             <p class="mb-0 fs-2 d-flex align-items-center gap-1">
-                                                <a href="${base_url}/storage/${dt.upload_syarat.dokumen}" target="_blank"><span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1"><i class="ti ti-download"></i> Download</span></a>                                                    
+                                                <a href="${base_url}/${dt.upload_syarat.dokumen}" target="_blank"><span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1"><i class="ti ti-download"></i> Download</span></a>                                                    
                                                 <a href="javascript:;" data-id="${upload_syarat_id}" class="hapus-upload-syarat"><span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1"><i class="ti ti-trash"></i> Hapus</span></a>                                                    
                                             </p>
                                         </div>

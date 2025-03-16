@@ -272,6 +272,37 @@ async function loadDataSelect(selectElement, api_url) {
     }
 }
 
+async function execAsync(vapi_url, vmethod = "GET", vtoken = null, vbody = null) {
+    try {
+        let headers = {};
+        if (vtoken) {
+            headers['Authorization'] = `Bearer ${vtoken}`;
+        }
+
+        let options = {
+            method: vmethod,
+            headers: headers
+        };
+
+        if (vbody) {
+            if (vbody instanceof FormData) {
+                options.body = vbody;
+            } else {
+                headers['Content-Type'] = 'application/json';
+                options.body = JSON.stringify(vbody);
+            }
+        }
+        const response = await fetch(vapi_url, options);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+
 async function loadOptionSelect(select_id, grup_param, data) {
     let $select = $(select_id);
     $select.empty();

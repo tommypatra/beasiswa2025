@@ -259,8 +259,6 @@
                                             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
                                             <ul class="dropdown-menu">
                                                 <li><a class="dropdown-item btn-ganti" data-id="${dt.id}" href="javascript:;"><i class="far fa-edit"></i> Ganti</a></li>
-                                                <li><a class="dropdown-item " data-id="${dt.id}" ><i class="fas fa-trash-alt"></i> Syarat</a></li>
-                                                <li><a class="dropdown-item " data-id="${dt.id}" href="{{ route('soal-wawancara') }}/${dt.id}"><i class="fas fa-trash-alt"></i> Soal Wawancara</a></li>
                                                 <li><a class="dropdown-item btn-hapus" data-id="${dt.id}" href="javascript:;"><i class="fas fa-trash-alt"></i> Hapus</a></li>
                                             </ul>
                                         </div>
@@ -269,10 +267,35 @@
                                 <tr>
                                     <td></td>
                                     <td colspan="7">
-                                        <a href="{{ route('syarat') }}/${dt.id}">
-                                        <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1"><i class="ti ti-download"></i> 
-                                            Syarat
-                                        </span>                                  
+                                        <a href="${base_url}/syarat/${dt.id}">
+                                            <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1"> 
+                                                Syarat
+                                            </span>                                  
+                                        </a>      
+                                        <a href="{{ route('soal-wawancara') }}/${dt.id}">
+                                            <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
+                                                Soal Ujian
+                                            </span>                                  
+                                        </a>      
+                                        <a href="{{ route('soal-wawancara') }}/${dt.id}">
+                                            <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
+                                                Soal Wawancara
+                                            </span>                                  
+                                        </a>      
+                                        <a href="${base_url}/verifikator/${dt.id}">
+                                            <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
+                                                Verifikator
+                                            </span>                                  
+                                        </a>      
+                                        <a href="${base_url}/surveyor/${dt.id}">
+                                            <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
+                                                Surveyor
+                                            </span>                                  
+                                        </a>      
+                                        <a href="${base_url}/pewawancara/${dt.id}">
+                                            <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
+                                                Pewawancara
+                                            </span>                                  
                                         </a>      
                                     </td>
                                 </tr>`;
@@ -358,7 +381,7 @@
                 const url = (id === '') ? endpoint : endpoint + '/' + id;
                 saveData(url, type, $(form).serialize(), function(response) {
                     //jika berhasil
-                    appShowNotification(true,['operasi berhasil dilakukan!']);
+                    appShowNotification(true,['berhasil dilakukan!']);
                     if(type=='POST'){
                         formReset();
                     }

@@ -21,15 +21,23 @@ class PenggunaController extends Controller
         $dataQuery = User::with(['userRole.role'])->orderBy('name', 'asc');
 
         if ($request->filled('search')) {
-            $search = $request->search;
-            $dataQuery->where(function ($query) use ($search) {
-                $query->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('email', 'like', '%' . $search . '%')
-                    ->orWhereHas('userROle.role', function ($q) use ($search) {
-                        $q->where('nama', 'like', '%' . $search . '%');
-                    });
+            $dataQuery->where(function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->search . '%')
+                    ->orWhere('email', 'like', '%' . $request->search . '%');
+                // ->orWhereHas('userROle.role', function ($q) use ($search) {
+                //     $q->where('nama', 'like', '%' . $search . '%');
+                // });
             });
         }
+
+        if ($request->filled('role')) {
+            $dataQuery->where(function ($query) use ($request) {
+                $query->WhereHas('userROle.role', function ($q) use ($request) {
+                    $q->where('nama', $request->role);
+                });
+            });
+        }
+
 
         $default_limit = env('DEFAULT_LIMIT', 30);
         $limit = $request->filled('limit') ? $request->limit : $default_limit;

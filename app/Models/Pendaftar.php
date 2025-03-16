@@ -38,8 +38,13 @@ class Pendaftar extends Model
         return $this->hasOne(Surveyor::class);
     }
 
-    public function verifikator()
+    public function verifikatorPendaftar()
     {
-        return $this->hasOne(Verifikator::class);
+        return $this->hasOne(VerifikatorPendaftar::class);
+    }
+
+    public function pesertaWawancara()
+    {
+        return $this->hasMany(PesertaWawancara::class);
     }
 }

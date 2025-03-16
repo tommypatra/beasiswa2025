@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('verifikators', function (Blueprint $table) {
             $table->id();
-            $table->boolean('hasil')->nullable();
-            $table->text('catatan')->nullable();
-            $table->foreignId('pendaftar_id')->nullable();
-            $table->foreign('pendaftar_id')->references('id')->on('pendaftars')->restrictOnDelete();
+            $table->foreignId('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->restrictOnDelete();
+            $table->foreignId('beasiswa_id')->nullable();
+            $table->foreign('beasiswa_id')->references('id')->on('beasiswas')->restrictOnDelete();
             $table->timestamps();
-            $table->unique(['pendaftar_id']);
+            $table->unique(['user_id', 'beasiswa_id']);
         });
     }
 

@@ -278,4 +278,5 @@ class PendaftarController extends Controller
             ], 404);
         }
     }
+    
 }

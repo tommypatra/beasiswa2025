@@ -104,6 +104,7 @@
         var data_referensi;
 
         $(document).ready(function() {
+            initPage();
             async function initPage() { // agar di load secara berurutan
                 await loadDataReferensi();
                 await loadOptionSelect(".pekerjaan_id", "Pekerjaan", data_referensi);
@@ -112,7 +113,6 @@
                 await dataLoad();
             }
 
-            initPage();
 
             async function loadDataReferensi() {
                 var url = base_url + '/api/data-referensi?limit=200';

@@ -22,10 +22,6 @@ return new class extends Migration
             $table->foreign('pendaftar_id')->references('id')->on('pendaftars')->restrictOnDelete();
             $table->foreignId('syarat_id')->nullable();
             $table->foreign('syarat_id')->references('id')->on('syarats')->restrictOnDelete();
-            $table->foreignId('verifikator_id')->nullable();
-            $table->foreign('verifikator_id')->references('id')->on('verifikators')->restrictOnDelete();
-            $table->foreignId('surveyor_id')->nullable();
-            $table->foreign('surveyor_id')->references('id')->on('surveyors')->restrictOnDelete();
             $table->timestamps();
         });
     }

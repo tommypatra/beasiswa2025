@@ -237,7 +237,7 @@
                 const url = (id === '') ? endpoint : endpoint + '/' + id;
                 saveData(url, type, $(form).serialize(), function(response) {
                     //jika berhasil
-                    appShowNotification(true,['operasi berhasil dilakukan!']);
+                    appShowNotification(true,['berhasil dilakukan!']);
                     if(type=='POST'){
                         formReset();
                     }
@@ -256,7 +256,7 @@
             if(val)
                 saveData(`${base_url}/api/ganti-nomor-soal-wawancara/${id}`, 'PUT', data, function(response) {
                     console.log('berhasil');
-                    // appShowNotification(true,['operasi berhasil dilakukan!']);
+                    // appShowNotification(true,['berhasil dilakukan!']);
                 });
         });
 

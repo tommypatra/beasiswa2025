@@ -104,6 +104,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Prestasi::class);
     }
 
+    public function verifikator()
+    {
+        return $this->hasMany(Verifikator::class);
+    }
+
     public function rumah()
     {
         return $this->hasOne(Rumah::class);

@@ -70,7 +70,21 @@ class BeasiswaController extends Controller
     public function show(string $id)
     {
         try {
-            $dataQuery = Beasiswa::with(['jenisBeasiswa', 'syarat'])->where('id', $id)->firstOrFail();
+            $dataQuery = Beasiswa::with([
+                'jenisBeasiswa',
+                'syarat',
+            ])
+                ->withCount([
+                    'pendaftar as jumlah_finalisasi' => function ($query) {
+                        $query->where('is_finalisasi', 1);
+                    },
+                    'pendaftar as jumlah_verifikator' => function ($query) {
+                        $query->whereHas('verifikatorPendaftar'); // Menghitung pendaftar yang memiliki verifikator
+                    }
+                ])
+                ->where('id', $id)
+                ->firstOrFail();
+
             return response()->json([
                 'status' => true,
                 'message' => 'Data ditemukan',

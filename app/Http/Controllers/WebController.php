@@ -157,4 +157,34 @@ class WebController extends Controller
     {
         return view('cetak.cetak_kartu_pendaftaran', ['url_id' => $url_id]);
     }
+
+    public function verifikator($id)
+    {
+        return view('app.verifikator', ['id' => $id]);
+    }
+
+    public function pewawancara($id)
+    {
+        return view('app.pewawancara', ['id' => $id]);
+    }
+
+    public function verifikasiBerkas()
+    {
+        return view('app.verifikasi_berkas');
+    }
+
+    public function wawancara()
+    {
+        return view('app.wawancara');
+    }
+
+    public function pesertaWawancara($id)
+    {
+        return view('app.peserta_wawancara', ['id' => $id]);
+    }
+
+    public function registrasiPeserta()
+    {
+        return view('app.registrasi_peserta');
+    }
 }

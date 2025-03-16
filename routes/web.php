@@ -37,3 +37,11 @@ Route::get('/berkas-pendaftaran/{id}', [WebController::class, 'berkasPendaftaran
 
 Route::get('/cetak-kartu-pendaftaran/{url_id}', [WebController::class, 'cetakKartuPendaftaran'])->name('cetak-kartu-pendaftaran');
 Route::get('/daftar-baru/{kategori}', [WebController::class, 'daftarBaru'])->name('daftar-baru');
+Route::get('/verifikator/{id}', [WebController::class, 'verifikator'])->name('verifikator');
+Route::get('/verifikasi-berkas', [WebController::class, 'verifikasiBerkas'])->name('verifikasi-berkas');
+
+Route::get('/pewawancara/{id}', [WebController::class, 'pewawancara'])->name('pewawancara');
+
+Route::get('/wawancara', [WebController::class, 'wawancara'])->name('wawancara');
+Route::get('/peserta-wawancara/{id}', [WebController::class, 'pesertaWawancara'])->name('peserta-wawancara');
+Route::get('/registrasi-peserta', [WebController::class, 'registrasiPeserta'])->name('registrasi-peserta');

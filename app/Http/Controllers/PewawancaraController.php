@@ -2,64 +2,130 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Beasiswa;
 use App\Models\Pewawancara;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\PewawancaraRequest;
+use App\Http\Resources\PewawancaraResource;
 
 class PewawancaraController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request, $beasiswa_id)
     {
-        //
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $dataQuery = Pewawancara::with(['beasiswa', 'user', 'pesertaWawancara.pendaftar.mahasiswa.user'])->where('beasiswa_id', $request->beasiswa_id)->orderBy('beasiswa_id', 'asc')->orderBy('user_id', 'asc');
+
+        if ($request->filled('search')) {
+            $dataQuery->where(function ($query) use ($request) {
+                $query->WhereHas('user', function ($q) use ($request) {
+                    $q->where('name', 'like', '%' . $request->search . '%');
+                });
+                $query->orWhereHas('pesertaWawancara.pendaftar.mahasiswa.user', function ($q) use ($request) {
+                    $q->where('name', 'like', '%' . $request->search . '%');
+                });
+            });
+        }
+
+        if ($request->filled('user_id')) {
+            $dataQuery->where(function ($query) use ($request) {
+                $query->WhereHas('user', function ($q) use ($request) {
+                    $q->where('id', $request->user_id);
+                });
+            });
+        }
+
+        $default_limit = env('DEFAULT_LIMIT', 30);
+        $limit = $request->filled('limit') ? $request->limit : $default_limit;
+        $data = $dataQuery->paginate($limit);
+        $resourceCollection = $data->getCollection()->map(function ($item) {
+            return new PewawancaraResource($item);
+        });
+        $data->setCollection($resourceCollection);
+
+        $dataRespon = [
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ];
+        return response()->json($dataRespon);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PewawancaraRequest $request)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $datasave = $request->validated();
+            $data = Pewawancara::create($datasave);
+            DB::commit();
+            return response()->json(['status' => true, 'message' => 'data baru berhasil dibuat', 'data' => $data], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat membuat data baru: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Pewawancara $pewawancara)
+    public function show(string $id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Pewawancara $pewawancara)
-    {
-        //
+        try {
+            $dataQuery = Pewawancara::with(['beasiswa', 'user.identitas'])->where('id', $id)->firstOrFail();
+            return response()->json([
+                'status' => true,
+                'message' => 'Data ditemukan',
+                'data' => new PewawancaraResource($dataQuery),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+                'data' => null,
+            ], 404);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Pewawancara $pewawancara)
+    public function update(PewawancaraRequest $request, string $id)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $data = Pewawancara::where('id', $id)->firstOrFail();
+
+            $data->update($request->validated());
+            DB::commit();
+            return response()->json(['status' => true, 'message' => 'berhasil diperbarui', 'data' => $data], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat memperbarui : ' . $e->getMessage(), 'data' => null], 500);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Pewawancara $pewawancara)
+    public function destroy(string $id)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $data = Pewawancara::where('id', $id)->firstOrFail();
+            $data->delete();
+            DB::commit();
+            return response()->json(null, 204);
+            // return response()->json(['status' => true, 'message' => 'hapus data berhasil dilakukan'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat menghapus : ' . $e->getMessage(), 'data' => null], 500);
+        }
     }
 }

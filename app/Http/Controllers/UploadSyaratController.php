@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Syarat;
 use App\Models\UploadSyarat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UploadSyaratRequest;
 use App\Http\Resources\UploadSyaratResource;
-use Illuminate\Support\Facades\Storage;
 
 class UploadSyaratController extends Controller
 {
@@ -17,11 +18,11 @@ class UploadSyaratController extends Controller
      */
     public function index(Request $request)
     {
-        $dataQuery = UploadSyarat::orderBy('id', 'asc');
+        $dataQuery = UploadSyarat::with(['syarat'])->orderBy('id', 'asc');
 
-        // if ($request->filled('search')) {
-        //     $dataQuery->where('nama', 'like', '%' . $request->search . '%');
-        // }
+        if ($request->filled('pendaftar_id')) {
+            $dataQuery->where('pendaftar_id', $request->pendaftar_id);
+        }
 
         $default_limit = env('DEFAULT_LIMIT', 30);
         $limit = $request->filled('limit') ? $request->limit : $default_limit;
@@ -30,6 +31,32 @@ class UploadSyaratController extends Controller
             return new UploadSyaratResource($item);
         });
         $data->setCollection($resourceCollection);
+
+        $dataRespon = [
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ];
+        return response()->json($dataRespon);
+    }
+
+    public function dataUploadSyarat(Request $request)
+    {
+        $default_limit = env('DEFAULT_LIMIT', 30);
+
+        $dataQuery = Syarat::with(['UploadSyarat' => function ($q) use ($request) {
+            $q->where('pendaftar_id', $request->pendaftar_id);
+        }])
+            ->where('beasiswa_id', $request->beasiswa_id)
+            ->orderBy('id', 'asc');
+
+        if ($request->filled('page')) {
+            $limit = $request->filled('limit') ? $request->limit : $default_limit;
+            $page = $request->filled('page') ? (int) $request->page : 1;
+            $data = $dataQuery->paginate($limit, ['*'], 'page', $page);
+        } else {
+            $data = $dataQuery->get();
+        }
 
         $dataRespon = [
             'status' => true,

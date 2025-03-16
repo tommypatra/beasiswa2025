@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->restrictOnDelete();
-            $table->foreignId('pendaftar_id')->nullable();
-            $table->foreign('pendaftar_id')->references('id')->on('pendaftars')->restrictOnDelete();
+            $table->foreignId('beasiswa_id')->nullable();
+            $table->foreign('beasiswa_id')->references('id')->on('beasiswas')->restrictOnDelete();
             $table->timestamps();
-            $table->unique(['user_id', 'pendaftar_id']);
+            $table->unique(['user_id', 'beasiswa_id']);
         });
     }
 

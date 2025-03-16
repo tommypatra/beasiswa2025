@@ -239,7 +239,7 @@
 
                 saveData(url, 'POST', formData, function(response) {
                     //jika berhasil
-                    appShowNotification(true,['operasi berhasil dilakukan!']);
+                    appShowNotification(true,['berhasil dilakukan!']);
                     if(id===''){
                         formReset();
                     }

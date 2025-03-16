@@ -17,9 +17,4 @@ class Surveyor extends Model
     {
         return $this->hasOne(UploadSyarat::class);
     }
-
-    public function pendaftar()
-    {
-        return $this->belongsTo(Pendaftar::class);
-    }
 }
