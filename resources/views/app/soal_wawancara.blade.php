@@ -32,7 +32,6 @@
                         <th width="5%">No</th>
                         <th width="45%">Soal Wawancara</th>
                         <th width="15%">Bobot Nilai</th>
-                        <th width="15%">Nomor Urut</th>
                         <th width="20%">Beasiswa</th>
                         <th>Aksi</th>
                     </tr>
@@ -75,7 +74,7 @@
                         </div>
 						<div class="col-lg-4 mb-3">
                             <label class="form-label">Bobot Nilai</label>
-                            <input type="text" name="bobot_nilai" id="bobot_nilai"  class="form-control" required>
+                            <input type="number" name="persentase_nilai" id="persentase_nilai"  class="form-control" required>
                         </div>
                     </div>
                 </div>
@@ -103,7 +102,7 @@
     var page = 1;
     $(document).ready(function() {
         dataLoad();
-        loadBeasiswa('#beasiswa_id',"{{ date('Y') }}");
+        loadDataSelect('#beasiswa_id', `beasiswa?tahun={{ date("Y") }}`);
 
         detailBeasiswa();
         async function detailBeasiswa() {
@@ -112,6 +111,7 @@
                 $('#nama-beasiswa').text(respon.data.nama);
             }
         }
+
 
         $('#soal').summernote({
             height: 200,
@@ -157,10 +157,9 @@
             if (data.length > 0) {
                 $.each(data, function(index, dt) {
                     const row = `<tr>
-                                <td>${no++}</td>
-                                <td>${dt.soal}</td>
-                                <td>${dt.bobot_nilai}</td>
                                 <td><input type="number" data-id="${dt.id}" style="width: 80px;" class="form-control ganti-nomor-urut" value="${dt.nomor}"></td>
+                                <td>${dt.soal}</td>
+                                <td>${dt.persentase_nilai}</td>
                                 <td>${dt.beasiswa.nama}</td>
                                 <td>
                                     <div class="dropdown">
@@ -221,6 +220,7 @@
             $('#form').trigger('reset');
             $('#form input[type="hidden"]').val('');
             $('#beasiswa_id').val(beasiswa_id);
+            $('#soal').summernote('code', '');
         }
 
         // Handle page change
@@ -266,11 +266,9 @@
             showDataById(endpoint, id, function(response) {
                 $('#id').val(response.data.id);
                 $('#beasiswa_id').val(response.data.beasiswa_id);
-                $('#nama').val(response.data.nama);
-                $('#jenis').val(response.data.jenis);
-                $('#is_wajib').val(response.data.is_wajib);
-                $('#is_aktif').val(response.data.is_aktif);
-                $('#deskripsi').val(response.data.deskripsi);
+                $('#persentase_nilai').val(response.data.persentase_nilai);
+                $('#nomor').val(response.data.nomor);
+                $('#soal').summernote('code', response.data.soal);
                 showModalForm();
             });
         });

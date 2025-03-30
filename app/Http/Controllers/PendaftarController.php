@@ -133,6 +133,34 @@ class PendaftarController extends Controller
         }
     }
 
+
+    public function getData(string $id)
+    {
+        try {
+
+            $dataQuery = Pendaftar::with([
+                'mahasiswa.user.identitas',
+                'mahasiswa.programStudi.fakultas',
+                'kelulusan',
+                'beasiswa',
+            ])
+                ->where("id", $id)
+                ->firstOrFail();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data ditemukan',
+                'data' => $dataQuery,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+                'data' => null,
+            ], 404);
+        }
+    }
+
     /**
      * Update the specified resource in storage.
      */
@@ -278,5 +306,4 @@ class PendaftarController extends Controller
             ], 404);
         }
     }
-    
 }

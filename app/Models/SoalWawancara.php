@@ -15,7 +15,7 @@ class SoalWawancara extends Model
 
     public function wawancaraNilai()
     {
-        return $this->hasMany(WawancaraNilai::class);
+        return $this->hasOne(WawancaraNilai::class);
     }
 
     public function user()

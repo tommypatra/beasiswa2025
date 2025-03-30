@@ -16,8 +16,6 @@ return new class extends Migration
             $table->integer('nomor')->nullable();
             $table->text('soal')->nullable();
             $table->integer('persentase_nilai')->nullable();
-            $table->foreignId('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->restrictOnDelete();
             $table->foreignId('beasiswa_id')->nullable();
             $table->foreign('beasiswa_id')->references('id')->on('beasiswas')->restrictOnDelete();
             $table->timestamps();

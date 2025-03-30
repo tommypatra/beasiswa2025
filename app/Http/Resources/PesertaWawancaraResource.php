@@ -18,6 +18,7 @@ class PesertaWawancaraResource extends JsonResource
 
         return [
             'id' => $this->id,
+            'beasiswa_id' => $this->beasiswa_id,
             'is_registrasi_wawancara' => $this->is_registrasi_wawancara,
             'wawancara' => $this->pesertaWawancara,
             'mahasiswa' => $this->mahasiswa,

@@ -13,6 +13,11 @@ class WawancaraNilai extends Model
         return $this->belongsTo(Pewawancara::class);
     }
 
+    public function pendaftar()
+    {
+        return $this->belongsTo(Pendaftar::class);
+    }
+
     public function soalWawancara()
     {
         return $this->belongsTo(SoalWawancara::class);

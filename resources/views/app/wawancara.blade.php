@@ -119,6 +119,7 @@
     $(document).ready(function() {
         dataLoad();
 
+
         function renderData(response) {
             const dataList = $('#data-list');
             const pagination = $('#pagination');

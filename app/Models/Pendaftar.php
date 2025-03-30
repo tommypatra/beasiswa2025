@@ -47,4 +47,9 @@ class Pendaftar extends Model
     {
         return $this->hasMany(PesertaWawancara::class);
     }
+
+    public function wawancaraNilai()
+    {
+        return $this->hasMany(WawancaraNilai::class);
+    }
 }

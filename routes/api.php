@@ -12,6 +12,7 @@ use App\Models\Verifikator;
 use Illuminate\Http\Request;
 use App\Models\JenisBeasiswa;
 use App\Models\SoalWawancara;
+use App\Models\WawancaraNilai;
 use App\Models\PesertaWawancara;
 use App\Http\Controllers\WilayahDesa;
 use App\Http\Middleware\Authenticate;
@@ -49,6 +50,7 @@ use App\Http\Controllers\JenisBeasiswaController;
 use App\Http\Controllers\SoalWawancaraController;
 use App\Http\Controllers\SumberListrikController;
 use App\Http\Controllers\StatusOrangTuaController;
+use App\Http\Controllers\WawancaraNilaiController;
 use App\Http\Controllers\PendidikanAkhirController;
 use App\Http\Controllers\PesertaWawancaraController;
 use App\Http\Controllers\ReferensiPilihanController;
@@ -80,6 +82,8 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     Route::get('data-role', [RoleController::class, 'index']);
     Route::get('data-jenis-beasiswa', [JenisBeasiswaController::class, 'index']);
     Route::get('data-beasiswa', [BeasiswaController::class, 'index']);
+
+    Route::get('get-data-pendaftar/{id}', [PendaftarController::class, 'getData']);
     Route::get('get-data-beasiswa/{id}', [BeasiswaController::class, 'show']);
     // Route::get('data-pekerjaan', [PekerjaanController::class, 'index']);
     // Route::get('data-pendapatan', [PendapatanController::class, 'index']);
@@ -102,6 +106,9 @@ Route::middleware('jwt.auth.refresh')->group(function () {
 
     Route::middleware(['cek.akses:pewawancara'])->group(function () {
         Route::resource('peserta-wawancara', PesertaWawancaraController::class);
+        Route::resource('wawancara-nilai', WawancaraNilaiController::class);
+        Route::get('proses-wawancara/{id}', [WawancaraNilaiController::class, 'prosesWawancara']);
+        Route::put('akhiri-wawancara/{id}', [WawancaraNilaiController::class, 'akhiriWawancara']);
         Route::get('wawancara', [PesertaWawancaraController::class, 'wawancara']);
         Route::get('pilih-peserta-wawancara', [PesertaWawancaraController::class, 'pilihPesertaWawancara']);
     });
@@ -147,7 +154,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::delete('pewawancara/{id}', [PewawancaraController::class, 'destroy']);
         Route::put('pewawancara/{id}', [PewawancaraController::class, 'update']);
 
-        Route::resource('peserta-wawancara', PesertaWawancaraController::class);
+        // Route::resource('peserta-wawancara', PesertaWawancaraController::class);
     });
 
     Route::middleware(['cek.akses:mahasiswa'])->group(function () {

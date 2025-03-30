@@ -193,7 +193,18 @@
                     if(dt.wawancara.length>0){                        
                         pewawancara = `<ul class="list">`;
                         $.each(dt.wawancara, function(index, item) {
-                            pewawancara += `<li>${item.pewawancara.user.name}</li>`;
+                            let status_wawancara=``;
+                            if(dt.is_registrasi_wawancara){
+                                status_wawancara=`<span class="badge fs-2 bg-danger">belum dimulai</span>`;
+                                if(item.status==1){
+                                    status_wawancara=`<span class="badge fs-2 bg-primary">Proses wawancara</span>`;
+                                }
+                                else if(item.status==2){
+                                    status_wawancara=`<span class="badge fs-2 bg-success">Selesai</span>`;
+                                }
+                            }
+
+                            pewawancara += `<li>${item.pewawancara.user.name} ${status_wawancara}</li>`;
                         });
                         pewawancara += `<ul>`;
                     }
@@ -203,6 +214,7 @@
                         vclass="table-success";
                         is_registrasi_wawancara="selected";
                     }
+
                     const row = `<tr class="${vclass}">
                                     <td>${no++}</td>
                                     <td>

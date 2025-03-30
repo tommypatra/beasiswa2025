@@ -117,6 +117,13 @@ class PesertaWawancaraController extends Controller
                 });
         }
 
+        // if ($request->filled('is_pewawancara'))
+        //     $dataQuery->orWhere(function ($query) use ($request) {
+        //         $query->WhereHas('pesertaWawancara.pewawancara', function ($q) use ($request) {
+        //             $q->where('user_id', auth()->user()->id);
+        //         });
+        //     });
+
         if ($request->filled('prodi')) {
             $dataQuery->where(function ($query) use ($request) {
                 $query->WhereHas('mahasiswa', function ($q) use ($request) {
@@ -181,11 +188,11 @@ class PesertaWawancaraController extends Controller
     public function show(string $id)
     {
         try {
-            $dataQuery = PesertaWawancara::with(['beasiswa', 'user.identitas'])->where('id', $id)->firstOrFail();
+            $dataQuery = PesertaWawancara::with(['pendaftar.mahasiswa.user.identitas', 'pendaftar.beasiswa'])->where('id', $id)->firstOrFail();
             return response()->json([
                 'status' => true,
                 'message' => 'Data ditemukan',
-                'data' => new PesertaWawancaraResource($dataQuery),
+                'data' => $dataQuery,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -199,13 +206,15 @@ class PesertaWawancaraController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(PesertaWawancaraRequest $request, string $id)
+    public function update(Request $request, string $id)
     {
         try {
             DB::beginTransaction();
             $data = PesertaWawancara::where('id', $id)->firstOrFail();
-
-            $data->update($request->validated());
+            $data_save = [
+                'status' => $request->status,
+            ];
+            $data->update($data_save);
             DB::commit();
             return response()->json(['status' => true, 'message' => 'berhasil diperbarui', 'data' => $data], 200);
         } catch (\Exception $e) {

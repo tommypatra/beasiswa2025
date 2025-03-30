@@ -26,7 +26,7 @@ class SoalWawancaraRequest extends FormRequest
             'soal' => 'required|string',
             'nomor' => 'required|numeric',
             'beasiswa_id' => 'required|numeric',
-            'bobot_nilai' => 'required|numeric',
+            'persentase_nilai' => 'required|numeric',
         ];
     }
 
@@ -36,7 +36,7 @@ class SoalWawancaraRequest extends FormRequest
             'soal' => 'soal',
             'nomor' => 'nomor soal',
             'beasiswa_id' => 'beasiswa',
-            'bobot_nilai' => 'bobot nilai',
+            'persentase_nilai' => 'bobot nilai',
         ];
     }
 }
