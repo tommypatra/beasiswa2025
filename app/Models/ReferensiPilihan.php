@@ -33,7 +33,7 @@ class ReferensiPilihan extends Model
         return $this->belongsTo(Rumah::class, 'sumber_air_id');
     }
 
-    public function rumaSumberListrik()
+    public function rumahSumberListrik()
     {
         return $this->belongsTo(Rumah::class, 'sumber_listrik_id');
     }

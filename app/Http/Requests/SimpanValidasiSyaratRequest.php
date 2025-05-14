@@ -22,6 +22,13 @@ class SimpanValidasiSyaratRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'verifikasi_berkas_skor' => [
+                'required',
+                'numeric',
+                'regex:/^\d{1,3}(\.\d{1,2})?$/', // maks 3 digit sebelum koma, maks 2 digit setelah
+                'max:100' // nilai maksimal
+            ],
+            'verifikator_id' => 'required|numeric',
             'verifikasi_berkas_hasil' => 'required|numeric|in:0,1', // Pastikan hanya 0 atau 1 yang diterima
             'verifikasi_berkas_catatan' => 'required_if:verifikasi_berkas_hasil,0|string|nullable',
         ];
@@ -30,6 +37,8 @@ class SimpanValidasiSyaratRequest extends FormRequest
     public function attributes(): array
     {
         return [
+            'verifikasi_berkas_skor' => 'skor',
+            'verifikator_id' => 'verifikator',
             'verifikasi_berkas_catatan' => 'catatan',
             'verifikasi_berkas_hasil' => 'hasil verifikasi',
         ];

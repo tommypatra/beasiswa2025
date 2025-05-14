@@ -37,6 +37,7 @@ class PendaftaranMahasiswaRequest extends FormRequest
             //sekolah
             'nama_sekolah' => 'required|string',
             'jenis' => 'required|string',
+            'akreditasi' => 'required|string',
             'jurusan' => 'required|string',
             'nisn' => 'required|numeric',
             'tahun_lulus' => 'required|numeric',
@@ -60,6 +61,7 @@ class PendaftaranMahasiswaRequest extends FormRequest
             'pendidikan_ibu_id' => 'required|numeric',
             'pendapatan_ibu_id' => 'required|numeric',
             'status_hidup_ibu_kandung' => 'required|numeric',
+            'tanggungan' => 'required|numeric',
 
             //rumah
             'status_id' => 'required|string',
@@ -89,6 +91,7 @@ class PendaftaranMahasiswaRequest extends FormRequest
             //sekolah
             'nama_sekolah' => 'nama sekolah',
             'jenis' => 'jenis sekolah',
+            'akreditasi' => 'akreditasi',
             'jurusan' => 'jurusan',
             'nisn' => 'nisn',
             'tahun_lulus' => 'tahun lulus',
@@ -112,6 +115,7 @@ class PendaftaranMahasiswaRequest extends FormRequest
             'pendidikan_ibu_id' => 'pendidikan akhir ibu',
             'pendapatan_ibu_id' => 'pendapatan ibu',
             'status_hidup_ibu_kandung' => 'status hidup ibu',
+            'tanggungan' => 'tanggungan',
 
             //rumah
             'status_id' => 'status kepemilikan rumah',

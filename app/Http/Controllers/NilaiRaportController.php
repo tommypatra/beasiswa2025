@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\NilaiRaport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NilaiRaportRequest;
+use App\Http\Resources\DataRaportResource;
 use App\Http\Resources\NilaiRaportResource;
 
 class NilaiRaportController extends Controller
@@ -85,6 +87,27 @@ class NilaiRaportController extends Controller
             ], 404);
         }
     }
+
+
+    public function dataRaport(string $id)
+    {
+        try {
+            $dataQuery = User::with(['pendidikanAkhir', 'nilaiRaport'])->where('id', $id)->firstOrFail();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data ditemukan',
+                'data' => new DataRaportResource($dataQuery),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+                'data' => null,
+            ], 404);
+        }
+    }
+
 
     /**
      * Update the specified resource in storage.

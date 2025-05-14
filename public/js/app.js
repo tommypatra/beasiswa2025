@@ -304,8 +304,8 @@ async function execAsync(vapi_url, vmethod = "GET", vtoken = null, vbody = null)
 
 
 async function loadOptionSelect(select_id, grup_param, data) {
-    let $select = $(select_id);
-    $select.empty();
+    let select = $(select_id);
+    select.empty();
     let groupedData = [];
     $.each(data, function (index, item) {
         if (item.grup === grup_param){
@@ -313,9 +313,11 @@ async function loadOptionSelect(select_id, grup_param, data) {
         }
     });
 
+    // console.log(data);
+
     $.each(groupedData, function (grup, items) {
         let $option = $("<option>", { value: items.id, text: items.nama });
-        $select.append($option);
+        select.append($option);
     });
 }  
 

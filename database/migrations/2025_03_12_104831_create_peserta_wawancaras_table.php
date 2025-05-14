@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('peserta_wawancaras', function (Blueprint $table) {
             $table->id();
-            $table->decimal('nilai', 4, 2)->nullable();
+            $table->decimal('nilai', 5, 2)->nullable();
             $table->smallInteger('status')->nullable(); //1 proses wawancara, 2 wawancara selesai
             $table->foreignId('pewawancara_id')->nullable();
             $table->foreign('pewawancara_id')->references('id')->on('pewawancaras')->restrictOnDelete();

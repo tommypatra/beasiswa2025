@@ -28,6 +28,11 @@ return new class extends Migration
             $table->foreign('sumber_listrik_id')->references('id')->on('referensi_pilihans')->restrictOnDelete();
             $table->foreignId('user_id');
             $table->foreign('user_id')->references('id')->on('users')->restrictOnDelete();
+
+            $table->boolean('verifikasi_lapangan_hasil')->nullable();
+            $table->text('verifikasi_lapangan_catatan')->nullable();
+            $table->decimal('verifikasi_lapangan_skor', 5, 2)->nullable();
+
             $table->timestamps();
             $table->unique(['user_id']);
         });

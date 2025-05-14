@@ -65,6 +65,59 @@ class VerifikatorPendaftarController extends Controller
         return response()->json($dataRespon);
     }
 
+    public function pesertaVerifikasi(Request $request)
+    {
+        $dataQuery = Beasiswa::with([
+            'user',
+        ])
+            ->withCount('pendaftar')
+            ->withCount([
+                'pendaftar as pendaftar_finalisasi' => function ($query) {
+                    $query->where('is_finalisasi', 1);
+                },
+                'pendaftar as pendaftar_batal' => function ($query) {
+                    $query->where('is_batal', 1);
+                }
+            ])
+            ->withCount('verifikatorPendaftar')
+            ->withCount([
+                'verifikatorPendaftar as verifikasi_ms' => function ($query) {
+                    $query->where('hasil', 1);
+                },
+                'verifikatorPendaftar as verifikasi_tms' => function ($query) {
+                    $query->where('hasil', '!=', 1);
+                }
+            ])
+            ->orderBy('daftar_mulai', 'desc');
+
+        if ($request->filled('search')) {
+            $dataQuery->where(function ($query) use ($request) {
+                $query->where('nama', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->filled('id')) {
+            $dataQuery->where('id', $request->id);
+        }
+
+        // Ambil limit dari request, jika tidak ada gunakan default dari .env
+        $default_limit = env('DEFAULT_LIMIT', 30);
+        $limit = $request->filled('limit') ? $request->limit : $default_limit;
+
+        // Paginate hasil query
+        $data = $dataQuery->paginate($limit);
+
+        // Format response JSON
+        $dataRespon = [
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ];
+
+        return response()->json($dataRespon);
+    }
+
+
     /**
      * Store a newly created resource in storage.
      */
@@ -126,8 +179,15 @@ class VerifikatorPendaftarController extends Controller
         try {
             DB::beginTransaction();
             $data = UploadSyarat::where('id', $id)->firstOrFail();
-
+            $pendaftar_id = $data->pendaftar_id;
             $data->update($request->validated());
+
+            $totalSkor = UploadSyarat::where('pendaftar_id', $pendaftar_id)->sum('verifikasi_berkas_skor');
+            $verifikator = VerifikatorPendaftar::where('pendaftar_id', $pendaftar_id)->firstOrFail();
+            $verifikator->update([
+                'total_skor' => $totalSkor
+            ]);
+
             DB::commit();
             return response()->json(['status' => true, 'message' => 'berhasil diperbarui', 'data' => $data], 200);
         } catch (\Exception $e) {

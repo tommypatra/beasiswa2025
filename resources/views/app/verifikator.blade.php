@@ -147,13 +147,16 @@ td, th {
                             <label class="form-label">Jumlah</label>                            
                             <input id="jumlah" type="number" class="form-control" value="10">
                         </div>
-                        <div class="col-sm-4 mb-3">
-                            <label class="form-label">Program Studi</label>
+                        <div class="col-sm-3 mb-3">
+                            <label class="form-label">Prodi</label>
                             <select id="program_studi_id" class="form-control"></select>
                         </div>
                         <div class="col-sm-4 mb-3">
                             <label class="form-label">Cari</label>
                             <input id="cari" type="text" class="form-control">
+                        </div>
+                        <div class="col-sm-2 mb-3 d-flex">
+                            <button type="button" class="btn btn-primary" id="btn-cari">Cari Data</button>
                         </div>
                     </div>
                     <table>
@@ -217,7 +220,7 @@ td, th {
                 // console.log(result);
                 
                 $('#info-beasiswa').html(`<h3 id="nama-beasiswa">${result.data.nama}</h3>
-                    Jumlah Pendaftar ${result.data.jumlah_finalisasi} Belum Ada Verifikator ${result.data.jumlah_finalisasi-result.data.jumlah_verifikator}
+                    Jumlah Pendaftar ${result.data.jumlah_finalisasi}
                 `);
                 // data_referensi=result.data.data;
             } catch (error) {
@@ -381,22 +384,27 @@ td, th {
             });
         }); 
 
-        $('#program_studi_id').change(function(){
-            loadDataPeserta();
-        })
 
-        $('#jumlah').blur(function(){
+        $(document).on('click', '#btn-cari', function() {
             loadDataPeserta();
-        })
-
-        $('#cari').on('keyup', function() {
-            let keyword = $(this).val().trim();
-            if (keyword.length >= 3) {
-                loadDataPeserta();
-            }else if(keyword.length < 1){
-                loadDataPeserta();
-            }
         });
+
+        // $('#program_studi_id').change(function(){
+        //     loadDataPeserta();
+        // })
+
+        // $('#jumlah').blur(function(){
+        //     loadDataPeserta();
+        // })
+
+        // $('#cari').on('keyup', function() {
+        //     let keyword = $(this).val().trim();
+        //     if (keyword.length >= 3) {
+        //         loadDataPeserta();
+        //     }else if(keyword.length < 1){
+        //         loadDataPeserta();
+        //     }
+        // });
 
         // Handle page change
         $('#btn-refresh').click(function() {

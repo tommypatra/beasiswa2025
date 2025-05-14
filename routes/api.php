@@ -12,6 +12,7 @@ use App\Models\Verifikator;
 use Illuminate\Http\Request;
 use App\Models\JenisBeasiswa;
 use App\Models\SoalWawancara;
+use App\Models\SurveiPeserta;
 use App\Models\WawancaraNilai;
 use App\Models\PesertaWawancara;
 use App\Http\Controllers\WilayahDesa;
@@ -30,6 +31,7 @@ use App\Http\Controllers\BeasiswaController;
 use App\Http\Controllers\FakultasController;
 use App\Http\Controllers\OrangTuaController;
 use App\Http\Controllers\PenggunaController;
+use App\Http\Controllers\SurveyorController;
 use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\IdentitasController;
 use App\Http\Controllers\MahasiswaController;
@@ -41,14 +43,17 @@ use App\Http\Controllers\PendidikanController;
 use App\Http\Controllers\NilaiRaportController;
 use App\Http\Controllers\PewawancaraController;
 use App\Http\Controllers\SumberBiayaController;
+use App\Http\Controllers\SurveiNilaiController;
 use App\Http\Controllers\VerifikatorController;
 use App\Http\Controllers\WilayahDesaController;
 use App\Http\Middleware\JwtAuthenticateRefresh;
 use App\Http\Controllers\ProgramStudiController;
 use App\Http\Controllers\UploadSyaratController;
 use App\Http\Controllers\JenisBeasiswaController;
+use App\Http\Controllers\PesertaSurveiController;
 use App\Http\Controllers\SoalWawancaraController;
 use App\Http\Controllers\SumberListrikController;
+use App\Http\Controllers\SurveiPesertaController;
 use App\Http\Controllers\StatusOrangTuaController;
 use App\Http\Controllers\WawancaraNilaiController;
 use App\Http\Controllers\PendidikanAkhirController;
@@ -85,6 +90,15 @@ Route::middleware('jwt.auth.refresh')->group(function () {
 
     Route::get('get-data-pendaftar/{id}', [PendaftarController::class, 'getData']);
     Route::get('get-data-beasiswa/{id}', [BeasiswaController::class, 'show']);
+    Route::get('get-data-mahasiswa/{id}', [MahasiswaController::class, 'show']);
+    Route::get('get-data-orang-tua/{id}', [OrangTuaController::class, 'dataOrangTua']);
+    Route::get('get-data-pendidikan-akhir/{id}', [PendidikanAkhirController::class, 'dataPendidikanAkhir']);
+    Route::get('get-data-upload/{id}', [UploadSyaratController::class, 'dataUpload']);
+    Route::get('get-data-raport/{id}', [NilaiRaportController::class, 'dataRaport']);
+    Route::get('get-data-kondisi-rumah/{id}', [RumahController::class, 'dataKondisiRumah']);
+
+    Route::get('get-data-dokumen-upload/{id}/', [UploadSyaratController::class, 'dataDokumenUpload']);
+
     // Route::get('data-pekerjaan', [PekerjaanController::class, 'index']);
     // Route::get('data-pendapatan', [PendapatanController::class, 'index']);
     // Route::get('data-sumber-biaya', [SumberBiayaController::class, 'index']);
@@ -104,6 +118,22 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::put('simpan-validasi-final/{id}', [VerifikatorPendaftarController::class, 'simpanValidasiFinal']);
     });
 
+    Route::middleware(['cek.akses:surveyor'])->group(function () {
+        Route::resource('peserta-survei', PesertaSurveiController::class);
+        Route::resource('survei-nilai', SurveiNilaiController::class);
+        Route::get('proses-survei/{id}', [SurveiNilaiController::class, 'prosesSurvei']);
+        Route::put('akhiri-survei/{id}', [SurveiNilaiController::class, 'akhiriSurvei']);
+        Route::get('survei', [PesertaSurveiController::class, 'survei']);
+        Route::get('pilih-peserta-survei', [PesertaSurveiController::class, 'pilihPesertaSurvei']);
+
+
+        Route::put('pendidikan-akhir/update-survei/{id}', [SurveiNilaiController::class, 'updateSurveiPendidikanAkhir']);
+        Route::put('raport/update-survei/{id}', [SurveiNilaiController::class, 'updateSurveiRaport']);
+        Route::put('kondisi-rumah/update-survei/{id}', [SurveiNilaiController::class, 'updateSurveiKondisiRumah']);
+        Route::put('orang-tua/update-survei/{id}', [SurveiNilaiController::class, 'updateSurveiOrangTUa']);
+        Route::put('dokumen-upload/update-survei/{id}', [SurveiNilaiController::class, 'updateSurveiDokumenUpload']);
+    });
+
     Route::middleware(['cek.akses:pewawancara'])->group(function () {
         Route::resource('peserta-wawancara', PesertaWawancaraController::class);
         Route::resource('wawancara-nilai', WawancaraNilaiController::class);
@@ -114,10 +144,9 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     });
 
     Route::middleware(['cek.akses:pengelola'])->group(function () {
-        Route::put('registasi-peserta-wawancara/{id}', [PesertaWawancaraController::class, 'registasiPeserta']);
+        Route::put('pengelola/registasi-peserta-wawancara/{id}', [PesertaWawancaraController::class, 'registasiPeserta']);
+        Route::get('pengelola/peserta-verifikasi', [VerifikatorPendaftarController::class, 'pesertaVerifikasi']);
     });
-
-
 
     Route::middleware(['cek.akses:admin'])->group(function () {
         Route::resource('pekerjaan', PekerjaanController::class);
@@ -148,6 +177,15 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::resource('verifikator-pendaftar', VerifikatorPendaftarController::class);
 
         //untuk surveyor
+        Route::get('surveyor/{beasiswa_id}', [SurveyorController::class, 'index']);
+        Route::get('surveyor/show/{id}', [SurveyorController::class, 'show']);
+        Route::post('surveyor', [SurveyorController::class, 'store']);
+        Route::delete('surveyor/{id}', [SurveyorController::class, 'destroy']);
+        Route::put('surveyor/{id}', [SurveyorController::class, 'update']);
+        Route::resource('surveyor-peserta', SurveiPesertaController::class);
+
+
+        //untuk pewawancara
         Route::get('pewawancara/{beasiswa_id}', [PewawancaraController::class, 'index']);
         Route::get('pewawancara/show/{id}', [PewawancaraController::class, 'show']);
         Route::post('pewawancara', [PewawancaraController::class, 'store']);

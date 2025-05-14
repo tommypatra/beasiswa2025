@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('bapak_nama', 100)->nullable();
             $table->string('ibu_nama', 100)->nullable();
+            $table->smallInteger('tanggungan')->nullable();
             $table->boolean('status_hidup_bapak_kandung')->default(true);
             $table->boolean('status_hidup_ibu_kandung')->default(true);
             $table->foreignId('pekerjaan_bapak_id')->nullable();
@@ -31,6 +32,11 @@ return new class extends Migration
 
             $table->foreignId('user_id');
             $table->foreign('user_id')->references('id')->on('users')->restrictOnDelete();
+
+            $table->boolean('verifikasi_lapangan_hasil')->nullable();
+            $table->text('verifikasi_lapangan_catatan')->nullable();
+            $table->decimal('verifikasi_lapangan_skor', 5, 2)->nullable();
+
             $table->timestamps();
             $table->unique(['user_id']);
         });

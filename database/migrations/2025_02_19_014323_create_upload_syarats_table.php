@@ -17,11 +17,14 @@ return new class extends Migration
             $table->text('verifikasi_berkas_catatan')->nullable();
             $table->boolean('verifikasi_lapangan_hasil')->nullable();
             $table->text('verifikasi_lapangan_catatan')->nullable();
+            $table->decimal('verifikasi_berkas_skor', 5, 2)->nullable();
+            $table->decimal('verifikasi_lapangan_skor', 5, 2)->nullable();
             $table->string('dokumen', 150)->nullable();
             $table->foreignId('pendaftar_id')->nullable();
             $table->foreign('pendaftar_id')->references('id')->on('pendaftars')->restrictOnDelete();
             $table->foreignId('syarat_id')->nullable();
             $table->foreign('syarat_id')->references('id')->on('syarats')->restrictOnDelete();
+            $table->unique(['pendaftar_id', 'pendaftar_id']);
             $table->timestamps();
         });
     }

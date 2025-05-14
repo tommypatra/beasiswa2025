@@ -17,8 +17,7 @@ class VerifikatorController extends Controller
      */
     public function index(Request $request, $beasiswa_id)
     {
-
-        $dataQuery = Verifikator::with(['beasiswa', 'user', 'verifikatorPendaftar.pendaftar.mahasiswa.user'])->where('beasiswa_id', $request->beasiswa_id)->orderBy('beasiswa_id', 'asc')->orderBy('user_id', 'asc');
+        $dataQuery = Verifikator::with(['beasiswa', 'user', 'verifikatorPendaftar.pendaftar.mahasiswa.user'])->where('beasiswa_id', $beasiswa_id)->orderBy('beasiswa_id', 'asc')->orderBy('user_id', 'asc');
 
         if ($request->filled('search')) {
             $dataQuery->where(function ($query) use ($request) {

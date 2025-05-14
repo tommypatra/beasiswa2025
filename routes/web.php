@@ -40,8 +40,16 @@ Route::get('/daftar-baru/{kategori}', [WebController::class, 'daftarBaru'])->nam
 Route::get('/verifikator/{id}', [WebController::class, 'verifikator'])->name('verifikator');
 Route::get('/verifikasi-berkas', [WebController::class, 'verifikasiBerkas'])->name('verifikasi-berkas');
 
+
+Route::get('/surveyor/{id}', [WebController::class, 'surveyor'])->name('surveyor');
+
 Route::get('/pewawancara/{id}', [WebController::class, 'pewawancara'])->name('pewawancara');
 
+Route::get('/survei', [WebController::class, 'survei'])->name('survei');
 Route::get('/wawancara', [WebController::class, 'wawancara'])->name('wawancara');
 Route::get('/peserta-wawancara/{id}', [WebController::class, 'pesertaWawancara'])->name('peserta-wawancara');
-Route::get('/registrasi-peserta', [WebController::class, 'registrasiPeserta'])->name('registrasi-peserta');
+Route::get('/peserta-survei/{id}', [WebController::class, 'pesertaSurvei'])->name('peserta-survei');
+
+Route::get('dashboard-beasiswa/{id}', [WebController::class, 'dashboardBeasiswa'])->name('dashboard-beasiswa');
+Route::get('registrasi-peserta', [WebController::class, 'registrasiPeserta'])->name('registrasi-peserta');
+Route::get('verifikasi-peserta', [WebController::class, 'verifikasiPeserta'])->name('verifikasi-peserta');

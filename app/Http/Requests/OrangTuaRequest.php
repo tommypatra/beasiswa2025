@@ -33,6 +33,7 @@ class OrangTuaRequest extends FormRequest
             'pendidikan_ibu_id' => 'required|numeric',
             'pendapatan_ibu_id' => 'required|numeric',
             'status_hidup_ibu_kandung' => 'required|numeric',
+            'tanggungan' => 'required|numeric',
         ];
     }
 
@@ -49,6 +50,8 @@ class OrangTuaRequest extends FormRequest
             'pendidikan_ibu_id' => 'pendidikan akhir ibu',
             'pendapatan_ibu_id' => 'pendapatan ibu',
             'status_hidup_ibu_kandung' => 'status hidup ibu',
+            'tanggungan' => 'tanggungan',
+
         ];
     }
 }

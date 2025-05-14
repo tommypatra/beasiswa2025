@@ -15,6 +15,13 @@ return new class extends Migration
             $table->id();
             $table->boolean('hasil')->nullable();
             $table->text('catatan')->nullable();
+            $table->decimal('total_skor', 5, 2)->nullable();
+
+
+            $table->boolean('verifikasi_lapangan_hasil')->nullable();
+            $table->text('verifikasi_lapangan_catatan')->nullable();
+            $table->decimal('verifikasi_lapangan_skor', 5, 2)->nullable();
+
             $table->foreignId('verifikator_id')->nullable();
             $table->foreign('verifikator_id')->references('id')->on('verifikators')->restrictOnDelete();
             $table->foreignId('pendaftar_id')->nullable();

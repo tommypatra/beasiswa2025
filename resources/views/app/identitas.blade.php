@@ -136,10 +136,10 @@
                     let desa = data.identitas.wilayah_desa;
                     let kabupaten = desa.wilayah_kecamatan.wilayah_kabupaten;
                     $('#wilayah_kabupaten').val(kabupaten.nama);
-                    $('#wilayah_kabupaten').data('id',kabupaten.id);
+                    $('#wilayah_kabupaten').attr('data-id',kabupaten.id);
     
                     $('#wilayah_desa').val(desa.desa);
-                    $('#wilayah_desa').data('id',desa.id);
+                    $('#wilayah_desa').attr('data-id',desa.id);
                 }
 
 
@@ -234,6 +234,7 @@
                     },
                     success: function (respon) {
                         response($.map(respon.data.data, function (item) {
+                            // console.log(item)
                             return {
                                 label: item.nama, 
                                 value: item.nama, 
@@ -245,6 +246,7 @@
             },
             minLength: 3,
             select: function (event, ui) {
+                // console.log(ui);
                 $(this).val(ui.item.value); 
                 $(this).attr("data-id", ui.item.id);
                 return false;
@@ -282,6 +284,7 @@
             select: function (event, ui) {
                 $(this).val(ui.item.value); 
                 $(this).attr("data-id", ui.item.id);
+                $('')
                 return false;
             }
         });

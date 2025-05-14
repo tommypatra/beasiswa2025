@@ -13,8 +13,18 @@ class Surveyor extends Model
         return $this->hasMany(DokumentasiSurvei::class);
     }
 
-    public function uploadSyarat()
+    public function surveiPeserta()
     {
-        return $this->hasOne(UploadSyarat::class);
+        return $this->hasMany(SurveiPeserta::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function beasiswa()
+    {
+        return $this->belongsTo(Beasiswa::class);
     }
 }

@@ -1,7 +1,7 @@
 @extends('template')
 
 @section('scriptHead')
-<title>Registrasi Peserta Seleksi Beasiswa</title>
+<title>Registrasi Peserta Wawancara Seleksi Beasiswa</title>
 <style>
 
 .list {
@@ -23,7 +23,7 @@
 <div class="card">
     <div class="card-body">
         <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">
-            <h5 class="card-title fw-semibold">Registrasi Peserta Seleksi Beasiswa</h5>
+            <h5 class="card-title fw-semibold">Registrasi Peserta Wawancara Seleksi Beasiswa</h5>
             <div class="d-flex gap-2">
                 <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
                 <button class="btn btn-success" id="btn-refresh">
@@ -84,7 +84,7 @@
                                     <tr>
                                         <th width="5%">No</th>
                                         <th width="25%">Nama/ Nim</th>
-                                        <th width="25%">Fakultas/ Program Studi</th>
+                                        <th width="25%">Nama Peserta Wawancara (Status)</th>
                                         <th width="15%">Status Registrasi </th>
                                     </tr>
                                 </thead>
@@ -281,7 +281,7 @@
                     let data_post = {
                         is_registrasi_wawancara : value,
                     };
-                    let url = `${base_url}/api/registasi-peserta-wawancara/${id}`;
+                    let url = `${base_url}/api/pengelola/registasi-peserta-wawancara/${id}`;
                     saveData(url, 'PUT', data_post, function(response) {
                         // console.log(response);
                         dataLoad();

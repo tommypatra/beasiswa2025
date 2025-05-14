@@ -41,10 +41,20 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-12 mb-3">
+                <div class="col-lg-9 mb-3">
                     <label class="form-label">Nama Sekolah</label>
                     <input name="nama_sekolah" id="nama_sekolah" type="text" class="form-control" required>
                 </div>
+
+                <div class="col-lg-3 mb-3">
+                    <label class="form-label">Akreditasi</label>
+                    <select name="akreditasi" id="akreditasi" class="form-control" required>
+                        <option value="">PILIH</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                    </select>
+                </div>                
             </div>
             <div class="row">
                 <div class="col-lg-4 mb-3">
@@ -67,6 +77,7 @@
                 <div class="col-lg-4 mb-3">
                     <label class="form-label">Nilai Akhir</label>
                     <input name="nilai_akhir_lulus" id="nilai_akhir_lulus" type="text" class="form-control" required>
+                    <div style="font-style: italic">rata rata nilai pada ujian nasional di Ijazah/SKHU/SKL</div>
                 </div>
             </div>
             <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
@@ -94,6 +105,7 @@
                 $('#nisn').val(data.nisn);
                 $('#nama_sekolah').val(data.nama_sekolah);
                 $('#jenis').val(data.jenis);
+                $('#akreditasi').val(data.akreditasi);
                 $('#tahun_lulus').val(data.tahun_lulus);
                 $('#nilai_akhir_lulus').val(data.nilai_akhir_lulus);
                 $('#jurusan').val(data.jurusan);
@@ -102,6 +114,7 @@
                 $('#nisn').val("");
                 $('#nama_sekolah').val("");
                 $('#jenis').val("");
+                $('#akreditasi').val("");
                 $('#tahun_lulus').val("{{ date('Y') }}");
                 $('#nilai_akhir_lulus').val("");
                 $('#jurusan').val("");

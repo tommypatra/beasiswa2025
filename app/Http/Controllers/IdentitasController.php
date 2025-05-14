@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Identitas;
+use App\Models\WilayahDesa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -64,6 +65,14 @@ class IdentitasController extends Controller
 
             $user_id = auth()->user()->id;
             $data = User::where('id', $user_id)->firstOrFail();
+
+            //cari wilayah
+            $data_wilayah = dataWilayah($request->wilayah_desa_id);
+            $data_save['desa'] = $data_wilayah['desa'];
+            $data_save['kecamatan'] = $data_wilayah['kecamatan'];
+            $data_save['kabupaten'] = $data_wilayah['kabupaten'];
+            $data_save['provinsi'] = $data_wilayah['provinsi'];
+
             $data->update($data_save);
             $respon['user'] = $data;
 
@@ -80,6 +89,8 @@ class IdentitasController extends Controller
             return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat membuat data baru: ' . $e->getMessage()], 500);
         }
     }
+
+
 
     /**
      * Display the specified resource.
@@ -115,6 +126,12 @@ class IdentitasController extends Controller
 
             $user = User::where('id', $user_id)->firstOrFail();
 
+            //cari wilayah
+            $data_wilayah = dataWilayah($request->wilayah_desa_id);
+            $data_save['desa'] = $data_wilayah['desa'];
+            $data_save['kecamatan'] = $data_wilayah['kecamatan'];
+            $data_save['kabupaten'] = $data_wilayah['kabupaten'];
+            $data_save['provinsi'] = $data_wilayah['provinsi'];
 
             $user->update($data_save);
             $respon['user'] = $user;

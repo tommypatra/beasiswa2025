@@ -114,8 +114,23 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(Rumah::class);
     }
 
+    public function surveyor()
+    {
+        return $this->hasOne(Surveyor::class);
+    }
+
     public function soalWawancara()
     {
         return $this->hasMany(SoalWawancara::class);
+    }
+
+    public function verifikatorLaporan()
+    {
+        return $this->hasMany(VerifikatorLaporan::class);
+    }
+
+    public function penerima()
+    {
+        return $this->hasMany(Penerima::class);
     }
 }

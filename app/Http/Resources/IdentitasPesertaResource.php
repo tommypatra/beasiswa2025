@@ -16,6 +16,7 @@ class IdentitasPesertaResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'total_skor' => $this->total_skor,
             'hasil' => $this->hasil,
             'catatan' => $this->catatan,
             'verifikator' => $this->verifikator,

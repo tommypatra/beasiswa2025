@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Beasiswa;
 use App\Models\Verifikator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -90,6 +91,9 @@ class VerifikasiBerkasController extends Controller
         try {
             DB::beginTransaction();
             $data = VerifikasiBerkas::create($request->validated());
+
+
+            
             DB::commit();
             return response()->json(['status' => true, 'message' => 'data baru berhasil dibuat', 'data' => $data], 201);
         } catch (\Exception $e) {

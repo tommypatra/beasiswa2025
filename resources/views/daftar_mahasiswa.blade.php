@@ -144,10 +144,19 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-lg-12 mb-3">
+                                    <div class="col-lg-9 mb-3">
                                         <label class="form-label">Nama Sekolah</label>
                                         <input name="nama_sekolah" id="nama_sekolah" type="text" class="form-control" required>
                                     </div>
+                                    <div class="col-lg-3 mb-3">
+                                        <label class="form-label">Akreditasi</label>
+                                        <select name="akreditasi" id="akreditasi" class="form-control" required>
+                                            <option value="">PILIH</option>
+                                            <option value="A">A</option>
+                                            <option value="B">B</option>
+                                            <option value="C">C</option>
+                                        </select>
+                                    </div>                                    
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-4 mb-3">
@@ -170,6 +179,7 @@
                                     <div class="col-lg-4 mb-3">
                                         <label class="form-label">Nilai Akhir</label>
                                         <input name="nilai_akhir_lulus" id="nilai_akhir_lulus" type="text" class="form-control" required>
+                                        <div style="font-style: italic">rata rata nilai pada ujian nasional di Ijazah/SKHU/SKL</div>
                                     </div>
                                 </div>
                             </form>                    
@@ -240,7 +250,16 @@
                                             <option value="0">Meninggal</option>
                                         </select>
                                     </div>
-                                </div>            
+                                </div>   
+                                
+                                <hr>
+                                <div class="row">
+                                    <div class="col-lg-6 mb-3">
+                                        <label class="form-label">Jumlah Tanggungan</label>
+                                        <input name="tanggungan" id="tanggungan" type="number" class="form-control" required>
+                                    </div>
+                                </div>
+                                                
                             </form>
                         </div>
                         <div id="step-4" class="tab-pane" role="tabpanel">                            

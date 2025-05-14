@@ -9,7 +9,10 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UploadSyaratRequest;
+use App\Http\Resources\DataUploadResource;
 use App\Http\Resources\UploadSyaratResource;
+use App\Http\Resources\DataDokumenUploadResource;
+use App\Models\VerifikatorPendaftar;
 
 class UploadSyaratController extends Controller
 {
@@ -38,6 +41,35 @@ class UploadSyaratController extends Controller
             'data' => $data,
         ];
         return response()->json($dataRespon);
+    }
+
+    public function dataDokumenUpload(string $id)
+    {
+        try {
+            $verifikator_pendaftar = VerifikatorPendaftar::where('pendaftar_id', $id)->firstOrFail();
+            // dd($verifikator_pendaftar);
+            $data = UploadSyarat::with(['syarat'])->where('pendaftar_id', $id)
+                ->orderBy('syarat_id', 'asc')
+                ->get();
+
+            // $respon_data = new DataDokumenUploadResource($data);
+            $respon_data = DataDokumenUploadResource::collection($data);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data ditemukan',
+                'data' => [
+                    'upload' => $respon_data,
+                    'verifikasi_berkas' => $verifikator_pendaftar,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+                'data' => null,
+            ], 404);
+        }
     }
 
     public function dataUploadSyarat(Request $request)
@@ -105,6 +137,26 @@ class UploadSyaratController extends Controller
             ], 404);
         }
     }
+
+
+    public function dataUpload(string $id)
+    {
+        try {
+            $dataQuery = UploadSyarat::with(['syarat'])->where('pendaftar_id', $id)->orderBy('syarat_id', 'asc')->get();
+            return response()->json([
+                'status' => true,
+                'message' => 'Data ditemukan',
+                'data' => DataUploadResource::collection($dataQuery),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+                'data' => null,
+            ], 404);
+        }
+    }
+
 
     /**
      * Update the specified resource in storage.

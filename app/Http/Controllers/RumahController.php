@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Rumah;
 use Illuminate\Http\Request;
+use App\Models\ReferensiPilihan;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Redis;
 use App\Http\Requests\RumahRequest;
-use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\RumahResource;
+use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\DataKondisiRumahResource;
 
 class RumahController extends Controller
 {
@@ -92,6 +94,48 @@ class RumahController extends Controller
             ], 404);
         }
     }
+
+
+    public function dataKondisiRumah(string $id)
+    {
+        try {
+
+            $grupTerpilih = ['MCK', 'Sumber Listrik', 'Sumber Air', 'Kepemilikan Rumah', 'Listrik'];
+
+            $jumlahPilihan = ReferensiPilihan::select('grup', DB::raw('count(*) as total'))
+                ->whereIn('grup', $grupTerpilih)
+                ->groupBy('grup')
+                ->get()
+                ->mapWithKeys(function ($item) {
+                    $key = strtolower(str_replace(' ', '_', $item->grup));
+                    return [$key => $item->total];
+                });
+
+
+            $data = User::with([
+                'rumah.pilihanKepemilikanRumah',
+                'rumah.pilihanMck',
+                'rumah.pilihanListrik',
+                'rumah.pilihanSumberAir',
+                'rumah.pilihanSumberListrik',
+            ])->where('id', $id)->firstOrFail();
+
+            $respon_data = new DataKondisiRumahResource($data, $jumlahPilihan);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data ditemukan',
+                'data' => $respon_data,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+                'data' => null,
+            ], 404);
+        }
+    }
+
 
     /**
      * Update the specified resource in storage.

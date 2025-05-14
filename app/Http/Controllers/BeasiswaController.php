@@ -80,6 +80,11 @@ class BeasiswaController extends Controller
                     },
                     'pendaftar as jumlah_verifikator' => function ($query) {
                         $query->whereHas('verifikatorPendaftar'); // Menghitung pendaftar yang memiliki verifikator
+                    },
+                    'pendaftar as jumlah_lulus_berkas' => function ($query) {
+                        $query->whereHas('verifikatorPendaftar', function ($q) {
+                            $q->where('hasil', 1);
+                        });
                     }
                 ])
                 ->where('id', $id)

@@ -139,6 +139,7 @@
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="col-lg-8">
                             <div class="card" id="validasi-syarat">                            
                                 <div class="card-body">                                
@@ -163,6 +164,12 @@
                                                         <option value="0">Tidak Memenuhi Syarat</option>
                                                     </select>
                                                 </div>
+
+                                                <div class="col-lg-4 mb-3"> 
+                                                    <input type="number" class="form-control" id="verifikasi_berkas_skor" placeholder="skor" name="verifikasi_berkas_skor" required>
+                                                    <i>wajib di isi 0 - 100</i>
+                                                </div>
+    
                                                 <div class="col-lg-12 mb-3">
                                                     <textarea class="form-control" name="verifikasi_berkas_catatan" id="verifikasi_berkas_catatan" rows="3"></textarea>
                                                 </div>
@@ -174,8 +181,8 @@
                                                 <div class="btn btn-primary btn-syarat-berikutnya"> >> </div>
                                             </div>
                                         </form>
-
                                     </div>
+
                                 </div>
                             </div>
 
@@ -197,6 +204,10 @@
                                                     <option value="1">Memenuhi Syarat</option>
                                                     <option value="0">Tidak Memenuhi Syarat</option>
                                                 </select>
+                                            </div>
+                                            <div class="col-lg-4 mb-3">
+                                                <input type="number" class="form-control" id="total_skor" placeholder="total skor" name="total_skor" required>
+                                                <i>wajib di isi 0 - 100</i>                                             
                                             </div>
                                             <div class="col-lg-12 mb-3">
                                                 <textarea class="form-control" name="catatan" id="catatan" rows="3"></textarea>
@@ -228,6 +239,7 @@
 <script src="{{ asset('js/crud.js') }}"></script>
 <script src="{{ asset('js/pagination.js') }}"></script>
 <script src="{{ asset('js/jquery-validation-1.19.5/dist/jquery.validate.min.js')}}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 
 <script type="text/javascript">
     const endpoint = base_url+'/api/verifikasi-berkas';
@@ -235,6 +247,7 @@
     var current_page_verifikasi = 1;
     var total_page_verifikasi = 1;    
     var beasiswa_id;
+    var verifikator_id;
     var peserta;
     var data_syarat;
     var lengkap;
@@ -242,6 +255,52 @@
 
     $(document).ready(function() {
         dataLoad();
+
+
+        async function openPdf(container, urlPdf) {
+            container.innerHTML = ''; // Bersihkan isi elemen dulu
+            // Cek apakah URL PDF tersedia
+            if (!urlPdf || urlPdf.trim() === '') {
+                container.innerHTML = '<p style="color:red;">Tidak ada file diupload.</p>';
+                return;
+            }
+
+            // Set worker PDF.js
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+            try {
+                const pdf = await pdfjsLib.getDocument(urlPdf).promise;
+                const totalPages = pdf.numPages; // Dapatkan jumlah total halaman
+
+                // Buat kontainer untuk menampung canvas per halaman
+                for (let pageNumber = 1; pageNumber <= totalPages; pageNumber++) {
+                    const page = await pdf.getPage(pageNumber);
+                    const viewport = page.getViewport({
+                        scale: 1.5
+                    });
+
+                    // Buat canvas untuk setiap halaman
+                    const canvas = document.createElement('canvas');
+                    canvas.style.width = '100%';
+                    container.appendChild(canvas);
+
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    const context = canvas.getContext('2d');
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+
+                    // Render halaman
+                    await page.render(renderContext).promise;
+                }
+            } catch (error) {
+                container.innerHTML = `<p style="color:red;">Gagal memuat dokumen PDF</p>`;
+                console.error('PDF load error:', error);
+            }
+        }
 
         function renderData(response) {
             const dataList = $('#data-list');
@@ -273,7 +332,7 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="d-flex flex-column align-items-center gap-2">
-                                            <button class="btn btn-secondary btn-mulai-verifikasi" data-beasiswa_id="${dt.beasiswa.id}" type="button" ${tombol_aktif}>Verifikasi</button>
+                                            <button class="btn btn-secondary btn-mulai-verifikasi" data-beasiswa_id="${dt.beasiswa.id}" data-verifikator_id="${dt.id}" type="button" ${tombol_aktif}>Verifikasi</button>
                                             <button class="btn btn-secondary btn-peserta" data-beasiswa_id="${dt.beasiswa.id}" type="button" ${tombol_aktif}>Daftar Peserta</button>
                                         </div>
                                     </td>
@@ -300,6 +359,8 @@
 
         $(document).on('click', '.btn-mulai-verifikasi', function() {
             showModal('modal-form');
+            
+            verifikator_id = $(this).data('verifikator_id');
             beasiswa_id = $(this).data('beasiswa_id');
             pesertaVerifikasi();
         }); 
@@ -448,12 +509,15 @@
             $('#syarat-upload input[type="hidden"]').val('');
             $("#verifikasi_berkas_hasil").prop("disabled", true);
             $("#verifikasi_berkas_catatan").prop("disabled", true);
+            $("#verifikasi_berkas_skor").prop("disabled", true);
             $("#btn-simpan").prop("disabled", true);
         }
 
         function showFinal(){
             $('#verifikator_pendaftar_id').val(peserta.id); 
             $('#hasil').val(peserta.hasil); 
+            $('#total_skor').val(peserta.total_skor); 
+            
             $('#catatan').val(peserta.catatan); 
             $('#validasi-final').show();
             $('#validasi-syarat').hide();
@@ -473,27 +537,9 @@
             let data = data_syarat[syarat_index];
             let contohPath = data.contoh ? `<a href="${base_url}/${data.contoh}" target="_blank">Contoh Format Dokumen</a>` : "";
             let wajib = (data.is_wajib) ? `Wajib` : `Pilihan`;
-            let dokumenEmbed=`Tidak Mengupload Dokumen`;
-            
+            // let dokumenEmbed=`Tidak Mengupload Dokumen`;
+            $(`#verifikasi_berkas_skor`).val('');
             $('#info-syarat').text(` ke ${syarat_index+1} dari ${data_syarat.length}`);
-
-            if (data.upload_syarat){
-                let jenis = data.jenis;
-                let url = base_url+'/'+data.upload_syarat.dokumen;
-
-                $("#verifikasi_berkas_hasil").prop("disabled", false);
-                $("#verifikasi_berkas_catatan").prop("disabled", false);
-                $("#btn-simpan").prop("disabled", false);
-                $(`#id`).val(data.upload_syarat.id);
-                $(`#verifikasi_berkas_hasil`).val(data.upload_syarat.verifikasi_berkas_hasil);
-                $(`#verifikasi_berkas_catatan`).val(data.upload_syarat.verifikasi_berkas_catatan);
-
-                dokumenEmbed = (jenis === "pdf") ?
-                    `<object data="${url}" type="application/pdf" width="100%" height="500px">
-                        <p>Browser Anda tidak mendukung tampilan PDF. <a href="${url}" target="_blank">Cek dokumen PDF disini</a></p>
-                    </object>` :
-                    `<iframe src="${url}" width="100%" height="350px""></iframe>`;
-            }
 
             let syarat = `  <div>
                                 <h2>${data.nama} (${wajib})</h2>
@@ -501,13 +547,40 @@
                                     <div class="accordion-body">                                        
                                         <p>Deskripsi : ${data.deskripsi}</p>
                                         <p>${contohPath}</p>
-                                        <div>${dokumenEmbed}</div>                                        
+                                        <div id="dokumen-embed" style="margin-top:10px; height:400px; width:100%; border:1px solid #ccc; overflow:auto;"></div>                                        
                                     </div>
                                 </div>
                             </div>`;   
-
-
             $('#syarat-upload').html(syarat);
+
+            if (data.upload_syarat){
+                let jenis = data.jenis;
+                let url = base_url+'/'+data.upload_syarat.dokumen;
+
+                $("#verifikasi_berkas_hasil").prop("disabled", false);
+                $("#verifikasi_berkas_catatan").prop("disabled", false);
+                $("#verifikasi_berkas_skor").prop("disabled", false);
+                $("#btn-simpan").prop("disabled", false);
+                $(`#id`).val(data.upload_syarat.id);
+                $(`#verifikasi_berkas_hasil`).val(data.upload_syarat.verifikasi_berkas_hasil);
+                $(`#verifikasi_berkas_catatan`).val(data.upload_syarat.verifikasi_berkas_catatan);
+                $(`#verifikasi_berkas_skor`).val(data.upload_syarat.verifikasi_berkas_skor);
+
+                if(jenis=='pdf'){
+                    openPdf(document.getElementById('dokumen-embed'), url);
+                }else{
+                    $('#dokumen-embed').html(`<img src="${url}">`)
+                }
+                // dokumenEmbed = (jenis === "pdf") ?
+                //     `<object data="${url}" type="application/pdf" width="100%" height="500px">
+                //         <p>Browser Anda tidak mendukung tampilan PDF. <a href="${url}" target="_blank">Cek dokumen PDF disini</a></p>
+                //     </object>` :
+                //     `<iframe src="${url}" width="100%" height="350px""></iframe>`;
+            }else{
+                $('#dokumen-embed').html('<p style="color:red;">Tidak ada file diupload.</p>');
+            }
+
+            
 
         }
         
@@ -528,7 +601,14 @@
             submitHandler: function(form) {
                 const id = $('#id').val();
                 let url = `${base_url}/api/simpan-validasi-syarat/${id}`;
-                saveData(url, 'PUT', $(form).serialize(), function (response) {
+
+                let data = $(form).serializeArray();
+                data.push({ name: 'verifikator_id', value: verifikator_id });
+
+                // konversi ke URL-encoded string kembali
+                let postData = $.param(data);                
+
+                saveData(url, 'PUT', postData, function (response) {
                     appShowNotification(true, ["simpan validasi final berhasil dilakukan!"]);
                     syarat_index++;
                     pesertaVerifikasi(current_page_verifikasi);
@@ -550,7 +630,14 @@
                 }
             },            
             submitHandler: function(form) {
-                const id = $('#verifikator_pendaftar_id').val();               
+                const id = $('#verifikator_pendaftar_id').val();   
+                
+                let data = $(form).serializeArray();
+                data.push({ name: 'verifikator_id', value: verifikator_id });
+
+                // konversi ke URL-encoded string kembali
+                let postData = $.param(data);                
+
                 if(!lengkap){
                     appShowNotification(false, ["masih ada syarat wajib yang belum divalidasi!"]);
                     syarat_index=0;
@@ -559,7 +646,7 @@
                 }
 
                 let url = `${base_url}/api/simpan-validasi-final/${id}`;
-                saveData(url, 'PUT', $(form).serialize(), function (response) {
+                saveData(url, 'PUT', postData, function (response) {
                     appShowNotification(true, ["berhasil dilakukan!"]);
                     syarat_index=0;
 

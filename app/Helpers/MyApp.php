@@ -6,6 +6,7 @@ use App\Models\Beasiswa;
 use App\Models\UserRole;
 use App\Models\Mahasiswa;
 use App\Models\Pendaftar;
+use App\Models\WilayahDesa;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -41,6 +42,33 @@ if (!function_exists('upload')) {
     }
 }
 
+if (!function_exists('dataWilayah')) {
+    function dataWilayah($desa_id)
+    {
+        $dataWilayah = [
+            'desa' => null,
+            'kecamatan' => null,
+            'kabupaten' => null,
+            'provinsi' => null,
+        ];
+        try {
+            $data = WilayahDesa::with([
+                'wilayahKecamatan.wilayahKabupaten.wilayahProvinsi',
+            ])->where('id', $desa_id)->firstOrFail();
+
+            $dataWilayah = [
+                'desa' => $data->desa,
+                'kecamatan' => $data->wilayahKecamatan->nama,
+                'kabupaten' => $data->wilayahKecamatan->wilayahKabupaten->nama,
+                'provinsi' => $data->wilayahKecamatan->wilayahKabupaten->wilayahProvinsi->nama,
+            ];
+
+            return $dataWilayah;
+        } catch (\Exception $e) {
+            return $dataWilayah;
+        }
+    }
+}
 
 if (!function_exists('validasiPendaftaran')) {
     function validasiPendaftaran($beasiswa_id)

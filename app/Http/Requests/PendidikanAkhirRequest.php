@@ -25,6 +25,7 @@ class PendidikanAkhirRequest extends FormRequest
         return [
             'nama_sekolah' => 'required|string',
             'jenis' => 'required|string',
+            'akreditasi' => 'required|string',
             'jurusan' => 'required|string',
             'nisn' => 'required|numeric',
             'tahun_lulus' => 'required|numeric',
@@ -36,6 +37,7 @@ class PendidikanAkhirRequest extends FormRequest
     {
         return [
             'nama_sekolah' => 'nama sekolah',
+            'akreditasi' => 'akreditasi',
             'jenis' => 'jenis sekolah',
             'jurusan' => 'jurusan',
             'nisn' => 'nisn',

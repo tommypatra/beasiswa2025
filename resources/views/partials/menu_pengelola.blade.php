@@ -6,11 +6,11 @@
     <span class="hide-menu">Pengelola</span>
 </li>
 <li class="sidebar-item menu-pengelola">
-    <a class="sidebar-link justify-content-between" target="_blank"
-        href="https://bootstrapdemos.wrappixel.com/materialM/dist/main/index2.html" aria-expanded="false">
+    <a class="sidebar-link justify-content-between" 
+        href="{{ route('verifikasi-peserta') }}" aria-expanded="false">
         <div class="d-flex align-items-center gap-3">
         <span class="d-flex">
-            <iconify-icon icon="solar:layers-minimalistic-outline" class=""></iconify-icon>
+            <iconify-icon icon="solar:list-check-linear" class=""></iconify-icon>
         </span>
         <span class="hide-menu">Beasiswa</span>
         </div>
@@ -21,42 +21,9 @@
         href="{{ route('registrasi-peserta') }}" aria-expanded="false">
         <div class="d-flex align-items-center gap-3">
         <span class="d-flex">
-            <iconify-icon icon="solar:layers-minimalistic-outline" class=""></iconify-icon>
+            <iconify-icon icon="solar:user-check-linear" class=""></iconify-icon>
         </span>
-        <span class="hide-menu">Registrasi Peserta</span>
-        </div>
-    </a>
-</li>
-<li class="sidebar-item menu-pengelola">
-    <a class="sidebar-link justify-content-between" target="_blank"
-        href="https://bootstrapdemos.wrappixel.com/materialM/dist/main/index2.html" aria-expanded="false">
-        <div class="d-flex align-items-center gap-3">
-        <span class="d-flex">
-            <iconify-icon icon="solar:user-check-outline" class=""></iconify-icon>
-        </span>
-        <span class="hide-menu">Verfikator</span>
-        </div>
-    </a>
-</li>
-<li class="sidebar-item menu-pengelola">
-    <a class="sidebar-link justify-content-between" target="_blank"
-        href="https://bootstrapdemos.wrappixel.com/materialM/dist/main/index2.html" aria-expanded="false">
-        <div class="d-flex align-items-center gap-3">
-        <span class="d-flex">
-            <iconify-icon icon="solar:card-search-broken" class=""></iconify-icon>
-        </span>
-        <span class="hide-menu">Surveyor</span>
-        </div>
-    </a>
-</li>
-<li class="sidebar-item menu-pengelola">
-    <a class="sidebar-link justify-content-between" target="_blank"
-        href="https://bootstrapdemos.wrappixel.com/materialM/dist/main/index2.html" aria-expanded="false">
-        <div class="d-flex align-items-center gap-3">
-        <span class="d-flex">
-            <iconify-icon icon="solar:armchair-outline" class=""></iconify-icon>
-        </span>
-        <span class="hide-menu">Pewawancara</span>
+        <span class="hide-menu">Registrasi Wawancara</span>
         </div>
     </a>
 </li>

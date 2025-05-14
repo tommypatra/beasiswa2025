@@ -80,7 +80,7 @@ class MahasiswaController extends Controller
     public function show(string $id)
     {
         try {
-            $dataQuery = Mahasiswa::with(['user', 'user.identitas'])->where('id', $id)->firstOrFail();
+            $dataQuery = Mahasiswa::with(['programstudi.fakultas', 'user', 'user.identitas'])->where('id', $id)->firstOrFail();
             return response()->json([
                 'status' => true,
                 'message' => 'Data ditemukan',
@@ -180,6 +180,12 @@ class MahasiswaController extends Controller
 
             //identitas
             $data_save['foto'] = upload($request->file('foto'), 'foto');
+            //cari wilayah identitas
+            $data_wilayah = dataWilayah($request->wilayah_desa_id);
+            $data_save['desa'] = $data_wilayah['desa'];
+            $data_save['kecamatan'] = $data_wilayah['kecamatan'];
+            $data_save['kabupaten'] = $data_wilayah['kabupaten'];
+            $data_save['provinsi'] = $data_wilayah['provinsi'];
             $respon['identitas'] = Identitas::create($data_save);
 
             //mahasiswa

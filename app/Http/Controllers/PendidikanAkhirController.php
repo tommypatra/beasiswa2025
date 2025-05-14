@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PendidikanAkhir;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\PendidikanAkhir;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PendidikanAkhirRequest;
 use App\Http\Resources\PendidikanAkhirResource;
+use App\Http\Resources\DataPendidikanAkhirResource;
 
 class PendidikanAkhirController extends Controller
 {
@@ -64,6 +66,25 @@ class PendidikanAkhirController extends Controller
     /**
      * Display the specified resource.
      */
+    public function dataPendidikanAkhir(string $id)
+    {
+        try {
+            $dataQuery = User::with(['pendidikanAkhir'])->where('id', $id)->firstOrFail();
+            return response()->json([
+                'status' => true,
+                'message' => 'Data ditemukan',
+                'data' => new DataPendidikanAkhirResource($dataQuery),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+                'data' => null,
+            ], 404);
+        }
+    }
+
+
     public function show(string $id)
     {
         try {

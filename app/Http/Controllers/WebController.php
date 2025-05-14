@@ -163,6 +163,11 @@ class WebController extends Controller
         return view('app.verifikator', ['id' => $id]);
     }
 
+    public function surveyor($id)
+    {
+        return view('app.surveyor', ['id' => $id]);
+    }
+
     public function pewawancara($id)
     {
         return view('app.pewawancara', ['id' => $id]);
@@ -183,8 +188,28 @@ class WebController extends Controller
         return view('app.peserta_wawancara', ['id' => $id]);
     }
 
+    public function survei()
+    {
+        return view('app.survei');
+    }
+
+    public function pesertaSurvei($id)
+    {
+        return view('app.peserta_survei', ['id' => $id]);
+    }
+
+    public function dashboardBeasiswa($id)
+    {
+        return view('app.dashboard_beasiswa', ['id' => $id]);
+    }
+
     public function registrasiPeserta()
     {
         return view('app.registrasi_peserta');
+    }
+
+    public function verifikasiPeserta()
+    {
+        return view('app.verifikasi_peserta');
     }
 }

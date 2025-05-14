@@ -78,27 +78,29 @@
     const endpoint = base_url + '/api/rumah';
     var page = 1;
     var data_referensi;
-
-    async function dataReferensi() {
-        var url = base_url + '/api/data-referensi?limit=1000';
-        try {
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`, 
-                    'Content-Type': 'application/json'
-                }
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            const result = await response.json();
-            data_referensi=result.data.data;
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
     $(document).ready(function() {
+
+        async function dataReferensi() {
+            var url = base_url + '/api/data-referensi?limit=1000';
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`, 
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const result = await response.json();
+                console.log('test');
+                data_referensi=result.data.data;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
         async function initPage() { // agar di load secara berurutan
             await loadDataReferensi();
             await loadOptionSelect("#sumber_air_id", "Sumber Air", data_referensi);
@@ -122,23 +124,25 @@
         initPage();
 
         async function loadDataReferensi() {
-            var url = base_url + '/api/data-referensi?limit=200';
-            try {
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const result = await response.json();
-                // console.log(result);
-                data=result.data.data;
-            } catch (error) {
-                console.error('Error:', error);
-            }
+            const url_referensi = base_url + '/api/data-referensi?limit=200';
+            const respon = await execAsync(url_referensi,"GET", token);
+            data_referensi=respon.data.data;
+            // try {
+            //     const response = await fetch(url, {
+            //         method: 'GET',
+            //         headers: {
+            //             'Content-Type': 'application/json'
+            //         }
+            //     });
+            //     if (!response.ok) {
+            //         throw new Error(`HTTP error! Status: ${response.status}`);
+            //     }
+            //     const result = await response.json();
+            //     // console.log(result);
+            //     data=result.data.data;
+            // } catch (error) {
+            //     console.error('Error:', error);
+            // }
         }
 
         function renderData(data){
@@ -153,6 +157,7 @@
 
                 $('#sumber_air_id').val(data.sumber_air_id);
                 $('#sumber_listrik_id').val(data.sumber_listrik_id);
+                $('#bayar_listrik_id').val(data.bayar_listrik_id);
             }else{
                 $('#id').val("");
                 $('#jumlah_orang_tinggal').val("");
@@ -163,6 +168,7 @@
 
                 $('#sumber_air_id').val("");
                 $('#sumber_listrik_id').val("");
+                $('#bayar_listrik_id').val("");
             }
         }
 

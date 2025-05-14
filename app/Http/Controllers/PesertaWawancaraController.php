@@ -78,12 +78,19 @@ class PesertaWawancaraController extends Controller
     public function index(Request $request)
     {
         $dataQuery = Pendaftar::with([
+            'beasiswa',
             'pesertaWawancara.pewawancara.user',
             'mahasiswa.user.identitas',
             'mahasiswa.programStudi.fakultas'
         ])
             ->orderBy('beasiswa_id', 'asc')
             ->orderBy('id', 'asc');
+
+        $dataQuery->where(function ($query) {
+            $query->WhereHas('pesertaWawancara.pewawancara', function ($q) {
+                $q->where('user_id', auth()->user()->id);
+            });
+        });
 
         $dataQuery->where(function ($query) {
             $query->WhereHas('verifikatorPendaftar', function ($q) {

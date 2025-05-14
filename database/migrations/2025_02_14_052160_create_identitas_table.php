@@ -19,8 +19,16 @@ return new class extends Migration
             $table->string('no_hp', 190)->nullable();
             $table->string('foto', 190)->default('images/user-avatar.png');
             $table->string('alamat', 190)->nullable();
+            $table->string('desa', 190)->nullable();
+            $table->string('kecamatan', 190)->nullable();
+            $table->string('kabupaten', 190)->nullable();
+            $table->string('provinsi', 190)->nullable();
             $table->foreignId('wilayah_desa_id')->nullable();
             $table->foreign('wilayah_desa_id')->references('id')->on('wilayah_desas')->restrictOnDelete();
+
+            $table->boolean('verifikasi_lapangan_hasil')->nullable();
+            $table->text('verifikasi_lapangan_catatan')->nullable();
+            $table->decimal('verifikasi_lapangan_skor', 5, 2)->nullable();
 
             $table->foreignId('user_id');
             $table->foreign('user_id')->references('id')->on('users')->restrictOnDelete();

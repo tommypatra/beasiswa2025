@@ -84,7 +84,16 @@
                             <option value="0">Meninggal</option>
                         </select>
                     </div>
-                </div>            
+                </div>   
+                
+                <hr>
+                <div class="row">
+                    <div class="col-lg-6 mb-3">
+                        <label class="form-label">Jumlah Tanggungan</label>
+                        <input name="tanggungan" id="tanggungan" type="number" class="form-control" required>
+                    </div>
+                </div>
+                
                 <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
             </form>
         </div>
@@ -149,6 +158,9 @@
                     $('#pekerjaan_ibu_id').val(data.pekerjaan_ibu_id);
                     $('#pendidikan_ibu_id').val(data.pendidikan_ibu_id);
                     $('#pendapatan_ibu_id').val(data.pendapatan_ibu_id);
+
+                    $('#tanggungan').val(data.tanggungan);
+
                 }else{
                     $('#id').val("");
                     $('#bapak_nama').val("");
@@ -156,6 +168,7 @@
                     $('#pekerjaan_bapak_id').val("");
                     $('#pendidikan_bapak_id').val("");
                     $('#pendapatan_bapak_id').val("");
+                    $('#tanggungan').val("");
 
                     $('#ibu_nama').val("");
                     $('#status_hidup_ibu_kandung').val("");

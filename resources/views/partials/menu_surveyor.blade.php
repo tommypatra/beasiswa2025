@@ -6,8 +6,7 @@
   <span class="hide-menu">Surveyor</span>
 </li>
 <li class="sidebar-item menu-surveyor">
-  <a class="sidebar-link justify-content-between" target="_blank"
-    href="https://bootstrapdemos.wrappixel.com/materialM/dist/main/index2.html" aria-expanded="false">
+  <a class="sidebar-link justify-content-between" href="{{ route('survei') }}" aria-expanded="false">
     <div class="d-flex align-items-center gap-3">
       <span class="d-flex">
         <iconify-icon icon="solar:user-id-linear" class=""></iconify-icon>

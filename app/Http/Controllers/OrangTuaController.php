@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\OrangTua;
 use Illuminate\Http\Request;
+use App\Models\ReferensiPilihan;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OrangTuaRequest;
 use App\Http\Resources\OrangTuaResource;
+use App\Http\Resources\DataOrangTuaResource;
 
 class OrangTuaController extends Controller
 {
@@ -19,7 +22,10 @@ class OrangTuaController extends Controller
         $dataQuery = OrangTua::with(['user.mahasiswa.programstudi.fakultas', 'user.identitas'])->orderBy('user_id', 'asc')->orderBy('bapak_nama', 'asc')->orderBy('ibu_nama', 'asc');
 
         if ($request->filled('search')) {
-            $dataQuery->where('nama_sekolah', 'like', '%' . $request->search . '%');
+            $dataQuery->where(function ($query) use ($request) {
+                $query->where('bapak_nama', 'like', '%' . $request->search . '%')
+                    ->orWhere('ibu_nama', 'like', '%' . $request->search . '%');
+            });
         }
 
         if ($request->filled('user_id')) {
@@ -72,6 +78,50 @@ class OrangTuaController extends Controller
                 'status' => true,
                 'message' => 'Data ditemukan',
                 'data' => new OrangTuaResource($dataQuery),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+                'data' => null,
+            ], 404);
+        }
+    }
+
+    public function dataOrangTua(string $id)
+    {
+        try {
+            $grupTerpilih = ['Pekerjaan', 'Pendidikan', 'Pendapatan'];
+
+            $jumlahPilihan = ReferensiPilihan::select('grup', DB::raw('count(*) as total'))
+                ->whereIn('grup', $grupTerpilih)
+                ->groupBy('grup')
+                ->get()
+                ->mapWithKeys(function ($item) {
+                    $key = strtolower(str_replace(' ', '_', $item->grup));
+                    return [$key => $item->total];
+                });
+
+            $data = User::with([
+                'orangTua.pekerjaanBapak',
+                'orangTua.pekerjaanIbu',
+                'orangTua.pendapatanBapak',
+                'orangTua.pendapatanIbu',
+                'orangTua.pendidikanBapak',
+                'orangTua.pendidikanIbu',
+                // 'rumah.pilihanKepemilikanRumah',
+                // 'rumah.pilihanMck',
+                // 'rumah.pilihanListrik',
+                // 'rumah.pilihanSumberAir',
+                // 'rumah.pilihanSumberListrik'
+            ])->where('id', $id)->firstOrFail();
+
+            $respon_data = new DataOrangTuaResource($data, $jumlahPilihan);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data ditemukan',
+                'data' => $respon_data,
             ]);
         } catch (\Exception $e) {
             return response()->json([
