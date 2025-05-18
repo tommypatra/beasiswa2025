@@ -75,3 +75,45 @@
     </div>
     </a>
 </li>
+<li class="sidebar-item menu-admin">
+    <a class="sidebar-link justify-content-between has-arrow" href="javascript:;" aria-expanded="false">
+    <div class="d-flex align-items-center gap-3">
+        <span class="d-flex">
+        <iconify-icon icon="solar:archive-minimalistic-outline"></iconify-icon>
+        </span>
+        <span class="hide-menu">Evaluasi Beasiswa</span>
+    </div>
+    </a>
+    <ul aria-expanded="false" class="collapse first-level">
+        <li class="sidebar-item">
+            <a class="sidebar-link justify-content-between" href="{{ route('monitoring') }}">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="d-flex">
+                    <span class="icon-small"></span>
+                    </span>
+                    <span class="hide-menu">Monitoring</span>
+                </div>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a class="sidebar-link justify-content-between" href="{{ route('butir-kegiatan') }}">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="d-flex">
+                    <span class="icon-small"></span>
+                    </span>
+                    <span class="hide-menu">Kegiatan</span>
+                </div>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a class="sidebar-link justify-content-between" href="{{ route('predikat') }}">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="d-flex">
+                    <span class="icon-small"></span>
+                    </span>
+                    <span class="hide-menu">Predikat</span>
+                </div>
+            </a>
+        </li>
+    </ul>
+</li>

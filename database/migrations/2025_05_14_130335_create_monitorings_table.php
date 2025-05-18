@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nama', 100)->nullable();
             $table->string('nomor_sk', 100)->nullable();
             $table->date('tanggal_sk')->nullable();
-            $table->string('file')->nullable();
+            $table->string('dokumen', 180)->nullable();
             $table->timestamps();
         });
     }

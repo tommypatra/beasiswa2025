@@ -12,4 +12,9 @@ class Kegiatan extends Model
     {
         return $this->hasMany(SubKegiatan::class);
     }
+
+    public function monitoring()
+    {
+        return $this->belongsTo(Monitoring::class);
+    }
 }

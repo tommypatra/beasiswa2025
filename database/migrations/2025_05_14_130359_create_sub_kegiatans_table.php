@@ -15,14 +15,18 @@ return new class extends Migration
             $table->id();
             $table->string('nama', 100)->nullable();
             $table->string('tingkat', 100)->nullable();
-            $table->string('jabatan', 100)->nullable();
-            $table->string('prestasi', 100)->nullable();
+            $table->string('pjp', 100)->nullable();
             $table->text('bukti')->nullable();
             $table->tinyInteger('nilai')->nullable();
-            $table->foreignId('monitoring_id')->nullable();
-            $table->foreign('monitoring_id')->references('id')->on('monitorings')->restrictOnDelete();
             $table->foreignId('kegiatan_id')->nullable();
             $table->foreign('kegiatan_id')->references('id')->on('kegiatans')->restrictOnDelete();
+
+
+            $table->foreignId('tingkat_id')->nullable();
+            $table->foreignId('pjp_id')->nullable();
+            $table->foreign('tingkat_id')->references('id')->on('referensi_pilihans')->restrictOnDelete();
+            $table->foreign('pjp_id')->references('id')->on('referensi_pilihans')->restrictOnDelete();
+
             $table->timestamps();
         });
     }

@@ -67,4 +67,14 @@ class ReferensiPilihan extends Model
     {
         return $this->belongsTo(OrangTua::class, 'id');
     }
+
+    public function pilihanTingkat()
+    {
+        return $this->belongsTo(SubKegiatan::class, 'tingkat_id');
+    }
+
+    public function pilihanPjp()
+    {
+        return $this->belongsTo(SubKegiatan::class, 'pjp_id');
+    }
 }

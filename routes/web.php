@@ -20,6 +20,13 @@ Route::get('/fakultas', [WebController::class, 'fakultas'])->name('fakultas');
 Route::get('/program-studi', [WebController::class, 'programStudi'])->name('program-studi');
 Route::get('/role', [WebController::class, 'role'])->name('role');
 Route::get('/pengguna', [WebController::class, 'pengguna'])->name('pengguna');
+
+Route::get('/monitoring', [WebController::class, 'monitoring'])->name('monitoring');
+Route::get('/predikat', [WebController::class, 'predikat'])->name('predikat');
+Route::get('/butir-kegiatan', [WebController::class, 'butirKegiatan'])->name('butir-kegiatan');
+
+
+
 Route::get('/jenis-beasiswa', [WebController::class, 'jenisBeasiswa'])->name('jenis-beasiswa');
 Route::get('/referensi-pilihan', [WebController::class, 'referensiPilihan'])->name('referensi-pilihan');
 Route::get('/beasiswa', [WebController::class, 'beasiswa'])->name('beasiswa');

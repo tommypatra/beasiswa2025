@@ -315,6 +315,8 @@ async function loadOptionSelect(select_id, grup_param, data) {
 
     // console.log(data);
 
+    let $option = $("<option>", { value: "", text: "pilih" });
+    select.append($option);
     $.each(groupedData, function (grup, items) {
         let $option = $("<option>", { value: items.id, text: items.nama });
         select.append($option);

@@ -13,8 +13,8 @@ class Monitoring extends Model
         return $this->hasMany(Predikat::class);
     }
 
-    public function subKegiatan()
+    public function kegiatan()
     {
-        return $this->hasMany(SubKegiatan::class);
+        return $this->hasMany(Kegiatan::class);
     }
 }

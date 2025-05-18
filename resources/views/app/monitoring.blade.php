@@ -1,17 +1,20 @@
 @extends('template')
 
 @section('scriptHead')
-<title>Referensi Pilihan</title>
+<title>Referensi Monitoring Beasiswa</title>
+<link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet">
+<style>
+    .ui-datepicker {
+        z-index: 9999 !important;
+    }        
+</style>
 @endsection
 
 @section('container')
-<?php
-    $pilihan=["MCK","Sumber Biaya","Sumber Listrik","Sumber Air","Status Rumah","Pekerjaan","Pendidikan","Pendapatan","Tingkat","Partisipasi/ Jabatan/ Prestasi"]; 
-?>
 <div class="card">
     <div class="card-body">
         <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">
-            <h5 class="card-title fw-semibold">Referensi Pilihan</h5>
+            <h5 class="card-title fw-semibold">Referensi Monitoring Beasiswa</h5>
             <div class="d-flex gap-2">
                 <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
                 <button class="btn btn-primary" id="btn-tambah">
@@ -25,23 +28,15 @@
                 </button>
             </div>
         </div>
-        <select name="grup_filter" id="grup_filter"  class="form-control">
-            <?php
-            echo "<option value='' selected>Pilih</option>";
-            foreach($pilihan as $i => $item){
-                echo "<option value='".$item."'>".$item."</option>";
-            }
-        ?>
-        </select>
-
+        
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
                     <tr>
                         <th width="5%">No</th>
-                        <th width="25%">Grup</th>
                         <th width="50%">Nama</th>
-                        <th width="15%">Nilai</th>
+                        <th width="20%">Nomor SK</th>
+                        <th width="20%">Tanggal SK</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -69,25 +64,23 @@
                 </div>
                 <div class="modal-body ">
                     <div class="row">
-						<div class="col-lg-5 mb-3">
-                            <label class="form-label">Grup</label>
-                            <select name="grup" id="grup"  class="form-control" required>
-                                <?php
-                                echo "<option value='' selected>Pilih</option>";
-                                foreach($pilihan as $i => $item){
-                                    echo "<option value='".$item."'>".$item."</option>";
-                                }
-                            ?>
-                            </select>
-                        </div>
-						<div class="col-lg-12 mb-3">
+						<div class="col-lg-9 mb-3">
                             <label class="form-label">Nama</label>
                             <input name="nama" id="nama" type="text" class="form-control" required>
                         </div>
-						<div class="col-lg-4 mb-3">
-                            <label class="form-label">Nilai</label>
-                            <input name="nilai" id="nilai" type="number" class="form-control" required>
+						<div class="col-lg-8 mb-3">
+                            <label class="form-label">Nomor SK</label>
+                            <input name="nomor_sk" id="nomor_sk" type="text" class="form-control" required>
                         </div>
+						<div class="col-lg-8 mb-3">
+                            <label class="form-label">Tanggal SK</label>
+                            <input name="tanggal_sk" id="tanggal_sk" type="text" class="form-control datepicker" value="{{ date('Y-m-d') }}" required>
+                        </div>
+                        <div class="col-lg-12 mb-3">
+                            <label class="form-label">Dokumen Monitoring</label>
+                            <input type="file" id="dokumen" name="dokumen" accept="application/pdf">
+                        </div>
+
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -102,15 +95,20 @@
 @endsection
 
 @section('scriptJs')
+<script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js" integrity="sha256-AlTido85uXPlSyyaZNsjJXeCs07eSv3r43kyCVc8ChI=" crossorigin="anonymous"></script>
 <script src="{{ asset('js/jquery-validation-1.19.5/dist/jquery.validate.min.js')}}"></script>
 <script src="{{ asset('js/crud.js') }}"></script>
 <script src="{{ asset('js/pagination.js') }}"></script>
 
 <script type="text/javascript">
-    const endpoint = base_url+'/api/referensi-pilihan';
+    const endpoint = base_url+'/api/monitoring';
     var page = 1;
     $(document).ready(function() {
         dataLoad();
+
+        $(".datepicker").datepicker({
+            dateFormat: "yy-mm-dd",
+        });
 
         function renderData(response) {
             const dataList = $('#data-list');
@@ -123,9 +121,17 @@
                 $.each(data, function(index, dt) {
                     const row = `<tr>
                                 <td>${no++}</td>
-                                <td>${dt.grup}</td>
-                                <td>${dt.nama}</td>
-                                <td>${dt.nilai}</td>
+                                <td>
+                                    ${dt.nama}
+                                    <div>
+                                        <a href="${base_url}/${dt.dokumen}" target="_blank">
+                                            <iconify-icon icon="solar:cloud-download-bold"></iconify-icon>
+                                            Download dokumen
+                                        </a>
+                                    </div>
+                                </td>
+                                <td>${dt.nomor_sk}</td>
+                                <td>${dt.tanggal_sk}</td>
                                 <td>
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
@@ -148,18 +154,13 @@
         }    
 
         function dataLoad() {
-            const search = $('#search-input').val();
-            const grup = $('#grup_filter').val();
-            const url = endpoint + '?grup='+grup+'&page=' + page + '&search=' + search + '&limit=' + vLimit;
+            var search = $('#search-input').val();
+            var url = endpoint + '?page=' + page + '&search=' + search + '&limit=' + vLimit;
 
             fetchData(url, function(response) {
                 renderData(response);
             },true);
         }
-
-        $('#grup_filter').change(function() {
-            dataLoad();
-        })
 
         // Handle page change
         $(document).on('click', '.page-link', function() {
@@ -194,23 +195,37 @@
         // Handle page change
         $('#btn-tambah').click(function() {
             formReset();
-            $('#grup').val($('#grup_filter').val());
             showModalForm();    
         });
 
         //validasi dan save, jika id ada maka PUT/edit jika tidak ada maka POST/simpan baru
         $("#form").validate({
+            rules: {
+                dokumen: {
+                    required: function() {
+                        return $('#id').val() === '';
+                    }
+                }
+            },
+            messages: {
+                dokumen: {
+                    required: "dokumen monitoring",
+                }
+            },
             submitHandler: function(form) {
                 const id = $('#id').val();
-                const type = (id === '') ? 'POST' : 'PUT';
                 const url = (id === '') ? endpoint : endpoint + '/' + id;
-                saveData(url, type, $(form).serialize(), function(response) {
+                var type ='POST'
+                var formData = new FormData(form);
+                if((id !== '')){
+                    type='PUT';
+                    formData.append("_method", "put");
+                }
+                saveData(url, 'POST', formData, function(response) {
                     //jika berhasil
                     appShowNotification(true,['berhasil dilakukan!']);
                     if(type=='POST'){
-                        $('#form input[type="hidden"]').val('');
-                        $('#nama').val('');
-                        $('#nilai').val('');
+                        formReset();
                     }
                     dataLoad();
                 });
@@ -222,7 +237,8 @@
             const id = $(this).data('id');
             showDataById(endpoint, id, function(response) {
                 $('#id').val(response.data.id);
-                $('#nilai').val(response.data.nilai);
+                $('#nomor_sk').val(response.data.nomor_sk);
+                $('#tanggal_sk').val(response.data.tanggal_sk);
                 $('#nama').val(response.data.nama);
                 showModalForm();
             });

@@ -13,13 +13,20 @@ class SubKegiatan extends Model
         return $this->belongsTo(Kegiatan::class);
     }
 
-    public function monitoring()
-    {
-        return $this->belongsTo(Monitoring::class);
-    }
 
     public function laporan()
     {
         return $this->hasMany(Laporan::class);
+    }
+
+
+    public function tingkat()
+    {
+        return $this->belongsTo(ReferensiPilihan::class, 'tingkat_id');
+    }
+
+    public function pjp()
+    {
+        return $this->belongsTo(ReferensiPilihan::class, 'pjp_id');
     }
 }

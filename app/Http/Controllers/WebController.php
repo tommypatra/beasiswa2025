@@ -34,6 +34,21 @@ class WebController extends Controller
         return view('app.pendapatan');
     }
 
+    public function predikat()
+    {
+        return view('app.predikat');
+    }
+
+    public function butirKegiatan()
+    {
+        return view('app.butir_kegiatan');
+    }
+
+    public function monitoring()
+    {
+        return view('app.monitoring');
+    }
+
     public function pendidikan()
     {
         return view('app.pendidikan');

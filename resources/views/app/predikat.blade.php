@@ -1,17 +1,14 @@
 @extends('template')
 
 @section('scriptHead')
-<title>Referensi Pilihan</title>
+<title>Referensi Fakultas</title>
 @endsection
 
 @section('container')
-<?php
-    $pilihan=["MCK","Sumber Biaya","Sumber Listrik","Sumber Air","Status Rumah","Pekerjaan","Pendidikan","Pendapatan","Tingkat","Partisipasi/ Jabatan/ Prestasi"]; 
-?>
 <div class="card">
     <div class="card-body">
         <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">
-            <h5 class="card-title fw-semibold">Referensi Pilihan</h5>
+            <h5 class="card-title fw-semibold">Referensi Fakultas</h5>
             <div class="d-flex gap-2">
                 <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
                 <button class="btn btn-primary" id="btn-tambah">
@@ -25,23 +22,15 @@
                 </button>
             </div>
         </div>
-        <select name="grup_filter" id="grup_filter"  class="form-control">
-            <?php
-            echo "<option value='' selected>Pilih</option>";
-            foreach($pilihan as $i => $item){
-                echo "<option value='".$item."'>".$item."</option>";
-            }
-        ?>
-        </select>
-
+        
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
                     <tr>
                         <th width="5%">No</th>
-                        <th width="25%">Grup</th>
                         <th width="50%">Nama</th>
-                        <th width="15%">Nilai</th>
+                        <th width="20%">Singkatan</th>
+                        <th width="10%">urut</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -69,24 +58,17 @@
                 </div>
                 <div class="modal-body ">
                     <div class="row">
-						<div class="col-lg-5 mb-3">
-                            <label class="form-label">Grup</label>
-                            <select name="grup" id="grup"  class="form-control" required>
-                                <?php
-                                echo "<option value='' selected>Pilih</option>";
-                                foreach($pilihan as $i => $item){
-                                    echo "<option value='".$item."'>".$item."</option>";
-                                }
-                            ?>
-                            </select>
-                        </div>
 						<div class="col-lg-12 mb-3">
                             <label class="form-label">Nama</label>
                             <input name="nama" id="nama" type="text" class="form-control" required>
                         </div>
 						<div class="col-lg-4 mb-3">
-                            <label class="form-label">Nilai</label>
-                            <input name="nilai" id="nilai" type="number" class="form-control" required>
+                            <label class="form-label">Singkatan</label>
+                            <input name="singkatan" id="singkatan" type="text" class="form-control" required>
+                        </div>
+						<div class="col-lg-4 mb-3">
+                            <label class="form-label">Urut</label>
+                            <input name="urut" id="urut" type="number" class="form-control" required>
                         </div>
                     </div>
                 </div>
@@ -107,7 +89,7 @@
 <script src="{{ asset('js/pagination.js') }}"></script>
 
 <script type="text/javascript">
-    const endpoint = base_url+'/api/referensi-pilihan';
+    const endpoint = base_url+'/api/fakultas';
     var page = 1;
     $(document).ready(function() {
         dataLoad();
@@ -123,9 +105,9 @@
                 $.each(data, function(index, dt) {
                     const row = `<tr>
                                 <td>${no++}</td>
-                                <td>${dt.grup}</td>
                                 <td>${dt.nama}</td>
-                                <td>${dt.nilai}</td>
+                                <td>${dt.singkatan}</td>
+                                <td>${dt.urut}</td>
                                 <td>
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
@@ -148,18 +130,13 @@
         }    
 
         function dataLoad() {
-            const search = $('#search-input').val();
-            const grup = $('#grup_filter').val();
-            const url = endpoint + '?grup='+grup+'&page=' + page + '&search=' + search + '&limit=' + vLimit;
+            var search = $('#search-input').val();
+            var url = endpoint + '?page=' + page + '&search=' + search + '&limit=' + vLimit;
 
             fetchData(url, function(response) {
                 renderData(response);
             },true);
         }
-
-        $('#grup_filter').change(function() {
-            dataLoad();
-        })
 
         // Handle page change
         $(document).on('click', '.page-link', function() {
@@ -194,7 +171,6 @@
         // Handle page change
         $('#btn-tambah').click(function() {
             formReset();
-            $('#grup').val($('#grup_filter').val());
             showModalForm();    
         });
 
@@ -208,9 +184,7 @@
                     //jika berhasil
                     appShowNotification(true,['berhasil dilakukan!']);
                     if(type=='POST'){
-                        $('#form input[type="hidden"]').val('');
-                        $('#nama').val('');
-                        $('#nilai').val('');
+                        formReset();
                     }
                     dataLoad();
                 });
@@ -222,7 +196,8 @@
             const id = $(this).data('id');
             showDataById(endpoint, id, function(response) {
                 $('#id').val(response.data.id);
-                $('#nilai').val(response.data.nilai);
+                $('#singkatan').val(response.data.singkatan);
+                $('#urut').val(response.data.urut);
                 $('#nama').val(response.data.nama);
                 showModalForm();
             });

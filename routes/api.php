@@ -29,8 +29,10 @@ use App\Http\Controllers\WilayahKabupaten;
 use App\Http\Middleware\CekAksesMiddleware;
 use App\Http\Controllers\BeasiswaController;
 use App\Http\Controllers\FakultasController;
+use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\OrangTuaController;
 use App\Http\Controllers\PenggunaController;
+use App\Http\Controllers\PredikatController;
 use App\Http\Controllers\SurveyorController;
 use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\IdentitasController;
@@ -38,10 +40,12 @@ use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\PekerjaanController;
 use App\Http\Controllers\PendaftarController;
 use App\Http\Controllers\SumberAirController;
+use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\PendapatanController;
 use App\Http\Controllers\PendidikanController;
 use App\Http\Controllers\NilaiRaportController;
 use App\Http\Controllers\PewawancaraController;
+use App\Http\Controllers\SubKegiatanController;
 use App\Http\Controllers\SumberBiayaController;
 use App\Http\Controllers\SurveiNilaiController;
 use App\Http\Controllers\VerifikatorController;
@@ -150,6 +154,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
 
     Route::middleware(['cek.akses:admin'])->group(function () {
         Route::resource('pekerjaan', PekerjaanController::class);
+        Route::resource('monitoring', MonitoringController::class);
         Route::resource('pendapatan', PendapatanController::class);
         Route::resource('pendidikan', PendidikanController::class);
         Route::resource('sumber-biaya', SumberBiayaController::class);
@@ -157,6 +162,9 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::resource('sumber-listrik', SumberListrikController::class);
         Route::resource('mck', MckController::class);
         Route::resource('referensi-pilihan', ReferensiPilihanController::class);
+        Route::resource('predikat', PredikatController::class);
+        Route::resource('kegiatan', KegiatanController::class);
+        Route::resource('butir-kegiatan', SubKegiatanController::class);
         Route::resource('fakultas', FakultasController::class);
         Route::resource('program-studi', ProgramStudiController::class);
         Route::resource('role', RoleController::class);

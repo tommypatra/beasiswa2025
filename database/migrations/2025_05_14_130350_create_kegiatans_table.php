@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('kegiatans', function (Blueprint $table) {
             $table->id();
             $table->string('nama', 100)->nullable();
-            $table->tinyInteger('nilai_minimal')->nullable();
+            $table->decimal('nilai_minimal', 5, 2)->nullable();
+            $table->foreignId('monitoring_id')->nullable();
+            $table->foreign('monitoring_id')->references('id')->on('monitorings')->restrictOnDelete();
             $table->timestamps();
         });
     }

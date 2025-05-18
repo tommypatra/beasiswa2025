@@ -16,12 +16,16 @@ class ReferensiPilihanController extends Controller
      */
     public function index(Request $request)
     {
-        $dataQuery = ReferensiPilihan::orderBy('grup', 'asc')->orderBy('nilai', 'asc')->orderBy('nama', 'asc');
+        $dataQuery = ReferensiPilihan::orderBy('grup', 'asc')->orderBy('nilai', 'asc')->orderBy('id', 'asc')->orderBy('nama', 'asc');
 
         if ($request->filled('grup')) {
-            $dataQuery->where('grup',  $request->grup);
+            $grup = $request->input('grup');
+            if (is_array($grup)) {
+                $dataQuery->whereIn('grup', $grup);
+            } else {
+                $dataQuery->where('grup', $grup);
+            }
         }
-
 
         if ($request->filled('search')) {
             $dataQuery->where('nama', 'like', '%' . $request->search . '%');
