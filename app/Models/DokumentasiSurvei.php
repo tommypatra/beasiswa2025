@@ -12,4 +12,9 @@ class DokumentasiSurvei extends Model
     {
         return $this->belongsTo(Surveyor::class);
     }
+
+    public function pendaftar()
+    {
+        return $this->belongsTo(Pendaftar::class);
+    }
 }

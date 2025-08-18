@@ -204,14 +204,13 @@
 
         statusKegiatan(false);
         async function initPage() { // agar di load secara berurutan
-            await loadDataReferensi();
+            await loadReferensi();
             await loadMonitoring();
-            console.log(data_referensi);
             await loadOptionSelect("#tingkat_id", "Tingkat", data_referensi);
             await loadOptionSelect("#pjp_id", "Partisipasi/ Jabatan/ Prestasi", data_referensi);
         }
 
-        async function loadDataReferensi() {
+        async function loadReferensi() {
             const url_referensi = base_url + '/api/data-referensi?limit=300&grup[]=Partisipasi/ Jabatan/ Prestasi&grup[]=Tingkat';
             const respon = await execAsync(url_referensi,"GET", token);
             data_referensi=respon.data.data;
@@ -285,18 +284,19 @@
             const pagination = $('#pagination');
             const response = await asyncFunction(`${base_url}/api/butir-kegiatan?kegiatan_id=${kegiatan_id}`);
 
-
             const data=response.data.data;
             let no = (response.data.current_page - 1) * response.data.per_page + 1;
             dataList.empty();
             pagination.empty();
             if (data.length > 0) {
                 $.each(data, function(index, dt) {
+                    const tingkat=(dt.tingkat)?dt.tingkat.nama:"";
+                    const pjp=(dt.pjp)?dt.pjp.nama:"";
                     const row = `<tr>
                                 <td>${no++}</td>
                                 <td>${dt.nama}</td>
-                                <td>${showText(dt.tingkat)}</td>
-                                <td>${showText(dt.pjp)}</td>
+                                <td>${tingkat}</td>
+                                <td>${pjp}</td>
                                 <td>${showText(dt.bukti)}</td>
                                 <td>${dt.nilai}</td>
                                 <td>
@@ -372,7 +372,7 @@
 
         // Handle search-input
         $(document).on('input', '#search-input', function() {
-            console.log('Event input berjalan');
+            // console.log('Event input berjalan');
             loadDataButirKegiatan();
         });        
 
@@ -470,10 +470,13 @@
         //ganti data
         $(document).on('click', '.btn-ganti', function() {
             const id = $(this).data('id');
-            showDataById(endpoint, id, function(response) {
+            showDataById(base_url+'/api/butir-kegiatan', id, function(response) {
                 $('#id').val(response.data.id);
-                $('#singkatan').val(response.data.singkatan);
-                $('#urut').val(response.data.urut);
+                $('#nilai').val(response.data.nilai);
+                $('#bukti').val(response.data.bukti);
+                $('#keterangan').val(response.data.keterangan);
+                $('#tingkat_id').val(response.data.tingkat_id);
+                $('#pjp_id').val(response.data.pjp_id);
                 $('#nama').val(response.data.nama);
                 showModalForm();
             });

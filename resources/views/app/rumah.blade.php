@@ -29,11 +29,21 @@
             <div class="row">
                 <div class="col-lg-4 mb-3">
                     <label class="form-label">Luas Tanah</label>
-                    <input name="luas_tanah" id="luas_tanah" type="text" class="form-control" required>
+                    <input name="luas_tanah" id="luas_tanah" type="text" class="form-control" placeholder="contoh: 120" required>
+                    <div>dalam meter</div>
+                    <div class="form-text">
+                        Masukkan luas total tanah dalam meter bujur sangkar. 
+                        Hitung dari panjang × lebar tanah , misal: 10 × 12 = 120
+                    </div>                    
                 </div>
                 <div class="col-lg-4 mb-3">
                     <label class="form-label">Luas Bangunan</label>
-                    <input name="luas_bangunan" id="luas_bangunan" type="text" class="form-control" required>
+                    <input name="luas_bangunan" id="luas_bangunan" type="text" class="form-control" placeholder="contoh: 90" required>
+                    <div>dalam meter</div>
+                    <div class="form-text">
+                        Masukkan luas total bangunan dalam meter bujur sangkar. 
+                        Hitung dari panjang × lebar bangunan , misal: 9 × 10 = 90
+                    </div>                    
                 </div>
             </div>
             <div class="row">

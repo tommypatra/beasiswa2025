@@ -112,6 +112,8 @@ class RumahController extends Controller
                 });
 
 
+            // print_r($jumlahPilihan);
+
             $data = User::with([
                 'rumah.pilihanKepemilikanRumah',
                 'rumah.pilihanMck',
@@ -119,6 +121,31 @@ class RumahController extends Controller
                 'rumah.pilihanSumberAir',
                 'rumah.pilihanSumberListrik',
             ])->where('id', $id)->firstOrFail();
+
+            $faktor_jumlah_orang_tinggal = ($data->rumah->jumlah_orang_tinggal <= 3 ? 1 : ($data->rumah->jumlah_orang_tinggal <= 6 ? 2 : 3)) / 3;
+            $faktor_luas_tanah = ($data->rumah->luas_tanah <= 90 ? 3 : ($data->rumah->luas_tanah <= 120 ? 2 : 1)) / 3;
+            $faktor_luas_bangunan = ($data->rumah->luas_bangunan <= 36 ? 3 : ($data->rumah->luas_bangunan <= 90 ? 2 : 1)) / 3;
+
+            // Faktor pilihan lain (pakai pembalik)
+            $faktor_sumber_listrik = pembalik($data->rumah->pilihanSumberListrik->nilai, $jumlahPilihan['sumber_listrik']);
+            $faktor_sumber_air = pembalik($data->rumah->pilihanSumberAir->nilai, $jumlahPilihan['sumber_air']);
+            $faktor_mck = pembalik($data->rumah->pilihanMck->nilai, $jumlahPilihan['mck']);
+            $faktor_listrik = pembalik($data->rumah->pilihanListrik->nilai, $jumlahPilihan['listrik']);
+            $faktor_kepemilikan_rumah = pembalik($data->rumah->pilihanKepemilikanRumah->nilai, $jumlahPilihan['kepemilikan_rumah']);
+
+            // Hitung skor (tanpa faktor verifikasi dulu)
+            $skor = 0;
+            $skor += $faktor_luas_tanah * 0.15;
+            $skor += $faktor_luas_bangunan * 0.15;
+            $skor += $faktor_kepemilikan_rumah * 0.15;
+            $skor += $faktor_jumlah_orang_tinggal * 0.10;
+            $skor += $faktor_sumber_listrik * 0.15;
+            $skor += $faktor_sumber_air * 0.05;
+            $skor += $faktor_mck * 0.05;
+            $skor += $faktor_listrik * 0.20;
+            $skor_akhir = round($skor * 100, 2); // Skala 0-100
+
+            $data->skor_akhir = $skor_akhir;
 
             $respon_data = new DataKondisiRumahResource($data, $jumlahPilihan);
 

@@ -20,7 +20,8 @@ class MahasiswaResource extends JsonResource
         $identitas = $user->identitas;
         return [
             'user_id' => $user->id,
-            'nama' => $user->name,
+            'name' => $user->name,
+            'ukt' => $mahasiswa->ukt,
             'email' => $user->email,
             'alamat' => $identitas->alamat,
             'foto' => $identitas->foto,

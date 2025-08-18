@@ -16,6 +16,11 @@ class DataRaportResource extends JsonResource
     {
         // return parent::toArray($request);
         $raport = [];
+
+        $verifikasi_lapangan_skor = null;
+        $verifikasi_lapangan_hasil = null;
+        $verifikasi_lapangan_catatan = null;
+
         if ($this->nilaiRaport) {
             $raport = [
                 'raport_id' => $this->nilaiRaport->id,
@@ -31,11 +36,10 @@ class DataRaportResource extends JsonResource
                 'smt_5_peringkat' => $this->nilaiRaport->smt_5_peringkat,
                 'smt_6_nilai' => $this->nilaiRaport->smt_6_nilai,
                 'smt_6_peringkat' => $this->nilaiRaport->smt_6_peringkat,
-
-                'verifikasi_lapangan_skor' => $this->nilaiRaport->verifikasi_lapangan_skor,
-                'verifikasi_lapangan_hasil' => $this->nilaiRaport->verifikasi_lapangan_hasil,
-                'verifikasi_lapangan_catatan' => $this->nilaiRaport->verifikasi_lapangan_catatan,
             ];
+            $verifikasi_lapangan_skor = $this->nilaiRaport->verifikasi_lapangan_skor;
+            $verifikasi_lapangan_hasil = $this->nilaiRaport->verifikasi_lapangan_hasil;
+            $verifikasi_lapangan_catatan = $this->nilaiRaport->verifikasi_lapangan_catatan;
         }
 
         return [
@@ -44,7 +48,10 @@ class DataRaportResource extends JsonResource
             'email' => $this->email,
             'akreditasi' => $this->pendidikanAkhir->akreditasi,
             'raport' => $raport,
-
+            'skor_akhir' => $this->skor_akhir,
+            'verifikasi_lapangan_skor' => $verifikasi_lapangan_skor,
+            'verifikasi_lapangan_hasil' => $verifikasi_lapangan_hasil,
+            'verifikasi_lapangan_catatan' => $verifikasi_lapangan_catatan,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

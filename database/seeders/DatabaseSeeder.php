@@ -127,29 +127,29 @@ class DatabaseSeeder extends Seeder
 
         //program studi
         $dtdef = [
-            ['nama' => 'Pendidkan Agama Islam', 'singkatan' => 'PAI', 'urut' => 1, 'fakultas_id' => 1],
-            ['nama' => 'Pendidkan Bahasa Arab', 'singkatan' => 'PBA', 'urut' => 2, 'fakultas_id' => 1],
-            ['nama' => 'Manajemen Pendidkan Islam', 'singkatan' => 'MPI', 'urut' => 3, 'fakultas_id' => 1],
-            ['nama' => 'Pendidikan Guru Madrasah Ibtidaiyah', 'singkatan' => 'PGMI', 'urut' => 4, 'fakultas_id' => 1],
-            ['nama' => 'Pendidkan Anak Usia Dini', 'singkatan' => 'PIAUD', 'urut' => 5, 'fakultas_id' => 1],
-            ['nama' => 'Tadris Bahasa Inggris', 'singkatan' => 'TBI', 'urut' => 6, 'fakultas_id' => 1],
-            ['nama' => 'Tadris IPA', 'singkatan' => 'TIPA', 'urut' => 7, 'fakultas_id' => 1],
-            ['nama' => 'Tadris Fisika', 'singkatan' => 'TFSK', 'urut' => 8, 'fakultas_id' => 1],
-            ['nama' => 'Tadris Biologi', 'singkatan' => 'TBLG', 'urut' => 9, 'fakultas_id' => 1],
-            ['nama' => 'Tadris Matematika', 'singkatan' => 'TMKT', 'urut' => 10, 'fakultas_id' => 1],
+            ['nama' => 'Pendidkan Agama Islam', 'idprodi' => 'PAI', 'singkatan' => 'PAI', 'urut' => 1, 'fakultas_id' => 1],
+            ['nama' => 'Pendidkan Bahasa Arab', 'idprodi' => 'PBA', 'singkatan' => 'PBA', 'urut' => 2, 'fakultas_id' => 1],
+            ['nama' => 'Manajemen Pendidkan Islam', 'idprodi' => 'KI', 'singkatan' => 'MPI', 'urut' => 3, 'fakultas_id' => 1],
+            ['nama' => 'Pendidikan Guru Madrasah Ibtidaiyah', 'idprodi' => 'PGMI', 'singkatan' => 'PGMI', 'urut' => 4, 'fakultas_id' => 1],
+            ['nama' => 'Pendidkan Anak Usia Dini', 'idprodi' => 'PGRA', 'singkatan' => 'PIAUD', 'urut' => 5, 'fakultas_id' => 1],
+            ['nama' => 'Tadris Bahasa Inggris', 'idprodi' => 'BING', 'singkatan' => 'TBI', 'urut' => 6, 'fakultas_id' => 1],
+            ['nama' => 'Tadris IPA', 'idprodi' => 'IPA', 'singkatan' => 'TIPA', 'urut' => 7, 'fakultas_id' => 1],
+            ['nama' => 'Tadris Fisika', 'idprodi' => 'FSK', 'singkatan' => 'TFSK', 'urut' => 8, 'fakultas_id' => 1],
+            ['nama' => 'Tadris Biologi', 'idprodi' => 'BLG', 'singkatan' => 'TBLG', 'urut' => 9, 'fakultas_id' => 1],
+            ['nama' => 'Tadris Matematika', 'idprodi' => 'MTK', 'singkatan' => 'TMTK', 'urut' => 10, 'fakultas_id' => 1],
 
-            ['nama' => 'Hukum Keluarga Islam', 'singkatan' => 'TFSK', 'urut' => 1, 'fakultas_id' => 2],
-            ['nama' => 'Hukum Ekonomi Syariah', 'singkatan' => 'HES', 'urut' => 2, 'fakultas_id' => 2],
-            ['nama' => 'Hukum Tata Negara', 'singkatan' => 'HTN', 'urut' => 3, 'fakultas_id' => 2],
+            ['nama' => 'Hukum Keluarga Islam', 'idprodi' => 'AS', 'singkatan' => 'AS', 'urut' => 1, 'fakultas_id' => 2],
+            ['nama' => 'Hukum Ekonomi Syariah', 'idprodi' => 'MU', 'singkatan' => 'HES', 'urut' => 2, 'fakultas_id' => 2],
+            ['nama' => 'Hukum Tata Negara', 'idprodi' => 'HTN', 'singkatan' => 'HTN', 'urut' => 3, 'fakultas_id' => 2],
 
-            ['nama' => 'Komunikasi Penyiaran Islam', 'singkatan' => 'KPI', 'urut' => 1, 'fakultas_id' => 3],
-            ['nama' => 'Bimbingan Penyuluhan Islam', 'singkatan' => 'BPI', 'urut' => 1, 'fakultas_id' => 3],
-            ['nama' => 'Manajemen Dakwah', 'singkatan' => 'MD', 'urut' => 1, 'fakultas_id' => 3],
-            ['nama' => 'Ilmu Al-Quran Tafsir', 'singkatan' => 'IQT', 'urut' => 1, 'fakultas_id' => 3],
+            ['nama' => 'Komunikasi Penyiaran Islam', 'idprodi' => 'KPI', 'singkatan' => 'KPI', 'urut' => 1, 'fakultas_id' => 3],
+            ['nama' => 'Bimbingan Penyuluhan Islam', 'idprodi' => 'BPI', 'singkatan' => 'BPI', 'urut' => 2, 'fakultas_id' => 3],
+            ['nama' => 'Manajemen Dakwah', 'idprodi' => 'MD', 'singkatan' => 'MD', 'urut' => 3, 'fakultas_id' => 3],
+            ['nama' => 'Ilmu Al-Quran Tafsir', 'idprodi' => 'IQT', 'singkatan' => 'IQT', 'urut' => 4, 'fakultas_id' => 3],
 
-            ['nama' => 'Ekonomi Syariah', 'singkatan' => 'ESY', 'urut' => 1, 'fakultas_id' => 4],
-            ['nama' => 'Perbankan Syariah', 'singkatan' => 'PBS', 'urut' => 1, 'fakultas_id' => 4],
-            ['nama' => 'Manajemen Bisnis Syariah', 'singkatan' => 'MBS', 'urut' => 1, 'fakultas_id' => 4],
+            ['nama' => 'Ekonomi Syariah', 'idprodi' => 'EI', 'singkatan' => 'ESY', 'urut' => 1, 'fakultas_id' => 4],
+            ['nama' => 'Perbankan Syariah', 'idprodi' => 'PBS', 'singkatan' => 'PBS', 'urut' => 2, 'fakultas_id' => 4],
+            ['nama' => 'Manajemen Bisnis Syariah', 'idprodi' => 'MBS', 'singkatan' => 'MBS', 'urut' => 3, 'fakultas_id' => 4],
 
         ];
         foreach ($dtdef as $dt) {

@@ -17,4 +17,9 @@ class Monitoring extends Model
     {
         return $this->hasMany(Kegiatan::class);
     }
+
+    public function skPenerima()
+    {
+        return $this->hasMany(SkPenerima::class);
+    }
 }

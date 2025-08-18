@@ -1,23 +1,50 @@
 @extends('template')
 
 @section('scriptHead')
-<title>Referensi Fakultas</title>
+<title>Predikat</title>
 @endsection
 
 @section('container')
 <div class="card">
     <div class="card-body">
+        <h5 class="card-title fw-semibold">Monitoring Beasiswa</h5>
+        <div class="d-flex flex-wrap gap-1 mb-3">
+
+            <div class="dropdown">
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="label_monitoring" data-bs-toggle="dropdown" aria-expanded="false" data-id="">
+                    Pilih monitoring
+                </button>
+                <ul class="dropdown-menu p-2" aria-labelledby="label_monitoring" style="max-height:200px; overflow:auto; min-width: 250px;">
+                    <!-- Filter input -->
+                    <li style="position: sticky; top: 0; background: #fff; z-index:1; padding: .5rem;">
+                    <input type="text" id="filter_monitoring" 
+                            name="filter_monitoring" 
+                            class="form-control" 
+                            placeholder="Cari monitoring...">
+                    <hr class="dropdown-divider mt-2 mb-0">
+                    </li>
+                    <div id="list_monitoring">
+                    </div>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
         <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">
-            <h5 class="card-title fw-semibold">Referensi Fakultas</h5>
+            <h5 class="card-title fw-semibold">Predikat</h5>
             <div class="d-flex gap-2">
-                <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
-                <button class="btn btn-primary" id="btn-tambah">
+                <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;" disabled>
+                <button class="btn btn-primary" id="btn-tambah" disabled>
                     <i class="ti ti-plus"></i>
                 </button>
-                <button class="btn btn-success" id="btn-refresh">
+                <button class="btn btn-success" id="btn-refresh" disabled>
                     <i class="ti ti-reload"></i>
                 </button>
-                <button class="btn btn-secondary" id="btn-filter">
+                <button class="btn btn-secondary" id="btn-filter" disabled>
                     <i class="ti ti-filter"></i>
                 </button>
             </div>
@@ -28,13 +55,16 @@
                 <thead>
                     <tr>
                         <th width="5%">No</th>
-                        <th width="50%">Nama</th>
-                        <th width="20%">Singkatan</th>
-                        <th width="10%">urut</th>
+                        <th width="35%">Predikas</th>
+                        <th width="15%">Nilai Minimal</th>
+                        <th width="15%">Nilai Maksimal</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="data-list">
+                    <tr>
+                        <td colspan="5">data tidak ditemukan</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -42,6 +72,7 @@
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center" id="pagination"></ul>
         </nav>
+
     </div>
 </div>
 
@@ -49,26 +80,26 @@
 <!-- MULAI MODAL -->
 <div class="modal fade modal" id="modal-form" role="dialog">
     <div class="modal-dialog">
-        <form id="form">
+        <form id="form-modal">
             <input type="hidden" name="id" id="id" >
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modal-label">Form</h5>
+                    <h5 class="modal-title" id="modal-label">Kegiatan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body ">
                     <div class="row">
 						<div class="col-lg-12 mb-3">
-                            <label class="form-label">Nama</label>
-                            <input name="nama" id="nama" type="text" class="form-control" required>
+                            <label class="form-label">Predikat</label>
+                            <input name="predikat" id="predikat" type="text" class="form-control" required>
                         </div>
-						<div class="col-lg-4 mb-3">
-                            <label class="form-label">Singkatan</label>
-                            <input name="singkatan" id="singkatan" type="text" class="form-control" required>
+						<div class="col-lg-6 mb-3">
+                            <label class="form-label">Nilai Minimal</label>
+                            <input name="nilai_minimal" id="nilai_minimal" type="number" class="form-control" required>
                         </div>
-						<div class="col-lg-4 mb-3">
-                            <label class="form-label">Urut</label>
-                            <input name="urut" id="urut" type="number" class="form-control" required>
+						<div class="col-lg-6 mb-3">
+                            <label class="form-label">Nilai Maksimal</label>
+                            <input name="nilai_maksimal" id="nilai_maksimal" type="number" class="form-control" required>
                         </div>
                     </div>
                 </div>
@@ -81,6 +112,8 @@
     </div>
 </div>
 <!-- AKHIR MODAL -->
+
+
 @endsection
 
 @section('scriptJs')
@@ -89,14 +122,49 @@
 <script src="{{ asset('js/pagination.js') }}"></script>
 
 <script type="text/javascript">
-    const endpoint = base_url+'/api/fakultas';
+    const endpoint = base_url+'/api/predikat';
     var page = 1;
     $(document).ready(function() {
-        dataLoad();
+        initPage()
 
-        function renderData(response) {
+        statusMonitoring(false);
+        async function initPage() { // agar di load secara berurutan
+            await loadMonitoring();
+        }      
+
+        function statusMonitoring(aktif = true) {
+            // false = disable, true = enable
+            $('#search-input').prop('disabled', !aktif);
+            $('#btn-tambah').prop('disabled', !aktif);
+            $('#btn-refresh').prop('disabled', !aktif);
+            $('#btn-filter').prop('disabled', !aktif);
+        }
+
+
+        async function loadMonitoring() {
+            let search = $('#filter_monitoring').val();
+            let respon = await asyncFunction(`${base_url}/api/monitoring?limit=10&search=${search}`);
+            const list = $('#list_monitoring').empty();
+
+            if(respon.data.total>0)
+                $.each(respon.data.data, function(index, item) {
+                    list.append(`
+                        <li>
+                            <a class="dropdown-item" href="#" data-val="${item.id}">
+                                ${item.nama}
+                            </a>
+                        </li>
+                    `);
+                });
+        }
+
+        async function loadData(){
+            const search = $('#search-input').val();
+            const kegiatan_id = $('#label_monitoring').attr("data-id");
             const dataList = $('#data-list');
             const pagination = $('#pagination');
+            const response = await asyncFunction(`${base_url}/api/predikat?monitoring_id=${kegiatan_id}&search=${search}`);
+
             const data=response.data.data;
             let no = (response.data.current_page - 1) * response.data.per_page + 1;
             dataList.empty();
@@ -105,9 +173,9 @@
                 $.each(data, function(index, dt) {
                     const row = `<tr>
                                 <td>${no++}</td>
-                                <td>${dt.nama}</td>
-                                <td>${dt.singkatan}</td>
-                                <td>${dt.urut}</td>
+                                <td>${dt.predikat}</td>
+                                <td>${dt.nilai_minimal}</td>
+                                <td>${dt.nilai_maksimal}</td>
                                 <td>
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
@@ -127,32 +195,44 @@
                             </tr>`;
                 dataList.append(row);                
             }
-        }    
-
-        function dataLoad() {
-            var search = $('#search-input').val();
-            var url = endpoint + '?page=' + page + '&search=' + search + '&limit=' + vLimit;
-
-            fetchData(url, function(response) {
-                renderData(response);
-            },true);
         }
+
+        $('#filter_monitoring').on('keypress', async function(e) {
+            if (e.which === 13) {       // 13 = Enter
+                e.preventDefault();      
+                await loadMonitoring(); 
+            }
+        });
+
+        $(document).on('click', '#list_monitoring .dropdown-item', function(e) {
+            e.preventDefault();
+            const text = $(this).text();
+            const val  = $(this).data('val');
+
+            $('#label_monitoring').text(text).append(' <span class="caret"></span>'); // caret Bootstrap
+            $('#label_monitoring').attr("data-id",val);
+
+            statusMonitoring();
+            loadData();
+
+        });        
+
 
         // Handle page change
         $(document).on('click', '.page-link', function() {
             page = $(this).data('page');
-            dataLoad();
+            loadData();
         });
 
         // Handle page change
         $('#btn-refresh').click(function() {
-            dataLoad();
+            loadData();
         });
 
         // Handle search-input
         $(document).on('input', '#search-input', function() {
-            console.log('Event input berjalan');
-            dataLoad();
+            // console.log('Event input berjalan');
+            loadData();
         });        
 
         //untuk show modal form
@@ -163,30 +243,36 @@
             fModalForm.show();
         }
 
-        function formReset(){
-            $('#form').trigger('reset');
-            $('#form input[type="hidden"]').val('');
+        function formPredikatReset(){
+            $('#form-modal').trigger('reset');
+            $('#form-modal input[type="hidden"]').val('');
         }
 
-        // Handle page change
         $('#btn-tambah').click(function() {
-            formReset();
-            showModalForm();    
+            formPredikatReset();
+            showModalForm();
         });
+        
 
         //validasi dan save, jika id ada maka PUT/edit jika tidak ada maka POST/simpan baru
-        $("#form").validate({
+        $("#form-modal").validate({
             submitHandler: function(form) {
                 const id = $('#id').val();
                 const type = (id === '') ? 'POST' : 'PUT';
-                const url = (id === '') ? endpoint : endpoint + '/' + id;
-                saveData(url, type, $(form).serialize(), function(response) {
-                    //jika berhasil
+                const url = (id === '') ? '/api/predikat' : '/api/predikat/' + id;
+                let dataArr = $(form).serializeArray();
+                dataArr.push({
+                    name: 'monitoring_id',
+                    value: $('#label_monitoring').attr('data-id')
+                });
+                let dataPayload = $.param(dataArr);
+
+                saveData(base_url+url, type, dataPayload, function(response) {                    
                     appShowNotification(true,['berhasil dilakukan!']);
                     if(type=='POST'){
-                        formReset();
+                        formPredikatReset();
                     }
-                    dataLoad();
+                    loadData();
                 });
             }
         });
@@ -194,22 +280,23 @@
         //ganti data
         $(document).on('click', '.btn-ganti', function() {
             const id = $(this).data('id');
-            showDataById(endpoint, id, function(response) {
+            showDataById(base_url+'/api/predikat', id, function(response) {
                 $('#id').val(response.data.id);
-                $('#singkatan').val(response.data.singkatan);
-                $('#urut').val(response.data.urut);
-                $('#nama').val(response.data.nama);
+                $('#nilai_minimal').val(response.data.nilai_minimal);
+                $('#nilai_maksimal').val(response.data.nilai_maksimal);
+                $('#predikat').val(response.data.predikat);
                 showModalForm();
             });
         });
 
         //hapus data
-        $(document).on('click', '.btn-hapus', function() {
-            const id = $(this).data('id');
-            deleteData(endpoint, id, function() {
-                appShowNotification(true,['berhasil dilakukan!']);
-                dataLoad();
-            });
+        $(document).on('click', '.btn-hapus', function() {         
+            const id = $('#label_monitoring').attr("data-id");
+            if(id!=="")
+                deleteData(base_url+'/api/kegiatan', id, function() {
+                    appShowNotification(true,['berhasil dilakukan!']);
+                    loadData();
+                });
         });
 
     });

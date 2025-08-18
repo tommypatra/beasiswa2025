@@ -8,10 +8,12 @@ use App\Models\Pendaftar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\PendaftaranBatalRequest;
+use App\Models\VerifikatorPendaftar;
 use App\Http\Requests\PendaftarRequest;
 use App\Http\Resources\PendaftarResource;
+use App\Http\Requests\PendaftaranBatalRequest;
 use App\Http\Requests\PendaftaranKembaliRequest;
+use App\Models\PesertaWawancara;
 
 class PendaftarController extends Controller
 {
@@ -201,7 +203,8 @@ class PendaftarController extends Controller
     {
         try {
             DB::beginTransaction();
-            $data = Pendaftar::with(['mahasiswa'])->where('id', $id)->firstOrFail();
+            $data = Pendaftar::with(['mahasiswa', 'beasiswa'])->where('id', $id)->firstOrFail();
+
 
             //validasi kepemilikan user
             if ($data->mahasiswa->user_id !== auth()->user()->id) {
@@ -221,6 +224,36 @@ class PendaftarController extends Controller
                 'url_id' => $url_id,
             ];
             $data->update($data_save);
+
+            //untuk data verifikator
+            $data['verifikator'] = null;
+            if ($data->beasiswa->ada_verifikasi_berkas == 1) {
+                // cari verifikator
+                $verifikator_id = cariVerifikatorBerkas($data->beasiswa_id);
+                if ($verifikator_id) {
+                    $data_verifikator = VerifikatorPendaftar::firstOrCreate(
+                        ["pendaftar_id" => $data->id], //cek dulu pendaftar_id, jika sudah ada batalkan
+                        ["verifikator_id" => $verifikator_id]
+                    );
+                    $data['verifikator'] = $data_verifikator;
+                }
+            }
+
+            //untuk data pewawancara
+            $data['pewawancara'] = null;
+            if ($data->beasiswa->ada_wawancara == 1) {
+                // cari pewawancara
+                $pewawancara_id = cariPewawancara($data->beasiswa_id);
+                if ($pewawancara_id) {
+                    $data_pewawancara = PesertaWawancara::firstOrCreate(
+                        ["pendaftar_id"   => $data->id], //cari dulu pendaftar_id, jika ada maka batalkan
+                        ["pewawancara_id" => $pewawancara_id]
+                    );
+                    $data['pewawancara'] = $data_pewawancara;
+                }
+            }
+
+
             DB::commit();
             return response()->json(['status' => true, 'message' => 'pendaftaran selesai dilakukan', 'data' => $data], 200);
         } catch (\Exception $e) {

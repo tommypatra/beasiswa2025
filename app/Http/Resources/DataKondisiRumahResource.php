@@ -50,7 +50,7 @@ class DataKondisiRumahResource extends JsonResource
             'verifikasi_lapangan_skor' => $this->rumah->verifikasi_lapangan_skor,
             'verifikasi_lapangan_hasil' => $this->rumah->verifikasi_lapangan_hasil,
             'verifikasi_lapangan_catatan' => $this->rumah->verifikasi_lapangan_catatan,
-
+            'skor_akhir' => $this->skor_akhir,
 
             'listrik_id' => $this->rumah->pilihanListrik->id,
             'listrik_nama' => $this->rumah->pilihanListrik->nama,

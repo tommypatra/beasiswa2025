@@ -22,6 +22,45 @@ class PesertaWawancaraController extends Controller
      */
     public function wawancara(Request $request)
     {
+        // 1. Beasiswa user sebagai verifikator
+        $beasiswaIds = Verifikator::where('user_id', auth()->id())->pluck('beasiswa_id');
+
+        // 3. Query beasiswa yang user jadi verifikator
+        $dataQuery = Beasiswa::with('user')
+            ->withCount([
+                // hitung total peserta wawancara yang sudah diverifikasi (hasil=1)
+                'pendaftar as total_pendaftar' => function ($query) {
+                    $query->whereHas('verifikatorPendaftar', function ($q) {
+                        $q->where('hasil', 1);
+                    });
+                },
+                // hitung peserta yang sudah registrasi wawancara
+                'pendaftar as peserta_registrasi' => function ($query) {
+                    $query->where('is_registrasi_wawancara', 1);
+                },
+                // hitung peserta valid (nilai tidak null)
+                'pesertaWawancara as peserta_valid' => function ($query) {
+                    $query->whereNotNull('nilai');
+                }
+            ])
+            ->whereIn('id', $beasiswaIds)
+            ->orderBy('id', 'asc');
+
+        // 3. Paging
+        $default_limit = env('DEFAULT_LIMIT', 30);
+        $limit = $request->filled('limit') ? $request->limit : $default_limit;
+        $data = $dataQuery->paginate($limit);
+
+        // 4. Response json
+        return response()->json([
+            'status'  => true,
+            'message' => 'Pengambilan data berhasil',
+            'data'    => $data
+        ]);
+    }
+
+    public function pewawancara(Request $request)
+    {
         $dataQuery = Pewawancara::with([
             'beasiswa',
             'user',
@@ -49,23 +88,9 @@ class PesertaWawancaraController extends Controller
             ->orderBy('beasiswa_id', 'asc')
             ->orderBy('user_id', 'asc');
 
-        // if ($request->filled('grup')) {
-        //     if ($request->filled('grup') == 'registrasi')
-        //         $dataQuery->where(function ($query) use ($request) {
-        //             $query->WhereHas('mahasiswa.user', function ($q) use ($request) {
-        //                 $q->where('name', 'like', '%' . $request->search . '%');
-        //             });
-        //         });
-        // }
-
-
         $default_limit = env('DEFAULT_LIMIT', 30);
         $limit = $request->filled('limit') ? $request->limit : $default_limit;
         $data = $dataQuery->paginate($limit);
-        // $resourceCollection = $data->getCollection()->map(function ($item) {
-        //     return new VerifikasiBerkasResource($item);
-        // });
-        // $data->setCollection($resourceCollection);
 
         $dataRespon = [
             'status' => true,
@@ -79,6 +104,7 @@ class PesertaWawancaraController extends Controller
     {
         $dataQuery = Pendaftar::with([
             'beasiswa',
+            'Kelulusan',
             'pesertaWawancara.pewawancara.user',
             'mahasiswa.user.identitas',
             'mahasiswa.programStudi.fakultas'
@@ -86,11 +112,11 @@ class PesertaWawancaraController extends Controller
             ->orderBy('beasiswa_id', 'asc')
             ->orderBy('id', 'asc');
 
-        $dataQuery->where(function ($query) {
-            $query->WhereHas('pesertaWawancara.pewawancara', function ($q) {
-                $q->where('user_id', auth()->user()->id);
-            });
-        });
+        // $dataQuery->where(function ($query) {
+        //     $query->WhereHas('pesertaWawancara.pewawancara', function ($q) {
+        //         $q->where('user_id', auth()->user()->id);
+        //     });
+        // });
 
         $dataQuery->where(function ($query) {
             $query->WhereHas('verifikatorPendaftar', function ($q) {

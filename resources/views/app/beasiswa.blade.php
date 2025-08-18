@@ -32,7 +32,7 @@
                     <tr>
                         <th width="5%">No</th>
                         <th width="10%">Tahun</th>
-                        <th width="30%">Beasiswa</th>
+                        <th width="30%">Beasiswa/ Kuota</th>
                         <th width="10%">Jenis</th>
                         <th width="10%">Pendaftaran</th>
                         <th width="10%">Pengumuman</th>
@@ -71,6 +71,12 @@
                     </div>
                     <div class="row">
 						<div class="col-sm-4 mb-3">
+                            <label class="form-label">Kuota</label>
+                            <input name="kuota" id="kuota" type="number" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="row">
+						<div class="col-sm-4 mb-3">
                             <label class="form-label">Jenis Beasiswa</label>
                             <select name="jenis_beasiswa_id" id="jenis_beasiswa_id" class="form-control" required></select>
                         </div>
@@ -82,10 +88,16 @@
 
                     <div class="row">
 						<div class="col-sm-5 mb-3">
+                            <input type="checkbox" name="ada_verifikasi_berkas" id="ada_verifikasi_berkas" value="1"> Ada Verifikasi Berkas
+                        </div>
+						<div class="col-sm-5 mb-3">
                             <input type="checkbox" name="ada_wawancara" id="ada_wawancara" value="1"> Ada Wawancara
                         </div>
                         <div class="col-sm-5 mb-3">
-                            <input type="checkbox" name="ada_survei_lapangan" id="ada_survei_lapangan" value="1"> Ada Survei
+                            <input type="checkbox" name="ada_verifikasi_lapangan" id="ada_verifikasi_lapangan" value="1"> Ada Survei
+                        </div>
+                        <div class="col-sm-5 mb-3">
+                            <input type="checkbox" name="ada_ujian_cbt" id="ada_ujian_cbt" value="1"> Ada Ujian CBT
                         </div>
                     </div>
 
@@ -94,16 +106,16 @@
                     <div class="row">
 
                         <div class="col-sm-4 mb-3">
-                            <input type="checkbox" name="butuh_data_orang_tua" id="butuh_data_orang_tua" value="1"> Orang Tua
+                            <input type="checkbox" name="perlu_data_orang_tua" id="perlu_data_orang_tua" value="1"> Orang Tua
                         </div>
                         <div class="col-sm-4 mb-3">
-                            <input type="checkbox" name="butuh_data_pendidikan_akhir" id="butuh_data_pendidikan_akhir" value="1"> Asal Sekolah
+                            <input type="checkbox" name="perlu_data_pendidikan_akhir" id="perlu_data_pendidikan_akhir" value="1"> Asal Sekolah
                         </div>
                         <div class="col-sm-4 mb-3">
-                            <input type="checkbox" name="butuh_data_nilai_raport" id="butuh_data_nilai_raport" value="1"> Nilai Raport
+                            <input type="checkbox" name="perlu_data_nilai_raport" id="perlu_data_nilai_raport" value="1"> Nilai Raport
                         </div>
                         <div class="col-sm-4 mb-3">
-                            <input type="checkbox" name="butuh_data_rumah" id="butuh_data_rumah" value="1"> Rumah
+                            <input type="checkbox" name="perlu_data_rumah" id="perlu_data_rumah" value="1"> Rumah
                         </div>
                     </div>
                         
@@ -246,10 +258,75 @@
             pagination.empty();
             if (data.length > 0) {
                 $.each(data, function(index, dt) {
+
+
+                    let detail_isian = `
+                        <a href="${base_url}/syarat/${dt.id}">
+                            <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1"> 
+                                Syarat
+                            </span>                                  
+                        </a>      
+                    `;
+
+                    // kalau ada ujian CBT
+                    if (dt.ada_ujian_cbt == 1) {
+                        detail_isian += `
+                            <a href="#">
+                                <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
+                                    Soal Ujian
+                                </span>                                  
+                            </a> 
+                        `;
+                    }
+
+                    // kalau ada verifikasi berkas
+                    if (dt.ada_verifikasi_berkas == 1) {
+                        detail_isian += `
+                            <a href="${base_url}/verifikator/${dt.id}">
+                                <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
+                                    Verifikator
+                                </span>                                  
+                            </a> 
+                        `;
+                    }
+
+                    // kalau ada verifikasi lapangan
+                    if (dt.ada_verifikasi_lapangan == 1) {
+                        detail_isian += `
+                            <a href="${base_url}/surveyor/${dt.id}">
+                                <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
+                                    Surveyor
+                                </span>                                  
+                            </a> 
+                        `;
+                    }
+
+                    // kalau ada wawancara
+                    if (dt.ada_wawancara == 1) {
+                        detail_isian += `
+                            <a href="${base_url}/pewawancara/${dt.id}">
+                                <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
+                                    Pewawancara
+                                </span>                                  
+                            </a>   
+                            <a href="${base_url}/soal-wawancara/${dt.id}">
+                                <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
+                                    Soal Wawancara
+                                </span>                                  
+                            </a> 
+                        `;
+                    }
+                    detail_isian += `
+                            <a href="${base_url}/kelulusan/${dt.id}">
+                                <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
+                                    Kelulusan
+                                </span>                                  
+                            </a>`;                
+
                     const row = `<tr>
                                     <td>${no++}</td>
                                     <td>${dt.tahun}</td>
-                                    <td>${dt.nama}</td>
+                                    <td>${dt.nama} <i>(kuota:${dt.kuota})</i></td>
                                     <td>${dt.jenis_beasiswa.nama}</td>
                                     <td>${dt.daftar_mulai} sd ${dt.daftar_selesai}</td>
                                     <td>${dt.pengumuman_akhir}</td>
@@ -267,36 +344,7 @@
                                 <tr>
                                     <td></td>
                                     <td colspan="7">
-                                        <a href="${base_url}/syarat/${dt.id}">
-                                            <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1"> 
-                                                Syarat
-                                            </span>                                  
-                                        </a>      
-                                        <a href="{{ route('soal-wawancara') }}/${dt.id}">
-                                            <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
-                                                Soal Ujian
-                                            </span>                                  
-                                        </a>      
-                                        <a href="{{ route('soal-wawancara') }}/${dt.id}">
-                                            <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
-                                                Soal Wawancara
-                                            </span>                                  
-                                        </a>      
-                                        <a href="${base_url}/verifikator/${dt.id}">
-                                            <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
-                                                Verifikator
-                                            </span>                                  
-                                        </a>      
-                                        <a href="${base_url}/surveyor/${dt.id}">
-                                            <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
-                                                Surveyor
-                                            </span>                                  
-                                        </a>      
-                                        <a href="${base_url}/pewawancara/${dt.id}">
-                                            <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
-                                                Pewawancara
-                                            </span>                                  
-                                        </a>      
+                                        ${detail_isian}
                                     </td>
                                 </tr>`;
                     dataList.append(row);
@@ -357,6 +405,7 @@
             $('#tahun').val("{{ date('Y') }}");
             $('#syarat_tahun_angkatan_mahasiswa').val("");
             $('#syarat_tahun_lulus_sma').val("");
+            $('#kuota').val("");
             $('#daftar_mulai').val("{{ date('Y-m-d') }}");
             $('#daftar_selesai').val("{{ date('Y-m-d') }}");
             $('#verifikasi_berkas_mulai').val("{{ date('Y-m-d') }}");
@@ -367,8 +416,8 @@
             $('#wawancara_selesai').val("{{ date('Y-m-d') }}");
             $('#pengumuman_verifikasi_berkas').val("{{ date('Y-m-d') }}");
             $('#pengumuman_akhir').val("{{ date('Y-m-d') }}");
-            $('#butuh_data_orang_tua').prop("checked", true);
-            $('#butuh_data_pendidikan_akhir').prop("checked", true);
+            $('#perlu_data_orang_tua').prop("checked", true);
+            $('#perlu_data_pendidikan_akhir').prop("checked", true);
             $('#is_aktif').val(1);
             
         });
@@ -400,6 +449,7 @@
                 $('#syarat_tahun_angkatan_mahasiswa').val(response.data.syarat_tahun_angkatan_mahasiswa);
                 $('#syarat_tahun_lulus_sma').val(response.data.syarat_tahun_lulus_sma);
                 
+                $('#kuota').val(response.data.kuota);
                 $('#nama').val(response.data.nama);
                 $('#tahun').val(response.data.tahun);
                 $('#daftar_mulai').val(response.data.daftar_mulai);
@@ -417,17 +467,21 @@
 
                 if(response.data.ada_wawancara)
                     $('#ada_wawancara').prop("checked", true);
-                if(response.data.ada_survei_lapangan)
-                    $('#ada_survei_lapangan').prop("checked", true);
+                if(response.data.ada_verifikasi_lapangan)
+                    $('#ada_verifikasi_lapangan').prop("checked", true);
+                if(response.data.ada_ujian_cbt)
+                    $('#ada_ujian_cbt').prop("checked", true);
+                if(response.data.ada_verifikasi_berkas)
+                    $('#ada_verifikasi_berkas').prop("checked", true);
 
-                if(response.data.butuh_data_orang_tua)
-                    $('#butuh_data_orang_tua').prop("checked", true);
-                if(response.data.butuh_data_nilai_raport)
-                    $('#butuh_data_nilai_raport').prop("checked", true);
-                if(response.data.butuh_data_orang_tua)
-                    $('#butuh_data_pendidikan_akhir').prop("checked", true);
-                if(response.data.butuh_data_rumah)
-                    $('#butuh_data_rumah').prop("checked", true);
+                if(response.data.perlu_data_orang_tua)
+                    $('#perlu_data_orang_tua').prop("checked", true);
+                if(response.data.perlu_data_nilai_raport)
+                    $('#perlu_data_nilai_raport').prop("checked", true);
+                if(response.data.perlu_data_pendidikan_akhir)
+                    $('#perlu_data_pendidikan_akhir').prop("checked", true);
+                if(response.data.perlu_data_rumah)
+                    $('#perlu_data_rumah').prop("checked", true);
                 $('#is_aktif').val(response.data.is_aktif);    
                 $('#deskripsi').summernote('code', response.data.deskripsi);
 

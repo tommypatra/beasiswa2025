@@ -6,10 +6,14 @@ use App\Models\Beasiswa;
 use App\Models\UserRole;
 use App\Models\Mahasiswa;
 use App\Models\Pendaftar;
+use App\Models\Pewawancara;
+use App\Models\Verifikator;
 use App\Models\WilayahDesa;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 
 if (!function_exists('daftarAkses')) {
@@ -31,7 +35,10 @@ if (!function_exists('daftarAkses')) {
 if (!function_exists('upload')) {
     function upload($file, $folder)
     {
-        $namaFile = time() . '_' . $file->getClientOriginalName(); // Nama unik
+        $ext = $file->getClientOriginalExtension();
+        $namaFile = time() . '_' . uniqid() . '.' . $ext;
+        // $namaFile = time() . '_' . $file->getClientOriginalName(); // Nama unik
+
         $path_dokumen = $folder . '/' . date('Y');
         if (!Storage::disk('public')->exists($path_dokumen)) {
             Storage::disk('public')->makeDirectory($path_dokumen);
@@ -70,11 +77,69 @@ if (!function_exists('dataWilayah')) {
     }
 }
 
+if (!function_exists('cariVerifikatorBerkas')) {
+    function cariVerifikatorBerkas($beasiswa_id)
+    {
+        $verifikator = Verifikator::withCount([
+            'verifikatorPendaftar as total_peserta' => function ($query) {
+                $query->select(DB::raw('count(distinct pendaftar_id)'));
+            }
+        ])
+            ->where('beasiswa_id', $beasiswa_id)
+            ->orderBy('total_peserta', 'asc') // paling sedikit dulu
+            ->orderBy('id', 'asc') // kalau sama, ambil id terkecil
+            ->first();
+
+        return $verifikator?->id;
+    }
+}
+
+if (!function_exists('cariPewawancara')) {
+    function cariPewawancara($beasiswa_id)
+    {
+        $pewawancara = Pewawancara::withCount([
+            'pesertaWawancara as total_peserta' => function ($query) {
+                $query->select(DB::raw('count(distinct pendaftar_id)'));
+            }
+        ])
+            ->where('beasiswa_id', $beasiswa_id)
+            ->orderBy('total_peserta', 'asc') // paling sedikit dulu
+            ->orderBy('id', 'asc') // kalau sama, ambil id terkecil
+            ->first();
+
+        return $pewawancara?->id;
+    }
+}
+
+if (!function_exists('skorAkreditasi')) {
+    function skorAkreditasi($akreditasi)
+    {
+        $akreditasiMap = [
+            'A' => env('AKREDITASI_A', 100),
+            'B' => env('AKREDITASI_B', 80),
+            'C' => env('AKREDITASI_C', 60),
+        ];
+        $skorAkredit = env('AKREDITASI_NONE', 30);
+        if (isset($akreditasiMap[$akreditasi])) {
+            $skorAkredit = $akreditasiMap[$akreditasi];
+        }
+        return $skorAkredit;
+    }
+}
+
+if (!function_exists('pembalik')) {
+    function pembalik($nilai, $totalPilihan)
+    {
+        return ($totalPilihan - $nilai + 1) / $totalPilihan;
+    }
+}
+
+
 if (!function_exists('validasiPendaftaran')) {
     function validasiPendaftaran($beasiswa_id)
     {
         $user_id = auth()->id();
-        $user = User::with(["nilaiRaport", "orangTua", "rumah", "mahasiswa", "pendidikanAkhir"])->where("id", $user_id)->first();
+        $user = User::with(["identitas", "nilaiRaport", "orangTua", "rumah", "mahasiswa", "pendidikanAkhir"])->where("id", $user_id)->first();
 
         $beasiswa = Beasiswa::where('id', $beasiswa_id)
             ->selectRaw('*, CASE 
@@ -84,6 +149,7 @@ if (!function_exists('validasiPendaftaran')) {
             ->first();
 
         $data['user'] = $user;
+        $data['identitas'] = optional($user->identitas)->wilayah_desa_id ? true : false;
         $data['angkatan_mahasiswa'] = true;
         $data['lulus_sma'] = true;
 

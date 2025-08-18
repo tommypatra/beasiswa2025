@@ -109,15 +109,50 @@ class OrangTuaController extends Controller
                 'orangTua.pendapatanIbu',
                 'orangTua.pendidikanBapak',
                 'orangTua.pendidikanIbu',
-                // 'rumah.pilihanKepemilikanRumah',
-                // 'rumah.pilihanMck',
-                // 'rumah.pilihanListrik',
-                // 'rumah.pilihanSumberAir',
-                // 'rumah.pilihanSumberListrik'
             ])->where('id', $id)->firstOrFail();
 
-            $respon_data = new DataOrangTuaResource($data, $jumlahPilihan);
+            //makin sedikit faktor makin tidak mampu
+            $faktor_tanggungan = ($data->orangTua->tanggungan <= 2) ? 3 / 3 : (($data->orangTua->tanggungan <= 4) ? 2 / 3 : 1 / 3);
+            if (!$data->orangTua->status_hidup_bapak_kandung || !$data->orangTua->status_hidup_ibu_kandung) {
+                $faktor_tanggungan = 1;
+            }
 
+            $faktor_bapak_pekerjaan = $data->orangTua->status_hidup_bapak_kandung
+                ? pembalik($data->orangTua->pekerjaanBapak->nilai, $jumlahPilihan['pekerjaan'])
+                : 1;
+
+            $faktor_bapak_pendidikan = $data->orangTua->status_hidup_bapak_kandung
+                ? pembalik($data->orangTua->pendidikanBapak->nilai, $jumlahPilihan['pendidikan'])
+                : 1;
+
+            $faktor_bapak_pendapatan = $data->orangTua->status_hidup_bapak_kandung
+                ? pembalik($data->orangTua->pendapatanBapak->nilai, $jumlahPilihan['pendapatan'])
+                : 1;
+
+            $faktor_ibu_pekerjaan = $data->orangTua->status_hidup_ibu_kandung
+                ? pembalik($data->orangTua->pekerjaanIbu->nilai, $jumlahPilihan['pekerjaan'])
+                : 1;
+
+            $faktor_ibu_pendidikan = $data->orangTua->status_hidup_ibu_kandung
+                ? pembalik($data->orangTua->pendidikanIbu->nilai, $jumlahPilihan['pendidikan'])
+                : 1;
+
+            $faktor_ibu_pendapatan = $data->orangTua->status_hidup_ibu_kandung
+                ? pembalik($data->orangTua->pendapatanIbu->nilai, $jumlahPilihan['pendapatan'])
+                : 1;
+
+            // Bobot
+            $skor_akhir = 0;
+            $skor_akhir += ($faktor_bapak_pekerjaan * 0.20);
+            $skor_akhir += ($faktor_bapak_pendidikan * 0.05);
+            $skor_akhir += ($faktor_bapak_pendapatan * 0.20);
+            $skor_akhir += ($faktor_ibu_pekerjaan * 0.20);
+            $skor_akhir += ($faktor_ibu_pendidikan * 0.05);
+            $skor_akhir += ($faktor_ibu_pendapatan * 0.20);
+            $skor_akhir += ($faktor_tanggungan * 0.10);
+            $data->skor_akhir = round($skor_akhir * 100, 2);
+
+            $respon_data = new DataOrangTuaResource($data, $jumlahPilihan);
             return response()->json([
                 'status' => true,
                 'message' => 'Data ditemukan',

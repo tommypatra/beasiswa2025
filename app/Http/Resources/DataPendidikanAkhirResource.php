@@ -26,6 +26,7 @@ class DataPendidikanAkhirResource extends JsonResource
             'nisn' => $this->pendidikanAkhir->nisn,
             'tahun_lulus' => $this->pendidikanAkhir->tahun_lulus,
             'nilai_akhir_lulus' => $this->pendidikanAkhir->nilai_akhir_lulus,
+            'skor_akhir' => $this->skor_akhir,
 
             'verifikasi_lapangan_skor' => $this->pendidikanAkhir->verifikasi_lapangan_skor,
             'verifikasi_lapangan_hasil' => $this->pendidikanAkhir->verifikasi_lapangan_hasil,

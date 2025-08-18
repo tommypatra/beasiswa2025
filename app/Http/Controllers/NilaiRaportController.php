@@ -93,6 +93,29 @@ class NilaiRaportController extends Controller
     {
         try {
             $dataQuery = User::with(['pendidikanAkhir', 'nilaiRaport'])->where('id', $id)->firstOrFail();
+            $akreditasi   = $dataQuery->pendidikanAkhir->akreditasi ?? null;
+            $skorAkredit = skorAkreditasi($akreditasi);
+
+            // bobot
+            $bobot_raport       = 0.7;
+            $bobot_akreditasi  = 0.3;
+
+            // Hitung rata-rata nilai rapor
+            $nilai = $dataQuery->nilaiRaport;
+            $totalNilai = (
+                ($nilai->smt_1_nilai ?? 0) +
+                ($nilai->smt_2_nilai ?? 0) +
+                ($nilai->smt_3_nilai ?? 0) +
+                ($nilai->smt_4_nilai ?? 0) +
+                ($nilai->smt_5_nilai ?? 0) +
+                ($nilai->smt_6_nilai ?? 0)
+            );
+            $rataRaport = $totalNilai / 6;
+
+            // hitung skor akhir
+            $skorAkhir = ($rataRaport * $bobot_raport) + ($skorAkredit * $bobot_akreditasi);
+            $skorAkhir = round($skorAkhir, 2);
+            $dataQuery->skor_akhir = $skorAkhir;
 
             return response()->json([
                 'status' => true,

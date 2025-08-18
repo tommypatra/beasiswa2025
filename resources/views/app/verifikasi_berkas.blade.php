@@ -158,7 +158,7 @@
                                             <input type="hidden" id="id" name="id">
                                             <div class="row">
                                                 <div class="col-lg-8 mb-3">
-                                                    <select class="form-control" name="verifikasi_berkas_hasil" id="verifikasi_berkas_hasil" required>
+                                                    <select class="form-control" name="verifikasi_berkas_hasil" id="verifikasi_berkas_hasil" data-bobot="" required>
                                                         <option value="">Pilih</option>
                                                         <option value="1">Memenuhi Syarat</option>
                                                         <option value="0">Tidak Memenuhi Syarat</option>
@@ -207,7 +207,6 @@
                                             </div>
                                             <div class="col-lg-4 mb-3">
                                                 <input type="number" class="form-control" id="total_skor" placeholder="total skor" name="total_skor" required>
-                                                <i>wajib di isi 0 - 100</i>                                             
                                             </div>
                                             <div class="col-lg-12 mb-3">
                                                 <textarea class="form-control" name="catatan" id="catatan" rows="3"></textarea>
@@ -333,7 +332,6 @@
                                     <td class="text-center">
                                         <div class="d-flex flex-column align-items-center gap-2">
                                             <button class="btn btn-secondary btn-mulai-verifikasi" data-beasiswa_id="${dt.beasiswa.id}" data-verifikator_id="${dt.id}" type="button" ${tombol_aktif}>Verifikasi</button>
-                                            <button class="btn btn-secondary btn-peserta" data-beasiswa_id="${dt.beasiswa.id}" type="button" ${tombol_aktif}>Daftar Peserta</button>
                                         </div>
                                     </td>
                                 </tr>`;
@@ -370,7 +368,7 @@
         });
 
         $(document).on('input', '#search-input', function() {
-            console.log('Event input berjalan');
+            // console.log('Event input berjalan');
             dataLoad();
         });      
 
@@ -382,6 +380,19 @@
 
         });
 
+        function opsi_instrumen(data_opsi){
+            //untuk pengaturan opsi instrumen
+            let opsi_pilihan_instrumen = [
+                {label: "Memenuhi Syarat", skor: 1},
+                {label: "Tidak Memenuhi Syarat", skor: 0}
+            ];
+
+            if (data_opsi && data_opsi.length > 0) {
+                opsi_pilihan_instrumen = data_opsi;
+            }
+            return opsi_pilihan_instrumen;
+        }
+
 
         async function pesertaVerifikasi(halaman=1) {
             try {
@@ -390,6 +401,9 @@
                 let syarat = await execAsync(`${base_url}/api/data-upload-syarat?beasiswa_id=${beasiswa_id}&pendaftar_id=${peserta.pendaftar.id}`, 'GET', token);
                 let body = $('#body-verifikasi-berkas');
                 let pendaftar_id = peserta.pendaftar.id;
+
+                console.log(syarat);
+
                 data_syarat=syarat.data;
                 
                 $('.mahasiswa-nama').text(peserta.user.name);
@@ -430,9 +444,17 @@
                                 lengkap=false;
                         }
 
+                        let opsi_pilihan_instrumen = opsi_instrumen(item.instrumen_opsi);
+                        
+                        let opsi_found = opsi_pilihan_instrumen.find(
+                            o => o.skor == item.upload_syarat?.verifikasi_berkas_hasil
+                        ) ?? null;
+                        
+                        // console.log(opsi_pilihan_instrumen);
+
                         let keterangan_upload = (!item.upload_syarat) ? `<span class="badge bg-info fs-2">tidak upload</span>`:
                                                 (item.upload_syarat?.verifikasi_berkas_hasil == null) ? `<span class="badge bg-warning fs-2">belum periksa</span>` : 
-                                                (item.upload_syarat.verifikasi_berkas_hasil) ? `<span class="badge bg-success fs-2">MS</span>` : `<span class="badge bg-danger fs-2">TMS</span>`; 
+                                                (item.upload_syarat.verifikasi_berkas_hasil) ? `<span class="badge bg-success fs-2">${opsi_found.label}</span>` : `<span class="badge bg-danger fs-2">TMS</span>`; 
                         listHtml += `<li class="list-group-item syarat-item" data-index="${index}" style="cursor:pointer;">
                                         <div class="d-flex align-items-center w-100">
                                             <div class="d-flex flex-column text-start">
@@ -553,6 +575,18 @@
                             </div>`;   
             $('#syarat-upload').html(syarat);
 
+            //untuk pengaturan opsi instrumen
+            let opsi_pilihan_instrumen = opsi_instrumen(data.instrumen_opsi);
+            let $select = $("#verifikasi_berkas_hasil");
+            $select.empty().append('<option value="">Pilih</option>');
+            opsi_pilihan_instrumen.forEach(function(opt, idx) {
+                // console.log(opt);
+                $select.append(`<option value="${opt.skor}">${opt.label}</option>`);
+            });
+            //untuk akhir untuk pengaturan opsi instrumen
+
+            $("#verifikasi_berkas_hasil").attr('data-bobot',data.bobot);
+
             if (data.upload_syarat){
                 let jenis = data.jenis;
                 let url = base_url+'/'+data.upload_syarat.dokumen;
@@ -560,6 +594,8 @@
                 $("#verifikasi_berkas_hasil").prop("disabled", false);
                 $("#verifikasi_berkas_catatan").prop("disabled", false);
                 $("#verifikasi_berkas_skor").prop("disabled", false);
+
+
                 $("#btn-simpan").prop("disabled", false);
                 $(`#id`).val(data.upload_syarat.id);
                 $(`#verifikasi_berkas_hasil`).val(data.upload_syarat.verifikasi_berkas_hasil);
@@ -609,12 +645,21 @@
                 let postData = $.param(data);                
 
                 saveData(url, 'PUT', postData, function (response) {
-                    appShowNotification(true, ["simpan validasi final berhasil dilakukan!"]);
+                    appShowNotification(true, ["simpan validasi berhasil dilakukan!"]);
                     syarat_index++;
                     pesertaVerifikasi(current_page_verifikasi);
                 });
             }
         });
+
+        $(document).on("change","#verifikasi_berkas_hasil",function(){
+            let bobot = parseFloat($(this).attr('data-bobot')) || 0;
+            let nilai = parseFloat($(this).val()) || 0;
+            let total_pilihan = $(this).find("option[value!='']").length;            
+            let skor_akhir = (nilai / (total_pilihan - 1)) * bobot;            
+            $('#verifikasi_berkas_skor').val(skor_akhir.toFixed(2));
+        });
+
 
         $("#form-validasi-final").validate({
             rules: {

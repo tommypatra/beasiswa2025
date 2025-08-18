@@ -28,7 +28,13 @@ class MahasiswaController extends Controller
         $dataQuery = Mahasiswa::with(['programstudi.fakultas', 'user', 'user.identitas'])->orderBy('program_studi_id', 'asc')->orderBy('nim', 'asc');
 
         if ($request->filled('search')) {
-            $dataQuery->where('nama', 'like', '%' . $request->search . '%');
+            $search = $request->search;
+            $dataQuery->where(function ($query) use ($search) {
+                $query->where('nim', 'like', "%$search%")
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%$search%");
+                    });
+            });
         }
 
         if ($request->filled('user_id')) {

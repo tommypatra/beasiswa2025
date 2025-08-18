@@ -43,6 +43,10 @@
                         <label class="form-label">Sumber Biaya</label>
                         <select name="sumber_biaya_id" id="sumber_biaya_id" class="form-control"></select>
                     </div>
+                    <div class="col-sm-5 mb-3">
+                        <label class="form-label">Nilai UKT</label>
+                        <input name="ukt" id="ukt" type="number" class="form-control" required>
+                    </div>
                     </div>
                 <div class="col-lg-4 mb-3">
                     <label class="form-label">Kartu Mahasiswa</label>
@@ -96,9 +100,11 @@
 
     function renderData(ada,data){
         if (ada) {
-            $('#id').val(data.id);
+            let id=(data.mahasiswa_id)?data.mahasiswa_id:data.id;
+            $('#id').val(id);
             $('#tahun_masuk').val(data.tahun_masuk);
             $('#nim').val(data.nim);
+            $('#ukt').val(data.ukt);
             $('#program_studi_id').val(data.program_studi_id);
             $('#sumber_biaya_id').val(data.sumber_biaya_id);
             $('#previewImage').show("");
@@ -106,6 +112,7 @@
         }else{
             $('#tahun_masuk').val("{{ date('Y') }}");
             $('#id').val("");
+            $('#ukt').val("");
             $('#nim').val("");
             $('#program_studi_id').val("");
             $('#sumber_biaya_id').val("");

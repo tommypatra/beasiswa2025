@@ -15,6 +15,16 @@ class SkPenerima extends Model
 
     public function penerima()
     {
-        return $this->belongsTo(Penerima::class);
+        return $this->hasMany(Penerima::class);
+    }
+
+    public function jadwalMonitoring()
+    {
+        return $this->hasMany(JadwalMonitoring::class);
+    }
+
+    public function monitoring()
+    {
+        return $this->belongsTo(Monitoring::class);
     }
 }

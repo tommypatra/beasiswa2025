@@ -14,10 +14,32 @@ class WebController extends Controller
         dd(auth()->user());
     }
 
-    public function login()
+    public function loginAdmin()
     {
         return view('login');
     }
+
+    public function loginSia()
+    {
+        return view('login_sia');
+    }
+
+    public function kelulusan($id)
+    {
+        return view('app.kelulusan', ['id' => $id]);
+    }
+
+
+    public function skPenerima()
+    {
+        return view('app.sk_penerima');
+    }
+
+    public function skPenerimaBeasiswa()
+    {
+        return view('app.sk_penerima_beasiswa');
+    }
+
 
     public function dashboard()
     {

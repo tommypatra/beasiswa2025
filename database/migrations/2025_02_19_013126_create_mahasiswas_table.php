@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nim', 50);
             $table->string('kartu_mahasiswa', 180)->nullable();
             $table->year('tahun_masuk')->nullable();
+            $table->integer('ukt')->nullable();
             $table->foreignId('program_studi_id')->nullable();
             $table->foreign('program_studi_id')->references('id')->on('program_studis')->restrictOnDelete();
             $table->foreignId('sumber_biaya_id')->nullable();

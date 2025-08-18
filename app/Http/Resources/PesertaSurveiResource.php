@@ -35,7 +35,7 @@ class PesertaSurveiResource extends JsonResource
                 'updated_at' => $survei->updated_at,
                 'catatan' => $survei->catatan,
                 'hasil' => $survei->hasil,
-                'surveyor_id' => $this->id,
+                'surveyor_id' => $survei->surveyor->id,
                 'surveyor' => $survei->surveyor->user->name,
             ],
             'user_id' => $user->id,

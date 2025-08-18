@@ -136,14 +136,14 @@
                     const row = `<tr>
                                     <td>${no++}</td>
                                     <td>
-                                        ${dt.beasiswa.tahun}
+                                        ${dt.tahun}
                                     </td>
                                     <td>
-                                        ${dt.beasiswa.nama}
+                                        ${dt.nama}
                                     </td>
                                     <td>
-                                        ${dt.beasiswa.wawancara_mulai} sd 
-                                        ${dt.beasiswa.wawancara_selesai}
+                                        ${dt.wawancara_mulai} sd 
+                                        ${dt.wawancara_selesai}
                                     </td>
                                     <td>
                                         <span class="badge rounded-pill fs-2 fw-medium bg-secondary-subtle text-secondary">Jumlah Peserta : ${dt.total_pendaftar}</span>
@@ -153,7 +153,7 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="d-flex flex-column align-items-center gap-2">
-                                            <button class="btn btn-secondary btn-daftar-peserta" data-beasiswa_id="${dt.beasiswa.id}" type="button" ${tombol_aktif}>Daftar Peserta</button>
+                                            <button class="btn btn-secondary btn-daftar-peserta" data-beasiswa_id="${dt.id}" type="button" ${tombol_aktif}>Daftar Peserta</button>
                                         </div>
                                     </td>
                                 </tr>`;

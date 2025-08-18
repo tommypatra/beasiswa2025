@@ -1,3 +1,16 @@
+$(document).ajaxSend(function (event, jqxhr, settings) {
+    if (settings.headers && settings.headers['X-Form-Submit']) {
+        $('form').find('input, select, textarea, button').prop('disabled', true);
+    }
+});
+
+$(document).ajaxComplete(function (event, jqxhr, settings) {
+    if (settings.headers && settings.headers['X-Form-Submit']) {
+        $('form').find('input, select, textarea, button').prop('disabled', false);
+    }
+});
+
+
 function appShowNotification(vStatus, vPesan) {
     let vIcon = "success";
     let vTitle = "Berhasil";
@@ -129,8 +142,8 @@ function showHideModal(el,status=true){
     }
 }
 
-function showText(param=null){
-    return (param)?param:"";
+function showText(param=null,def=""){
+    return (param)?param:def;
 }
 
 function ajaxRequest(url, method, data=null, successCallback, errorCallback) {
@@ -299,6 +312,55 @@ async function execAsync(vapi_url, vmethod = "GET", vtoken = null, vbody = null)
         return await response.json();
     } catch (error) {
         console.error('Error:', error);
+    }
+}
+
+async function execNewAsync(vapi_url, vmethod = "GET", vtoken = null, vbody = null) {
+    try {
+        let headers = {};
+        if (vtoken) {
+            headers['Authorization'] = `Bearer ${vtoken}`;
+        }
+
+        let options = {
+            method: vmethod,
+            headers: headers
+        };
+
+        if (vbody) {
+            if (vbody instanceof FormData) {
+                options.body = vbody;
+            } else {
+                headers['Content-Type'] = 'application/json';
+                options.body = JSON.stringify(vbody);
+            }
+        }
+
+        const response = await fetch(vapi_url, options);
+
+        if (!response.ok) {
+            if(response.status === 401){
+                window.location.href = '/login';
+                return;
+            }
+            let errorData;
+            try {
+                errorData = await response.json();
+            } catch {
+                errorData = { message: response.statusText };
+            }
+            throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
+        }
+
+        if (response.status === 204) {
+            // No Content
+            return {};
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error:', error);
+        return { error: true, message: error.message || 'Unknown error' };
     }
 }
 

@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('nama', 100)->nullable();
             $table->string('tingkat', 100)->nullable();
             $table->string('pjp', 100)->nullable();
-            $table->text('bukti')->nullable();
+            $table->string('bukti', 180)->nullable();
+            $table->text('keterangan')->nullable();
             $table->tinyInteger('nilai')->nullable();
             $table->foreignId('kegiatan_id')->nullable();
             $table->foreign('kegiatan_id')->references('id')->on('kegiatans')->restrictOnDelete();

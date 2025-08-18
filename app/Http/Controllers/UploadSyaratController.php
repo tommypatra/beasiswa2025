@@ -12,7 +12,9 @@ use App\Http\Requests\UploadSyaratRequest;
 use App\Http\Resources\DataUploadResource;
 use App\Http\Resources\UploadSyaratResource;
 use App\Http\Resources\DataDokumenUploadResource;
+use App\Http\Resources\VerifikasiUploadResource;
 use App\Models\VerifikatorPendaftar;
+
 
 class UploadSyaratController extends Controller
 {
@@ -76,19 +78,14 @@ class UploadSyaratController extends Controller
     {
         $default_limit = env('DEFAULT_LIMIT', 30);
 
-        $dataQuery = Syarat::with(['UploadSyarat' => function ($q) use ($request) {
-            $q->where('pendaftar_id', $request->pendaftar_id);
-        }])
-            ->where('beasiswa_id', $request->beasiswa_id)
+        $dataQuery = Syarat::where('beasiswa_id', $request->beasiswa_id)
+            ->with(['uploadSyarat' => function ($q) use ($request) {
+                $q->where('pendaftar_id', $request->pendaftar_id);
+            }])
             ->orderBy('id', 'asc');
 
-        if ($request->filled('page')) {
-            $limit = $request->filled('limit') ? $request->limit : $default_limit;
-            $page = $request->filled('page') ? (int) $request->page : 1;
-            $data = $dataQuery->paginate($limit, ['*'], 'page', $page);
-        } else {
-            $data = $dataQuery->get();
-        }
+        $data = $dataQuery->get();
+        $data = VerifikasiUploadResource::collection($data);
 
         $dataRespon = [
             'status' => true,

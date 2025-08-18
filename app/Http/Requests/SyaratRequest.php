@@ -28,8 +28,10 @@ class SyaratRequest extends FormRequest
             'deskripsi' => 'nullable',
             'is_wajib' => 'required|numeric',
             'is_aktif' => 'required|numeric',
+            'bobot' => 'required|numeric',
             'beasiswa_id' => 'required|numeric',
             'contoh' => 'nullable|file|max:2048',
+            'instrumen_opsi' => 'nullable|string',
 
         ];
     }
@@ -42,6 +44,8 @@ class SyaratRequest extends FormRequest
             'deskripsi' => 'deskripsi',
             'is_wajib' => 'status wajib',
             'is_aktif' => 'status aktif',
+            'bobot' => 'bobot',
+            'instrumen_opsi' => 'instrumen_opsi',
             'beasiswa_id' => 'pilihan beasiswa',
             'contoh' => 'contoh syarat',
         ];

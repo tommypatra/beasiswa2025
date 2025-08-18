@@ -49,6 +49,8 @@ class PendaftarRequest extends FormRequest
         $validator->after(function ($validator) use ($data) {
             if (!$data->pendaftaran_aktif) {
                 $validator->errors()->add('pendaftaran', 'Maaf, pendaftaran sudah tertutup!');
+            } elseif (!$data->identitas) {
+                $validator->errors()->add('pendaftaran', 'Maaf, lengkapi dulu semua data identitas anda!');
             } elseif (!$data->nilai_raport) {
                 $validator->errors()->add('pendaftaran', 'Maaf, nilai raport tidak boleh kosong!');
             } elseif (!$data->orang_tua) {

@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Beasiswa;
+use App\Models\Pendaftar;
 use App\Models\Verifikator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\VerifikatorPendaftar;
 use App\Http\Requests\VerifikatorRequest;
 use App\Http\Resources\VerifikatorResource;
 
@@ -15,6 +17,40 @@ class VerifikatorController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    public function getPesertaVerifikasi($beasiswa_id, $hasil)
+    {
+        if (!in_array($hasil, [0, 1])) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Parameter hasil harus 0 atau 1'
+            ], 422);
+        }
+
+        $beasiswa = Beasiswa::select('id', 'ada_verifikasi_berkas', 'ada_verifikasi_lapangan', 'ada_ujian_cbt', 'ada_wawancara')
+            ->find($beasiswa_id);
+        if (!$beasiswa) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Beasiswa tidak ditemukan'
+            ], 404);
+        }
+
+        $pendaftarIds = Pendaftar::where('beasiswa_id', $beasiswa_id)
+            ->whereHas('verifikatorPendaftar', function ($query) use ($hasil) {
+                $query->where('hasil', $hasil);
+            })
+            ->pluck('id');
+
+        return response()->json([
+            'status' => true,
+            'beasiswa' => $beasiswa,
+            'pendaftar_ids' => $pendaftarIds,
+            'total' => $pendaftarIds->count()
+        ]);
+    }
+
+
     public function index(Request $request, $beasiswa_id)
     {
         $dataQuery = Verifikator::with(['beasiswa', 'user', 'verifikatorPendaftar.pendaftar.mahasiswa.user'])->where('beasiswa_id', $beasiswa_id)->orderBy('beasiswa_id', 'asc')->orderBy('user_id', 'asc');

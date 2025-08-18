@@ -116,6 +116,7 @@
                                     <div class="btn btn-sm btn-outline-primary mb-1" id="data-kondisi-rumah" style="display:none">Kondisi Rumah</div>
                                     <div class="btn btn-sm btn-outline-primary mb-1" id="data-orang-tua" style="display:none">Orang Tua</div>
                                     <div class="btn btn-sm btn-outline-primary mb-1" id="data-dokumen-upload">Dokumen Upload</div>
+                                    <div class="btn btn-sm btn-outline-primary mb-1" id="dokumentasi-survei">Dokumentasi Survei</div>
                                 </div>
                             </div>
                         </div>
@@ -133,7 +134,9 @@
                                         <div class="col-lg-8 mb-3">
                                             <select class="form-control" name="verifikasi_lapangan_hasil" id="verifikasi_lapangan_hasil" required>
                                                 <option value="">Pilih</option>
-                                                <option value="2">Sesuai</option>
+                                                <option value="4">Sangat Sesuai</option>
+                                                <option value="3">Sesuai</option>
+                                                <option value="2">Cukup Sesuai</option>
                                                 <option value="1">Kurang Sesuai</option>
                                                 <option value="0">Tidak Sesuai</option>
                                             </select>
@@ -150,7 +153,7 @@
                                     </div>
                 
                                     <div class="mt-1">
-                                        <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
+                                        <button type="submit" class="btn btn-primary" id="btn-simpan1">Simpan</button>
                                     </div>
                                 </form>
                             </div>
@@ -165,16 +168,12 @@
                                         <div class="col-lg-8 mb-3">
                                             <select class="form-control" name="hasil" id="hasil" required>
                                                 <option value="">Pilih</option>
-                                                <option value="3">Sangat Layak</option>
-                                                <option value="2">Layak</option>
-                                                <option value="1">Dipertimbangkan</option>
+                                                <option value="4">Sangat Layak</option>
+                                                <option value="3">Layak</option>
+                                                <option value="2">Cukup Layak</option>
+                                                <option value="1">Kurang Layak</option>
                                                 <option value="0">Tidak Layak</option>
                                             </select>
-                                        </div>
-
-                                        <div class="col-lg-4 mb-3"> 
-                                            <input type="number" class="form-control" id="total_skor" placeholder="total_skor" name="total_skor" required>
-                                            <i>wajib di isi 0 - 100</i>
                                         </div>
 
                                         <div class="col-lg-12 mb-3">
@@ -183,7 +182,7 @@
                                     </div>
                 
                                     <div class="mt-1">
-                                        <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
+                                        <button type="submit" class="btn btn-primary" id="btn-simpan2">Simpan</button>
                                     </div>
                                 </form>
                             </div>
@@ -217,6 +216,10 @@
     var last_page;
     var data_survei;
     var vRespon;
+    var skor_system;
+    var pendaftar_id;
+    var surveyor_id;
+    var survei_peserta;
     
     $(document).ready(function() {
         dataLoad();
@@ -227,11 +230,12 @@
 
         function faktorVerifikasi(){
             let verifikasi = parseInt($('#verifikasi_lapangan_hasil').val());
-            return faktor_verifikasi = verifikasi / 2;            
+            return faktor_verifikasi = verifikasi / 4;        
         }
 
         $('#verifikasi_lapangan_hasil').on('change', function() {
             let judul_komponen = $('#judul-komponen').text().trim();
+            // alert(judul_komponen);
             if(judul_komponen=='Pendidikan Akhir')
                 hitung_skor_pendidikan_akhir();
             else if(judul_komponen=='Raport')
@@ -248,12 +252,17 @@
 
         //data pendidikan akhir
         $(document).on('click','#data-pendidikan-akhir', function(){
+            $('#konten').show();
+            $('#survei-komponen').show();
+            $('#survei-akhir').hide();
             data_pendidikan_akhir();
         });
 
         async function data_pendidikan_akhir(){
             vRespon = await asyncFunction(`${base_url}/api/get-data-pendidikan-akhir/${data_survei.user_id}`);
             vId = vRespon.data.pendidikan_akhir_id;
+            skor_system = vRespon.data.skor_akhir;
+
             $('#verifikasi_lapangan_skor').val(vRespon.data.verifikasi_lapangan_skor);
             $('#verifikasi_lapangan_hasil').val(vRespon.data.verifikasi_lapangan_hasil);
             $('#verifikasi_lapangan_catatan').val(vRespon.data.verifikasi_lapangan_catatan);
@@ -295,33 +304,28 @@
             `);
         }
 
-        function hitung_skor_pendidikan_akhir(){
-            let data=vRespon.data;
-
-            let akreditasi = data.akreditasi;
-            let nilai_akhir_lulus = parseFloat(data.nilai_akhir_lulus);
-
+        function hitung_skor_pendidikan_akhir(){    
             let faktor_verifikasi = faktorVerifikasi();
-            let skor_akreditasi = (akreditasi=='A')?3:(akreditasi=='B')?2:1; 
-            let skor_nilai = (nilai_akhir_lulus/100);
-            let skor_pendidikan = (0.7 * skor_nilai) + (0.3 * (skor_akreditasi / 3));
-
-            let skor_final = (skor_pendidikan * faktor_verifikasi)*100;
-
+            let skor_final = (skor_system * faktor_verifikasi);
             $('#verifikasi_lapangan_skor').val(skor_final.toFixed(2));            
         }
 
         //data raport
         $(document).on('click','#data-raport', function(){
+            $('#konten').show();
+            $('#survei-komponen').show();
+            $('#survei-akhir').hide();
             data_raport();
         });
 
         async function data_raport(){
             vRespon = await asyncFunction(`${base_url}/api/get-data-raport/${data_survei.user_id}`);
             vId = vRespon.data.raport.raport_id;
-            $('#verifikasi_lapangan_skor').val(vRespon.data.raport.verifikasi_lapangan_skor);
-            $('#verifikasi_lapangan_hasil').val(vRespon.data.raport.verifikasi_lapangan_hasil);
-            $('#verifikasi_lapangan_catatan').val(vRespon.data.raport.verifikasi_lapangan_catatan);
+            skor_system = vRespon.data.skor_akhir;
+
+            $('#verifikasi_lapangan_skor').val(vRespon.data.verifikasi_lapangan_skor);
+            $('#verifikasi_lapangan_hasil').val(vRespon.data.verifikasi_lapangan_hasil);
+            $('#verifikasi_lapangan_catatan').val(vRespon.data.verifikasi_lapangan_catatan);
             $('#konten-komponen').html(`
                 <h5 id="judul-komponen">Raport</h5>
                 <div>
@@ -329,80 +333,56 @@
                     <div class="row mb-2">
                         <div class="col-sm-6 fw-bold">Semester I (Nilai/ Peringkat)</div>
                         <div class="col-sm-1">:</div>
-                        <div class="col-sm-5"><span id="smt_1_nilai">${vRespon.data.raport.smt_1_nilai}</span>/ ${vRespon.data.raport.smt_1_peringkat}</div>
+                        <div class="col-sm-5"><span id="smt_1_nilai">${vRespon.data.raport.smt_1_nilai}</span>/ ${showText(vRespon.data.raport.smt_1_peringkat,"-")}</div>
                     </div>
                     <div class="row mb-2">
                         <div class="col-sm-6 fw-bold">Semester II (Nilai/ Peringkat)</div>
                         <div class="col-sm-1">:</div>
-                        <div class="col-sm-5"><span id="smt_2_nilai">${vRespon.data.raport.smt_2_nilai}</span>/ ${vRespon.data.raport.smt_2_peringkat}</div>
+                        <div class="col-sm-5"><span id="smt_2_nilai">${vRespon.data.raport.smt_2_nilai}</span>/ ${showText(vRespon.data.raport.smt_2_peringkat,"-")}</div>
                     </div>
                     <div class="row mb-2">
                         <div class="col-sm-6 fw-bold">Semester III (Nilai/ Peringkat)</div>
                         <div class="col-sm-1">:</div>
-                        <div class="col-sm-5"><span id="smt_3_nilai">${vRespon.data.raport.smt_3_nilai}</span>/ ${vRespon.data.raport.smt_3_peringkat}</div>
+                        <div class="col-sm-5"><span id="smt_3_nilai">${vRespon.data.raport.smt_3_nilai}</span>/ ${showText(vRespon.data.raport.smt_3_peringkat,"-")}</div>
                     </div>
                     <div class="row mb-2">
                         <div class="col-sm-6 fw-bold">Semester IV (Nilai/ Peringkat)</div>
                         <div class="col-sm-1">:</div>
-                        <div class="col-sm-5"><span id="smt_4_nilai">${vRespon.data.raport.smt_4_nilai}</span>/ ${vRespon.data.raport.smt_4_peringkat}</div>
+                        <div class="col-sm-5"><span id="smt_4_nilai">${vRespon.data.raport.smt_4_nilai}</span>/ ${showText(vRespon.data.raport.smt_4_peringkat,"-")}</div>
                     </div>
                     <div class="row mb-2">
                         <div class="col-sm-6 fw-bold">Semester V (Nilai/ Peringkat)</div>
                         <div class="col-sm-1">:</div>
-                        <div class="col-sm-5"><span id="smt_5_nilai">${vRespon.data.raport.smt_5_nilai}</span>/ ${vRespon.data.raport.smt_5_peringkat}</div>
+                        <div class="col-sm-5"><span id="smt_5_nilai">${vRespon.data.raport.smt_5_nilai}</span>/ ${showText(vRespon.data.raport.smt_5_peringkat,"-")}</div>
                     </div>
                     <div class="row mb-2">
                         <div class="col-sm-6 fw-bold">Semester VI (Nilai/ Peringkat)</div>
                         <div class="col-sm-1">:</div>
-                        <div class="col-sm-5"><span id="smt_6_nilai">${vRespon.data.raport.smt_6_nilai}</span>/ ${vRespon.data.raport.smt_6_peringkat}</div>
+                        <div class="col-sm-5"><span id="smt_6_nilai">${vRespon.data.raport.smt_6_nilai}</span>/ ${showText(vRespon.data.raport.smt_6_peringkat,"-")}</div>
                     </div>
                 </div>            
             `);        
         }
 
         function hitung_skor_raport() {
-            let data=vRespon.data;
-            let akreditasi = data.akreditasi;
             let faktor_verifikasi = faktorVerifikasi();
-
-
-            // Faktor akreditasi: A = 3, B = 2, C = 1
-            let faktor_akreditasi = ((akreditasi == 'A') ? 3 : (akreditasi == 'B') ? 2 : 1)/3;
-
-            // Ambil nilai raport dari semester 1 sampai semester 6
-            let nilai_smt1 = parseFloat(data.raport.smt_1_nilai);
-            let nilai_smt2 = parseFloat(data.raport.smt_2_nilai);
-            let nilai_smt3 = parseFloat(data.raport.smt_3_nilai);
-            let nilai_smt4 = parseFloat(data.raport.smt_4_nilai);
-            let nilai_smt5 = parseFloat(data.raport.smt_5_nilai);
-            let nilai_smt6 = parseFloat(data.raport.smt_6_nilai);
-
-            // Hitung rata-rata nilai raport
-            let rata_rata_raport = (nilai_smt1 + nilai_smt2 + nilai_smt3 + nilai_smt4 + nilai_smt5 + nilai_smt6) / 6;
-            // Faktor raport: Skala 0 - 1, jadi bagi dengan 100
-            let faktor_raport = rata_rata_raport / 100;
-
-            // Skor akhir untuk raport (70%)
-            let skor_raport = faktor_raport * 0.7;
-
-            // Skor akhir untuk akreditasi (30%)
-            let skor_akreditasi = faktor_akreditasi * 0.3;
-
-            // Total skor: 70% dari skor raport + 30% dari skor akreditasi
-            let skor_final = ((skor_raport + skor_akreditasi)*faktor_verifikasi) * 100;
-
-            // Tampilkan skor akhir pada elemen tertentu
+            let skor_final = (skor_system*faktor_verifikasi);
             $('#verifikasi_lapangan_skor').val(skor_final.toFixed(2));
         }
 
         //data kondisi rumah
         $(document).on('click','#data-kondisi-rumah', function(){
+            $('#konten').show();
+            $('#survei-komponen').show();
+            $('#survei-akhir').hide();
             data_kondisi_rumah();
         });
 
         async function data_kondisi_rumah(){
             vRespon = await asyncFunction(`${base_url}/api/get-data-kondisi-rumah/${data_survei.user_id}`);
             vId = vRespon.data.rumah_id;
+            skor_system = vRespon.data.skor_akhir;
+
             $('#verifikasi_lapangan_skor').val(vRespon.data.verifikasi_lapangan_skor);
             $('#verifikasi_lapangan_hasil').val(vRespon.data.verifikasi_lapangan_hasil);
             $('#verifikasi_lapangan_catatan').val(vRespon.data.verifikasi_lapangan_catatan);
@@ -456,53 +436,24 @@
         
 
         function hitung_skor_data_kondisi_rumah() {
-            let data = vRespon.data;
-            // Ambil nilai verifikasi hasil lapangan
-
             let faktor_verifikasi = faktorVerifikasi();
-
-            // Menghitung faktor berdasarkan inputan jumlah orang tinggal
-            let faktor_jumlah_orang_tinggal = ((data.jumlah_orang_tinggal <= 3) ? 1 : (data.jumlah_orang_tinggal <= 6) ? 2 : 3)/3;
-
-            // Menghitung faktor berdasarkan luas tanah
-            let faktor_luas_tanah = ((data.luas_tanah <= 90) ? 3 : (data.luas_tanah <= 120) ? 2 : 1)/3;
-
-            // Menghitung faktor berdasarkan luas bangunan
-            let faktor_luas_bangunan = ((data.luas_bangunan <= 36) ? 3 : (data.luas_bangunan <= 90) ? 2 : 1)/3;
-
-            // Menghitung faktor berdasarkan pilihan lainnya yang diambil dari jumlah pilihan
-            let faktor_sumber_listrik = pembalik(data.sumber_listrik_nilai , data.jumlah_pilihan.sumber_listrik);
-            let faktor_sumber_air = pembalik(data.sumber_air_nilai, data.jumlah_pilihan.sumber_air);
-            let faktor_mck = pembalik(data.mck_nilai, data.jumlah_pilihan.mck);
-            let faktor_listrik = pembalik(data.listrik_nilai, data.jumlah_pilihan.listrik);
-            let faktor_kepemilikan_rumah = pembalik(data.kepemilikan_rumah_nilai, data.jumlah_pilihan.kepemilikan_rumah);
-
-            // Kalkulasi skor berdasarkan faktor dan bobot masing-masing
-            let skor = 0;
-            skor += (faktor_luas_tanah * 0.15);  // Bobot 10% untuk luas tanah
-            skor += (faktor_luas_bangunan * 0.15);  // Bobot 15% untuk luas bangunan
-            skor += (faktor_kepemilikan_rumah * 0.15);  // Bobot 15% untuk kepemilikan rumah
-            skor += (faktor_jumlah_orang_tinggal * 0.1);  // Bobot 10% untuk jumlah orang tinggal
-            skor += (faktor_sumber_listrik * 0.15);  // Bobot 10% untuk sumber listrik
-            skor += (faktor_sumber_air * 0.05);  // Bobot 5% untuk sumber air
-            skor += (faktor_mck * 0.05);  // Bobot 5% untuk MCK
-            skor += (faktor_listrik * 0.2);  // Bobot 20% untuk listrik
-
-            // Menghitung skor final (dikalikan faktor verifikasi dan dikali 100 untuk skala 0-100)
-            let skor_final = (skor * faktor_verifikasi) * 100;
-
-            // Menampilkan skor akhir dalam elemen input
+            let skor_final = (skor_system * faktor_verifikasi);
             $('#verifikasi_lapangan_skor').val(skor_final.toFixed(2));
         }
 
         //data orang tua
         $(document).on('click','#data-orang-tua', function(){
+            $('#konten').show();
+            $('#survei-komponen').show();
+            $('#survei-akhir').hide();
             data_orang_tua();
         });
 
         async function data_orang_tua(){
             vRespon = await asyncFunction(`${base_url}/api/get-data-orang-tua/${data_survei.user_id}`);
             vId = vRespon.data.orang_tua_id;
+            skor_system = vRespon.data.skor_akhir;
+
             $('#verifikasi_lapangan_skor').val(vRespon.data.verifikasi_lapangan_skor);
             $('#verifikasi_lapangan_hasil').val(vRespon.data.verifikasi_lapangan_hasil);
             $('#verifikasi_lapangan_catatan').val(vRespon.data.verifikasi_lapangan_catatan);
@@ -572,56 +523,16 @@
         }
 
         function hitung_skor_data_orang_tua() {
-            let data = vRespon.data;
-            // Ambil nilai verifikasi hasil lapangan
             let faktor_verifikasi = faktorVerifikasi();
-
-            let faktor_tanggunan = ((data.tanggungan <= 2) ? 3 : (data.tanggungan <= 4) ? 2 : 1)/3;
-            if(!data.bapak.status || !data.ibu.status){
-                faktor_tanggunan=1;
-            }
-
-            // Normalisasi bapak
-            let faktor_bapak_pekerjaan = (data.bapak.status)?pembalik(data.bapak.pekerjaan_nilai,data.jumlah_pilihan.pekerjaan):1;
-            let faktor_bapak_pendidikan = (data.bapak.status)?pembalik(data.bapak.pendidikan_nilai,data.jumlah_pilihan.pendidikan):1;
-            let faktor_bapak_pendapatan = (data.bapak.status)?pembalik(data.bapak.pendapatan_nilai,data.jumlah_pilihan.pendapatan):1;
-
-            // Normalisasi Ibu
-            let faktor_ibu_pekerjaan = (data.ibu.status)?pembalik(data.ibu.pekerjaan_nilai,data.jumlah_pilihan.pekerjaan):1;
-            let faktor_ibu_pendidikan = (data.ibu.status)?pembalik(data.ibu.pendidikan_nilai,data.jumlah_pilihan.pendidikan):1;
-            let faktor_ibu_pendapatan = (data.ibu.status)?pembalik(data.ibu.pendapatan_nilai,data.jumlah_pilihan.pendapatan):1;
-
-            // console.log(faktor_ibu_pekerjaan,faktor_ibu_pendidikan,faktor_ibu_pendapatan)
-
-            // Kalkulasi skor berdasarkan faktor dan bobot masing-masing
-            let skor = 0;
-            skor += (faktor_bapak_pekerjaan * 0.20);  // Bobot 20% untuk pekerjaan bapak
-            skor += (faktor_bapak_pendidikan * 0.05);  // Bobot 5% untuk pendidikan bapak
-            skor += (faktor_bapak_pendapatan * 0.20);  // Bobot 20% untuk pendapatan bapak
-            skor += (faktor_ibu_pekerjaan * 0.20);  // Bobot 20% untuk pekerjaan ibu
-            skor += (faktor_ibu_pendidikan * 0.05);  // Bobot 5% untuk pendidikan ibu
-            skor += (faktor_ibu_pendapatan * 0.20);  // Bobot 20% untuk pendapatan ibu
-            skor += (faktor_tanggunan * 0.10);  // Bobot 10% untuk tanggungan
-
-            // console.log(
-            //     faktor_bapak_pekerjaan,
-            //     faktor_bapak_pendidikan,
-            //     faktor_bapak_pendapatan,
-            //     faktor_ibu_pekerjaan,
-            //     faktor_ibu_pendidikan,
-            //     faktor_ibu_pendapatan,
-            //     faktor_tanggunan,
-            // );
-
-            // Menghitung skor final (dikalikan faktor verifikasi dan dikali 100 untuk skala 0-100)
-            let skor_final = (skor * faktor_verifikasi) * 100;
-
-            // Menampilkan skor akhir dalam elemen input
+            let skor_final = (skor_system * faktor_verifikasi);
             $('#verifikasi_lapangan_skor').val(skor_final.toFixed(2));
         }
 
         //data dokumen upload
         $(document).on('click','#data-dokumen-upload', function(){
+            $('#konten').show();
+            $('#survei-komponen').show();
+            $('#survei-akhir').hide();
             data_dokumen_upload();
         });
 
@@ -670,6 +581,63 @@
             `);
         }
 
+
+        //data dokumen upload
+        $(document).on('click','#dokumentasi-survei', function(){
+            $('#konten').show();
+            $('#survei-komponen').hide();
+            $('#survei-akhir').hide();
+
+            let upload_path='';
+            if (!survei_peserta.hasil) {
+                upload_path=`   <div class="mb-3">
+                                    <label for="gambar" class="form-label">Pilih Gambar</label>
+                                    <input class="form-control" type="file" name="path" id="path" accept="image/*" required>
+                                    <div class="form-text">Format: JPG, JPEG, PNG, WEBP — Maksimal 4 MB</div>
+                                </div>`;
+            }
+
+            $('#konten-komponen').html(`
+                <h5 id="judul-komponen">Dokumentasi Survei</h5>
+                ${upload_path}               
+                <div class="mb-3" id="list-dokumen">
+                    <p>Data tidak ditemukan.</p>
+                </div>            
+            `);
+
+            dokumentasiSurvei();
+        });
+
+        async function dokumentasiSurvei(){
+            vRespon = await asyncFunction(`${base_url}/api/get-data-dokumentasi-survei/${data_survei.pendaftar_id}`);
+            html=``;
+            if (vRespon.status) {
+                html=`<div class="row">`;
+                vRespon.data.forEach((item, index) => {
+                    let link_gambar=base_url+'/'+item.path;
+                    let btn_hapus='';
+                    if (!survei_peserta.hasil) {
+                        btn_hapus=` <button class="btn btn-danger mt-2 btn-hapus-dokumentasi" data-dokumentasi_survei_id="${item.id}" type="button" >
+                                        <iconify-icon icon="solar:trash-bin-minimalistic-outline" class="nav-small-cap-icon fs-4"></iconify-icon>
+                                    </button>`;            
+                    }
+                    html += `                    
+                    <div class="col-md-4">                    
+                        <a href="${link_gambar}" target="_blank"><img src="${link_gambar}" width="100%"></a>
+                        ${btn_hapus}
+                    </div>
+                    `;
+                });
+                html+=`</div>`;
+
+            } else {
+                html='<p>Data tidak ditemukan.</p>';
+            }
+
+            $('#list-dokumen').html(`${html}`);
+        }
+
+
         async function openPdf(container, urlPdf) {
             container.innerHTML = ''; // Bersihkan isi elemen dulu
             // Cek apakah URL PDF tersedia
@@ -714,6 +682,13 @@
                 console.error('PDF load error:', error);
             }
         }
+        $(document).on('click','.btn-hapus-dokumentasi', function () {
+            const id=$(this).attr('data-dokumentasi_survei_id');
+            deleteData(`${base_url}/api/dokumentasi-survei`, id, function() {
+                appShowNotification(true,['berhasil dilakukan!']);
+                dokumentasiSurvei()
+            });
+        })
 
         $(document).on('shown.bs.collapse', '.accordion-collapse', function () {
             const accordionItem = $(this).closest('.accordion-item');
@@ -782,6 +757,8 @@
                 data_dokumen_upload();            
             }
             // renderSurvei(response.data);
+
+            // console.log(survei_peserta);
         }
 
         function cariSurveyor(data, user_id) {
@@ -858,12 +835,6 @@
             },true);
         }
 
-
-        async function dataWawancara() {
-            let response = await asyncFunction(`${base_url}/api/proses-survei/${pendaftar_id}?page=${page}&beasiswa_id=${beasiswa_id}`);
-            renderSurvei(response.data);
-        }        
-
         $('#btn-refresh').click(function() {
             dataLoad();
         });
@@ -872,6 +843,17 @@
             // console.log('Event input berjalan');
             dataLoad();
         });      
+
+        async function load_data_peserta_survei(){
+            let peserta_survei = await asyncFunction(`${base_url}/api/peserta-survei/${pendaftar_id}`);
+            survei_peserta = peserta_survei.data.survei_peserta[0];            
+            // console.log(survei_peserta);
+            if (survei_peserta.hasil!=null) {
+                disabledForm(true);            
+            }else{
+                disabledForm(false);            
+            }
+        } 
 
 
         $(document).on('click','.btn-instrumen-survei', async function(){
@@ -883,9 +865,13 @@
             $('#survei-komponen').show();
             $('#survei-akhir').hide();
 
+            pendaftar_id=$(this).attr('data-pendaftar_id');
+            surveyor_id=$(this).attr('data-surveyor_id');
+
+            load_data_peserta_survei();
+
             survei_mulai();
             showModal('modal-survei');
-            // console.log(data_survei);
         });
 
 
@@ -897,9 +883,19 @@
                 saveData(url, 'PUT', $(form).serialize(), function(response) {
                     // renderData(response.status,response.data);
                     appShowNotification(true, ['berhasil dilakukan!']);
+                    // kondisiTombol('data-pendidikan-akhir',response.status);
                 });
             }
         });
+
+        function kondisiTombol(id_element,hasil=null){
+            if(hasil){
+                const tombol = $('#'+id_element);            
+                if (tombol.hasClass('btn-outline-primary')) {
+                    tombol.removeClass('btn-outline-primary').addClass('btn-primary');
+                }
+            }
+        }
 
         //validasi dan simpan
         $("#form-survei-akhir").validate({
@@ -908,102 +904,57 @@
                 saveData(url, 'PUT', $(form).serialize(), function(response) {
                     // renderData(response.status,response.data);
                     appShowNotification(true, ['berhasil dilakukan!']);
+                    dataLoad();
+                    load_data_peserta_survei();            
                 });
             }
         });
 
+        function disabledForm(status) {
+            $('#form, #form-survei-akhir')
+                .find('input, select, textarea, button')
+                .prop('disabled', status);
+            
+            $('#btn-simpan1, #btn-simpan2').toggle(!status);
+        }
 
         $('.akhiri-survei').click(async function() {
-            let cek_raport;
-            let cek_orangtua;
-            let cek_pendidikan;
-            let cek_rumah;
-            let cek_upload;
-            let cek_peserta;
-            let total_nilai = 0;
-            let skor_akhir = 0;
-            let pembagi=1;
-
-            if(vBeasiswa.perlu_data_pendidikan_akhir){
-                cek_pendidikan = await asyncFunction(`${base_url}/api/get-data-pendidikan-akhir/${data_survei.user_id}`);
-                if(cek_pendidikan.data.verifikasi_lapangan_hasil==null){
-                    appShowNotification(false, ['data pendidikan akhir wajib di survei terlebih dahulu!']);
-                    return;
-                }
-                pembagi++;
-                total_nilai+=parseFloat(cek_pendidikan.data.verifikasi_lapangan_skor || 0);
-            }
-            if(vBeasiswa.perlu_data_nilai_raport){
-                cek_raport = await asyncFunction(`${base_url}/api/get-data-raport/${data_survei.user_id}`);
-                if(cek_raport.data.raport.verifikasi_lapangan_hasil==null){
-                    appShowNotification(false, ['data nilai raport wajib di survei terlebih dahulu!']);
-                    return;
-                }
-                pembagi++;
-                total_nilai+=parseFloat(cek_raport.data.raport.verifikasi_lapangan_skor || 0);
-            }
-            if(vBeasiswa.perlu_data_rumah){
-                cek_rumah = await asyncFunction(`${base_url}/api/get-data-kondisi-rumah/${data_survei.user_id}`);
-                if(cek_rumah.data.verifikasi_lapangan_hasil==null){
-                    appShowNotification(false, ['data kondisi rumah wajib di survei terlebih dahulu!']);
-                    return;
-                }
-                pembagi++;
-                total_nilai+=parseFloat(cek_rumah.data.verifikasi_lapangan_skor || 0);
-            }
-            if(vBeasiswa.perlu_data_orang_tua){
-                cek_orangtua = await asyncFunction(`${base_url}/api/get-data-orang-tua/${data_survei.user_id}`);
-                if(cek_orangtua.data.verifikasi_lapangan_hasil==null){
-                    appShowNotification(false, ['data orang tua wajib di survei terlebih dahulu!']);
-                    return;
-                }
-                pembagi++;
-                total_nilai+=parseFloat(cek_orangtua.data.verifikasi_lapangan_skor || 0);
-            }
-            cek_upload = await asyncFunction(`${base_url}/api/get-data-dokumen-upload/${data_survei.pendaftar_id}`);
-            if(cek_upload.data.verifikasi_berkas.verifikasi_lapangan_hasil==null){
-                appShowNotification(false, ['data upload dokumen wajib di survei terlebih dahulu!']);
-                return;
-            }
 
             cek_peserta = await asyncFunction(`${base_url}/api/peserta-survei/${data_survei.pendaftar_id}`);
+            survei_peserta = cek_peserta.data.survei_peserta[0];
+            vId=survei_peserta.id;
 
-            total_nilai+=parseFloat(cek_upload.data.verifikasi_berkas.verifikasi_lapangan_skor || 0);
-            skor_akhir=(total_nilai/pembagi);
-            
-            let pilihan_hasil=0;
-            if(skor_akhir<45){
-                pilihan_hasil=0;
-            }else if(skor_akhir>=45 && skor_akhir<=69.99){
-                pilihan_hasil=1;
-            }else if(skor_akhir>=70 && skor_akhir<=84.99){
-                pilihan_hasil=2;                
-            }else if(skor_akhir>=85 && skor_akhir<=100){
-                pilihan_hasil=3;                
-            }
-
-
-            let tmp_survei = cek_peserta.data.survei_peserta[0];
-            vId=tmp_survei.id;
-
-            if(parseFloat(tmp_survei.hasil)>=0){
-                $('#hasil').val(tmp_survei.hasil);
-                $('#total_skor').val(tmp_survei.total_skor);
-                $('#catatan').val(tmp_survei.catatan);
-            }else{
-                $('#hasil').val(pilihan_hasil);
-                $('#total_skor').val(skor_akhir.toFixed(2));
-                $('#catatan').val("");
-            }
+           
+            // if(parseFloat(survei_peserta.hasil)>=0){
+                $('#hasil').val(survei_peserta.hasil);
+                // $('#total_skor').val(survei_peserta.total_skor);
+                $('#catatan').val(survei_peserta.catatan);
+            // }else{
+            //     $('#hasil').val(pilihan_hasil);
+            //     $('#total_skor').val(skor_akhir.toFixed(2));
+            //     $('#catatan').val("");
+            // }
 
 
-            $('#komponen').hide();
+            $('#komponen').show();
             $('#konten').hide();
             $('#survei-komponen').hide();
             $('#survei-akhir').show();
 
         });
 
+        // Event delegation — aman walau elemen dibuat via AJAX
+        $(document).on('change', '#path', function(e) {
+            var formData = new FormData();
+            formData.append("surveyor_id", surveyor_id);            
+            formData.append("pendaftar_id", pendaftar_id);            
+            formData.append("path", $(this)[0].files[0]);   
+
+            saveData(`${base_url}/api/dokumentasi-survei`, 'POST', formData, function(response) {
+                appShowNotification(true,['berhasil terupload!']);
+                dokumentasiSurvei();
+            });            
+        });
 
     });
 </script>

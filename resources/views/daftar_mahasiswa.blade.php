@@ -328,6 +328,10 @@
                                             <label class="form-label">Sumber Biaya</label>
                                             <select name="sumber_biaya_id" id="sumber_biaya_id" class="form-control" required></select>
                                         </div>
+                                        <div class="col-sm-6 mb-3">
+                                            <label class="form-label">Nilai UKT</label>
+                                            <input name="ukt" id="ukt" type="number" class="form-control" required>
+                                        </div>
                                         </div>
                                     <div class="col-lg-4 mb-3">
                                         <label class="form-label">Kartu Mahasiswa</label>

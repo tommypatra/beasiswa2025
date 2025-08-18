@@ -220,6 +220,14 @@ class PesertaSurveiController extends Controller
             $data_save = $request->validated();
 
             $data = SurveiPeserta::where('id', $id)->firstOrFail();
+
+            //untuk cek sudah upload atau belum
+            $controller = new DokumentasiSurveiController();
+            $response = $controller->dataDokumentasiSurvei($data->pendaftar_id)->getData(); // JSON → object
+            if (!$response->status) {
+                return response()->json(['status' => false, 'message' => 'Sebelum mengakhiri wajib upload foto dokumentasi survei terlebih dahulu', 'data' => null], 500);
+            }
+
             $data->update($data_save);
             DB::commit();
             return response()->json(['status' => true, 'message' => 'berhasil diperbarui', 'data' => $data], 200);

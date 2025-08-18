@@ -4,62 +4,112 @@ namespace App\Http\Controllers;
 
 use App\Models\Predikat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\PredikatRequest;
+use App\Http\Resources\PredikatResource;
 
 class PredikatController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
+        $dataQuery = Predikat::orderBy('nilai_maksimal', 'desc');
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $dataQuery->where(function ($query) use ($search) {
+                $query->where('predikat', 'like', '%' . $search . '%');
+            });
+        }
+
+        $default_limit = env('DEFAULT_LIMIT', 30);
+        $limit = $request->filled('limit') ? $request->limit : $default_limit;
+        $data = $dataQuery->paginate($limit);
+        $resourceCollection = $data->getCollection()->map(function ($item) {
+            return new PredikatResource($item);
+        });
+        $data->setCollection($resourceCollection);
+
+        $dataRespon = [
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ];
+        return response()->json($dataRespon);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PredikatRequest $request)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $data = Predikat::create($request->validated());
+            DB::commit();
+            return response()->json(['status' => true, 'message' => 'data baru berhasil dibuat', 'data' => $data], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat membuat data baru: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Predikat $predikat)
+    public function show(string $id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Predikat $predikat)
-    {
-        //
+        try {
+            $dataQuery = Predikat::where('id', $id)->firstOrFail();
+            return response()->json([
+                'status' => true,
+                'message' => 'Data ditemukan',
+                'data' => new PredikatResource($dataQuery),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+                'data' => null,
+            ], 404);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Predikat $predikat)
+    public function update(PredikatRequest $request, string $id)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $data = Predikat::where('id', $id)->firstOrFail();
+            $data->update($request->validated());
+            DB::commit();
+            return response()->json(['status' => true, 'message' => 'berhasil diperbarui', 'data' => $data], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat memperbarui : ' . $e->getMessage(), 'data' => null], 500);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Predikat $predikat)
+    public function destroy(string $id)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $data = Predikat::where('id', $id)->firstOrFail();
+            $data->delete();
+            DB::commit();
+            return response()->json(null, 204);
+            // return response()->json(['status' => true, 'message' => 'hapus data berhasil dilakukan'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat menghapus : ' . $e->getMessage(), 'data' => null], 500);
+        }
     }
 }

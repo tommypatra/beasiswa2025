@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('url_id', 100)->nullable();
             $table->boolean('is_batal')->default(0);
             $table->boolean('is_finalisasi')->default(0);
+            $table->boolean('is_registrasi_wawancara')->default(0);
+            $table->boolean('is_registrasi_ujian')->default(0);
             $table->text('alasan')->nullable();
             $table->foreignId('mahasiswa_id');
             $table->foreign('mahasiswa_id')->references('id')->on('mahasiswas')->restrictOnDelete();

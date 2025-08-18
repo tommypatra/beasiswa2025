@@ -132,8 +132,8 @@
                         akses_list = '<ul>';
                         $.each(dt.user_role, function(index, item) {
                             akses_list += ` <li>
-                                                ${item.role.nama} 
-                                                <a href="javascript:;" class="hapus-akses" data-id="${item.id}" data-grup_id="${item.role_id}"><iconify-icon icon="solar:trash-bin-minimalistic-outline" class=""></iconify-icon></a>
+                                                ${item.nama} 
+                                                <a href="javascript:;" class="hapus-akses" data-id="${item.user_role_id}" data-grup_id="${item.role_id}"><iconify-icon icon="solar:trash-bin-minimalistic-outline" class=""></iconify-icon></a>
                                             </li>`;
                         });
                         akses_list += '</ul>';
@@ -148,9 +148,9 @@
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item btn-pilih-akses" data-id="${dt.id}" href="javascript:;"><i class="far fa-edit"></i> Akses Pengguna</a></li>
-                                            <li><a class="dropdown-item btn-ganti" data-id="${dt.id}" href="javascript:;"><i class="far fa-edit"></i> Ganti</a></li>
-                                            <li><a class="dropdown-item btn-hapus" data-id="${dt.id}" href="javascript:;"><i class="fas fa-trash-alt"></i> Hapus</a></li>
+                                            <li><a class="dropdown-item btn-pilih-akses" data-id="${dt.user_id}" href="javascript:;"><i class="far fa-edit"></i> Akses Pengguna</a></li>
+                                            <li><a class="dropdown-item btn-ganti" data-id="${dt.user_id}" href="javascript:;"><i class="far fa-edit"></i> Ganti</a></li>
+                                            <li><a class="dropdown-item btn-hapus" data-id="${dt.user_id}" href="javascript:;"><i class="fas fa-trash-alt"></i> Hapus</a></li>
                                         </ul>
                                     </div>
                                 </td>
@@ -228,7 +228,7 @@
                 }
             },
             submitHandler: function(form) {
-                const id = $('#id').val();
+                const id = $('#form #id').val();
                 const type = (id === '') ? 'POST' : 'PUT';
                 const url = (id === '') ? endpoint : endpoint + '/' + id;
                 saveData(url, type, $(form).serialize(), function(response) {
@@ -246,7 +246,7 @@
         $(document).on('click', '.btn-ganti', function() {
             const id = $(this).data('id');
             showDataById(endpoint, id, function(response) {
-                $('#id').val(response.data.id);
+                $('#form #id').val(response.data.user_id);
                 $('#email').val(response.data.email);
                 $('#name').val(response.data.name);
                 showModalForm();

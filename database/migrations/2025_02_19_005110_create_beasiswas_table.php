@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('beasiswas', function (Blueprint $table) {
             $table->id();
+            $table->integer('kuota')->nullable();
             $table->string('nama', 150)->nullable();
             $table->string('syarat_tahun_angkatan_mahasiswa', 50)->nullable();
             $table->string('syarat_tahun_lulus_sma', 50)->nullable();
@@ -28,12 +29,15 @@ return new class extends Migration
             $table->date('wawancara_selesai')->nullable();
             $table->date('pengumuman_verifikasi_berkas')->nullable();
             $table->date('pengumuman_akhir')->nullable();
-            $table->boolean('ada_wawancara')->nullable();
-            $table->boolean('is_aktif')->default(true);
-            $table->boolean('perlu_data_orang_tua')->default(false);
-            $table->boolean('perlu_data_rumah')->default(false);
-            $table->boolean('perlu_data_nilai_raport')->default(false);
-            $table->boolean('perlu_data_pendidikan_akhir')->default(false);
+            $table->boolean('ada_verifikasi_berkas')->nullable()->default(false);
+            $table->boolean('ada_verifikasi_lapangan')->nullable()->default(false);
+            $table->boolean('ada_ujian_cbt')->nullable()->default(false);
+            $table->boolean('ada_wawancara')->nullable()->default(false);
+            $table->boolean('is_aktif')->nullable()->default(true);
+            $table->boolean('perlu_data_orang_tua')->nullable()->default(false);
+            $table->boolean('perlu_data_rumah')->nullable()->default(false);
+            $table->boolean('perlu_data_nilai_raport')->nullable()->default(false);
+            $table->boolean('perlu_data_pendidikan_akhir')->nullable()->default(false);
             $table->foreignId('jenis_beasiswa_id');
             $table->foreign('jenis_beasiswa_id')->references('id')->on('jenis_beasiswas')->restrictOnDelete();
             $table->foreignId('user_id');

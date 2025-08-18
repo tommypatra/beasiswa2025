@@ -29,7 +29,7 @@ class SimpanValidasiSyaratRequest extends FormRequest
                 'max:100' // nilai maksimal
             ],
             'verifikator_id' => 'required|numeric',
-            'verifikasi_berkas_hasil' => 'required|numeric|in:0,1', // Pastikan hanya 0 atau 1 yang diterima
+            'verifikasi_berkas_hasil' => 'required|numeric|in:0,1,2,3,4,5,6,7,8,9,10', // Pastikan hanya 0 atau 1 yang diterima
             'verifikasi_berkas_catatan' => 'required_if:verifikasi_berkas_hasil,0|string|nullable',
         ];
     }

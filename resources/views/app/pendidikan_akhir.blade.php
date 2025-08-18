@@ -77,7 +77,7 @@
                 <div class="col-lg-4 mb-3">
                     <label class="form-label">Nilai Akhir</label>
                     <input name="nilai_akhir_lulus" id="nilai_akhir_lulus" type="text" class="form-control" required>
-                    <div style="font-style: italic">rata rata nilai pada ujian nasional di Ijazah/SKHU/SKL</div>
+                    <div style="font-style: italic">rata rata nilai pada ujian nasional di Ijazah/SKHU/SKL, contoh : 93.50</div>
                 </div>
             </div>
             <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
@@ -98,6 +98,10 @@
     var page = 1;
     $(document).ready(function() {
         dataLoad();
+
+        $(document).on('input', 'input[type="text"]', function() {
+            $(this).val($(this).val().toUpperCase());
+        });
 
         function renderData(ada,data){
             if (ada) {

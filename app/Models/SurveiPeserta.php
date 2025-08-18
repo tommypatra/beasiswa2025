@@ -9,6 +9,7 @@ class SurveiPeserta extends Model
     //
     protected $guarded = ["id"];
 
+
     public function surveyor()
     {
         return $this->belongsTo(Surveyor::class);

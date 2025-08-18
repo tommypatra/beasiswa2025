@@ -27,3 +27,14 @@
         </div>
     </a>
 </li>
+<li class="sidebar-item menu-pengelola">
+    <a class="sidebar-link justify-content-between" 
+        href="{{ route('sk-penerima') }}" aria-expanded="false">
+        <div class="d-flex align-items-center gap-3">
+        <span class="d-flex">
+            <iconify-icon icon="solar:notebook-broken" class=""></iconify-icon>
+        </span>
+        <span class="hide-menu">SK Penerima Beasiswa</span>
+        </div>
+    </a>
+</li>

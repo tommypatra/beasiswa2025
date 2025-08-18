@@ -66,10 +66,25 @@ class PendidikanAkhirController extends Controller
     /**
      * Display the specified resource.
      */
-    public function dataPendidikanAkhir(string $id)
+    public function dataPendidikanAkhir(int $id)
     {
         try {
             $dataQuery = User::with(['pendidikanAkhir'])->where('id', $id)->firstOrFail();
+
+            $nilaiUjian   = floatval($dataQuery->pendidikanAkhir->nilai_akhir_lulus ?? 0);
+            $akreditasi   = $dataQuery->pendidikanAkhir->akreditasi ?? null;
+            // skor akreditasi
+            $skorAkredit = skorAkreditasi($akreditasi);
+
+            // bobot
+            $bobot_ujian       = 0.7;
+            $bobot_akreditasi  = 0.3;
+
+            // hitung skor akhir
+            $skorAkhir = ($nilaiUjian * $bobot_ujian) + ($skorAkredit * $bobot_akreditasi);
+            $skorAkhir = round($skorAkhir, 2);
+            $dataQuery->skor_akhir = $skorAkhir;
+
             return response()->json([
                 'status' => true,
                 'message' => 'Data ditemukan',

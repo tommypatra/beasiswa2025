@@ -90,6 +90,7 @@ class DataOrangTuaResource extends JsonResource
                 'pendapatan_nilai' => $this->orangTua->pendapatanIbu->nilai,
                 'status' => $this->orangTua->status_hidup_ibu_kandung,
             ],
+            'skor_akhir' => $this->skor_akhir,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

@@ -2,6 +2,18 @@
 
 @section('scriptHead')
 <title>Syarat Dokumen Upload</title>
+<style>
+.form-instrumen-opsi ul {
+    list-style-type: disc;   /* pakai bullet titik */
+    padding-left: 1.5rem;    /* kasih indentasi biar rapi */
+    margin: 0.5rem 0;
+}
+
+.form-instrumen-opsi li {
+    margin-bottom: 0.25rem; /* spasi antar list */
+}
+
+</style>
 @endsection
 
 @section('container')
@@ -34,6 +46,7 @@
                         <th width="10%">Wajib</th>
                         <th width="20%">Beasiswa</th>
                         <th width="10%">Aktif</th>
+                        <th width="10%">Skor</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -70,6 +83,10 @@
                             <input name="nama" id="nama" type="text" class="form-control" required>
                         </div>
 						<div class="col-lg-3 mb-3">
+                            <label class="form-label">Bobot Skor</label>
+                            <input name="bobot" id="bobot" type="number" class="form-control" required>
+                        </div>
+						<div class="col-lg-3 mb-3">
                             <label class="form-label">Jenis</label>
                             <select name="jenis" id="jenis"  class="form-control" required>
                                 <option value="pdf">PDF</option>
@@ -82,6 +99,21 @@
                                 <option value="1">Ya</option>
                                 <option value="0">Tidak</option>
                             </select>
+                        </div>
+                        <div class="col-lg-12 mb-3">
+                            <label class="form-label">Instrumen Opsi</label>
+                            <textarea name="instrumen_opsi" id="instrumen_opsi" rows="3" class="form-control"></textarea>
+                            <small class="text-muted d-block mt-1 form-instrumen-opsi">
+                                <ul class="mb-0 ps-3 ">
+                                    <li>Pemisah pilihan gunakan tanda koma (<code>,</code>).</li>
+                                    <li>Skor tertinggi diberikan pada pilihan pertama.</li>
+                                    <li>Skor menurun sesuai urutan penulisan.</li>
+                                    <li>
+                                        Contoh:
+                                        <code>Sangat Sesuai, Sesuai, Cukup Sesuai, Kurang Sesuai, Tidak Sesuai</code>
+                                    </li>
+                                </ul>
+                            </small>
                         </div>
 						<div class="col-lg-12 mb-3">
                             <label class="form-label">Deskripsi</label>
@@ -158,12 +190,14 @@
                                 <td>${(dt.is_wajib)?'Wajib':'Tidak Wajib'}</td>
                                 <td>${dt.beasiswa.nama}</td>
                                 <td>${(dt.is_aktif)?'Aktif':'Tidak Aktif'}</td>
+                                <td>${showText(dt.bobot)}</td>
+
                                 <td>
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item btn-ganti" data-id="${dt.id}" href="javascript:;"><i class="far fa-edit"></i> Ganti</a></li>
-                                            <li><a class="dropdown-item btn-hapus" data-id="${dt.id}" href="javascript:;"><i class="fas fa-trash-alt"></i> Hapus</a></li>
+                                            <li><a class="dropdown-item btn-ganti" data-id="${dt.id}" href="javascript:;"><iconify-icon icon="solar:clapperboard-edit-outline" class=""></iconify-icon> Ganti</a></li>
+                                            <li><a class="dropdown-item btn-hapus" data-id="${dt.id}" href="javascript:;"><iconify-icon icon="solar:trash-bin-trash-outline" class=""></iconify-icon> Hapus</a></li>
                                         </ul>
                                     </div>
                                 </td>
@@ -217,6 +251,7 @@
             $('#form').trigger('reset');
             $('#form input[type="hidden"]').val('');
             $('#contoh').val('');
+            $('#instrumen_opsi').val('');
             $('#beasiswa_id').val(beasiswa_id);
         }
 
@@ -257,6 +292,9 @@
                 $('#nama').val(response.data.nama);
                 $('#jenis').val(response.data.jenis);
                 $('#is_wajib').val(response.data.is_wajib);
+                $('#bobot').val(response.data.bobot);
+                $('#instrumen_opsi').val(response.data.instrumen_opsi);
+
                 $('#is_aktif').val(response.data.is_aktif);
                 $('#deskripsi').val(response.data.deskripsi);
                 showModalForm();

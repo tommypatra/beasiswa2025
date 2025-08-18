@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('path', 150)->nullable();
             $table->foreignId('surveyor_id')->nullable();
             $table->foreign('surveyor_id')->references('id')->on('surveyors')->restrictOnDelete();
-            $table->foreignId('survei_peserta_id')->nullable();
-            $table->foreign('survei_peserta_id')->references('id')->on('survei_pesertas')->restrictOnDelete();
+            $table->foreignId('pendaftar_id')->nullable();
+            $table->foreign('pendaftar_id')->references('id')->on('pendaftars')->restrictOnDelete();
             $table->timestamps();
         });
     }

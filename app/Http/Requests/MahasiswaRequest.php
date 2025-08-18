@@ -26,6 +26,7 @@ class MahasiswaRequest extends FormRequest
         return [
             'nim' => 'required|string',
             'tahun_masuk' => 'required|numeric',
+            'ukt' => 'required|numeric',
             'program_studi_id' => 'required|numeric',
             'sumber_biaya_id' => 'required|numeric',
             'kartu_mahasiswa' => ($isCreate ? 'required' : 'nullable') . '|file|mimes:jpg,png,jpeg|max:2048',
@@ -38,6 +39,7 @@ class MahasiswaRequest extends FormRequest
             'nim' => 'nomor induk mahasiswa',
             'tahun_masuk' => 'tahun masuk',
             'program_studi_id' => 'program studi',
+            'ukt' => 'ukt mahasiswa',
             'sumber_biaya_id' => 'sumber biaya studi',
             'kartu_mahasiswa' => 'kartu mahasiswa',
         ];

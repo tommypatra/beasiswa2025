@@ -13,7 +13,16 @@ return new class extends Migration
     {
         Schema::create('kelulusans', function (Blueprint $table) {
             $table->id();
-            $table->integer('nilai_akhir')->nullable();
+            $table->decimal('nilai_survei', 5, 2)->nullable();
+            $table->decimal('nilai_cbt', 5, 2)->nullable();
+            $table->decimal('nilai_berkas', 5, 2)->nullable();
+            $table->decimal('nilai_orang_tua', 5, 2)->nullable();
+            $table->decimal('nilai_raport', 5, 2)->nullable();
+            $table->decimal('nilai_pendidikan_akhir', 5, 2)->nullable();
+            $table->decimal('nilai_rumah', 5, 2)->nullable();
+            $table->decimal('nilai_wawancara', 5, 2)->nullable();
+            $table->decimal('nilai_ekonomi', 5, 2)->nullable();
+            $table->decimal('nilai_pendidikan', 5, 2)->nullable();
             $table->boolean('is_lulus')->nullable();
             $table->text('catatan')->nullable();
             $table->foreignId('pendaftar_id')->nullable();

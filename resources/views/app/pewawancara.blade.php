@@ -222,7 +222,7 @@ td, th {
                 // console.log(result);
                 
                 $('#info-beasiswa').html(`<h3 id="nama-beasiswa">${result.data.nama}</h3>
-                    Jumlah Pendaftar ${result.data.jumlah_finalisasi}
+                    Peserta Lulus Berkas ${result.data.jumlah_lulus_berkas}
                 `);
                 // data_referensi=result.data.data;
             } catch (error) {

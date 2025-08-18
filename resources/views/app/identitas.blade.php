@@ -57,7 +57,7 @@
                         <textarea name="alamat" id="alamat" rows="3" class="form-control" required></textarea>
                     </div>
                     <div class="col-sm-4 mb-3">
-                        <label class="form-label">Kabupaten</label>
+                        <label class="form-label">Kabupaten/ Kota</label>
                         <input name="wilayah_kabupaten" id="wilayah_kabupaten" data-id="" type="text" class="form-control" required>
                     </div>
                     <div class="col-sm-4 mb-3">
@@ -255,7 +255,7 @@
 
         $("#wilayah_desa").autocomplete({
             source: function (request, response) {
-                let kabupaten_id = $('#wilayah_kabupaten').data("id");
+                let kabupaten_id = $('#wilayah_kabupaten').attr("data-id");
                 // console.log(kabupaten_id);
                 if (!kabupaten_id) {
                     return;

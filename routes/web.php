@@ -7,7 +7,8 @@ use App\Http\Controllers\AuthController;
 Route::get('auth/google', [AuthController::class, 'redirectToGoogle'])->name('google.login');
 Route::get('auth/callback', [AuthController::class, 'handleGoogleCallback']);
 
-Route::get('/login', [WebController::class, 'login'])->name('login');
+Route::get('/login-email', [WebController::class, 'loginAdmin'])->name('login-email');
+Route::get('/login', [WebController::class, 'loginSia'])->name('login');
 Route::get('/dashboard', [WebController::class, 'dashboard'])->name('dashboard');
 Route::get('/pekerjaan', [WebController::class, 'pekerjaan'])->name('pekerjaan');
 Route::get('/pendapatan', [WebController::class, 'pendapatan'])->name('pendapatan');
@@ -48,7 +49,10 @@ Route::get('/verifikator/{id}', [WebController::class, 'verifikator'])->name('ve
 Route::get('/verifikasi-berkas', [WebController::class, 'verifikasiBerkas'])->name('verifikasi-berkas');
 
 
+Route::get('/kelulusan/{id}', [WebController::class, 'kelulusan'])->name('kelulusan');
 Route::get('/surveyor/{id}', [WebController::class, 'surveyor'])->name('surveyor');
+Route::get('/sk-penerima', [WebController::class, 'skPenerima'])->name('sk-penerima');
+Route::get('/sk-penerima-beasiswa', [WebController::class, 'skPenerimaBeasiswa'])->name('sk-penerima-beasiswa');
 
 Route::get('/pewawancara/{id}', [WebController::class, 'pewawancara'])->name('pewawancara');
 

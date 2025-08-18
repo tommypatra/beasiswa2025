@@ -52,4 +52,18 @@ class Beasiswa extends Model
     {
         return $this->hasOne(Surveyor::class);
     }
+
+    public function pesertaWawancara()
+    {
+        return $this->hasManyThrough(
+            PesertaWawancara::class,
+            Pewawancara::class,
+            'beasiswa_id',    // foreign key di tabel pewawancaras
+            'pewawancara_id', // foreign key di tabel peserta_wawancaras
+            'id',             // local key di tabel beasiswas
+            'id'              // local key di tabel pewawancaras
+        )->whereHas('pendaftar.verifikatorPendaftar', function ($q) {
+            $q->where('hasil', 1);
+        });
+    }
 }

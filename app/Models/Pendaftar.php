@@ -8,6 +8,11 @@ class Pendaftar extends Model
 {
     protected $guarded = ["id"];
 
+    public function dokumentasiSurvei()
+    {
+        return $this->hasMany(DokumentasiSurvei::class);
+    }
+
     public function beasiswa()
     {
         return $this->belongsTo(Beasiswa::class);
@@ -55,6 +60,6 @@ class Pendaftar extends Model
 
     public function surveiPeserta()
     {
-        return $this->hasMany(SurveiPeserta::class);
+        return $this->hasOne(SurveiPeserta::class);
     }
 }

@@ -24,6 +24,9 @@ class BeasiswaController extends Controller
             ->orderBy('daftar_mulai', 'desc')
             ->orderBy('nama', 'asc');
 
+        if ($request->filled('beasiswa_id')) {
+            $dataQuery->where('id', $request->beasiswa_id);
+        }
         if ($request->filled('search')) {
             $dataQuery->where('nama', 'like', '%' . $request->search . '%');
         }

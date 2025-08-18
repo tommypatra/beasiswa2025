@@ -28,9 +28,9 @@
                 <thead>
                     <tr>
                         <th width="5%">No</th>
-                        <th width="50%">Nama</th>
-                        <th width="50%">Fakultas</th>
-                        <th width="20%">Singkatan</th>
+                        <th width="15%">ID PRODI</th>
+                        <th width="40%">Nama/ Singkatan</th>
+                        <th width="30%">Fakultas</th>
                         <th width="10%">urut</th>
                         <th>Aksi</th>
                     </tr>
@@ -66,6 +66,10 @@
 						<div class="col-lg-8 mb-3">
                             <label class="form-label">Fakultas</label>
                             <select name="fakultas_id" id="fakultas_id" class="form-control" required></select>
+                        </div>
+						<div class="col-lg-4 mb-3">
+                            <label class="form-label">ID Prodi</label>
+                            <input name="idprodi" id="idprodi" type="text" class="form-control" required>
                         </div>
 						<div class="col-lg-4 mb-3">
                             <label class="form-label">Singkatan</label>
@@ -111,9 +115,9 @@
                 $.each(data, function(index, dt) {
                     const row = `<tr>
                                 <td>${no++}</td>
-                                <td>${dt.nama}</td>
+                                <td>${dt.idprodi}</td>
+                                <td>${dt.nama} (${dt.singkatan})</td>
                                 <td>${dt.fakultas.nama}</td>
-                                <td>${dt.singkatan}</td>
                                 <td>${dt.urut}</td>
                                 <td>
                                     <div class="dropdown">
@@ -205,6 +209,7 @@
                 $('#id').val(response.data.id);
                 $('#singkatan').val(response.data.singkatan);
                 $('#urut').val(response.data.urut);
+                $('#idprodi').val(response.data.idprodi);
                 $('#nama').val(response.data.nama);
                 $('#fakultas_id').val(response.data.fakultas_id);
                 showModalForm();

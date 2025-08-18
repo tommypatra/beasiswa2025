@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('program_studis', function (Blueprint $table) {
             $table->id();
             $table->string('nama', 100)->nullable();
+            $table->string('idprodi', 50)->unique();
             $table->string('singkatan', 50)->nullable();
             $table->integer('urut')->nullable();
             $table->foreignId('fakultas_id')->nullable();

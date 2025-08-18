@@ -70,7 +70,7 @@ class SubKegiatanController extends Controller
     public function show(string $id)
     {
         try {
-            $dataQuery = SubKegiatan::where('id', $id)->firstOrFail();
+            $dataQuery = SubKegiatan::with(['tingkat', 'pjp'])->where('id', $id)->firstOrFail();
             return response()->json([
                 'status' => true,
                 'message' => 'Data ditemukan',

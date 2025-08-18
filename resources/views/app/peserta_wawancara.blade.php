@@ -130,6 +130,7 @@
                                         <div class="col-lg-4 mb-3">
                                             <label class="form-label">Nilai</label>
                                             <input name="nilai" id="nilai" type="number" class="form-control" required>
+                                            <i>Nilai : 0 sd 100</i>
                                         </div>
                 
                                         <div class="col-lg-12 mb-3">

@@ -25,6 +25,7 @@ class ProgramStudiRequest extends FormRequest
         return [
             'nama' => 'required|string|max:150',
             'singkatan' => 'required|string|max:25',
+            'idprodi' => 'required|string|max:25',
             'urut' => 'required|numeric',
             'fakultas_id' => 'required|numeric',
         ];
@@ -35,6 +36,7 @@ class ProgramStudiRequest extends FormRequest
         return [
             'nama' => 'nama',
             'singkatan' => 'singkatan',
+            'idprodi' => 'id prodi',
             'urut' => 'urut',
             'fakultas_id' => 'fakultas',
         ];

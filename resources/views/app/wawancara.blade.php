@@ -167,7 +167,7 @@
 
         async function dataLoad() {
             var search = $('#search-input').val();
-            var url = `${base_url}/api/wawancara?search=${search}`;
+            var url = `${base_url}/api/pewawancara?search=${search}`;
 
             fetchData(url, function(response) {
                 renderData(response);

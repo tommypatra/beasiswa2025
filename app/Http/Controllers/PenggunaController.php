@@ -18,7 +18,7 @@ class PenggunaController extends Controller
      */
     public function index(Request $request)
     {
-        $dataQuery = User::with(['userRole.role'])->orderBy('name', 'asc');
+        $dataQuery = User::with(['userRole.role', 'identitas'])->orderBy('name', 'asc');
 
         if ($request->filled('search')) {
             $dataQuery->where(function ($query) use ($request) {

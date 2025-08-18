@@ -46,6 +46,7 @@ class PendaftaranMahasiswaRequest extends FormRequest
             //mahasiswa
             'nim' => 'required|string',
             'tahun_masuk' => 'required|numeric',
+            'ukt' => 'required|numeric',
             'program_studi_id' => 'required|numeric',
             'sumber_biaya_id' => 'required|numeric',
             'kartu_mahasiswa' => 'required|file|mimes:jpg,png,jpeg|max:750',
@@ -99,6 +100,7 @@ class PendaftaranMahasiswaRequest extends FormRequest
 
             //mahasiswa
             'nim' => 'nomor induk mahasiswa',
+            'ukt' => 'nilai ukt',
             'tahun_masuk' => 'tahun masuk',
             'program_studi_id' => 'program studi',
             'sumber_biaya_id' => 'sumber biaya studi',

@@ -39,7 +39,7 @@
                 <form id="login-form">
                   <div class="mb-3">
                     <label for="email" class="form-label">User/Email</label>
-                    <input type="email" class="form-control" id="email" name="email" required>
+                    <input type="text" class="form-control" id="email" name="email" required>
                   </div>
                   <div class="mb-4">
                     <label for="password" class="form-label">Password</label>
@@ -55,7 +55,7 @@
                     {{-- <a class="text-primary fw-bold" href="./index.html">Forgot Password ?</a> --}}
                   </div>
                   <button type="submit" data-method="masuk" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">Masuk</button>
-                  <button type="submit" data-method="simpeg" class="btn btn-success w-100 py-8 fs-4 mb-4 rounded-2">Masuk Dengan Simpeg</button>
+                  <a href="{{ url('/login-sia') }}" class="btn btn-success w-100 py-8 fs-4 mb-4 rounded-2">Masuk Dengan Akun SIA</a>
                   <a href="{{ route('google.login') }}" class="btn btn-danger w-100 py-8 fs-4 mb-4 rounded-2">Masuk Dengan Google</a>
                   <div class="d-flex align-items-center justify-content-center">
                     <p class="fs-4 mb-0 fw-bold">Belum ada akun?</p>
@@ -153,7 +153,7 @@
         submitHandler: function (form) {
             var method = $('button[type="submit"]:focus').data('method');
 
-            if (method === 'simpeg') {
+            if (method === 'akun_sia') {
                 alert('Login dengan Simpeg');
             } else {
                 login(form);

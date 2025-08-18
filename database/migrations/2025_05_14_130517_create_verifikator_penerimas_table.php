@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('verifikator_beasiswa', function (Blueprint $table) {
+        Schema::create('verifikator_penerima', function (Blueprint $table) {
             $table->id();
             $table->tinyInteger('status')->nullable();
             $table->text('catatan')->nullable();
