@@ -20,7 +20,8 @@
     }
   </style>
   <script type="text/javascript">
-    const base_url = '{{ url("/") }}';
+    // const base_url = '{{ url("/") }}';
+    const base_url = "https://ioss.iainkendari.ac.id";
     var user_id;
   </script>
   @yield('scriptHead')  
