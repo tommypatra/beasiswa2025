@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 Route::get('auth/google', [AuthController::class, 'redirectToGoogle'])->name('google.login');
 Route::get('auth/callback', [AuthController::class, 'handleGoogleCallback']);
 
+Route::get('/', [WebController::class, 'loginSia']);
 Route::get('/login-email', [WebController::class, 'loginAdmin'])->name('login-email');
 Route::get('/login', [WebController::class, 'loginSia'])->name('login');
 Route::get('/dashboard', [WebController::class, 'dashboard'])->name('dashboard');
