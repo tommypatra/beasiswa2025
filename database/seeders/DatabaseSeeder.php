@@ -154,6 +154,7 @@ class DatabaseSeeder extends Seeder
         ];
         foreach ($dtdef as $dt) {
             ProgramStudi::create([
+                'idprodi' => $dt['idprodi'],
                 'nama' => $dt['nama'],
                 'singkatan' => $dt['singkatan'],
                 'urut' => $dt['urut'],
