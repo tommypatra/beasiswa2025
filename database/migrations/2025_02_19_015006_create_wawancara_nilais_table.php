@@ -22,7 +22,10 @@ return new class extends Migration
             $table->foreignId('soal_wawancara_id')->nullable();
             $table->foreign('soal_wawancara_id')->references('id')->on('soal_wawancaras')->restrictOnDelete();
             $table->timestamps();
-            $table->unique(['pewawancara_id', 'soal_wawancara_id', 'pendaftar_id']);
+            $table->unique(
+                ['pewawancara_id', 'soal_wawancara_id', 'pendaftar_id'],
+                'uniq_wawancara_nilai' // nama alias unik kolom
+            );
         });
     }
 
