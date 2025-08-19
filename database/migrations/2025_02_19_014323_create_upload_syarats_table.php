@@ -24,7 +24,7 @@ return new class extends Migration
             $table->foreign('pendaftar_id')->references('id')->on('pendaftars')->restrictOnDelete();
             $table->foreignId('syarat_id')->nullable();
             $table->foreign('syarat_id')->references('id')->on('syarats')->restrictOnDelete();
-            $table->unique(['pendaftar_id', 'pendaftar_id']);
+            $table->unique(['pendaftar_id', 'syarat_id']);
             $table->timestamps();
         });
     }
