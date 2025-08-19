@@ -241,6 +241,7 @@ class DatabaseSeeder extends Seeder
                 'wawancara_selesai' => date('Y-m-26'),
                 'pengumuman_verifikasi_berkas' => date('Y-m-23'),
                 'pengumuman_akhir' => date('Y-m-27'),
+                'bobot' => 200,
                 'ada_wawancara' => 1,
                 'perlu_data_orang_tua' => 1,
                 'perlu_data_rumah' => 1,
@@ -254,6 +255,8 @@ class DatabaseSeeder extends Seeder
                 'syarat_tahun_angkatan_mahasiswa' => "2024,2023,2022",
                 'syarat_tahun_lulus_sma' => null,
                 'tahun' => 2025,
+                'bobot' => 100,
+
                 'daftar_mulai' => date('Y-m-1'),
                 'daftar_selesai' => date('Y-m-20'),
                 'verifikasi_berkas_mulai' => date('Y-m-20'),
@@ -280,6 +283,7 @@ class DatabaseSeeder extends Seeder
                 'syarat_tahun_angkatan_mahasiswa' => $dt['syarat_tahun_angkatan_mahasiswa'],
                 'syarat_tahun_lulus_sma' => $dt['syarat_tahun_lulus_sma'],
                 'tahun' => $dt['tahun'],
+                'bobot' => $dt['bobot'],
                 'daftar_mulai' => $dt['daftar_mulai'],
                 'daftar_selesai' => $dt['daftar_selesai'],
                 'verifikasi_berkas_mulai' => $dt['verifikasi_berkas_mulai'],
@@ -302,24 +306,26 @@ class DatabaseSeeder extends Seeder
 
         //role user
         $dtdef = [
-            ['beasiswa_id' => 1, 'nama' => 'KIP/ KKS', 'jenis' => 'image', 'deskripsi' => 'Jika memiliki', 'is_wajib' => 0],
-            ['beasiswa_id' => 1, 'nama' => 'Kartu Tanda Pengenal (KTP)', 'jenis' => 'image', 'deskripsi' => 'Scan KTP asli, jika hilang scan surat ketrangan asli dari pemerintah setempat', 'is_wajib' => 1],
-            ['beasiswa_id' => 1, 'nama' => 'Ijazah SMA', 'jenis' => 'pdf', 'deskripsi' => 'Scan ijazah asli atau legalisir stempel asli', 'is_wajib' => 1],
-            ['beasiswa_id' => 1, 'nama' => 'Raport Semester 1 sd 6', 'jenis' => 'pdf', 'deskripsi' => 'Scan asli atau legalisir stempel asli', 'is_wajib' => 1],
-            ['beasiswa_id' => 1, 'nama' => 'Sertifikat Prestasi', 'jenis' => 'pdf', 'deskripsi' => 'Scan sertifikat asli (sertifikat juara 1 sd 5 baik prestasi akademik atau non akademik)', 'is_wajib' => 1],
-            ['beasiswa_id' => 1, 'nama' => 'Foto Rumah', 'jenis' => 'pdf', 'deskripsi' => 'Foto bagian depan, belakang dan dapur', 'is_wajib' => 1],
-            ['beasiswa_id' => 1, 'nama' => 'Surat Keterangan Tidak Mampu', 'jenis' => 'pdf', 'deskripsi' => 'Wajib bagi yang tidak memiliki KIP/KKS (wajib mengikuti format yang telah ditentukan)', 'is_wajib' => 0],
-            ['beasiswa_id' => 1, 'nama' => 'Formulir Permohonan Beasiswa', 'jenis' => 'pdf', 'deskripsi' => 'Wajib asli (contoh format terlampir)', 'is_wajib' => 1],
+            ['beasiswa_id' => 1, 'bobot' => 20, 'instrumen_opsi' => 'Ada, Tidak Ada/Sesuai', 'nama' => 'KIP/ KKS', 'jenis' => 'image', 'deskripsi' => 'Jika memiliki', 'is_wajib' => 0],
+            ['beasiswa_id' => 1, 'bobot' => 20, 'instrumen_opsi' => 'Ada, Tidak Ada/Sesuai',  'nama' => 'Kartu Tanda Pengenal (KTP)', 'jenis' => 'image', 'deskripsi' => 'Scan KTP asli, jika hilang scan surat ketrangan asli dari pemerintah setempat', 'is_wajib' => 1],
+            ['beasiswa_id' => 1, 'bobot' => 20, 'instrumen_opsi' => 'Ada, Tidak Ada/Sesuai',  'nama' => 'Ijazah SMA', 'jenis' => 'pdf', 'deskripsi' => 'Scan ijazah asli atau legalisir stempel asli', 'is_wajib' => 1],
+            ['beasiswa_id' => 1, 'bobot' => 20, 'instrumen_opsi' => 'Ada, Tidak Ada/Sesuai',  'nama' => 'Raport Semester 1 sd 6', 'jenis' => 'pdf', 'deskripsi' => 'Scan asli atau legalisir stempel asli', 'is_wajib' => 1],
+            ['beasiswa_id' => 1, 'bobot' => 20, 'instrumen_opsi' => 'Tingkat Internasional, Tingkat Nasional, Tingkat Provinsi, Tingkat Kota/Kabupaten, Tingkat Sekolah/Kecamatan, Tingkat Kelurahan/Desa',  'nama' => 'Sertifikat Prestasi', 'jenis' => 'pdf', 'deskripsi' => 'Scan sertifikat asli (sertifikat juara 1 sd 5 baik prestasi akademik atau non akademik)', 'is_wajib' => 1],
+            ['beasiswa_id' => 1, 'bobot' => 20, 'instrumen_opsi' => 'Sangat Sesuai, Sesuai, Cukup Sesuai, Kurang Sesuai, Tidak Sesuai',  'nama' => 'Foto Rumah', 'jenis' => 'pdf', 'deskripsi' => 'Foto bagian depan, belakang dan dapur', 'is_wajib' => 1],
+            ['beasiswa_id' => 1, 'bobot' => 20, 'instrumen_opsi' => 'Sangat Sesuai, Kurang Sesuai, Sudah Ada KIP-KKS/ Tidak Sesuai',  'nama' => 'Surat Keterangan Tidak Mampu', 'jenis' => 'pdf', 'deskripsi' => 'Wajib bagi yang tidak memiliki KIP/KKS (wajib mengikuti format yang telah ditentukan)', 'is_wajib' => 0],
+            ['beasiswa_id' => 1, 'bobot' => 20, 'instrumen_opsi' => 'Sangat Sesuai, Kurang Sesuai, Tidak Sesuai',  'nama' => 'Formulir Permohonan Beasiswa', 'jenis' => 'pdf', 'deskripsi' => 'Wajib asli (contoh format terlampir)', 'is_wajib' => 1],
 
-            ['beasiswa_id' => 2, 'nama' => 'Kartu Tanda Pengenal (KTP)', 'jenis' => 'image', 'deskripsi' => 'Scan KTP asli, jika hilang scan surat ketrangan asli dari pemerintah setempat', 'is_wajib' => 1],
-            ['beasiswa_id' => 2, 'nama' => 'KHS Semester Terakhir', 'jenis' => 'pdf', 'deskripsi' => 'Wajib asli', 'is_wajib' => 1],
-            ['beasiswa_id' => 2, 'nama' => 'Surat Permohonan Beasiswa', 'jenis' => 'pdf', 'deskripsi' => 'Wajib asli (contoh format terlampir)', 'is_wajib' => 1],
+            ['beasiswa_id' => 2, 'bobot' => 20, 'instrumen_opsi' => 'Ada, Tidak Ada/Sesuai',  'nama' => 'Kartu Tanda Pengenal (KTP)', 'jenis' => 'image', 'deskripsi' => 'Scan KTP asli, jika hilang scan surat ketrangan asli dari pemerintah setempat', 'is_wajib' => 1],
+            ['beasiswa_id' => 2, 'bobot' => 20, 'instrumen_opsi' => 'Ada, Tidak Ada/Sesuai',  'nama' => 'KHS Semester Terakhir', 'jenis' => 'pdf', 'deskripsi' => 'Wajib asli', 'is_wajib' => 1],
+            ['beasiswa_id' => 2, 'bobot' => 20, 'instrumen_opsi' => 'Ada, Tidak Ada/Sesuai',  'nama' => 'Surat Permohonan Beasiswa', 'jenis' => 'pdf', 'deskripsi' => 'Wajib asli (contoh format terlampir)', 'is_wajib' => 1],
 
         ];
         foreach ($dtdef as $dt) {
             Syarat::create([
                 'beasiswa_id' => $dt['beasiswa_id'],
                 'nama' => $dt['nama'],
+                'bobot' => $dt['bobot'],
+                'instrumen_opsi' => $dt['instrumen_opsi'],
                 'jenis' => $dt['jenis'],
                 'deskripsi' => $dt['deskripsi'],
                 'is_wajib' => $dt['is_wajib'],
