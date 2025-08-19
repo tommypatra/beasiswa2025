@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="{{ asset('template/materialm/assets/css/styles.min.css') }}" />
   <link href="{{ asset('js/sweetalert2/dist/sweetalert2.min.css') }}" rel="stylesheet">
   <script type="text/javascript">
+    // const base_url = "https://ioss.iainkendari.ac.id";
     const base_url = '{{ url("/") }}';
   </script>
 </head>
