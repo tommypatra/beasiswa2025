@@ -55,7 +55,7 @@
                     {{-- <a class="text-primary fw-bold" href="./index.html">Forgot Password ?</a> --}}
                   </div>
                   <button type="submit" data-method="masuk" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">Masuk</button>
-                  <a href="{{ url('/login-sia') }}" class="btn btn-success w-100 py-8 fs-4 mb-4 rounded-2">Masuk Dengan Akun SIA</a>
+                  <a href="{{ url('/login') }}" class="btn btn-success w-100 py-8 fs-4 mb-4 rounded-2">Masuk Dengan Akun SIA</a>
                   <a href="{{ route('google.login') }}" class="btn btn-danger w-100 py-8 fs-4 mb-4 rounded-2">Masuk Dengan Google</a>
                   <div class="d-flex align-items-center justify-content-center">
                     <p class="fs-4 mb-0 fw-bold">Belum ada akun?</p>
