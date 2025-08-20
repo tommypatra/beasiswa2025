@@ -111,6 +111,7 @@
                                     <li>
                                         Contoh:
                                         <code>Sangat Sesuai, Sesuai, Cukup Sesuai, Kurang Sesuai, Tidak Sesuai</code>
+                                        <code>Ada, Tidak Ada</code>
                                     </li>
                                 </ul>
                             </small>
@@ -179,7 +180,7 @@
             pagination.empty();
             if (data.length > 0) {
                 $.each(data, function(index, dt) {
-                    const contoh=(dt.contoh)?`<a href="${base_url}/storage/${dt.contoh}" target="_blank"><span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">Contoh</span></a>`:"";
+                    const contoh=(dt.contoh)?`<a href="${base_url}/${dt.contoh}" target="_blank"><span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">Contoh</span></a>`:"";
                     const row = `<tr>
                                 <td>${no++}</td>
                                 <td>
