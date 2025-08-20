@@ -57,8 +57,9 @@ class BeasiswaController extends Controller
     {
         try {
             DB::beginTransaction();
-            $request->merge(['user_id' => auth()->user()->id]);
-            $data = Beasiswa::create($request->validated());
+            $data_post = $request->validated();
+            $data_post['user_id'] = auth()->user()->id;
+            $data = Beasiswa::create($data_post);
             DB::commit();
             return response()->json(['status' => true, 'message' => 'data baru berhasil dibuat', 'data' => $data], 201);
         } catch (\Exception $e) {
@@ -114,8 +115,11 @@ class BeasiswaController extends Controller
     {
         try {
             DB::beginTransaction();
+            $data_post = $request->validated();
+            $data_post['user_id'] = auth()->user()->id;
+
             $data = Beasiswa::where('id', $id)->firstOrFail();
-            $data->update($request->validated());
+            $data->update($data_post);
             DB::commit();
             return response()->json(['status' => true, 'message' => 'berhasil diperbarui', 'data' => $data], 200);
         } catch (\Exception $e) {
