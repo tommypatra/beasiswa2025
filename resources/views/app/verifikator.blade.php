@@ -366,6 +366,7 @@ td, th {
             select: function (event, ui) {
                 $(this).val(ui.item.value); 
                 $("#user_id").val(ui.item.user_id);
+                // alert(user_id)
                 return false;
             }
         });        
