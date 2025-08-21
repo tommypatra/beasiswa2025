@@ -97,9 +97,8 @@ class VerifikatorController extends Controller
     {
         try {
             DB::beginTransaction();
-            $data_post = $request->validated();
-            $data_post['user_id'] = auth()->user()->id;
-            $data = Verifikator::create($data_post);
+            $datasave = $request->validated();
+            $data = Verifikator::create($datasave);
             DB::commit();
             return response()->json(['status' => true, 'message' => 'data baru berhasil dibuat', 'data' => $data], 201);
         } catch (\Exception $e) {
@@ -136,12 +135,9 @@ class VerifikatorController extends Controller
     {
         try {
             DB::beginTransaction();
-            $data_post = $request->validated();
-            $data_post['user_id'] = auth()->user()->id;
-
             $data = Verifikator::where('id', $id)->firstOrFail();
 
-            $data->update($data_post);
+            $data->update($request->validated());
             DB::commit();
             return response()->json(['status' => true, 'message' => 'berhasil diperbarui', 'data' => $data], 200);
         } catch (\Exception $e) {

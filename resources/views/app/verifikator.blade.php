@@ -355,7 +355,7 @@ td, th {
                             return {
                                 label: item.name, 
                                 value: item.name, 
-                                id: item.id
+                                user_id: item.user_id
                             };
                         }));
                     }
@@ -365,7 +365,7 @@ td, th {
             minLength: 3,
             select: function (event, ui) {
                 $(this).val(ui.item.value); 
-                $("#user_id").val(ui.item.id);
+                $("#user_id").val(ui.item.user_id);
                 return false;
             }
         });        

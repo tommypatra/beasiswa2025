@@ -59,6 +59,8 @@ class BeasiswaController extends Controller
             DB::beginTransaction();
             $data_post = $request->validated();
             $data_post['user_id'] = auth()->user()->id;
+
+            // $request->merge(['user_id' => auth()->user()->id]);
             $data = Beasiswa::create($data_post);
             DB::commit();
             return response()->json(['status' => true, 'message' => 'data baru berhasil dibuat', 'data' => $data], 201);
