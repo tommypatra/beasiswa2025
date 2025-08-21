@@ -23,7 +23,7 @@ class VerifikatorRequest extends FormRequest
     {
         $id = $this->route('verifikator');
         return [
-            'user_id' => 'required|numeric',
+            // 'user_id' => 'required|numeric',
             'beasiswa_id' => 'required|numeric',
         ];
     }
@@ -31,7 +31,7 @@ class VerifikatorRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'user_id' => 'akun verifikator',
+            // 'user_id' => 'akun verifikator',
             'beasiswa_id' => 'pilihan beasiswa',
         ];
     }
