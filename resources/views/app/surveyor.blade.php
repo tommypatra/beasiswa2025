@@ -84,7 +84,7 @@ td, th {
                     <tr>
                         <th width="5%"></th>
                         <th width="5%">No</th>
-                        <th width="35%">Nama Verifikator</th>
+                        <th width="35%">Nama Surveyor</th>
                         <th width="35%">Daftar Peserta (Nama/ Nim/ Program Studi)</th>
                         <th width="5%">Aksi</th>
                     </tr>
@@ -116,7 +116,7 @@ td, th {
                 <div class="modal-body">
                     <div class="row">
 						<div class="col-sm-12 mb-3">
-                            <label class="form-label">Verifikator</label>
+                            <label class="form-label">Surveyor</label>
                             <input name="nama" id="nama" type="text" class="form-control" required>
                         </div>
                     </div>
@@ -372,7 +372,7 @@ td, th {
                             return {
                                 label: item.name, 
                                 value: item.name, 
-                                id: item.id
+                                user_id: item.user_id
                             };
                         }));
                     }
@@ -382,7 +382,7 @@ td, th {
             minLength: 3,
             select: function (event, ui) {
                 $(this).val(ui.item.value); 
-                $("#user_id").val(ui.item.id);
+                $("#user_id").val(ui.item.user_id);
                 return false;
             }
         });        
