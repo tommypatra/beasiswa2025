@@ -14,6 +14,17 @@ class PendaftarRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        $data = validasiPendaftaran($this->input('beasiswa_id'));
+
+        if ($data->user->mahasiswa) {
+            $this->merge([
+                'mahasiswa_id' => $data->user->mahasiswa->id,
+            ]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -21,13 +32,6 @@ class PendaftarRequest extends FormRequest
      */
     public function rules(): array
     {
-        // $id = $this->input('id');
-        $data = validasiPendaftaran($this->input('beasiswa_id'));
-        // dd($data->user->mahasiswa);
-        if ($data->user->mahasiswa) {
-            $this->merge(['mahasiswa_id' => $data->user->mahasiswa->id]);
-        }
-
         return [
             'beasiswa_id' => 'required|numeric',
             'mahasiswa_id' => 'required|numeric',
