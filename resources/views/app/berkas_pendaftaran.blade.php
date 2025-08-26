@@ -102,7 +102,7 @@ function renderData(data){
         is_finalisasi=pendaftar.is_finalisasi;
         $.each(syarat, function(index, dt) {
             var is_wajib=(dt.is_wajib)?`<span class="badge rounded-pill fs-2 bg-danger">wajib</span>`:`<span class="badge rounded-pill fs-2 bg-warning">tidak wajib</span>`;
-            const contoh=(dt.contoh)?`<div class="mb-2"><i>Wajib sama dengan format berikut <a href="${base_url}/${dt.contoh}" target="_blank"><span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">Download Contoh Format</span></a></i></div>`:"";
+            const contoh=(dt.contoh)?`<div class="mb-2"><i><a href="${base_url}/${dt.contoh}" target="_blank"><span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">Download Contoh Format</span></a></i></div>`:"";
 
             const jenis_dokumen=(dt.jenis.toLowerCase()==='pdf')?`application/pdf`:`image/png, image/jpeg, image/jpg`;
             var upload_syarat="";
