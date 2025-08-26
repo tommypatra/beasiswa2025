@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('pendaftars', function (Blueprint $table) {
             $table->id();
-            $table->string('no_pendaftaran', 100);
+            $table->string('no_pendaftaran', 100)->nullable();
             $table->string('url_id', 100)->nullable();
             $table->boolean('is_batal')->default(0);
             $table->boolean('is_finalisasi')->default(0);
