@@ -234,6 +234,8 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::resource('upload-syarat', UploadSyaratController::class);
         Route::resource('rumah', RumahController::class);
 
+        Route::get('detail-pendaftar/{pendaftar_id}', [PendaftarController::class, 'detailPendaftar']);
+
         Route::put('batalkan-pendaftaran/{id}', [PendaftarController::class, 'pembatalan']);
         Route::put('pendaftaran-selesai/{id}', [PendaftarController::class, 'pendaftaranSelesai']);
         Route::put('daftar-kembali/{id}', [PendaftarController::class, 'daftarKembali']);

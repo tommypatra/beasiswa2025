@@ -75,7 +75,7 @@ async function initPage() { // agar di load secara berurutan
 
 async function dataLoad() {
     try {
-        let result = await execAsync(`${base_url}/api/pendaftar/${id}`, 'GET', token);
+        let result = await execAsync(`${base_url}/api/detail-pendaftar/${id}`, 'GET', token);
         renderData(result.data);
     } catch (error) {
         console.error("Terjadi kesalahan:", error);
@@ -83,20 +83,21 @@ async function dataLoad() {
 }       
 
 function renderData(data){
-    if (data.pendaftar.length>0) {
-        let beasiswa = data;
+    
+    if (data.mahasiswa) {
+        let beasiswa = data.beasiswa;
         let syarat = data.syarat;
-        let pendaftar = data.pendaftar[0];
-        let mahasiswa = pendaftar.mahasiswa;
+        let pendaftar = data;
+        let mahasiswa = data.mahasiswa;
         let konten_syarat ='';
         if(!mahasiswa){
             alert('akses ditolak');
             window.location.replace(`${base_url}/pendaftar`);
         }
         url_id=pendaftar.url_id;
-        $('#id').val(pendaftar.id);
+        $('#id').val(pendaftar.pendaftar_id);
         $('#beasiswa-deskripsi').text(beasiswa.nama);
-        $('#identitas-pendaftar').text(`Data Mahasiswa : ${localStorage.getItem('nama')}/ ${mahasiswa.nim}/ ${mahasiswa.program_studi.nama}`);
+        $('#identitas-pendaftar').text(`Data Mahasiswa : ${localStorage.getItem('nama')}/ ${mahasiswa.nim}/ ${mahasiswa.program_studi_nama}`);
         siap_finaliasi=true;
         is_finalisasi=pendaftar.is_finalisasi;
         $.each(syarat, function(index, dt) {
@@ -107,7 +108,6 @@ function renderData(data){
             var upload_syarat="";
             // console.log(dt.upload_syarat);
             var upload_syarat_id="";
-
 
             if(dt.upload_syarat){
                 let timestamp = dt.upload_syarat.created_at.replace('T', ' ').split('.')[0];
@@ -159,6 +159,7 @@ function renderData(data){
         });
         
         $('#syarat-dokumen').html(konten_syarat);
+        // alert(siap_finaliasi)
         if(siap_finaliasi){
             $('#btn-pendaftaran-selesai').attr('disabled',false);
             $('#btn-pendaftaran-selesai').removeClass('btn-warning').addClass('btn-primary');
@@ -166,8 +167,7 @@ function renderData(data){
             $('#btn-pendaftaran-selesai').attr('disabled',true);
             $('#btn-pendaftaran-selesai').removeClass('btn-primary').addClass('btn-warning');
         }
-
-        if(!pendaftar.is_finalisasi && data.is_pendaftaran_aktif){
+        if(!pendaftar.is_finalisasi && beasiswa.is_pendaftaran_aktif){
             $('#area-finalisasi').show();
             $('.input-file').show();
             $('.hapus-upload-syarat').show();

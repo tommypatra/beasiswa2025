@@ -6,14 +6,15 @@ use App\Models\Beasiswa;
 use App\Models\Mahasiswa;
 use App\Models\Pendaftar;
 use Illuminate\Http\Request;
+use App\Models\PesertaWawancara;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\VerifikatorPendaftar;
 use App\Http\Requests\PendaftarRequest;
 use App\Http\Resources\PendaftarResource;
 use App\Http\Requests\PendaftaranBatalRequest;
+use App\Http\Resources\DetailPendaftarResource;
 use App\Http\Requests\PendaftaranKembaliRequest;
-use App\Models\PesertaWawancara;
 
 class PendaftarController extends Controller
 {
@@ -85,6 +86,34 @@ class PendaftarController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat membuat data baru: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function detailPendaftar(string $id)
+    {
+        try {
+            $dataQuery = Pendaftar::with([
+                'beasiswa.jenisBeasiswa',
+                'beasiswa.syarat' => function ($query) use ($id) {
+                    $query->with(['uploadSyarat' => function ($q) use ($id) {
+                        $q->where('pendaftar_id', $id);
+                    }]);
+                },
+                'mahasiswa.user.identitas.wilayahDesa.wilayahKecamatan.wilayahKabupaten.wilayahProvinsi',
+                'mahasiswa.programStudi.fakultas',
+                'kelulusan'
+            ])->where('id', $id)->firstOrFail();
+            return response()->json([
+                'status' => true,
+                'message' => 'Data ditemukan',
+                'data' => new DetailPendaftarResource($dataQuery),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+                'data' => null,
+            ], 404);
         }
     }
 

@@ -8,6 +8,13 @@ class Beasiswa extends Model
 {
     protected $guarded = ["id"];
 
+    protected $appends = ['is_pendaftaran_aktif'];
+
+    public function getIsPendaftaranAktifAttribute()
+    {
+        return now()->between($this->daftar_mulai, $this->daftar_selesai);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
