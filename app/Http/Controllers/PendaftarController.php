@@ -41,6 +41,10 @@ class PendaftarController extends Controller
             $dataQuery->where('nama', 'like', '%' . $request->search . '%');
         }
 
+        if (!$request->filled('show_all')) {
+            $dataQuery->where('is_aktif', 1);
+        }
+
         $default_limit = env('DEFAULT_LIMIT', 30);
         $limit = $request->filled('limit') ? $request->limit : $default_limit;
         $data = $dataQuery->paginate($limit);

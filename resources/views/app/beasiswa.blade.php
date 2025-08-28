@@ -360,7 +360,7 @@
 
         function dataLoad() {
             var search = $('#search-input').val();
-            var url = endpoint + '?page=' + page + '&search=' + search + '&limit=' + vLimit;
+            var url = endpoint + '?show_all=1&page=' + page + '&search=' + search + '&limit=' + vLimit;
 
             fetchData(url, function(response) {
                 renderData(response);

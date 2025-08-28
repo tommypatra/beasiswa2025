@@ -193,7 +193,7 @@ if (!function_exists('validasiPendaftaran')) {
         $data['finalisasi'] = ($data_pendaftaran) ? $data_pendaftaran->is_finalisasi : null;
         $data['pendaftaran_aktif'] = $beasiswa->is_pendaftaran_aktif;
 
-        $data['sudah_mendaftar'] = Pendaftar::with(['kelulusan'])->whereHas('beasiswa', fn($q) => $q->where('tahun', $beasiswa->tahun))
+        $data['sudah_mendaftar'] = Pendaftar::with(['kelulusan'])->whereHas('beasiswa', fn($q) => $q->where('is_aktif', '1')->where('tahun', $beasiswa->tahun))
             ->whereHas('mahasiswa', fn($q) => $q->where('user_id', $user_id))
             ->where(function ($query) {
                 $query->whereHas('kelulusan', function ($q) {
