@@ -846,7 +846,7 @@
 
         async function load_data_peserta_survei(){
             let peserta_survei = await asyncFunction(`${base_url}/api/peserta-survei/${pendaftar_id}`);
-            survei_peserta = peserta_survei.data.survei_peserta[0];            
+            survei_peserta = peserta_survei.data.survei_peserta;            
             // console.log(survei_peserta);
             if (survei_peserta.hasil!=null) {
                 disabledForm(true);            
