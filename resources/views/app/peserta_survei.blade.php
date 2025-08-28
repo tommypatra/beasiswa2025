@@ -845,10 +845,10 @@
         });      
 
         async function load_data_peserta_survei(){
-            let peserta_survei = await asyncFunction(`${base_url}/api/peserta-survei/${pendaftar_id}`);
-            survei_peserta = peserta_survei.data[0].survei_peserta;            
-            // console.log(peserta_survei);
-            if (survei_peserta.hasil!=null) {
+            let cek_peserta = await asyncFunction(`${base_url}/api/peserta-survei/${pendaftar_id}`);
+            survei_peserta = cek_peserta.data.survei_peserta;            
+            // console.log(survei_peserta);
+            if (cek_peserta.hasil!=null) {
                 disabledForm(true);            
             }else{
                 disabledForm(false);            
@@ -921,7 +921,9 @@
         $('.akhiri-survei').click(async function() {
 
             cek_peserta = await asyncFunction(`${base_url}/api/peserta-survei/${data_survei.pendaftar_id}`);
-            survei_peserta = cek_peserta.data.survei_peserta[0];
+            // console.log(cek_peserta);
+            survei_peserta = cek_peserta.data.survei_peserta;            
+
             vId=survei_peserta.id;
 
            
