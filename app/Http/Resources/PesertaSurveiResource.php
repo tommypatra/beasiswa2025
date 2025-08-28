@@ -18,7 +18,7 @@ class PesertaSurveiResource extends JsonResource
         $mahasiswa = $this->mahasiswa;
         $user = $mahasiswa->user;
         $identitas = $user->identitas;
-        $survei = $this->surveiPeserta[0];
+        $survei = $this->surveiPeserta;
         return [
             'pendaftar_id' => $this->id,
             'beasiswa_id' => $this->beasiswa_id,
