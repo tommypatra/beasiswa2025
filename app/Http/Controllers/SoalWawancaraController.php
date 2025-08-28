@@ -19,6 +19,10 @@ class SoalWawancaraController extends Controller
     {
         $dataQuery = SoalWawancara::with(['beasiswa'])->orderBy('beasiswa_id', 'asc')->orderBy('nomor', 'asc');
 
+        if ($request->filled('beasiswa_id')) {
+            $dataQuery->where('beasiswa_id', $request->beasiswa_id);
+        }
+
         if ($request->filled('search')) {
             $dataQuery->where('nama', 'like', '%' . $request->search . '%');
         }
