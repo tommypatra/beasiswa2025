@@ -43,66 +43,68 @@
 @endsection
 
 @section('container')
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title fw-semibold">Penetapan Kelulusan Beasiswa</h5>
-        <div>Beasiswa : <span id="beasiswa-nama"></span></div>
-        <div>Kuota : <span id="beasiswa-kuota"></span></div>
-        <div>Jumlah Lulus : <span id="beasiswa-jumlah-lulus"></span></div>
-    </div>
-</div>
 
-<div class="card">
-    <div class="card-body">
-        <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">
-            <h5 class="card-title fw-semibold">Dafftar Mahasiswa</h5>
-            <div class="d-flex gap-2">
-                <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
-                <button class="btn btn-success" id="btn-refresh">
-                    <i class="ti ti-reload"></i>
-                </button>
-                <button class="btn btn-success" id="btn-filter">
-                    <i class="ti ti-filter"></i>
-                </button>
-                <button class="btn btn-primary" id="btn-sinkronisasi">
-                    <i class="ti ti-server"></i> Sinkronisasi
-                </button>
+<h2 >Penetapan Kelulusan Beasiswa</h2>
+<div id="label-beasiswa" class="mb-2"></div>
+
+<div class="row">
+    <div class="col-lg-9">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">
+                    <h5 class="card-title fw-semibold">Dafftar Mahasiswa</h5>
+                    <div class="d-flex gap-2">
+                        <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
+                        <button class="btn btn-success" id="btn-refresh">
+                            <i class="ti ti-reload"></i>
+                        </button>
+                        <button class="btn btn-success" id="btn-filter">
+                            <i class="ti ti-filter"></i>
+                        </button>
+                        <button class="btn btn-primary" id="btn-sinkronisasi">
+                            <i class="ti ti-server"></i> Sinkronisasi
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="progress" style="display: none;">
+                    <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;">0%</div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" style="vertical-align: middle;" width="5%">No</th>
+                                <th rowspan="2" style="vertical-align: middle;" width="25%">Nama / Nim / Program Studi</th>
+                                <th colspan="6" class="text-center" style="vertical-align: middle;">Nilai</th>
+                                <th rowspan="2" style="vertical-align: middle;" width="15%">Status Lulus</th>
+                                <th rowspan="2" style="vertical-align: middle;" width="5%" class="text-center">Status / Aksi</th>
+                            </tr>
+                            <tr>
+                                <th style="vertical-align: middle;" width="10%">Ekonomi</th>
+                                <th style="vertical-align: middle;" width="10%">Pendidikan</th>
+                                <th style="vertical-align: middle;" width="10%">Dokumen Syarat</th>
+                                <th style="vertical-align: middle;" width="10%">CBT</th>
+                                <th style="vertical-align: middle;" width="10%">Survei</th>
+                                <th style="vertical-align: middle;" width="10%">Wawancara</th>
+                            </tr>
+                        </thead>
+
+
+                        <tbody id="data-list">
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center" id="pagination"></ul>
+                </nav>
             </div>
         </div>
-        
-        <div class="progress" style="display: none;">
-            <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;">0%</div>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th rowspan="2" style="vertical-align: middle;" width="5%">No</th>
-                        <th rowspan="2" style="vertical-align: middle;" width="25%">Nama / Nim / Program Studi</th>
-                        <th colspan="6" class="text-center" style="vertical-align: middle;">Nilai</th>
-                        <th rowspan="2" style="vertical-align: middle;" width="15%">Status Lulus</th>
-                        <th rowspan="2" style="vertical-align: middle;" width="5%" class="text-center">Status / Aksi</th>
-                    </tr>
-                    <tr>
-                        <th style="vertical-align: middle;" width="10%">Ekonomi</th>
-                        <th style="vertical-align: middle;" width="10%">Pendidikan</th>
-                        <th style="vertical-align: middle;" width="10%">Dokumen Syarat</th>
-                        <th style="vertical-align: middle;" width="10%">CBT</th>
-                        <th style="vertical-align: middle;" width="10%">Survei</th>
-                        <th style="vertical-align: middle;" width="10%">Wawancara</th>
-                    </tr>
-                </thead>
-
-
-                <tbody id="data-list">
-                </tbody>
-            </table>
-        </div>
-        <!-- Pagination -->
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center" id="pagination"></ul>
-        </nav>
+    </div>
+    <div class="col-lg-3">
+        @include('app/menu_beasiswa')
     </div>
 </div>
 
@@ -170,7 +172,7 @@
 
 <script type="text/javascript">
     const endpoint = base_url+'/api/peserta-wawancara';
-    const beasiswa_id="{{ $id }}";
+    const beasiswa_id="{{ $beasiswa_id }}";
     var page = 1;
     var pewawancara;
     var pendaftar_id;
@@ -182,7 +184,7 @@
         
         async function init(){
             setOptionFilter();
-            await dataBeasiswa();
+            await loadDataBeasiswa();
             await dataLoad();
         }
 
@@ -267,17 +269,18 @@
         }    
 
         
-        async function dataBeasiswa(){
-            var url = `${base_url}/api/data-beasiswa?beasiswa_id=${beasiswa_id}`;
-            fetchData(url, function(response) {
-                // console.log(response);
-                if(response.status){
-                    let data=response.data.data[0];
-                    $('#beasiswa-nama').text(data.nama);
-                    $('#beasiswa-kuota').text(data.kuota);
-                }
-            },true);
+        async function loadDataBeasiswa() {
+            let url = `${base_url}/api/get-data-beasiswa/${beasiswa_id}`;
+            const response = await execAsync(`${url}`, 'GET', token);
+            let beasiswa=response.data;
+            $('#label-beasiswa').html(`<h4>${beasiswa.nama}</h4>`);
 
+            if(beasiswa.ada_verifikasi_lapangan)
+              $('#menu-web-surveyor').show();
+            if(beasiswa.ada_wawancara)
+              $('#menu-web-pewawancara').show();
+            if(beasiswa.ada_wawancara)
+              $('#menu-web-soal').show();
         }
 
         async function dataLoad() {

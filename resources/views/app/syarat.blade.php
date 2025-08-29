@@ -17,47 +17,56 @@
 @endsection
 
 @section('container')
-<h2 id="nama-beasiswa"></h2>
-<div class="card">
-    <div class="card-body">
-        <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">
-            <h5 class="card-title fw-semibold">Syarat Dokumen Upload</h5>
-            <div class="d-flex gap-2">
-                <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
-                <button class="btn btn-primary" id="btn-tambah">
-                    <i class="ti ti-plus"></i>
-                </button>
-                <button class="btn btn-success" id="btn-refresh">
-                    <i class="ti ti-reload"></i>
-                </button>
-                <button class="btn btn-secondary" id="btn-filter">
-                    <i class="ti ti-filter"></i>
-                </button>
+<h2>Syarat</h2>
+<div id="label-beasiswa" class="mb-2"></div>
+
+<div class="row">
+    <div class="col-lg-9">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">
+                    <h5 class="card-title fw-semibold">Syarat Dokumen Upload</h5>
+                    <div class="d-flex gap-2">
+                        <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
+                        <button class="btn btn-primary" id="btn-tambah">
+                            <i class="ti ti-plus"></i>
+                        </button>
+                        <button class="btn btn-success" id="btn-refresh">
+                            <i class="ti ti-reload"></i>
+                        </button>
+                        <button class="btn btn-secondary" id="btn-filter">
+                            <i class="ti ti-filter"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th width="5%">No</th>
+                                <th width="25%">Nama/Jenis</th>
+                                <th width="25%">Deskripsi</th>
+                                {{-- <th width="10%">Wajib</th> --}}
+                                {{-- <th width="20%">Beasiswa</th> --}}
+                                <th width="10%">Aktif</th>
+                                <th width="10%">Skor</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-list">
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center" id="pagination"></ul>
+                </nav>
             </div>
         </div>
-        
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th width="5%">No</th>
-                        <th width="25%">Nama/Jenis</th>
-                        <th width="25%">Deskripsi</th>
-                        <th width="10%">Wajib</th>
-                        <th width="20%">Beasiswa</th>
-                        <th width="10%">Aktif</th>
-                        <th width="10%">Skor</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="data-list">
-                </tbody>
-            </table>
-        </div>
-        <!-- Pagination -->
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center" id="pagination"></ul>
-        </nav>
+    </div>
+    <div class="col-lg-3">
+        @include('app/menu_beasiswa')
     </div>
 </div>
 
@@ -156,19 +165,29 @@
     var page = 1;
     
     async function initPage() { // agar di load secara berurutan
-        await loadDataSelect('#beasiswa_id', `data-beasiswa?tahun=${tahun}&limit=100`);
     }
 
     $(document).ready(function() {
         initPage();
         dataLoad();
 
-        detailBeasiswa();
-        async function detailBeasiswa() {
-            if(beasiswa_id){
-                let respon = await asyncFunction(`${base_url}/api/beasiswa/${beasiswa_id}`);
-                $('#nama-beasiswa').text(respon.data.nama);
-            }
+        async function initPage() {
+            await loadDataSelect('#beasiswa_id', `data-beasiswa?tahun=${tahun}&limit=100`);
+            await loadDataBeasiswa();
+        }
+
+        async function loadDataBeasiswa() {
+            let url = `${base_url}/api/get-data-beasiswa/${beasiswa_id}`;
+            const response = await execAsync(`${url}`, 'GET', token);
+            let beasiswa=response.data;
+            $('#label-beasiswa').html(`<h4>${beasiswa.nama}</h4>`);
+
+            if(beasiswa.ada_verifikasi_lapangan)
+              $('#menu-web-surveyor').show();
+            if(beasiswa.ada_wawancara)
+              $('#menu-web-pewawancara').show();
+            if(beasiswa.ada_wawancara)
+              $('#menu-web-soal').show();
         }
 
         function renderData(response) {
@@ -189,10 +208,7 @@
                                 </td>
                                 <td>${dt.deskripsi}</td>
                                 <td>${(dt.is_wajib)?'Wajib':'Tidak Wajib'}</td>
-                                <td>${dt.beasiswa.nama}</td>
-                                <td>${(dt.is_aktif)?'Aktif':'Tidak Aktif'}</td>
                                 <td>${showText(dt.bobot)}</td>
-
                                 <td>
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>

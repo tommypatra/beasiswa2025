@@ -59,44 +59,54 @@ td, th {
 @endsection
 
 @section('container')
-<div id="info-beasiswa" class="mb-2"></div>
-<div class="card">
-    <div class="card-body">
-        <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">
-            <h5 class="card-title fw-semibold">Pewawancara Seleksi Beasiswa</h5>
-            <div class="d-flex gap-2">
-                <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
-                <button class="btn btn-primary" id="btn-tambah">
-                    <i class="ti ti-plus"></i>
-                </button>
-                <button class="btn btn-success" id="btn-refresh">
-                    <i class="ti ti-reload"></i>
-                </button>
-                <button class="btn btn-secondary" id="btn-filter">
-                    <i class="ti ti-filter"></i>
-                </button>
+<h2>Pewawancara</h2>
+<div id="label-beasiswa" class="mb-2"></div>
+
+<div class="row">
+    <div class="col-lg-9">
+
+        <div class="card">
+            <div class="card-body">
+                <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">
+                    <h5 class="card-title fw-semibold">Pewawancara Seleksi Beasiswa</h5>
+                    <div class="d-flex gap-2">
+                        <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
+                        <button class="btn btn-primary" id="btn-tambah">
+                            <i class="ti ti-plus"></i>
+                        </button>
+                        <button class="btn btn-success" id="btn-refresh">
+                            <i class="ti ti-reload"></i>
+                        </button>
+                        <button class="btn btn-secondary" id="btn-filter">
+                            <i class="ti ti-filter"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th width="5%"></th>
+                                <th width="5%">No</th>
+                                <th width="35%">Nama Pewawancara</th>
+                                <th width="35%">Daftar Peserta (Nama/ Nim/ Program Studi)</th>
+                                <th width="5%">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-list">
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center" id="pagination"></ul>
+                </nav>
             </div>
         </div>
-        
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th width="5%"></th>
-                        <th width="5%">No</th>
-                        <th width="35%">Nama Pewawancara</th>
-                        <th width="35%">Daftar Peserta (Nama/ Nim/ Program Studi)</th>
-                        <th width="5%">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="data-list">
-                </tbody>
-            </table>
-        </div>
-        <!-- Pagination -->
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center" id="pagination"></ul>
-        </nav>
+    </div>
+    <div class="col-lg-3">
+        @include('app/menu_beasiswa')
     </div>
 </div>
 
@@ -106,7 +116,7 @@ td, th {
     <div class="modal-dialog">
         <form id="form">
             <input type="hidden" name="id" id="id" >
-            <input type="hidden" name="beasiswa_id" id="beasiswa_id" value="{{ $id }}">
+            <input type="hidden" name="beasiswa_id" id="beasiswa_id" value="{{ $beasiswa_id }}">
             <input type="hidden" name="user_id" id="user_id" >
             <div class="modal-content">
                 <div class="modal-header">
@@ -195,7 +205,7 @@ td, th {
 
 <script type="text/javascript">
     const endpoint = base_url+'/api/pewawancara';
-    var id = "{{ $id }}";
+    var id = "{{ $beasiswa_id }}";
     var page = 1;
     $(document).ready(function() {
         initPage();
@@ -206,29 +216,19 @@ td, th {
         }
 
         async function loadDataBeasiswa() {
-            var url = base_url + '/api/get-data-beasiswa/'+id;
-            try {
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`, 
-                        'Content-Type': 'application/json'
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const result = await response.json();
-                // console.log(result);
-                
-                $('#info-beasiswa').html(`<h3 id="nama-beasiswa">${result.data.nama}</h3>
-                    Peserta Lulus Berkas ${result.data.jumlah_lulus_berkas}
-                `);
-                // data_referensi=result.data.data;
-            } catch (error) {
-                console.error('Error:', error);
-            }
+            let url = `${base_url}/api/get-data-beasiswa/${id}`;
+            const response = await execAsync(`${url}`, 'GET', token);
+            let beasiswa=response.data;
+            $('#label-beasiswa').html(`<h4>${beasiswa.nama}</h4>`);
+
+            if(beasiswa.ada_verifikasi_lapangan)
+              $('#menu-web-surveyor').show();
+            if(beasiswa.ada_wawancara)
+              $('#menu-web-pewawancara').show();
+            if(beasiswa.ada_wawancara)
+              $('#menu-web-soal').show();
         }
+
 
         function renderData(response) {
             const dataList = $('#data-list');

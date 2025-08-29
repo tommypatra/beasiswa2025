@@ -335,8 +335,9 @@
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
                                             <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item btn-ganti" data-id="${dt.id}" href="javascript:;"><i class="far fa-edit"></i> Ganti</a></li>
-                                                <li><a class="dropdown-item btn-hapus" data-id="${dt.id}" href="javascript:;"><i class="fas fa-trash-alt"></i> Hapus</a></li>
+                                                <li><a class="dropdown-item btn-selengkapnya" href="${base_url}/dashboard-beasiswa/${dt.id}"><iconify-icon icon="solar:book-2-linear" class=""></iconify-icon> Selengkapnya</a></li>
+                                                <li><a class="dropdown-item btn-ganti" data-id="${dt.id}" href="javascript:;"><iconify-icon icon="solar:pen-linear" class=""></iconify-icon> Ganti</a></li>
+                                                <li><a class="dropdown-item btn-hapus" data-id="${dt.id}" href="javascript:;"><iconify-icon icon="solar:trash-bin-trash-outline" class=""></iconify-icon> Hapus</a></li>
                                             </ul>
                                         </div>
                                     </td>

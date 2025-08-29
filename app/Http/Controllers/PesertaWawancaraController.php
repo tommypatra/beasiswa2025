@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Beasiswa;
 use App\Models\Pendaftar;
 use App\Models\Pewawancara;
+use App\Models\Verifikator;
 use App\Models\UploadSyarat;
 use Illuminate\Http\Request;
 use App\Models\PesertaWawancara;

@@ -26,7 +26,7 @@ class WebController extends Controller
 
     public function kelulusan($id)
     {
-        return view('app.kelulusan', ['id' => $id]);
+        return view('app.kelulusan', ['beasiswa_id' => $id]);
     }
 
 
@@ -197,17 +197,17 @@ class WebController extends Controller
 
     public function verifikator($id)
     {
-        return view('app.verifikator', ['id' => $id]);
+        return view('app.verifikator', ['beasiswa_id' => $id]);
     }
 
     public function surveyor($id)
     {
-        return view('app.surveyor', ['id' => $id]);
+        return view('app.surveyor', ['beasiswa_id' => $id]);
     }
 
     public function pewawancara($id)
     {
-        return view('app.pewawancara', ['id' => $id]);
+        return view('app.pewawancara', ['beasiswa_id' => $id]);
     }
 
     public function verifikasiBerkas()
@@ -237,7 +237,7 @@ class WebController extends Controller
 
     public function dashboardBeasiswa($id)
     {
-        return view('app.dashboard_beasiswa', ['id' => $id]);
+        return view('app.dashboard_beasiswa', ['beasiswa_id' => $id]);
     }
 
     public function registrasiPeserta()
