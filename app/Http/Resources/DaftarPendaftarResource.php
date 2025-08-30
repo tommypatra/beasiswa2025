@@ -58,7 +58,7 @@ class DaftarPendaftarResource extends JsonResource
             'jenis_beasiswa' => $beasiswa->jenisBeasiswa->nama,
             'tahun_beasiswa' => $beasiswa->tahun,
             'kuota_beasiswa' => $beasiswa->kuota,
-            'is_lulus' => $kelulusan->is_lulus,
+            'is_lulus' => $kelulusan?->is_lulus,
             'no_pendaftaran' => $this->no_pendaftaran,
             'is_finalisasi' => $this->is_finalisasi,
             'is_batal' => $this->is_batal,
