@@ -20,6 +20,7 @@
 <div class="d-flex align-items-center mb-2">
     <iconify-icon icon="solar:checklist-linear" class="fs-9"></iconify-icon> <h2 class="mb-0 ms-2">Syarat</h2>
 </div>
+
 <div id="label-beasiswa" class="mb-2"></div>
 
 <div class="row">
