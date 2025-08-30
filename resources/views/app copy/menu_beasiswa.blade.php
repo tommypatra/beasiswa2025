@@ -3,7 +3,7 @@
       $segmel_url=request()->segment(1);
       $menu=[
         ['color'=>'primary','label'=>'Dashboard','icon'=>'solar:book-2-linear','url'=>'dashboard-beasiswa'],
-        ['color'=>'primary','label'=>'Pendaftar','icon'=>'solar:users-group-rounded-outline','url'=>'pendaftar-beasiswa'],
+        ['color'=>'primary','label'=>'Pendaftar','icon'=>'solar:users-group-rounded-outline','url'=>'pendaftar'],
         ['color'=>'primary','label'=>'Syarat','icon'=>'solar:checklist-linear','url'=>'syarat'],
         ['color'=>'primary','label'=>'Verifikator','icon'=>'solar:user-check-linear','url'=>'verifikator'],
         ['color'=>'primary','label'=>'Surveyor','icon'=>'solar:user-hands-outline','url'=>'surveyor'],

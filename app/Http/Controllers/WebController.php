@@ -172,7 +172,7 @@ class WebController extends Controller
 
     public function pendaftar()
     {
-        return view('app.pendaftar');
+        return view('app.daftar_beasiswa');
     }
 
     public function nilaiRaport()
@@ -203,6 +203,11 @@ class WebController extends Controller
     public function surveyor($id)
     {
         return view('app.surveyor', ['beasiswa_id' => $id]);
+    }
+
+    public function pendaftarBeasiswa($id)
+    {
+        return view('app.pendaftar_beasiswa', ['beasiswa_id' => $id]);
     }
 
     public function pewawancara($id)

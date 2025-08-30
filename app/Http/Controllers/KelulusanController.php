@@ -34,6 +34,14 @@ class KelulusanController extends Controller
             'pendaftar.mahasiswa.programStudi.fakultas'
         ]);
 
+
+        $dataQuery->where(function ($query) {
+            $query->whereHas('pendaftar', function ($q) {
+                $q->where('is_finalisasi', 1);
+            });
+        });
+
+
         if ($request->filled('sort')) {
             foreach ($request->sort as $col) {
                 if ($col) {

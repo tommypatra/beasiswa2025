@@ -13,6 +13,7 @@ use App\Models\VerifikatorPendaftar;
 use App\Http\Requests\PendaftarRequest;
 use App\Http\Resources\PendaftarResource;
 use App\Http\Requests\PendaftaranBatalRequest;
+use App\Http\Resources\DaftarPendaftarResource;
 use App\Http\Resources\DetailPendaftarResource;
 use App\Http\Requests\PendaftaranKembaliRequest;
 
@@ -21,6 +22,47 @@ class PendaftarController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    public function daftarPendaftar(Request $request, $id_beasiswa)
+    {
+        $dataQuery = Pendaftar::with([
+            'verifikatorPendaftar.verifikator.user',
+            'beasiswa.jenisBeasiswa',
+            'kelulusan',
+            'mahasiswa.programStudi.fakultas',
+            'mahasiswa.user.identitas',
+            'mahasiswa.user.pendidikanAkhir'
+        ])
+            ->where('beasiswa_id', $id_beasiswa)
+            ->orderBy('created_at', 'desc');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $dataQuery->where(function ($query) use ($search) {
+                $query->whereHas('mahasiswa.user', function ($q) use ($search) {
+                    $q->where('name', 'like', '%' . $search . '%');
+                });
+            });
+        }
+
+
+        $default_limit = env('DEFAULT_LIMIT', 30);
+        $limit = $request->filled('limit') ? $request->limit : $default_limit;
+        $data = $dataQuery->paginate($limit);
+        $resourceCollection = $data->getCollection()->map(function ($item) {
+            return new DaftarPendaftarResource($item);
+        });
+        $data->setCollection($resourceCollection);
+
+        $dataRespon = [
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ];
+        return response()->json($dataRespon);
+    }
+
     public function index(Request $request)
     {
         $dataQuery = Beasiswa::with(['jenisBeasiswa', 'syarat'])

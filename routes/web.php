@@ -32,7 +32,8 @@ Route::get('/butir-kegiatan', [WebController::class, 'butirKegiatan'])->name('bu
 Route::get('/jenis-beasiswa', [WebController::class, 'jenisBeasiswa'])->name('jenis-beasiswa');
 Route::get('/referensi-pilihan', [WebController::class, 'referensiPilihan'])->name('referensi-pilihan');
 Route::get('/beasiswa', [WebController::class, 'beasiswa'])->name('beasiswa');
-Route::get('/syarat/{beasiswa_id?}', [WebController::class, 'syarat'])->name('syarat');
+Route::get('/syarat/{beasiswa_id}', [WebController::class, 'syarat'])->name('syarat');
+Route::get('/pendaftar-beasiswa/{beasiswa_id}', [WebController::class, 'pendaftarBeasiswa'])->name('pendaftar-beasiswa');
 Route::get('/soal-wawancara/{beasiswa_id?}', [WebController::class, 'soalWawancara'])->name('soal-wawancara');
 
 Route::get('/mahasiswa', [WebController::class, 'dataMahasiswa'])->name('mahasiswa');

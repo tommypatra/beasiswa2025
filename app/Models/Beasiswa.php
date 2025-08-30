@@ -12,6 +12,9 @@ class Beasiswa extends Model
 
     public function getIsPendaftaranAktifAttribute()
     {
+        if (!$this->daftar_mulai || !$this->daftar_selesai) {
+            return false;
+        }
         return now()->between($this->daftar_mulai, $this->daftar_selesai);
     }
 

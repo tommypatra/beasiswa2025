@@ -100,6 +100,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     Route::get('data-beasiswa', [BeasiswaController::class, 'index']);
     Route::get('cari-mahasiswa', [MahasiswaController::class, 'index']);
 
+    Route::get('daftar-pendaftar-beasiswa/{id}', [PendaftarController::class, 'daftarPendaftar']);
     Route::get('get-data-pendaftar/{id}', [PendaftarController::class, 'getData']);
     Route::get('get-data-beasiswa/{id}', [BeasiswaController::class, 'show']);
     Route::get('get-data-mahasiswa/{id}', [MahasiswaController::class, 'show']);
