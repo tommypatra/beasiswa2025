@@ -36,9 +36,9 @@
                         <thead>
                             <tr>
                                 <th width="5%">No</th>
-                                <th width="45%">Soal Wawancara</th>
+                                <th width="70%">Soal Wawancara</th>
                                 <th width="15%">Bobot Nilai</th>
-                                <th width="20%">Beasiswa</th>
+                                {{-- <th width="20%">Beasiswa</th> --}}
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -175,7 +175,6 @@
                                 <td><input type="number" data-id="${dt.id}" style="width: 80px;" class="form-control ganti-nomor-urut" value="${dt.nomor}"></td>
                                 <td>${dt.soal}</td>
                                 <td>${dt.persentase_nilai}</td>
-                                <td>${dt.beasiswa.nama}</td>
                                 <td>
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>

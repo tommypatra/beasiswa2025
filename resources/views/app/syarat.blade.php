@@ -52,7 +52,7 @@
                                 <th width="25%">Deskripsi</th>
                                 {{-- <th width="10%">Wajib</th> --}}
                                 {{-- <th width="20%">Beasiswa</th> --}}
-                                <th width="10%">Aktif</th>
+                                <th width="10%">Status Isian</th>
                                 <th width="10%">Skor</th>
                                 <th>Aksi</th>
                             </tr>
