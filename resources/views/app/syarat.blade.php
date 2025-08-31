@@ -114,7 +114,7 @@
                         </div>
                         <div class="col-lg-12 mb-3">
                             <label class="form-label">Instrumen Opsi</label>
-                            <textarea name="instrumen_opsi" id="instrumen_opsi" rows="3" class="form-control"></textarea>
+                            <textarea name="instrumen_opsi" id="instrumen_opsi" rows="3" class="form-control">Ada, Tidak Ada</textarea>
                             <small class="text-muted d-block mt-1 form-instrumen-opsi">
                                 <ul class="mb-0 ps-3 ">
                                     <li>Pemisah pilihan gunakan tanda koma (<code>,</code>).</li>
@@ -195,7 +195,10 @@
             pagination.empty();
             if (data.length > 0) {
                 $.each(data, function(index, dt) {
-                    const contoh=(dt.contoh)?`<a href="${base_url}/${dt.contoh}" target="_blank"><span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">Contoh</span></a>`:"";
+                    const contoh=(dt.contoh)?`
+                    <a href="${base_url}/${dt.contoh}" target="_blank"><span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">Contoh</span></a>
+                    <a href="javascript:;" class="hapus-contoh" data-id="${dt.id}"><iconify-icon icon="solar:trash-bin-minimalistic-outline" class=""></iconify-icon></a>
+                    `:"";
                     const row = `<tr>
                                 <td>${no++}</td>
                                 <td>
@@ -271,7 +274,9 @@
         // Handle page change
         $('#btn-tambah').click(function() {
             formReset();
-            showModalForm();    
+            $('#instrumen_opsi').val('Ada,Tidak Ada');
+            showModalForm();
+
         });
 
         //validasi dan save, jika id ada maka PUT/edit jika tidak ada maka POST/simpan baru
@@ -295,6 +300,17 @@
                 });
             }
         });
+
+        //hapus contoh
+        $(document).on('click', '.hapus-contoh', async function() {
+            const id = $(this).data('id');
+            const url = `${base_url}/api/syarat-hapus-contoh`;
+            deleteData(url, id, function() {
+                appShowNotification(true,['berhasil dilakukan!']);
+                dataLoad();
+            });
+        });
+        
 
         //ganti data
         $(document).on('click', '.btn-ganti', function() {

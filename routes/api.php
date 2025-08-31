@@ -177,6 +177,9 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::post('proses-kelulusan', [KelulusanController::class, 'prosesKelulusan']);
         Route::delete('hapus-kelulusan/{beasiswa_id}', [KelulusanController::class, 'hapusKelulusan']);
 
+        Route::delete('syarat-hapus-contoh/{beasiswa_id}', [SyaratController::class, 'hapusContoh']);
+
+
         Route::resource('monitoring', MonitoringController::class);
         Route::resource('pendapatan', PendapatanController::class);
         Route::resource('pendidikan', PendidikanController::class);

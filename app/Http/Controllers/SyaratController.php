@@ -120,6 +120,25 @@ class SyaratController extends Controller
         }
     }
 
+    public function hapusContoh(string $id)
+    {
+        try {
+            DB::beginTransaction();
+            $data = Syarat::where('id', $id)->firstOrFail();
+            if ($data->contoh && Storage::disk('public')->exists($data->contoh)) {
+                Storage::disk('public')->delete($data->contoh);
+            }
+            $data_save['contoh'] = null;
+            $data->update($data_save);
+            DB::commit();
+            return response()->json(null, 204);
+            // return response()->json(['status' => true, 'message' => 'hapus data berhasil dilakukan'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat menghapus : ' . $e->getMessage(), 'data' => null], 500);
+        }
+    }
+
     /**
      * Remove the specified resource from storage.
      */
