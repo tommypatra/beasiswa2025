@@ -111,82 +111,55 @@ td, th {
     </div>
 </div>
 
-
 <!-- MULAI MODAL -->
-<div class="modal fade modal" id="modal-form" role="dialog">
+<div class="modal fade modal" id="modal-filter" role="dialog">
     <div class="modal-dialog">
-        <form id="form">
-            <input type="hidden" name="id" id="id" >
-            <input type="hidden" name="beasiswa_id" id="beasiswa_id" value="{{ $beasiswa_id }}">
-            <input type="hidden" name="user_id" id="user_id" >
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modal-label">Form</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-						<div class="col-sm-12 mb-3">
-                            <label class="form-label">Surveyor</label>
-                            <input name="nama" id="nama" type="text" class="form-control" required>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
-                    <button type="button" class="btn btn-outline-primary " data-bs-dismiss="modal">Tutup</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-<!-- AKHIR MODAL -->
-
-<!-- MULAI MODAL -->
-<div class="modal fade modal" id="modal-pembagian" role="dialog">
-    <div class="modal-dialog modal-xl">
-        <form id="pembagian">
+        <form id="form-filter">
             <input type="hidden" name="surveyor_id" id="surveyor_id" >
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modal-label">Pembagian Peserta</h5>
+                    <h5 class="modal-title" id="modal-label">Filter</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-sm-3 mb-3">
-                            <label class="form-label">Jumlah</label>                            
-                            <input id="jumlah" type="number" class="form-control" value="10">
-                        </div>
-                        <div class="col-sm-3 mb-3">
-                            <label class="form-label">Filter Wilayah</label>
-                            <input id="filter_wilayah" type="text" class="form-control">
-                        </div>
-                        <div class="col-sm-4 mb-3">
-                            <label class="form-label">Cari</label>
-                            <input id="cari" type="text" class="form-control">
-                        </div>
-                        <div class="col-sm-2 mb-3 d-flex">
-                            <button type="button" class="btn btn-primary" id="btn-cari">Cari Data</button>
+                        <div class="col-sm-6 mb-3">
+                            <label class="form-label">Pendaftaran</label>                            
+                            <select id="status-pendaftaran" name="status-pendaftaran" class="form-control" required>
+                                <option value="semua">SEMUA</option>
+                                <option value="selesai">SELESAI</option>
+                                <option value="belum">BELUM</option>
+                                <option value="batal">BATAL</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                            <tr>
-                                <td><input type="checkbox" id="pilihsemua" ></td>
-                                <td width="40%">Data Mahasiswa</td>
-                                <td>Alamat/ HP</td>
-                                <td>Kelurahan/ Desa/ Kecamatan</td>
-                                <td>Kabupaten/ Provinsi</td>
-                            </tr>
-                            </thead>
-                            <tbody id="daftar-peserta"></tbody>
-                        </table>  
-                    </div>                  
+                    <div class="row">
+                        <div class="col-sm-6 mb-3">
+                            <label class="form-label">Verifikasi</label>                            
+                            <select id="status-verifikasi" name="status-verifikasi" class="form-control" required>
+                                <option value="semua">SEMUA</option>
+                                <option value="ms">MEMENUHI</option>
+                                <option value="tms">TIDAK MEMENUHI</option>
+                                <option value="selesai">SELESAI</option>
+                                <option value="belum">BELUM</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 mb-3">
+                            <label class="form-label">Kelulusan</label>
+                            <select id="status-kelulusan" name="status-kelulusan" class="form-control" required>
+                                <option value="semua">SEMUA</option>
+                                <option value="l">LULUS</option>
+                                <option value="tl">TIDAK LULUS</option>
+                                <option value="selesai">SELESAI</option>
+                                <option value="belum">BELUM</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
+                    <div class="btn btn-primary" id="btn-terapkan-filter">Terapkan Filter</div>
                     <button type="button" class="btn btn-outline-primary " data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
@@ -264,7 +237,7 @@ td, th {
             let no = (response.data.current_page - 1) * response.data.per_page + 1;
             dataList.empty();
             pagination.empty();
-            if (response.status) {
+            if (response.data.data.length>0) {
                 $.each(data, function(index, dt) {
 
                     const status_pendaftaran=getStatusPendaftaran(dt);
@@ -295,8 +268,11 @@ td, th {
 
         async function dataLoad() {
             var search = $('#search-input').val();
+            var pendaftaran = $('#status-pendaftaran').val();
+            var verifikasi = $('#status-verifikasi').val();
+            var kelulusan = $('#status-kelulusan').val();
             var limit = 30;
-            var url = `${base_url}/api/daftar-pendaftar-beasiswa/${id}?page=${page}&search=${search}&limit=${limit}`;
+            var url = `${base_url}/api/daftar-pendaftar-beasiswa/${id}?page=${page}&search=${search}&limit=${limit}&pendaftaran=${pendaftaran}&verifikasi=${verifikasi}&kelulusan=${kelulusan}`;
 
             fetchData(url, function(response) {
                 renderData(response);
@@ -314,6 +290,11 @@ td, th {
             loadDataPeserta();
         });
 
+                // Handle page change
+        $('#btn-terapkan-filter').click(function() {
+            dataLoad();
+        });
+
         // Handle page change
         $('#btn-refresh').click(function() {
             dataLoad();
@@ -324,6 +305,13 @@ td, th {
             console.log('Event input berjalan');
             dataLoad();
         });      
+
+        $('#btn-filter').click(function(){
+            var fModalForm = new bootstrap.Modal(document.getElementById('modal-filter'), {
+                keyboard: false
+            });
+            fModalForm.show();
+        })
 
     });
 </script>

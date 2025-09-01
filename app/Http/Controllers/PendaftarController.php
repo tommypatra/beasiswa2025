@@ -47,6 +47,95 @@ class PendaftarController extends Controller
         }
 
 
+        if ($request->filled('pendaftaran')) {
+            $pendaftaran = $request->pendaftaran;
+            switch ($pendaftaran) {
+                case 'selesai':
+                    $dataQuery->where(function ($query) {
+                        $query->where('is_finalisasi', 1);
+                    });
+                    break;
+                case 'belum':
+                    $dataQuery->where(function ($query) {
+                        $query->where('is_finalisasi', 0)->where('is_batal', 0);
+                    });
+                    break;
+                case 'batal':
+                    $dataQuery->where(function ($query) {
+                        $query->where('is_batal', 1);
+                    });
+                    break;
+            }
+        }
+
+        if ($request->filled('verifikasi')) {
+            $verifikasi = $request->verifikasi;
+            switch ($verifikasi) {
+                case 'ms':
+                    $dataQuery->where(function ($query) {
+                        $query->whereHas('verifikatorPendaftar', function ($q) {
+                            $q->where('hasil', 1);
+                        });
+                    });
+                    break;
+                case 'tms':
+                    $dataQuery->where(function ($query) {
+                        $query->whereHas('verifikatorPendaftar', function ($q) {
+                            $q->where('hasil', 0);
+                        });
+                    });
+                    break;
+                case 'selesai':
+                    $dataQuery->where(function ($query) {
+                        $query->whereHas('verifikatorPendaftar', function ($q) {
+                            $q->whereNotNull('hasil');
+                        });
+                    });
+                    break;
+                case 'belum':
+                    $dataQuery->where(function ($query) {
+                        $query->whereHas('verifikatorPendaftar', function ($q) {
+                            $q->whereNull('hasil');
+                        });
+                    });
+                    break;
+            }
+        }
+
+        if ($request->filled('kelulusan')) {
+            $kelulusan = $request->kelulusan;
+            switch ($kelulusan) {
+                case 'l':
+                    $dataQuery->where(function ($query) {
+                        $query->whereHas('kelulusan', function ($q) {
+                            $q->where('is_lulus', 1);
+                        });
+                    });
+                    break;
+                case 'tl':
+                    $dataQuery->where(function ($query) {
+                        $query->whereHas('kelulusan', function ($q) {
+                            $q->where('is_lulus', 0);
+                        });
+                    });
+                    break;
+                case 'selesai':
+                    $dataQuery->where(function ($query) {
+                        $query->whereHas('kelulusan', function ($q) {
+                            $q->whereNotNull('is_lulus');
+                        });
+                    });
+                    break;
+                case 'belum':
+                    $dataQuery->where(function ($query) {
+                        $query->whereHas('kelulusan', function ($q) {
+                            $q->whereNull('is_lulus');
+                        });
+                    });
+                    break;
+            }
+        }
+
         $default_limit = env('DEFAULT_LIMIT', 30);
         $limit = $request->filled('limit') ? $request->limit : $default_limit;
         $data = $dataQuery->paginate($limit);
