@@ -251,6 +251,7 @@
     var data_syarat;
     var lengkap;
     var syarat_index=0;
+    var is_verifikasi_berkas_aktif=false;
 
     $(document).ready(function() {
         dataLoad();
@@ -331,7 +332,7 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="d-flex flex-column align-items-center gap-2">
-                                            <button class="btn btn-secondary btn-mulai-verifikasi" data-beasiswa_id="${dt.beasiswa.id}" data-verifikator_id="${dt.id}" type="button" ${tombol_aktif}>Verifikasi</button>
+                                            <button class="btn btn-secondary btn-mulai-verifikasi" data-beasiswa_id="${dt.beasiswa.id}" data-is_verifikasi_berkas_aktif="${dt.beasiswa.is_verifikasi_berkas_aktif}" data-verifikator_id="${dt.id}" type="button" ${tombol_aktif}>Verifikasi</button>
                                         </div>
                                     </td>
                                 </tr>`;
@@ -360,6 +361,7 @@
             
             verifikator_id = $(this).data('verifikator_id');
             beasiswa_id = $(this).data('beasiswa_id');
+            is_verifikasi_berkas_aktif = $(this).data('is_verifikasi_berkas_aktif');
             pesertaVerifikasi();
         }); 
 
@@ -402,7 +404,7 @@
                 let body = $('#body-verifikasi-berkas');
                 let pendaftar_id = peserta.pendaftar.id;
 
-                console.log(syarat);
+                // console.log(syarat);
 
                 data_syarat=syarat.data;
                 
@@ -543,6 +545,19 @@
             $('#catatan').val(peserta.catatan); 
             $('#validasi-final').show();
             $('#validasi-syarat').hide();
+
+
+            $("#hasil").prop("disabled", true);
+            $("#total_skor").prop("disabled", true);
+            $("#catatan").prop("disabled", true);
+            $("#btn-simpan-final").prop("disabled", true);                
+            if(is_verifikasi_berkas_aktif){
+                $("#hasil").prop("disabled", false);
+                $("#total_skor").prop("disabled", false);
+                $("#catatan").prop("disabled", false);
+                $("#btn-simpan-final").prop("disabled", false);                
+            }
+
         }
 
         function showSyarat(){
@@ -590,13 +605,12 @@
             if (data.upload_syarat){
                 let jenis = data.jenis;
                 let url = base_url+'/'+data.upload_syarat.dokumen;
-
-                $("#verifikasi_berkas_hasil").prop("disabled", false);
-                $("#verifikasi_berkas_catatan").prop("disabled", false);
-                $("#verifikasi_berkas_skor").prop("disabled", false);
-
-
-                $("#btn-simpan").prop("disabled", false);
+                if(is_verifikasi_berkas_aktif){
+                    $("#verifikasi_berkas_hasil").prop("disabled", false);
+                    $("#verifikasi_berkas_catatan").prop("disabled", false);
+                    $("#verifikasi_berkas_skor").prop("disabled", false);
+                    $("#btn-simpan").prop("disabled", false);
+                }
                 $(`#id`).val(data.upload_syarat.id);
                 $(`#verifikasi_berkas_hasil`).val(data.upload_syarat.verifikasi_berkas_hasil);
                 $(`#verifikasi_berkas_catatan`).val(data.upload_syarat.verifikasi_berkas_catatan);

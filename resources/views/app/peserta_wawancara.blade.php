@@ -190,7 +190,7 @@
 
             // console.log(peserta.data);
 
-            if (peserta.data.status == 2) {
+            if (peserta.data.status == 2 || !data.beasiswa.is_wawancara_aktif) {
                 $('#form-wawancara').find('input, select, textarea, button').prop('disabled', true);
                 $('#catatan').summernote('disable');
                 $('.akhiri-wawancara').prop('disabled',true);

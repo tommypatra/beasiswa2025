@@ -220,6 +220,7 @@
     var pendaftar_id;
     var surveyor_id;
     var survei_peserta;
+    var is_survei_aktif=false;
     
     $(document).ready(function() {
         dataLoad();
@@ -795,7 +796,7 @@
                                     <td class="text-center">
                                         ${status_survei}
                                         <div class="d-flex flex-column align-items-center gap-2 mt-2">
-                                            <button class="btn btn-secondary btn-instrumen-survei" data-pendaftar_id="${dt.pendaftar_id}" type="button" data-surveyor_id="${dt.survei.surveyor_id}" data-survei_peserta_id="${dt.survei.survei_peserta_id}" >Instrumen Survei</button>
+                                            <button class="btn btn-secondary btn-instrumen-survei" data-pendaftar_id="${dt.pendaftar_id}" type="button" data-surveyor_id="${dt.survei.surveyor_id}" data-is_survei_aktif="${dt.beasiswa.is_survei_aktif}" data-survei_peserta_id="${dt.survei.survei_peserta_id}" >Instrumen Survei</button>
                                         </div>
                                     </td>
                                 </tr>`;
@@ -847,8 +848,8 @@
         async function load_data_peserta_survei(){
             let cek_peserta = await asyncFunction(`${base_url}/api/peserta-survei/${pendaftar_id}`);
             survei_peserta = cek_peserta.data.survei_peserta;            
-            // console.log(survei_peserta);
-            if (cek_peserta.hasil!=null) {
+            console.log(survei_peserta);
+            if ((survei_peserta && survei_peserta.hasil !== null) || !is_survei_aktif) {
                 disabledForm(true);            
             }else{
                 disabledForm(false);            
@@ -867,7 +868,7 @@
 
             pendaftar_id=$(this).attr('data-pendaftar_id');
             surveyor_id=$(this).attr('data-surveyor_id');
-
+            is_survei_aktif=$(this).data('is_survei_aktif');
             load_data_peserta_survei();
 
             survei_mulai();

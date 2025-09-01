@@ -29,6 +29,7 @@ class PesertaSurveiResource extends JsonResource
                 'perlu_data_rumah' => $this->beasiswa->perlu_data_rumah,
                 'perlu_data_nilai_raport' => $this->beasiswa->perlu_data_nilai_raport,
                 'perlu_data_pendidikan_akhir' => $this->beasiswa->perlu_data_pendidikan_akhir,
+                'is_survei_aktif' => $this->beasiswa->is_survei_aktif,
             ],
             'survei' => [
                 'survei_peserta_id' => $survei->id,

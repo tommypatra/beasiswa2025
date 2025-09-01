@@ -119,6 +119,7 @@
     const endpoint = base_url+'/api/wawancara';
     var page = 1;
     var beasiswa_id;
+    var is_wawancara_aktif=false;
 
     $(document).ready(function() {
         dataLoad();
@@ -153,7 +154,7 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="d-flex flex-column align-items-center gap-2">
-                                            <button class="btn btn-secondary btn-daftar-peserta" data-beasiswa_id="${dt.id}" type="button" ${tombol_aktif}>Daftar Peserta</button>
+                                            <button class="btn btn-secondary btn-daftar-peserta" data-beasiswa_id="${dt.id}" data-is_wawancara_aktif="${dt.is_wawancara_aktif}" type="button" ${tombol_aktif}>Daftar Peserta</button>
                                         </div>
                                     </td>
                                 </tr>`;
@@ -187,6 +188,7 @@
             dataList.empty();
             pagination.empty();
             if (data.length > 0) {
+                const disabled_wawancara=(is_wawancara_aktif)?"":"disabled";
                 $.each(data, function(index, dt) {
                     let pewawancara = ``;
                     let peserta_wawancara=dt.wawancara[0];
@@ -231,7 +233,7 @@
                                         ${pewawancara}
                                     </td>
                                     <td class="text-center">
-                                        <select style="min-width: 100px;" class="form-control status-registrasi-peserta" data-id="${dt.id}">
+                                        <select style="min-width: 100px;" class="form-control status-registrasi-peserta" data-id="${dt.id}" ${disabled_wawancara}>
                                             <option value="0">Belum</option>
                                             <option value="1" ${is_registrasi_wawancara}>Sudah</option>
                                         </select>
@@ -240,6 +242,8 @@
                     dataList.append(row);
                 });
                 renderPagination(response.data, pagination);
+
+
             }else{
                 const row = `<tr>
                                 <td colspan="4">data tidak ditemukan</td>
@@ -268,6 +272,7 @@
 
         $(document).on('click','.btn-daftar-peserta',function(){
             beasiswa_id = $(this).data('beasiswa_id');
+            is_wawancara_aktif = $(this).data('is_wawancara_aktif');
             showModal('modal-peserta');    
             dataPeserta();
         });

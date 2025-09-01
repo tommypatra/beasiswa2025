@@ -115,7 +115,7 @@
 <script type="text/javascript">
     const endpoint = base_url+'/api/wawancara';
     var page = 1;
-
+    var is_wawancara_aktif=false;
     $(document).ready(function() {
         dataLoad();
 
@@ -150,7 +150,7 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="d-flex flex-column align-items-center gap-2">
-                                            <button class="btn btn-secondary btn-daftar-peserta" data-beasiswa_id="${dt.beasiswa.id}" type="button" ${tombol_aktif}>Daftar Peserta</button>
+                                            <button class="btn btn-secondary btn-daftar-peserta" data-is_wawancara_aktif="${dt.beasiswa.is_wawancara_aktif}" data-beasiswa_id="${dt.beasiswa.id}" type="button" ${tombol_aktif}>Daftar Peserta</button>
                                         </div>
                                     </td>
                                 </tr>`;

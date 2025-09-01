@@ -8,7 +8,23 @@ class Beasiswa extends Model
 {
     protected $guarded = ["id"];
 
-    protected $appends = ['is_pendaftaran_aktif'];
+    protected $appends = ['is_pendaftaran_aktif', 'is_verifikasi_berkas_aktif', 'is_wawancara_aktif', 'is_survei_aktif'];
+
+    public function getIsWawancaraAktifAttribute()
+    {
+        if (!$this->wawancara_mulai || !$this->wawancara_selesai) {
+            return false;
+        }
+        return now()->between($this->wawancara_mulai, $this->wawancara_selesai);
+    }
+
+    public function getIsSurveiAktifAttribute()
+    {
+        if (!$this->survei_lapangan_mulai || !$this->survei_lapangan_selesai) {
+            return false;
+        }
+        return now()->between($this->survei_lapangan_mulai, $this->survei_lapangan_selesai);
+    }
 
     public function getIsPendaftaranAktifAttribute()
     {
@@ -16,6 +32,14 @@ class Beasiswa extends Model
             return false;
         }
         return now()->between($this->daftar_mulai, $this->daftar_selesai);
+    }
+
+    public function getIsVerifikasiBerkasAktifAttribute()
+    {
+        if (!$this->verifikasi_berkas_mulai || !$this->verifikasi_berkas_selesai) {
+            return false;
+        }
+        return now()->between($this->verifikasi_berkas_mulai, $this->verifikasi_berkas_selesai);
     }
 
     public function user()

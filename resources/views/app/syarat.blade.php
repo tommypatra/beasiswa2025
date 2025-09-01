@@ -76,7 +76,7 @@
 
 <!-- MULAI MODAL -->
 <div class="modal fade modal" id="modal-form" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <form id="form">
             <input type="hidden" name="id" id="id" >
             <div class="modal-content">
@@ -118,12 +118,12 @@
                             <small class="text-muted d-block mt-1 form-instrumen-opsi">
                                 <ul class="mb-0 ps-3 ">
                                     <li>Pemisah pilihan gunakan tanda koma (<code>,</code>).</li>
-                                    <li>Skor tertinggi diberikan pada pilihan pertama.</li>
-                                    <li>Skor menurun sesuai urutan penulisan.</li>
+                                    <li>Skor tertinggi diberikan pada pilihan pertama dan menurun sesuai urutan penulisan.</li>
                                     <li>
-                                        Contoh:
+                                        <div>Contoh:</div>
                                         <code>Sangat Sesuai, Sesuai, Cukup Sesuai, Kurang Sesuai, Tidak Sesuai</code>
-                                        <code>Ada, Tidak Ada</code>
+                                        <div>atau</div>
+                                        <code>Memenuhi, Tidak Memenuhi</code>
                                     </li>
                                 </ul>
                             </small>
@@ -274,7 +274,7 @@
         // Handle page change
         $('#btn-tambah').click(function() {
             formReset();
-            $('#instrumen_opsi').val('Ada,Tidak Ada');
+            $('#instrumen_opsi').val('Memenuhi,Tidak Memenuhi');
             showModalForm();
 
         });
@@ -295,6 +295,7 @@
                     appShowNotification(true,['berhasil dilakukan!']);
                     if(id===''){
                         formReset();
+                        $('#instrumen_opsi').val('Memenuhi,Tidak Memenuhi');
                     }
                     dataLoad();
                 });
