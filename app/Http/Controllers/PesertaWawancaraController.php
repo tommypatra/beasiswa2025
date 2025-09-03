@@ -151,7 +151,9 @@ class PesertaWawancaraController extends Controller
                 });
         }
 
-        if (!($request->filled('show_all') && izinkanAkses('admin'))) {
+        if ($request->filled('show_all') && izinkanAkses('admin')) {
+            //
+        } else {
             $dataQuery->orWhere(function ($query) {
                 $query->whereHas('pesertaWawancara.pewawancara', function ($q) {
                     $q->where('user_id', auth()->id());
