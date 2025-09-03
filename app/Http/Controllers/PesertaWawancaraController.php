@@ -151,12 +151,13 @@ class PesertaWawancaraController extends Controller
                 });
         }
 
-        if (!$request->filled('show_all'))
-            $dataQuery->orWhere(function ($query) use ($request) {
-                $query->WhereHas('pesertaWawancara.pewawancara', function ($q) use ($request) {
-                    $q->where('user_id', auth()->user()->id);
+        if (!($request->filled('show_all') && izinkanAkses('admin'))) {
+            $dataQuery->orWhere(function ($query) {
+                $query->whereHas('pesertaWawancara.pewawancara', function ($q) {
+                    $q->where('user_id', auth()->id());
                 });
             });
+        }
 
         if ($request->filled('prodi')) {
             $dataQuery->where(function ($query) use ($request) {
