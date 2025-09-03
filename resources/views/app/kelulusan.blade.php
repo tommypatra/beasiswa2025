@@ -115,42 +115,42 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modal-label">Filter Data Kelulusan</h5>
+                <h5 class="modal-title" id="modal-label">Urut Data Kelulusan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body">
                 <div class="row">
                     <div class="col-lg-12 mb-3">
-                        <label class="form-label">Filter 1</label>
+                        <label class="form-label">Urut Data 1</label>
                         <select name="filter1" id="filter1" class="form-control data-filter" required>                            
                         </select>                
                     </div>
                 </div>
                 <div class="row">                
                     <div class="col-lg-12 mb-3">
-                        <label class="form-label">Filter 2</label>
+                        <label class="form-label">Urut Data 2</label>
                         <select name="filter2" id="filter2" class="form-control data-filter" >                            
                         </select>                
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-12 mb-3">
-                        <label class="form-label">Filter 3</label>
+                        <label class="form-label">Urut Data 3</label>
                         <select name="filter3" id="filter3" class="form-control data-filter" >                            
                         </select>                
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-12 mb-3">
-                        <label class="form-label">Filter 4</label>
+                        <label class="form-label">Urut Data 4</label>
                         <select name="filter4" id="filter4" class="form-control data-filter" >                            
                         </select>                
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-12 mb-3">
-                        <label class="form-label">Filter 5</label>
+                        <label class="form-label">Urut Data 5</label>
                         <select name="filter5" id="filter5" class="form-control data-filter" >                            
                         </select>                
                     </div>
