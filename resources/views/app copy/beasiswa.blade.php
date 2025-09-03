@@ -259,69 +259,69 @@
             if (data.length > 0) {
                 $.each(data, function(index, dt) {
 
+                    let detail_isian=``;
+                    // let detail_isian = `
+                    //     <a href="${base_url}/syarat/${dt.id}">
+                    //         <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1"> 
+                    //             Syarat
+                    //         </span>                                  
+                    //     </a>      
+                    // `;
 
-                    let detail_isian = `
-                        <a href="${base_url}/syarat/${dt.id}">
-                            <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1"> 
-                                Syarat
-                            </span>                                  
-                        </a>      
-                    `;
+                    // // kalau ada ujian CBT
+                    // if (dt.ada_ujian_cbt == 1) {
+                    //     detail_isian += `
+                    //         <a href="#">
+                    //             <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
+                    //                 Soal Ujian
+                    //             </span>                                  
+                    //         </a> 
+                    //     `;
+                    // }
 
-                    // kalau ada ujian CBT
-                    if (dt.ada_ujian_cbt == 1) {
-                        detail_isian += `
-                            <a href="#">
-                                <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
-                                    Soal Ujian
-                                </span>                                  
-                            </a> 
-                        `;
-                    }
+                    // // kalau ada verifikasi berkas
+                    // if (dt.ada_verifikasi_berkas == 1) {
+                    //     detail_isian += `
+                    //         <a href="${base_url}/verifikator/${dt.id}">
+                    //             <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
+                    //                 Verifikator
+                    //             </span>                                  
+                    //         </a> 
+                    //     `;
+                    // }
 
-                    // kalau ada verifikasi berkas
-                    if (dt.ada_verifikasi_berkas == 1) {
-                        detail_isian += `
-                            <a href="${base_url}/verifikator/${dt.id}">
-                                <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
-                                    Verifikator
-                                </span>                                  
-                            </a> 
-                        `;
-                    }
+                    // // kalau ada verifikasi lapangan
+                    // if (dt.ada_verifikasi_lapangan == 1) {
+                    //     detail_isian += `
+                    //         <a href="${base_url}/surveyor/${dt.id}">
+                    //             <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
+                    //                 Surveyor
+                    //             </span>                                  
+                    //         </a> 
+                    //     `;
+                    // }
 
-                    // kalau ada verifikasi lapangan
-                    if (dt.ada_verifikasi_lapangan == 1) {
-                        detail_isian += `
-                            <a href="${base_url}/surveyor/${dt.id}">
-                                <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
-                                    Surveyor
-                                </span>                                  
-                            </a> 
-                        `;
-                    }
-
-                    // kalau ada wawancara
-                    if (dt.ada_wawancara == 1) {
-                        detail_isian += `
-                            <a href="${base_url}/pewawancara/${dt.id}">
-                                <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
-                                    Pewawancara
-                                </span>                                  
-                            </a>   
-                            <a href="${base_url}/soal-wawancara/${dt.id}">
-                                <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
-                                    Soal Wawancara
-                                </span>                                  
-                            </a> 
-                        `;
-                    }
-                    detail_isian += `
-                            <a href="${base_url}/kelulusan/${dt.id}">
-                                <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
-                                    Kelulusan
-                                </span>                                  
-                            </a>`;                
+                    // // kalau ada wawancara
+                    // if (dt.ada_wawancara == 1) {
+                    //     detail_isian += `
+                    //         <a href="${base_url}/pewawancara/${dt.id}">
+                    //             <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
+                    //                 Pewawancara
+                    //             </span>                                  
+                    //         </a>   
+                    //         <a href="${base_url}/soal-wawancara/${dt.id}">
+                    //             <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
+                    //                 Soal Wawancara
+                    //             </span>                                  
+                    //         </a> 
+                    //     `;
+                    // }
+                    // detail_isian += `
+                    //         <a href="${base_url}/kelulusan/${dt.id}">
+                    //             <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
+                    //                 Kelulusan
+                    //             </span>                                  
+                    //         </a>`;                
 
                     const row = `<tr>
                                     <td>${no++}</td>
@@ -340,12 +340,6 @@
                                                 <li><a class="dropdown-item btn-hapus" data-id="${dt.id}" href="javascript:;"><iconify-icon icon="solar:trash-bin-trash-outline" class=""></iconify-icon> Hapus</a></li>
                                             </ul>
                                         </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td colspan="7">
-                                        ${detail_isian}
                                     </td>
                                 </tr>`;
                     dataList.append(row);
