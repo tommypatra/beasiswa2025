@@ -54,14 +54,14 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">
-                    <h5 class="card-title fw-semibold">Dafftar Mahasiswa</h5>
+                    <h5 class="card-title fw-semibold">Daftar Mahasiswa</h5>
                     <div class="d-flex gap-2">
                         <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
                         <button class="btn btn-success" id="btn-refresh">
                             <i class="ti ti-reload"></i>
                         </button>
                         <button class="btn btn-success" id="btn-filter">
-                            <i class="ti ti-filter"></i>
+                            <iconify-icon icon="solar:sort-vertical-outline" class="fs-5"></iconify-icon>
                         </button>
                         <button class="btn btn-primary" id="btn-sinkronisasi">
                             <i class="ti ti-server"></i> Sinkronisasi
@@ -77,19 +77,10 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th rowspan="2" style="vertical-align: middle;" width="5%">No</th>
-                                <th rowspan="2" style="vertical-align: middle;" width="25%">Nama / Nim / Program Studi</th>
-                                <th colspan="6" class="text-center" style="vertical-align: middle;">Nilai</th>
-                                <th rowspan="2" style="vertical-align: middle;" width="15%">Status Lulus</th>
-                                <th rowspan="2" style="vertical-align: middle;" width="5%" class="text-center">Status / Aksi</th>
-                            </tr>
-                            <tr>
-                                <th style="vertical-align: middle;" width="10%">Ekonomi</th>
-                                <th style="vertical-align: middle;" width="10%">Pendidikan</th>
-                                <th style="vertical-align: middle;" width="10%">Dokumen Syarat</th>
-                                <th style="vertical-align: middle;" width="10%">CBT</th>
-                                <th style="vertical-align: middle;" width="10%">Survei</th>
-                                <th style="vertical-align: middle;" width="10%">Wawancara</th>
+                                <th style="vertical-align: middle;" width="5%">No</th>
+                                <th style="vertical-align: middle;" width="25%">Nama / Nim / Program Studi</th>
+                                <th class="text-center" style="vertical-align: middle;">Alamat</th>
+                                <th class="text-center" style="vertical-align: middle;">Status Lulus/ Nilai</th>
                             </tr>
                         </thead>
 
@@ -115,43 +106,54 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modal-label">Urut Data Kelulusan</h5>
+                <h5 class="modal-title" id="modal-label">Pengaturan Data</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-lg-12 mb-3">
+                    <div class="col-lg-12">
+                        <h5>Filter Data</h5>
+                        <hr>
+                    </div>
+                    <div class="col-lg-5 mb-3">
+                        <label class="form-label">Status Lulus</label>
+                        <select name="status_lulus" id="status_lulus" class="form-control filter-item">
+                            <option value="">-- Pilih --</option>                            
+                            <option value="1">Lulus</option>                            
+                            <option value="0">Tidak Lulus</option>                            
+                            <option value="2">Belum Dinilai</option>                            
+                        </select>                
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h5>Urut Data</h5>
+                        <hr>
+                    </div>
+                    <div class="col-lg-5 mb-3">
                         <label class="form-label">Urut Data 1</label>
-                        <select name="filter1" id="filter1" class="form-control data-filter" required>                            
+                        <select name="sort1" id="sort1" class="form-control data-filter" required>                            
                         </select>                
                     </div>
-                </div>
-                <div class="row">                
-                    <div class="col-lg-12 mb-3">
+                    <div class="col-lg-5 mb-3">
                         <label class="form-label">Urut Data 2</label>
-                        <select name="filter2" id="filter2" class="form-control data-filter" >                            
+                        <select name="sort2" id="sort2" class="form-control data-filter" >                            
                         </select>                
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12 mb-3">
+                    <div class="col-lg-5 mb-3">
                         <label class="form-label">Urut Data 3</label>
-                        <select name="filter3" id="filter3" class="form-control data-filter" >                            
+                        <select name="sort3" id="sort3" class="form-control data-filter" >                            
                         </select>                
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12 mb-3">
+                    <div class="col-lg-5 mb-3">
                         <label class="form-label">Urut Data 4</label>
-                        <select name="filter4" id="filter4" class="form-control data-filter" >                            
+                        <select name="sort4" id="sort4" class="form-control data-filter" >                            
                         </select>                
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12 mb-3">
+                    <div class="col-lg-5 mb-3">
                         <label class="form-label">Urut Data 5</label>
-                        <select name="filter5" id="filter5" class="form-control data-filter" >                            
+                        <select name="sort5" id="sort5" class="form-control data-filter" >                            
                         </select>                
                     </div>
                 </div>
@@ -173,14 +175,34 @@
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
 
 <script type="text/javascript">
-    const endpoint = base_url+'/api/peserta-wawancara';
+    const endpoint = base_url+'/api/kelulusan';
     const beasiswa_id="{{ $beasiswa_id }}";
     var page = 1;
     var pewawancara;
     var pendaftar_id;
     var last_page;
     var data_init;
+
+    const opsiSort = [
+        { value: "", text: "-- Pilih --" },
+        { value: "nilai_wawancara", text: "Wawancara" },
+        { value: "nilai_berkas", text: "Verifikasi Berkas" },
+        { value: "nilai_ekonomi", text: "Ekonomi Orang Tua" },
+        { value: "nilai_pendidikan", text: "Pendidikan" },
+        { value: "nilai_cbt", text: "CBT" },
+    ];
     
+    const opsiFilter = {
+        status_lulus: [
+            { value: "", text: "-- Pilih --" },
+            { value: "1", text: "Lulus" },
+            { value: "0", text: "Tidak Lulus" },
+            { value: "2", text: "Belum Dinilai" }
+        ],
+        // tanggal_mulai: { type: "date" },
+        // tanggal_selesai: { type: "date" }
+    };    
+
     $(document).ready(function() {
         init();
         
@@ -191,20 +213,11 @@
         }
 
         function setOptionFilter(){
-            let opsi = [
-                { value: "", text: "-- Pilih --" },
-                { value: "nilai_wawancara", text: "Wawancara" },
-                { value: "nilai_berkas", text: "Verifikasi Berkas" },
-                { value: "nilai_ekonomi", text: "Ekonomi Orang Tua" },
-                { value: "nilai_pendidikan", text: "Pendidikan" },
-                { value: "nilai_cbt", text: "CBT" },
-            ];
-
             // kosongkan dulu semua select.data-filter
             $(".data-filter").empty();
 
             // loop untuk isi option
-            $.each(opsi, function(index, item) {
+            $.each(opsiSort, function(index, item) {
                 $(".data-filter").append(
                     $("<option>", {
                         value: item.value,
@@ -240,7 +253,7 @@
             pagination.empty();
             if (data.length > 0) {
                 $.each(data, function(index, dt) {
-
+                    let status_lulus = dt.status?.is_lulus; 
                     const row = `<tr>
                                     <td>${no++}</td>
                                     <td>
@@ -250,14 +263,29 @@
                                             ${dt.mahasiswa.program_studi}
                                         </div>
                                     </td>
-                                    <td>${showText(dt.nilai.ekonomi)}</td>
-                                    <td>${showText(dt.nilai.pendidikan)}</td>
-                                    <td>${showText(dt.nilai.berkas)}</td>
-                                    <td>${showText(dt.nilai.cbt)}</td>
-                                    <td>${showText(dt.nilai.survei)}</td>
-                                    <td>${showText(dt.nilai.wawancara)}</td>
-                                    <td></td>
-                                    <td></td>
+                                    <td>
+                                        ${dt.mahasiswa.kabupaten} - ${dt.mahasiswa.provinsi} 
+                                        <div>
+                                            <span class="badge bg-secondary fs-2">${dt.mahasiswa.no_hp}</span>
+                                        </div>
+                                        <div>
+                                            <span class="badge bg-secondary fs-2">${dt.mahasiswa.email}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <select name="is_lulus" class="form-control w-auto status-kelulusan mb-2" data-id="${dt.id}">
+                                            <option value="" ${status_lulus === null || status_lulus === "" ? "selected" : ""}>-PILIH-</option>
+                                            <option value="1" ${status_lulus === 1 ? "selected" : ""}>LULUS</option>
+                                            <option value="0" ${status_lulus === 0 ? "selected" : ""}>TIDAK LULUS</option>
+                                        </select>                                           
+
+                                        <span class="badge rounded-pill fs-2 fw-medium bg-primary">Ekonomi : ${showText(dt.nilai.ekonomi)}</span>
+                                        <span class="badge rounded-pill fs-2 fw-medium bg-primary">Pendidikan : ${showText(dt.nilai.pendidikan)}</span>
+                                        <span class="badge rounded-pill fs-2 fw-medium bg-primary">Berkas ${showText(dt.nilai.berkas)}</span>
+                                        <span class="badge rounded-pill fs-2 fw-medium bg-primary">CBT : ${showText(dt.nilai.cbt)}</span>
+                                        <span class="badge rounded-pill fs-2 fw-medium bg-primary">Survei : ${showText(dt.nilai.survei)}</span>
+                                        <span class="badge rounded-pill fs-2 fw-medium bg-primary">Wawancara : ${showText(dt.nilai.wawancara)}</span>                                        
+                                    </td>
                                 </tr>`;
                     dataList.append(row);
                 });
@@ -281,20 +309,33 @@
 
         async function dataLoad() {
             const search = $('#search-input').val();
-            const filter1 = $('#filter1').val();
-            const filter2 = $('#filter2').val();
-            const filter3 = $('#filter3').val();
-            const filter4 = $('#filter4').val();
-            const filter5 = $('#filter5').val();
+            const status_lulus = $('#status_lulus').val();
+            
+            const sort1 = $('#sort1').val();
+            const sort2 = $('#sort2').val();
+            const sort3 = $('#sort3').val();
+            const sort4 = $('#sort4').val();
+            const sort5 = $('#sort5').val();
 
             var url = `${base_url}/api/kelulusan?beasiswa_id=${beasiswa_id}&search=${search}`;
-
-            // tambahkan filter kalau ada yg dipilih
-            [filter1, filter2, filter3, filter4, filter5].forEach((f, idx) => {
-                if (f) {
-                    url += `&sort[${idx+1}]=${f}`;
+            
+            // loop semua filter
+            $(".filter-item").each(function () {
+                const key = $(this).attr("name");
+                const val = $(this).val();
+                if (val) {
+                    url += `&filter[${key}]=${val}`;
                 }
             });
+
+            // ambil semua value dari select yang punya id diawali "sort"
+            $('[id^="sort"]').each(function (idx) {
+                const val = $(this).val();
+                if (val) {
+                    url += `&sort[${idx+1}]=${val}`;
+                }
+            });
+
             fetchData(url, function(response) {
                 renderData(response);
             },true);
@@ -386,6 +427,16 @@
 
         $('#btn-refresh').click(function() {
             dataLoad();
+        });
+
+
+        $(document).on('change', '.status-kelulusan', function() {
+            const id = $(this).data('id');
+            const url = endpoint + '/' + id;
+
+            saveData(url, 'PUT', {is_lulus: $(this).val()}, function(response) {
+                appShowNotification(true, ['berhasil dilakukan!']);
+            });
         });
 
 

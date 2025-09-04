@@ -59,10 +59,12 @@
                     <div class="col-sm-4 mb-3">
                         <label class="form-label">Kabupaten/ Kota</label>
                         <input name="wilayah_kabupaten" id="wilayah_kabupaten" data-id="" type="text" class="form-control" required>
+                        wajib ketik dan pilih kabupaten/ kota
                     </div>
                     <div class="col-sm-4 mb-3">
                         <label class="form-label">Kelurahan/ Desa</label>
                         <input name="wilayah_desa" id="wilayah_desa" data-id="" type="text" class="form-control" required>
+                        pilih terlebih dahulu kabupaten setelah itu wajib ketik dan pilih kelurahan/desan
                     </div>
                     <div class="col-sm-4 mb-3">
                         <label class="form-label">Nomor HP/WA</label>

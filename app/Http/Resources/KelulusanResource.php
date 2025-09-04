@@ -15,7 +15,7 @@ class KelulusanResource extends JsonResource
     public function toArray(Request $request): array
     {
 
-        //return parent::toArray($request);
+        // return parent::toArray($request);
 
         $pendaftar = $this->pendaftar;
         $mahasiswa = $pendaftar->mahasiswa;
@@ -44,10 +44,15 @@ class KelulusanResource extends JsonResource
                 'nama' => $user->name,
                 'email' => $user->email,
                 'tempat_lahir' => $identitas->tempat_lahir ?? null,
+                'no_hp' => $identitas->no_hp ?? null,
                 'nim' => $mahasiswa->nim ?? null,
                 'tanggal_lahir' => $identitas->tanggal_lahir ?? null,
                 'jenis_kelamin' => $identitas->jenis_kelamin ?? null,
                 'alamat' => $identitas->alamat ?? null,
+                'desa' => $identitas->desa ?? null,
+                'kecamatan' => $identitas->kecamatan ?? null,
+                'kabupaten' => $identitas->kabupaten ?? null,
+                'provinsi' => $identitas->provinsi ?? null,
                 'program_studi' => $programStudi->nama ?? null,
                 'fakultas' => $fakultas->nama ?? null,
             ],

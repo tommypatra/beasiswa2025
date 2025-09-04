@@ -41,6 +41,29 @@ class KelulusanController extends Controller
             });
         });
 
+        $filters = $request->input('filter', []);
+
+        foreach ($filters as $key => $val) {
+            if ($val === null || $val === '') continue;
+
+            switch ($key) {
+                case 'status_lulus':
+                    if ($val != 2)
+                        $dataQuery->where(function ($query) use ($val) {
+                            $query->where('is_lulus', $val);
+                        });
+                    else
+                        $dataQuery->where(function ($query) {
+                            $query->whereNull('is_lulus');
+                        });
+                    break;
+                default:
+                    $dataQuery->where(function ($query) {
+                        $dataQuery->where($key, $val);
+                    });
+                    break;
+            }
+        }
 
         if ($request->filled('sort')) {
             foreach ($request->sort as $col) {
@@ -260,7 +283,7 @@ class KelulusanController extends Controller
             DB::beginTransaction();
             $data = Kelulusan::where('id', $id)->firstOrFail();
             $data_save = [
-                'status' => $request->status,
+                'is_lulus' => $request->is_lulus,
             ];
             $data->update($data_save);
             DB::commit();
