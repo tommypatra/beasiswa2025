@@ -287,7 +287,7 @@ td, th {
             const limit = $('#jumlah').val();
             const cari = $('#cari').val();
             const program_studi_id = $('#program_studi_id').val();
-            var url = `${base_url}/api/peserta-wawancara?search=${cari}&prodi=${program_studi_id}&pewawancara=0&beasiswa_id=${id}&limit=${limit}`;
+            var url = `${base_url}/api/peserta-wawancara?is_admin=1&search=${cari}&prodi=${program_studi_id}&pewawancara=0&beasiswa_id=${id}&limit=${limit}`;
             try {
                 const response = await fetch(url, {
                     method: 'GET',

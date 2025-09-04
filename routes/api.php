@@ -154,7 +154,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     Route::get('peserta-verifikasi/{beasiswa_id}/{hasil}', [VerifikatorController::class, 'getPesertaVerifikasi']);
 
     Route::middleware(['cek.akses:pewawancara'])->group(function () {
-        Route::resource('peserta-wawancara', PesertaWawancaraController::class);
+        // Route::resource('peserta-wawancara', PesertaWawancaraController::class);
         Route::resource('wawancara-nilai', WawancaraNilaiController::class);
         Route::get('proses-wawancara/{id}', [WawancaraNilaiController::class, 'prosesWawancara']);
         Route::put('akhiri-wawancara/{id}', [WawancaraNilaiController::class, 'akhiriWawancara']);
@@ -226,7 +226,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::delete('pewawancara/{id}', [PewawancaraController::class, 'destroy']);
         Route::put('pewawancara/{id}', [PewawancaraController::class, 'update']);
 
-        // Route::resource('peserta-wawancara', PesertaWawancaraController::class);
+        Route::resource('peserta-wawancara', PesertaWawancaraController::class);
     });
 
     Route::middleware(['cek.akses:mahasiswa'])->group(function () {

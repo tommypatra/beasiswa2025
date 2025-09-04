@@ -132,9 +132,7 @@ class PesertaWawancaraController extends Controller
         //         $dataQuery->whereDoesntHave('PesertaWawancara');
         // }
 
-        if ($request->filled('beasiswa_id')) {
-            $dataQuery->where('beasiswa_id', $request->beasiswa_id);
-        }
+        $dataQuery->where('beasiswa_id', $request->beasiswa_id);
 
         if ($request->filled('search')) {
             $dataQuery->where(function ($query) use ($request) {
@@ -151,7 +149,7 @@ class PesertaWawancaraController extends Controller
                 });
         }
 
-        if ($request->filled('show_all') && izinkanAkses('admin')) {
+        if ($request->filled('is_admin') && izinkanAkses('admin')) {
             //
         } else {
             $dataQuery->where(function ($query) {
