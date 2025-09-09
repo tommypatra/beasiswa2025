@@ -138,11 +138,15 @@ class PendaftarController extends Controller
 
         $default_limit = env('DEFAULT_LIMIT', 30);
         $limit = $request->filled('limit') ? $request->limit : $default_limit;
-        $data = $dataQuery->paginate($limit);
-        $resourceCollection = $data->getCollection()->map(function ($item) {
-            return new DaftarPendaftarResource($item);
-        });
-        $data->setCollection($resourceCollection);
+        if ($limit == 0) {
+            $data = DaftarPendaftarResource::collection($dataQuery->get());
+        } else {
+            $data = $dataQuery->paginate($limit);
+            $resourceCollection = $data->getCollection()->map(function ($item) {
+                return new DaftarPendaftarResource($item);
+            });
+            $data->setCollection($resourceCollection);
+        }
 
         $dataRespon = [
             'status' => true,

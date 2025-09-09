@@ -75,6 +75,9 @@ td, th {
                         <button class="btn btn-success" id="btn-refresh">
                             <i class="ti ti-reload"></i>
                         </button>
+                        <button class="btn btn-success" id="btn-cetak">
+                            <i class="ti ti-printer"></i>
+                        </button>
                         <button class="btn btn-secondary" id="btn-filter">
                             <i class="ti ti-filter"></i>
                         </button>
@@ -290,7 +293,21 @@ td, th {
             loadDataPeserta();
         });
 
-                // Handle page change
+        $('#btn-cetak').click(function(){
+            const params = new URLSearchParams();
+            const pendaftaran = $('#status-pendaftaran').val();
+            const verifikasi   = $('#status-verifikasi').val();
+            const kelulusan    = $('#status-kelulusan').val();
+
+            if (pendaftaran) params.append('pendaftaran', pendaftaran);
+            if (verifikasi)  params.append('verifikasi', verifikasi);
+            if (kelulusan)   params.append('kelulusan', kelulusan);
+
+            const url = `${base_url}/cetak-data-pendaftar/${id}?${params.toString()}`;
+            window.open(url, '_blank');
+        });
+
+        // Handle page change
         $('#btn-terapkan-filter').click(function() {
             dataLoad();
         });

@@ -66,3 +66,6 @@ Route::get('/peserta-survei/{id}', [WebController::class, 'pesertaSurvei'])->nam
 Route::get('dashboard-beasiswa/{beasiswa_id}', [WebController::class, 'dashboardBeasiswa'])->name('dashboard-beasiswa');
 Route::get('registrasi-peserta', [WebController::class, 'registrasiPeserta'])->name('registrasi-peserta');
 Route::get('verifikasi-peserta', [WebController::class, 'verifikasiPeserta'])->name('verifikasi-peserta');
+
+
+Route::get('cetak-data-pendaftar/{beasiswa_id}', [WebController::class, 'cetakDataPendaftar'])->name('cetak-data-pendaftar');
