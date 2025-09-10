@@ -31,11 +31,11 @@
                 <thead>
                     <tr>
                         <th width="5%">No</th>
-                        <th width="10%">Tahun</th>
-                        <th width="30%">Beasiswa/ Kuota</th>
+                        <th width="30%">Tahun/ Beasiswa/ Kuota</th>
                         <th width="10%">Jenis</th>
                         <th width="10%">Pendaftaran</th>
                         <th width="10%">Pengumuman</th>
+                        <th width="10%">Jumlah Pendaftar</th>
                         <th width="15%">Status</th>
                         <th>Aksi</th>
                     </tr>
@@ -333,11 +333,11 @@
 
                     const row = `<tr>
                                     <td>${no++}</td>
-                                    <td>${dt.tahun}</td>
-                                    <td>${dt.nama} <i>(kuota:${dt.kuota})</i></td>
+                                    <td>${dt.tahun} / ${dt.nama} <i>(kuota:${dt.kuota})</i></td>
                                     <td>${dt.jenis_beasiswa.nama}</td>
                                     <td>${dt.daftar_mulai} sd ${dt.daftar_selesai}</td>
                                     <td>${dt.pengumuman_akhir}</td>
+                                    <td>${dt.pendaftar_count}</td>
                                     <td>${status_besiswa}</td>
                                     <td>
                                         <div class="dropdown">
