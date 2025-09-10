@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('syarat_tahun_lulus_sma', 50)->nullable();
             $table->year('tahun')->nullable();
             $table->text('deskripsi')->nullable();
+            $table->integer('batas_minimal_ukt')->nullable();
             $table->date('daftar_mulai')->nullable();
             $table->date('daftar_selesai')->nullable();
             $table->date('verifikasi_berkas_mulai')->nullable();

@@ -150,6 +150,7 @@ if (!function_exists('validasiPendaftaran')) {
 
         $data['user'] = $user;
         $data['identitas'] = optional($user->identitas)->wilayah_desa_id ? true : false;
+        $data['data_mahasiswa'] = optional($user->mahasiswa)->id ? true : false;
         $data['angkatan_mahasiswa'] = true;
         $data['lulus_sma'] = true;
 
@@ -157,6 +158,7 @@ if (!function_exists('validasiPendaftaran')) {
         $data['orang_tua'] = true;
         $data['rumah'] = true;
         $data['pendidikan_akhir'] = true;
+
         if ($beasiswa->perlu_data_orang_tua) {
             $data['orang_tua'] = ($user->orangTua) ? true : false;
         }
@@ -192,6 +194,17 @@ if (!function_exists('validasiPendaftaran')) {
         $data['batal'] = ($data_pendaftaran) ? $data_pendaftaran->is_batal : null;
         $data['finalisasi'] = ($data_pendaftaran) ? $data_pendaftaran->is_finalisasi : null;
         $data['pendaftaran_aktif'] = $beasiswa->is_pendaftaran_aktif;
+
+        $data['ukt_memenuhi'] = true;
+
+        if ($beasiswa->nilai_minimal_ukt) {
+            $data['ukt_memenuhi'] = false;
+            if ($user->mahasiswa && $user->mahasiswa->ukt !== null) {
+                $data['ukt_memenuhi'] = ($user->mahasiswa->ukt > $beasiswa->nilai_minimal_ukt) ? true : false;
+            }
+        }
+        // echo "UKT MEMENUHI : " . $beasiswa->nilai_minimal_ukt . " " . $data['ukt_memenuhi'];
+        // die;
 
         $data['sudah_mendaftar'] = Pendaftar::with(['kelulusan'])->whereHas('beasiswa', fn($q) => $q->where('is_aktif', '1')->where('tahun', $beasiswa->tahun))
             ->whereHas('mahasiswa', fn($q) => $q->where('user_id', $user_id))

@@ -55,6 +55,8 @@ class PendaftarRequest extends FormRequest
                 $validator->errors()->add('pendaftaran', 'Maaf, pendaftaran sudah tertutup!');
             } elseif (!$data->identitas) {
                 $validator->errors()->add('pendaftaran', 'Maaf, lengkapi dulu semua data identitas anda!');
+            } elseif (!$data->data_mahasiswa) {
+                $validator->errors()->add('pendaftaran', 'Maaf, lengkapi dulu data mahasiswa!');
             } elseif (!$data->nilai_raport) {
                 $validator->errors()->add('pendaftaran', 'Maaf, nilai raport tidak boleh kosong!');
             } elseif (!$data->orang_tua) {
@@ -69,6 +71,8 @@ class PendaftarRequest extends FormRequest
                 $validator->errors()->add('pendaftaran', 'Maaf, syarat tahun lulus SMA tidak memenuhi!');
             } elseif ($data->user->id !== auth()->user()->id) {
                 $validator->errors()->add('pendaftaran', 'Maaf, akses anda tidak diperbolehkan!');
+            } elseif (!$data->ukt_memenuhi) {
+                $validator->errors()->add('pendaftaran', 'Maaf, nilai UKT anda tidak memenuhi untuk mendaftar di beasiswa ini!');
             } elseif ($data->sudah_mendaftar) {
                 $validator->errors()->add('pendaftaran', 'Anda sudah terdaftar pada beasiswa lain di tahun tersebut!');
             }

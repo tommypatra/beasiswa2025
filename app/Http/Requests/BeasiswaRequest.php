@@ -70,6 +70,7 @@ class BeasiswaRequest extends FormRequest
             'perlu_data_rumah' => 'nullable',
             'perlu_data_nilai_raport' => 'nullable',
             'perlu_data_pendidikan_akhir' => 'nullable',
+            'nilai_minimal_ukt' => 'nullable|numeric',
             'is_aktif' => 'required|numeric',
         ];
     }
@@ -102,6 +103,7 @@ class BeasiswaRequest extends FormRequest
             'perlu_data_rumah' => 'kebutuhan data rumah',
             'perlu_data_nilai_raport' => 'kebutuhan data nilai raport',
             'perlu_data_pendidikan_akhir' => 'kebutuhan data pendidikan',
+            'nilai_minimal_ukt' => 'nilai minimal UKT',
             'is_aktif' => 'status',
         ];
     }

@@ -36,7 +36,7 @@
                         <th width="10%">Jenis</th>
                         <th width="10%">Pendaftaran</th>
                         <th width="10%">Pengumuman</th>
-                        <th width="30%">Keterangan</th>
+                        <th width="15%">Status</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -156,6 +156,13 @@
 						<div class="col-sm-4 mb-3">
                             <label class="form-label">Pengumuman Kelulusan Beasiswa</label>
                             <input name="pengumuman_akhir" id="pengumuman_akhir" type="text" class="form-control datepicker" required>
+                        </div>
+                    </div>                    
+                    <div class="row">
+						<div class="col-sm-4 mb-3">
+                            <label class="form-label">Batas Minimal UKT</label>
+                            <input name="nilai_minimal_ukt" id="nilai_minimal_ukt" type="text" class="form-control">
+                            <i>masukan nilai minimal UKT</i>
                         </div>
                     </div>                    
                     <div class="row">
@@ -321,7 +328,8 @@
                     //             <span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">
                     //                 Kelulusan
                     //             </span>                                  
-                    //         </a>`;            
+                    //         </a>`;       
+                    const status_besiswa = (dt.is_aktif)?`<span class="badge text-bg-success">Aktif</span>`:`<span class="badge text-bg-danger">Tidak Aktif</span>`;     
 
                     const row = `<tr>
                                     <td>${no++}</td>
@@ -330,7 +338,7 @@
                                     <td>${dt.jenis_beasiswa.nama}</td>
                                     <td>${dt.daftar_mulai} sd ${dt.daftar_selesai}</td>
                                     <td>${dt.pengumuman_akhir}</td>
-                                    <td>${showText(dt.keterangan)}</td>
+                                    <td>${status_besiswa}</td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
@@ -400,6 +408,7 @@
             $('#tahun').val("{{ date('Y') }}");
             $('#syarat_tahun_angkatan_mahasiswa').val("");
             $('#syarat_tahun_lulus_sma').val("");
+            $('#nilai_minimal_ukt').val("");
             $('#kuota').val("");
             $('#daftar_mulai').val("{{ date('Y-m-d') }}");
             $('#daftar_selesai').val("{{ date('Y-m-d') }}");
@@ -442,6 +451,8 @@
                 $('#id').val(response.data.id);
                 $('#jenis_beasiswa_id').val(response.data.jenis_beasiswa_id);
                 $('#syarat_tahun_angkatan_mahasiswa').val(response.data.syarat_tahun_angkatan_mahasiswa);
+                $('#nilai_minimal_ukt').val(response.data.nilai_minimal_ukt);
+                
                 $('#syarat_tahun_lulus_sma').val(response.data.syarat_tahun_lulus_sma);
                 
                 $('#kuota').val(response.data.kuota);
