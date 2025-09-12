@@ -159,11 +159,6 @@ class PendaftarController extends Controller
     public function index(Request $request)
     {
         $dataQuery = Beasiswa::with(['jenisBeasiswa', 'syarat'])
-            ->selectRaw('*, 
-                            CASE 
-                                WHEN NOW() BETWEEN daftar_mulai AND daftar_selesai THEN true 
-                            ELSE false 
-                            END as is_pendaftaran_aktif')
             ->withCount(['pendaftar'])
             ->with(['pendaftar' => function ($query) use ($request) {
                 $mahasiswa = Mahasiswa::where('user_id', auth()->user()->id)->first();

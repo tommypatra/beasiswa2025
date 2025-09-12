@@ -5,6 +5,7 @@
         ['color'=>'primary','label'=>'Dashboard','icon'=>'solar:book-2-linear','url'=>'dashboard-beasiswa'],
         ['color'=>'primary','label'=>'Pendaftar','icon'=>'solar:users-group-rounded-outline','url'=>'pendaftar-beasiswa'],
         ['color'=>'primary','label'=>'Syarat','icon'=>'solar:checklist-linear','url'=>'syarat'],
+        ['color'=>'primary','label'=>'CAT','icon'=>'solar:square-academic-cap-2-outline','url'=>'cat'],
         ['color'=>'primary','label'=>'Verifikator','icon'=>'solar:user-check-linear','url'=>'verifikator'],
         ['color'=>'primary','label'=>'Surveyor','icon'=>'solar:user-hands-outline','url'=>'surveyor'],
         ['color'=>'primary','label'=>'Pewawancara','icon'=>'solar:user-speak-rounded-outline','url'=>'pewawancara'],

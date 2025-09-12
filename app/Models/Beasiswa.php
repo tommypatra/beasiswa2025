@@ -15,7 +15,7 @@ class Beasiswa extends Model
         if (!$this->wawancara_mulai || !$this->wawancara_selesai) {
             return false;
         }
-        return now()->between($this->wawancara_mulai, $this->wawancara_selesai);
+        return today()->between($this->wawancara_mulai, $this->wawancara_selesai);
     }
 
     public function getIsSurveiAktifAttribute()
@@ -23,7 +23,7 @@ class Beasiswa extends Model
         if (!$this->survei_lapangan_mulai || !$this->survei_lapangan_selesai) {
             return false;
         }
-        return now()->between($this->survei_lapangan_mulai, $this->survei_lapangan_selesai);
+        return today()->between($this->survei_lapangan_mulai, $this->survei_lapangan_selesai);
     }
 
     public function getIsPendaftaranAktifAttribute()
@@ -31,7 +31,7 @@ class Beasiswa extends Model
         if (!$this->daftar_mulai || !$this->daftar_selesai) {
             return false;
         }
-        return now()->between($this->daftar_mulai, $this->daftar_selesai);
+        return today()->between($this->daftar_mulai, $this->daftar_selesai);
     }
 
     public function getIsVerifikasiBerkasAktifAttribute()
@@ -39,7 +39,7 @@ class Beasiswa extends Model
         if (!$this->verifikasi_berkas_mulai || !$this->verifikasi_berkas_selesai) {
             return false;
         }
-        return now()->between($this->verifikasi_berkas_mulai, $this->verifikasi_berkas_selesai);
+        return today()->between($this->verifikasi_berkas_mulai, $this->verifikasi_berkas_selesai);
     }
 
     public function user()

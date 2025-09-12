@@ -14,6 +14,11 @@ class WebController extends Controller
         dd(auth()->user());
     }
 
+    public function ruangan()
+    {
+        return view('app.ruangan');
+    }
+
     public function loginAdmin()
     {
         return view('login');
@@ -34,6 +39,10 @@ class WebController extends Controller
         return view('app.kelulusan', ['beasiswa_id' => $id]);
     }
 
+    public function cat($id)
+    {
+        return view('app.cat', ['beasiswa_id' => $id]);
+    }
 
     public function skPenerima()
     {
@@ -258,5 +267,27 @@ class WebController extends Controller
     public function verifikasiPeserta()
     {
         return view('app.verifikasi_peserta');
+    }
+
+
+    //untuk pengaturan cat
+    public function pengaturanCat($id)
+    {
+        return view('app.cat.pengaturan', ['beasiswa_id' => $id]);
+    }
+
+    public function ruanganCat($id)
+    {
+        return view('app.cat.ruangan', ['beasiswa_id' => $id]);
+    }
+
+    public function sesiCat($id)
+    {
+        return view('app.cat.sesi', ['beasiswa_id' => $id]);
+    }
+
+    public function jadwalCat($id)
+    {
+        return view('app.cat.jadwal', ['beasiswa_id' => $id]);
     }
 }

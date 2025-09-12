@@ -141,12 +141,7 @@ if (!function_exists('validasiPendaftaran')) {
         $user_id = auth()->id();
         $user = User::with(["identitas", "nilaiRaport", "orangTua", "rumah", "mahasiswa", "pendidikanAkhir"])->where("id", $user_id)->first();
 
-        $beasiswa = Beasiswa::where('id', $beasiswa_id)
-            ->selectRaw('*, CASE 
-                                WHEN NOW() BETWEEN daftar_mulai AND daftar_selesai THEN true 
-                            ELSE false 
-                            END as is_pendaftaran_aktif')
-            ->first();
+        $beasiswa = Beasiswa::where('id', $beasiswa_id)->first();
 
         $data['user'] = $user;
         $data['identitas'] = optional($user->identitas)->wilayah_desa_id ? true : false;
@@ -206,12 +201,17 @@ if (!function_exists('validasiPendaftaran')) {
         // echo "UKT MEMENUHI : " . $beasiswa->nilai_minimal_ukt . " " . $data['ukt_memenuhi'];
         // die;
 
-        $data['sudah_mendaftar'] = Pendaftar::with(['kelulusan'])->whereHas('beasiswa', fn($q) => $q->where('is_aktif', '1')->where('tahun', $beasiswa->tahun))
+
+        $data['sudah_mendaftar'] = Pendaftar::with(['kelulusan', 'verifikatorPendaftar'])->whereHas('beasiswa', fn($q) => $q->where('is_aktif', '1')->where('tahun', $beasiswa->tahun))
             ->whereHas('mahasiswa', fn($q) => $q->where('user_id', $user_id))
             ->where(function ($query) {
                 $query->whereHas('kelulusan', function ($q) {
                     $q->where('is_lulus', 1);
                 })->orWhereDoesntHave('kelulusan');
+            })->where(function ($query) {
+                $query->whereHas('verifikatorPendaftar', function ($q) {
+                    $q->where('hasil', 1);
+                })->orWhereDoesntHave('verifikatorPendaftar');
             })
             ->where("is_batal", "0")
             ->exists();

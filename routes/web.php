@@ -4,12 +4,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WebController;
 use App\Http\Controllers\AuthController;
 
-Route::get('auth/google', [AuthController::class, 'redirectToGoogle'])->name('google.login');
-Route::get('auth/callback', [AuthController::class, 'handleGoogleCallback']);
+Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('/auth/callback', [AuthController::class, 'handleGoogleCallback']);
 
 Route::get('/', [WebController::class, 'loginSia']);
 Route::get('/login-email', [WebController::class, 'loginAdmin'])->name('login-email');
 Route::get('/login', [WebController::class, 'loginSia'])->name('login');
+Route::get('/ruangan', [WebController::class, 'ruangan'])->name('ruangan');
 Route::get('/dashboard', [WebController::class, 'dashboard'])->name('dashboard');
 Route::get('/pekerjaan', [WebController::class, 'pekerjaan'])->name('pekerjaan');
 Route::get('/pendapatan', [WebController::class, 'pendapatan'])->name('pendapatan');
@@ -33,6 +34,7 @@ Route::get('/jenis-beasiswa', [WebController::class, 'jenisBeasiswa'])->name('je
 Route::get('/referensi-pilihan', [WebController::class, 'referensiPilihan'])->name('referensi-pilihan');
 Route::get('/beasiswa', [WebController::class, 'beasiswa'])->name('beasiswa');
 Route::get('/syarat/{beasiswa_id}', [WebController::class, 'syarat'])->name('syarat');
+Route::get('/cat/{beasiswa_id}', [WebController::class, 'cat'])->name('cat');
 Route::get('/pendaftar-beasiswa/{beasiswa_id}', [WebController::class, 'pendaftarBeasiswa'])->name('pendaftar-beasiswa');
 Route::get('/soal-wawancara/{beasiswa_id?}', [WebController::class, 'soalWawancara'])->name('soal-wawancara');
 
@@ -63,9 +65,16 @@ Route::get('/wawancara', [WebController::class, 'wawancara'])->name('wawancara')
 Route::get('/peserta-wawancara/{id}', [WebController::class, 'pesertaWawancara'])->name('peserta-wawancara');
 Route::get('/peserta-survei/{id}', [WebController::class, 'pesertaSurvei'])->name('peserta-survei');
 
-Route::get('dashboard-beasiswa/{beasiswa_id}', [WebController::class, 'dashboardBeasiswa'])->name('dashboard-beasiswa');
-Route::get('registrasi-peserta', [WebController::class, 'registrasiPeserta'])->name('registrasi-peserta');
-Route::get('verifikasi-peserta', [WebController::class, 'verifikasiPeserta'])->name('verifikasi-peserta');
+Route::get('/dashboard-beasiswa/{beasiswa_id}', [WebController::class, 'dashboardBeasiswa'])->name('dashboard-beasiswa');
+Route::get('/registrasi-peserta', [WebController::class, 'registrasiPeserta'])->name('registrasi-peserta');
+Route::get('/verifikasi-peserta', [WebController::class, 'verifikasiPeserta'])->name('verifikasi-peserta');
 
 
-Route::get('cetak-data-pendaftar/{beasiswa_id}', [WebController::class, 'cetakDataPendaftar'])->name('cetak-data-pendaftar');
+Route::get('/cetak-data-pendaftar/{beasiswa_id}', [WebController::class, 'cetakDataPendaftar'])->name('cetak-data-pendaftar');
+
+
+//route untuk pengaturan cat
+Route::get('/pengaturan-cat/{id}', [WebController::class, 'pengaturanCat']);
+Route::get('/ruangan-cat/{id}', [WebController::class, 'ruanganCat']);
+Route::get('/sesi-cat/{id}', [WebController::class, 'sesiCat']);
+Route::get('/jadwal-cat/{id}', [WebController::class, 'jadwalCat']);

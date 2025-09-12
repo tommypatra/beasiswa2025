@@ -76,6 +76,16 @@
     </a>
 </li>
 <li class="sidebar-item menu-admin">
+    <a class="sidebar-link justify-content-between" href="{{ route('ruangan') }}" aria-expanded="false">
+        <div class="d-flex align-items-center gap-3">
+        <span class="d-flex">
+            <iconify-icon icon="solar:garage-outline" class=""></iconify-icon>
+        </span>
+        <span class="hide-menu">Ruangan</span>
+    </div>
+    </a>
+</li>
+<li class="sidebar-item menu-admin">
     <a class="sidebar-link justify-content-between has-arrow" href="javascript:;" aria-expanded="false">
     <div class="d-flex align-items-center gap-3">
         <span class="d-flex">

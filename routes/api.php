@@ -26,6 +26,7 @@ use App\Http\Controllers\RumahController;
 use App\Http\Controllers\WilayahProvinsi;
 use App\Http\Controllers\SyaratController;
 use App\Http\Controllers\WilayahKabupaten;
+use App\Http\Controllers\RuanganController;
 use App\Http\Middleware\CekAksesMiddleware;
 use App\Http\Controllers\BeasiswaController;
 use App\Http\Controllers\FakultasController;
@@ -172,6 +173,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     });
 
     Route::middleware(['cek.akses:admin'])->group(function () {
+        Route::resource('ruangan', RuanganController::class);
         Route::resource('pekerjaan', PekerjaanController::class);
         Route::resource('kelulusan', KelulusanController::class);
         Route::post('proses-kelulusan', [KelulusanController::class, 'prosesKelulusan']);

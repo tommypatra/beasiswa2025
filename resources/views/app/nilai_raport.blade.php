@@ -25,18 +25,23 @@
 
         <form id="form">
             <input type="hidden" id="id" name="id">
+            <div class="alert alert-primary" role="alert">
+                Untuk nilai rata rata wajib diisi dengan 0 - 100, jika ada koma cara mengisinya ganti dengan titik contoh : 89.78
+                <br>Untuk peringat boleh kosong atau isikan dengan angka contoh 1 atau 2 atau 3 dst
+            </div>                    
+
             <h5>Kelas X</h5>
             <div class="row">
                 <div class="col-sm-5 mb-3">
                     <label class="form-label">Semester 1</label>
-                    <div>Nilai</div>
-                    <input name="smt_1_nilai" id="smt_1_nilai" type="number" class="form-control" required>
+                    <div>Nilai Rata-Rata</div>
+                    <input name="smt_1_nilai" id="smt_1_nilai" type="number" class="form-control" required>                    
                     <div>Peringkat</div>
                     <input name="smt_1_peringkat" id="smt_1_peringkat" type="number" class="form-control" >
                 </div>
                 <div class="col-sm-5 mb-3">
                     <label class="form-label">Semester 2</label>
-                    <div>Nilai</div>
+                    <div>Nilai Rata-Rata</div>
                     <input name="smt_2_nilai" id="smt_2_nilai" type="number" class="form-control" required>
                     <div>Peringkat</div>
                     <input name="smt_2_peringkat" id="smt_2_peringkat" type="number" class="form-control" >
@@ -47,14 +52,14 @@
             <div class="row">
                 <div class="col-sm-5 mb-3">
                     <label class="form-label">Semester 3</label>
-                    <div>Nilai</div>
+                    <div>Nilai Rata-Rata</div>
                     <input name="smt_3_nilai" id="smt_3_nilai" type="number" class="form-control" required>
                     <div>Peringkat</div>
                     <input name="smt_3_peringkat" id="smt_3_peringkat" type="number" class="form-control" >
                 </div>
                 <div class="col-sm-5 mb-3">
                     <label class="form-label">Semester 4</label>
-                    <div>Nilai</div>
+                    <div>Nilai Rata-Rata</div>
                     <input name="smt_4_nilai" id="smt_4_nilai" type="number" class="form-control" required>
                     <div>Peringkat</div>
                     <input name="smt_4_peringkat" id="smt_4_peringkat" type="number" class="form-control" >
@@ -66,14 +71,14 @@
             <div class="row">
                 <div class="col-sm-5 mb-3">
                     <label class="form-label">Semester 5</label>
-                    <div>Nilai</div>
+                    <div>Nilai Rata-Rata</div>
                     <input name="smt_5_nilai" id="smt_5_nilai" type="number" class="form-control" required>
                     <div>Peringkat</div>
                     <input name="smt_5_peringkat" id="smt_5_peringkat" type="number" class="form-control" >
                 </div>
                 <div class="col-sm-5 mb-3">
                     <label class="form-label">Semester 6</label>
-                    <div>Nilai</div>
+                    <div>Nilai Rata-Rata</div>
                     <input name="smt_6_nilai" id="smt_6_nilai" type="number" class="form-control" required>
                     <div>Peringkat</div>
                     <input name="smt_6_peringkat" id="smt_6_peringkat" type="number" class="form-control" >
@@ -169,16 +174,16 @@
 
         //validasi dan save, jika id ada maka PUT/edit jika tidak ada maka POST/simpan baru
         $("#form").validate({           
-            rules: {
-                smt_3_nilai: {
-                    number: true // Hanya angka dan desimal yang valid
-                }
-            },
-            messages: {
-                smt_3_nilai: {
-                    number: "Hanya diperbolehkan angka bulat atau desimal (gunakan titik sebagai pemisah)."
-                }
-            },            
+            // rules: {
+            //     smt_3_nilai: {
+            //         number: true // Hanya angka dan desimal yang valid
+            //     }
+            // },
+            // messages: {
+            //     smt_3_nilai: {
+            //         number: "Hanya diperbolehkan angka bulat atau desimal (gunakan titik sebagai pemisah)."
+            //     }
+            // },            
             submitHandler: function(form) {
                 const id = $('#id').val();
                 const type = (id === '') ? 'POST' : 'PUT';
