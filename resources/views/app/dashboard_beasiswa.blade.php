@@ -99,12 +99,6 @@
             let beasiswa=response.data;
             $('#label-beasiswa').html(`<h4>${beasiswa.nama}</h4>`);
 
-            if(beasiswa.ada_verifikasi_lapangan)
-              $('#menu-web-surveyor').show();
-            if(beasiswa.ada_wawancara)
-              $('#menu-web-pewawancara').show();
-            if(beasiswa.ada_wawancara)
-              $('#menu-web-soal').show();
         }
 
     })

@@ -2,49 +2,40 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\RuanganUjian;
+use App\Models\PengaturanUjian;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RuanganUjianRequest;
-use App\Http\Resources\RuanganUjianResource;
+use App\Http\Requests\PengaturanUjianRequest;
+use App\Http\Resources\PengaturanUjianResource;
 
-class RuanganUjianController extends Controller
+class PengaturanUjianController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $beasiswa_id = $request->filled('beasiswa_id') ? $request->beasiswa_id : null;
-
-        $dataQuery = RuanganUjian::with(['beasiswa', 'ruangan'])->orderBy('urut', 'asc')
-            ->where('beasiswa_id', $beasiswa_id);
+        $dataQuery = PengaturanUjian::with(['beasiswa'])->orderBy('id', 'asc');
 
         if ($request->filled('search')) {
-            $dataQuery->where(function ($query) use ($request) {
-                $query->WhereHas('ruangan', function ($q) use ($request) {
-                    $q->where('name', 'like', '%' . $request->search . '%');
-                });
-                $query->orWhereHas('ruangan', function ($q) use ($request) {
-                    $q->where('gedung', 'like', '%' . $request->search . '%');
-                });
+            $dataQuery->where('nama', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('beasiswa_id')) {
+            $beasiswa_id = $request->beasiswa_id;
+            $dataQuery->where(function ($query) use ($beasiswa_id) {
+                $query->where('beasiswa_id', $beasiswa_id);
             });
         }
 
         $default_limit = env('DEFAULT_LIMIT', 30);
         $limit = $request->filled('limit') ? $request->limit : $default_limit;
-
-        if ($limit == 0) {
-            $data = $dataQuery->get();
-            $data = RuanganUjianResource::collection($data);
-        } else {
-            $data = $dataQuery->paginate($limit);
-            $resourceCollection = $data->getCollection()->map(function ($item) {
-                return new RuanganUjianResource($item);
-            });
-            $data->setCollection($resourceCollection);
-        }
+        $data = $dataQuery->paginate($limit);
+        $resourceCollection = $data->getCollection()->map(function ($item) {
+            return new PengaturanUjianResource($item);
+        });
+        $data->setCollection($resourceCollection);
 
         $dataRespon = [
             'status' => true,
@@ -57,11 +48,11 @@ class RuanganUjianController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(RuanganUjianRequest $request)
+    public function store(PengaturanUjianRequest $request)
     {
         try {
             DB::beginTransaction();
-            $data = RuanganUjian::create($request->validated());
+            $data = PengaturanUjian::create($request->validated());
             DB::commit();
             return response()->json(['status' => true, 'message' => 'data baru berhasil dibuat', 'data' => $data], 201);
         } catch (\Exception $e) {
@@ -76,11 +67,11 @@ class RuanganUjianController extends Controller
     public function show(string $id)
     {
         try {
-            $dataQuery = RuanganUjian::where('id', $id)->firstOrFail();
+            $dataQuery = PengaturanUjian::where('id', $id)->firstOrFail();
             return response()->json([
                 'status' => true,
                 'message' => 'Data ditemukan',
-                'data' => new RuanganUjianResource($dataQuery),
+                'data' => new PengaturanUjianResource($dataQuery),
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -94,11 +85,11 @@ class RuanganUjianController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(RuanganUjianRequest $request, string $id)
+    public function update(PengaturanUjianRequest $request, string $id)
     {
         try {
             DB::beginTransaction();
-            $data = RuanganUjian::where('id', $id)->firstOrFail();
+            $data = PengaturanUjian::where('id', $id)->firstOrFail();
             $data->update($request->validated());
             DB::commit();
             return response()->json(['status' => true, 'message' => 'berhasil diperbarui', 'data' => $data], 200);
@@ -115,7 +106,7 @@ class RuanganUjianController extends Controller
     {
         try {
             DB::beginTransaction();
-            $data = RuanganUjian::where('id', $id)->firstOrFail();
+            $data = PengaturanUjian::where('id', $id)->firstOrFail();
             $data->delete();
             DB::commit();
             return response()->json(null, 204);

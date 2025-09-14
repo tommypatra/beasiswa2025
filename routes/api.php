@@ -42,6 +42,7 @@ use App\Http\Controllers\KelulusanController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\PekerjaanController;
 use App\Http\Controllers\PendaftarController;
+use App\Http\Controllers\SesiUjianController;
 use App\Http\Controllers\SumberAirController;
 use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\PendapatanController;
@@ -56,6 +57,7 @@ use App\Http\Controllers\VerifikatorController;
 use App\Http\Controllers\WilayahDesaController;
 use App\Http\Middleware\JwtAuthenticateRefresh;
 use App\Http\Controllers\ProgramStudiController;
+use App\Http\Controllers\RuanganUjianController;
 use App\Http\Controllers\UploadSyaratController;
 use App\Http\Controllers\JenisBeasiswaController;
 use App\Http\Controllers\PesertaSurveiController;
@@ -65,6 +67,7 @@ use App\Http\Controllers\SurveiPesertaController;
 use App\Http\Controllers\StatusOrangTuaController;
 use App\Http\Controllers\WawancaraNilaiController;
 use App\Http\Controllers\PendidikanAkhirController;
+use App\Http\Controllers\PengaturanUjianController;
 use App\Http\Controllers\PesertaWawancaraController;
 use App\Http\Controllers\ReferensiPilihanController;
 use App\Http\Controllers\VerifikasiBerkasController;
@@ -174,6 +177,9 @@ Route::middleware('jwt.auth.refresh')->group(function () {
 
     Route::middleware(['cek.akses:admin'])->group(function () {
         Route::resource('ruangan', RuanganController::class);
+        Route::resource('pengaturan-ujian', PengaturanUjianController::class);
+        Route::resource('ruangan-ujian', RuanganUjianController::class);
+        Route::resource('sesi-ujian', SesiUjianController::class);
         Route::resource('pekerjaan', PekerjaanController::class);
         Route::resource('kelulusan', KelulusanController::class);
         Route::post('proses-kelulusan', [KelulusanController::class, 'prosesKelulusan']);

@@ -2,6 +2,8 @@
 
 @section('scriptHead')
 <title>Pengaturan CAT</title>
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+<link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet">
 @endsection
 
 @section('container')
@@ -18,36 +20,40 @@
       <div class="card">
         <div class="card-body pb-0">
 
-            <ul class="nav nav-tabs" id="catTab" role="tablist">
+            <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <button class="nav-link active" id="pengaturan-tab" data-bs-toggle="tab" data-bs-target="#pengaturan" type="button" role="tab">Pengaturan</button>
+                    <a class="nav-link active" data-bs-toggle="tab" href="#tab-pengaturan">Dasar</a>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link" id="ruangan-tab" data-bs-toggle="tab" data-bs-target="#ruangan" type="button" role="tab">Ruangan</button>
+                    <a class="nav-link" data-bs-toggle="tab" href="#tab-ruangan">Ruangan</a>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link" id="sesi-tab" data-bs-toggle="tab" data-bs-target="#sesi" type="button" role="tab">Sesi</button>
+                    <a class="nav-link" data-bs-toggle="tab" href="#tab-sesi">Sesi</a>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link" id="jadwal-tab" data-bs-toggle="tab" data-bs-target="#jadwal" type="button" role="tab">Jadwal</button>
+                    <a class="nav-link" data-bs-toggle="tab" href="#tab-jadwal">Jadwal Ujian</a>
                 </li>
             </ul>
 
             <div class="tab-content mt-3" id="catTabContent">
                 <!-- Tab 1 -->
-                <div class="tab-pane fade show active" id="pengaturan" role="tabpanel">
+                <div class="tab-pane fade show active" id="tab-pengaturan" >
+                    @include('app.cat.pengaturan')
                 </div>
 
                 <!-- Tab 2 -->
-                <div class="tab-pane fade" id="ruangan" role="tabpanel">
+                <div class="tab-pane fade" id="tab-ruangan" >
+                    @include('app.cat.ruangan')
                 </div>
 
                 <!-- Tab 3 -->
-                <div class="tab-pane fade" id="sesi" role="tabpanel">
+                <div class="tab-pane fade" id="tab-sesi" >
+                    @include('app.cat.sesi')
                 </div>
 
                 <!-- Tab 4 -->
-                <div class="tab-pane fade" id="jadwal" role="tabpanel">
+                <div class="tab-pane fade" id="tab-jadwal" >
+                    @include('app.cat.jadwal')
                 </div>
             </div>
 
@@ -63,31 +69,62 @@
 @endsection
 
 @section('scriptJs')
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+<script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js" integrity="sha256-AlTido85uXPlSyyaZNsjJXeCs07eSv3r43kyCVc8ChI=" crossorigin="anonymous"></script>
+<script src="{{ asset('js/jquery-validation-1.19.5/dist/jquery.validate.min.js')}}"></script>
+<script src="{{ asset('js/crud.js') }}"></script>
+<script src="{{ asset('js/pagination.js') }}"></script>
 <script type="text/javascript">
-    var id = "{{ $beasiswa_id }}";
-    var loadedTabs = {};
+    var beasiswa_id = "{{ $beasiswa_id }}";
     $(document).ready(function() {
-        // auto load tab pertama
-        loadTabContent('#pengaturan');
+        initPage();
+        async function initPage() {
+            await loadDataBeasiswa();
+            await loadDataRuangan();
+        }
 
-        $('#catTab button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
-            var target = $(e.target).data('bs-target'); // misal: #ruangan
-            if (!loadedTabs[target]) {
-                loadTabContent(target);
-                loadedTabs[target] = true;
-            }
+        $(".datepicker").datepicker({
+            dateFormat: "yy-mm-dd",
         });
 
-        function loadTabContent(target) {
-            let url = "";
-            if (target === "#pengaturan") url = `/pengaturan-cat/${id}`;
-            if (target === "#ruangan") url = `/ruangan-cat/${id}`;
-            if (target === "#sesi") url = `/sesi-cat/${id}`;
-            if (target === "#jadwal") url = `/jadwal-cat/${id}`;
-
-            $(target).html('<div class="text-center p-3">Loading...</div>');
-            $(target).load(url);
+        async function loadDataBeasiswa() {
+            let url = `${base_url}/api/get-data-beasiswa/${beasiswa_id}`;
+            const response = await execAsync(`${url}`, 'GET', token);
+            let beasiswa=response.data;
+            $('#label-beasiswa').html(`<h4>${beasiswa.nama}</h4>`);
         }
+
+
+        async function loadDataRuangan() {
+            let url = `${base_url}/api/ruangan?limit=0`;
+            const response = await execAsync(`${url}`, 'GET', token);
+            if (response.status && response.data) {
+                let $select = $('#ruangan_id');
+                $select.empty();
+                $select.append('<option value="" data-kapasitas="">-- Pilih Ruangan --</option>');
+                $.each(response.data, function (index, item) {
+                    $select.append(`<option value="${item.id}" data-kapasitas="${item.kapasitas}">${item.nama}</option>`);
+                });
+            }
+        }
+
+        $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+            const target = $(e.target).attr("href");
+            switch (target) {
+                case "#tab-pengaturan":
+                    loadDataTab1();
+                    break;
+                case "#tab-ruangan":
+                    loadDataTab2();
+                    break;
+                case "#tab-sesi":
+                    loadDataTab3();
+                    break;
+                case "#tab-jadwal":
+                    loadDataTab4();
+                    break;
+            }
+        });
 
     })
 </script>

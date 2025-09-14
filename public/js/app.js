@@ -419,5 +419,25 @@ function showModal(modalId){
         keyboard: false  
       });
       tmpModal.show();
+}
 
+
+//untuk ubah otomatis format jam
+function initTimeInput(selector) {
+    $(selector).on("input", function () {
+        let val = $(this).val().replace(/\D/g, ""); // hanya angka
+        if (val.length >= 6) {
+            val = val.substring(0, 2) + ":" + val.substring(2, 4) + ":" + val.substring(4, 6);
+        }
+        $(this).val(val);
+    });
+
+    $(selector).on("blur", function () {
+        let val = $(this).val();
+        let regex = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/; // HH:MM:SS
+        if (val && !regex.test(val)) {
+            alert("Format salah! Gunakan HH:MM:SS (contoh 09:30:00 atau 18:45:00).");
+            $(this).val("");
+        }
+    });
 }

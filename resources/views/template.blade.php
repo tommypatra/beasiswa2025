@@ -294,6 +294,7 @@
     });
   </script>
   @yield('scriptJs')
+  @stack('scriptJs')
 </body>
 
 </html>

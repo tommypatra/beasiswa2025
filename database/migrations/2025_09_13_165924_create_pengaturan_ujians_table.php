@@ -11,15 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ruangan_ujians', function (Blueprint $table) {
+        Schema::create('pengaturan_ujians', function (Blueprint $table) {
             $table->id();
-            $table->integer('urut');
-            $table->integer('jumlah_peserta');
-            $table->foreignId('ruangan_id');
-            $table->foreign('ruangan_id')->references('id')->on('ruangans')->restrictOnDelete();
+            $table->integer('peserta_per_ruangan')->nullable();
+            $table->date('tanggal_mulai');
+            $table->date('tanggal_selesai');
+            $table->text('cetak_kartu_ujian')->nullable();
             $table->foreignId('beasiswa_id');
             $table->foreign('beasiswa_id')->references('id')->on('beasiswas')->restrictOnDelete();
-            $table->unique(['ruangan_id', 'beasiswa_id']);
+
+            $table->unique(['beasiswa_id']);
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ruangan_ujians');
+        Schema::dropIfExists('pengaturan_ujians');
     }
 };

@@ -62,6 +62,16 @@ class Beasiswa extends Model
         return $this->hasMany(Verifikator::class);
     }
 
+    public function sesiUjian()
+    {
+        return $this->hasMany(SesiUjian::class);
+    }
+
+    public function pengaturanUjian()
+    {
+        return $this->hasOne(PengaturanUjian::class);
+    }
+
     public function verifikatorPendaftar()
     {
         return $this->hasManyThrough(VerifikatorPendaftar::class, Pendaftar::class, 'beasiswa_id', 'pendaftar_id');
@@ -80,6 +90,11 @@ class Beasiswa extends Model
     public function jenisBeasiswa()
     {
         return $this->belongsTo(JenisBeasiswa::class);
+    }
+
+    public function ruangUjian()
+    {
+        return $this->hasMany(RuangUjian::class);
     }
 
     public function surveyor()

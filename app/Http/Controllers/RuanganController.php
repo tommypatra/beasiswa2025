@@ -24,11 +24,17 @@ class RuanganController extends Controller
 
         $default_limit = env('DEFAULT_LIMIT', 30);
         $limit = $request->filled('limit') ? $request->limit : $default_limit;
-        $data = $dataQuery->paginate($limit);
-        $resourceCollection = $data->getCollection()->map(function ($item) {
-            return new RuanganResource($item);
-        });
-        $data->setCollection($resourceCollection);
+
+        if ($limit == 0) {
+            $data = $dataQuery->get();
+            $data = RuanganResource::collection($data);
+        } else {
+            $data = $dataQuery->paginate($limit);
+            $resourceCollection = $data->getCollection()->map(function ($item) {
+                return new RuanganResource($item);
+            });
+            $data->setCollection($resourceCollection);
+        }
 
         $dataRespon = [
             'status' => true,
