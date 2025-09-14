@@ -299,6 +299,30 @@ class PendaftarController extends Controller
     }
 
 
+    public function batalkanFinalisasi(string $id)
+    {
+        try {
+            DB::beginTransaction();
+            //update pendaftar
+            $data = Pendaftar::where('id', $id)->firstOrFail();
+            $dataUpdate = [
+                'is_finalisasi' => 0,
+            ];
+            $data->update($dataUpdate);
+
+            //hapus 
+            $dataVerifikator = VerifikatorPendaftar::where('pendaftar_id', $id)->firstOrFail();
+            $dataVerifikator->delete();
+
+            DB::commit();
+            return response()->json(['status' => true, 'message' => 'berhasil diperbarui', 'data' => $data], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat memperbarui : ' . $e->getMessage(), 'data' => null], 500);
+        }
+    }
+
+
     public function getData(string $id)
     {
         try {

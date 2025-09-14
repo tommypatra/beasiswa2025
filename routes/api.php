@@ -187,6 +187,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
 
         Route::delete('syarat-hapus-contoh/{beasiswa_id}', [SyaratController::class, 'hapusContoh']);
 
+        Route::get('batalkan-finalisasi/{id}', [PendaftarController::class, 'batalkanFinalisasi']);
 
         Route::resource('monitoring', MonitoringController::class);
         Route::resource('pendapatan', PendapatanController::class);

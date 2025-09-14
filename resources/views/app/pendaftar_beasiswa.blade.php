@@ -224,7 +224,8 @@ td, th {
             
             if (dt.hasil_verifikasi === null){ 
                 catatan=``;
-                status= `<div class="badge rounded-pill fs-2 text-bg-warning">Belum Diproses</div>`;
+                status= `<div class="badge rounded-pill fs-2 text-bg-warning">Belum Diproses</div> 
+                            <a href="javascript:;" class="btn-batalkan-finalisasi" data-pendaftar_id="${dt.pendaftar_id}" data-nama="${dt.nama}"><iconify-icon icon="solar:close-square-outline" class=""></iconify-icon></a>`;
             }
             else if (dt.hasil_verifikasi === 1) 
                 status= `<div class="badge rounded-pill fs-2 text-bg-success">Memenuhi</div>`;
@@ -286,6 +287,26 @@ td, th {
         $(document).on('click', '.page-link', function() {
             page = $(this).data('page');
             dataLoad();
+        });
+
+        
+       // Handle page change
+        $(document).on('click', '.btn-batalkan-finalisasi', async function() {
+            let pendaftar_id = $(this).attr('data-pendaftar_id');
+            let nama = $(this).attr('data-nama');
+            let url = `${base_url}/api/batalkan-finalisasi/${pendaftar_id}`;
+
+            if (confirm(`Yakin batalkan finalisasi atas nama ${nama} ?`)) {
+                // prompt untuk konfirmasi terakhir
+                let input = prompt(`Ketik "BATAL" untuk membatalkan finalisasi pendaftaran atas nama ${nama}:`);
+
+                if (input === 'BATAL') {
+                    const response = await execAsync(url, 'GET', token);
+                    dataLoad();
+                } else {
+                    alert('Finalisasi tidak jadi dibatalkan. Anda tidak mengetik "BATAL".');
+                }
+            }
         });
 
 
