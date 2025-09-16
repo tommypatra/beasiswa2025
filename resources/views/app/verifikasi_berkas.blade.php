@@ -112,6 +112,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modal-label">Verifikasi Berkas <span class="mahasiswa-nama"></span></h5>
+                    &nbsp; <a href="#" target="_blank" class="cetak-kartu-pendaftaran fs-4"><iconify-icon icon="solar:printer-outline" class=""></iconify-icon></a>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -407,7 +408,7 @@
                 // console.log(syarat);
 
                 data_syarat=syarat.data;
-                
+                $('.cetak-kartu-pendaftaran').attr('href',`${base_url}/cetak-kartu-pendaftaran/${peserta.pendaftar.url_id}`);
                 $('.mahasiswa-nama').text(peserta.user.name);
                 $('.mahasiswa-nim').text(`Nim : ${peserta.mahasiswa.nim}`);
                 $('.mahasiswa-prodi').text(peserta.program_studi.nama);
