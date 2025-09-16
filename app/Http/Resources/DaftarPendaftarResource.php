@@ -26,6 +26,7 @@ class DaftarPendaftarResource extends JsonResource
         $user = $this->mahasiswa->user;
         return [
             'pendaftar_id' => $this->id,
+            'url_id' => $this->url_id,
             'user_id' => $user->id,
             'identitas_id' => $identitas->id,
             'mahasiswa_id' => $mahasiswa->id,

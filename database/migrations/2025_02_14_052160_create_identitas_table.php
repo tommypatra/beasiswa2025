@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('identitas', function (Blueprint $table) {
             $table->id();
             $table->string('tempat_lahir', 190)->nullable();
+            $table->string('inisial', 190)->nullable();
             $table->date('tanggal_lahir')->nullable();
             $table->enum('jenis_kelamin', ['L', 'P'])->nullable();
             $table->string('no_hp', 190)->nullable();

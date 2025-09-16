@@ -32,6 +32,10 @@
                     <div class="col-sm-12 mb-3">
                         <div>Email : <span id="email"></span></div>
                     </div>
+                    <div class="col-sm-4 mb-3">
+                        <label class="form-label">Inisial</label>
+                        <input name="inisial" id="inisial" type="text" class="form-control">
+                    </div>
                     <div class="col-sm-7 mb-3">
                         <label class="form-label">Nama</label>
                         <input name="name" id="name" type="text" class="form-control" required>
@@ -133,6 +137,7 @@
                 $('#tanggal_lahir').val(data.identitas.tanggal_lahir);
                 $('#no_hp').val(data.identitas.no_hp);
                 $('#alamat').val(data.identitas.alamat);
+                $('#inisial').val(data.identitas.inisial);
 
                 if(data.identitas.wilayah_desa){
                     let desa = data.identitas.wilayah_desa;
@@ -156,6 +161,7 @@
             $('#tempat_lahir').val("");
             $('#tanggal_lahir').val("{{ date('Y-m-d') }}");
             $('#no_hp').val("");
+            $('#inisial').val("");
             $('#alamat').val("");
             $('#previewImage').hide("");
         }

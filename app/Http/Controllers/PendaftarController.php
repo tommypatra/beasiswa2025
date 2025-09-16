@@ -16,6 +16,7 @@ use App\Http\Requests\PendaftaranBatalRequest;
 use App\Http\Resources\DaftarPendaftarResource;
 use App\Http\Resources\DetailPendaftarResource;
 use App\Http\Requests\PendaftaranKembaliRequest;
+use App\Http\Resources\CetakIdentitasKartuPendaftaranResource;
 
 class PendaftarController extends Controller
 {
@@ -494,6 +495,7 @@ class PendaftarController extends Controller
         try {
 
             $pendaftar = Pendaftar::with([
+                'verifikatorPendaftar.verifikator.user.identitas',
                 'kelulusan',
                 'mahasiswa.programStudi.fakultas',
                 'mahasiswa.user.identitas.wilayahDesa.wilayahKecamatan.wilayahKabupaten.wilayahProvinsi',
@@ -501,6 +503,7 @@ class PendaftarController extends Controller
                 ->where('url_id', $url_id)
                 ->firstOrFail();
 
+            $dataPendaftar = new CetakIdentitasKartuPendaftaranResource($pendaftar);
 
             $beasiswa = Beasiswa::with([
                 'jenisBeasiswa',
@@ -516,7 +519,7 @@ class PendaftarController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Data ditemukan',
-                'data' => ['pendaftar' => $pendaftar, 'beasiswa' => $beasiswa],
+                'data' => ['pendaftar' => $dataPendaftar, 'beasiswa' => $beasiswa],
             ]);
         } catch (\Exception $e) {
             return response()->json([

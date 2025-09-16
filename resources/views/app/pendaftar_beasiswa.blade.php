@@ -205,8 +205,9 @@ td, th {
         function getStatusPendaftaran(dt) {
             if (dt.is_batal) return `<div class="badge rounded-pill fs-2 text-bg-danger">Batal</div>
                                     <div class="fs-2">${showText(dt.alasan_batal)}</div>`;
-            if (dt.is_finalisasi==1) return `<div class="badge rounded-pill fs-2 text-bg-success">Selesai</div>
-                                            <div class="badge rounded-pill fs-2 text-bg-secondary">${dt.no_pendaftaran}</div>`;
+            if (dt.is_finalisasi==1) return `<div class="badge rounded-pill fs-2 text-bg-success text-dark">Selesai <a href="${base_url}/cetak-kartu-pendaftaran/${dt.url_id}" target="_blank" ><iconify-icon icon="solar:printer-outline" class=""></iconify-icon></a></div>
+                                            <div class="badge rounded-pill fs-2 text-bg-secondary">${dt.no_pendaftaran}</div>                                            
+                                            `;
             return `<div class="badge rounded-pill fs-2 text-bg-warning">Proses</div>`;
         }
 
@@ -224,8 +225,7 @@ td, th {
             
             if (dt.hasil_verifikasi === null){ 
                 catatan=``;
-                status= `<div class="badge rounded-pill fs-2 text-bg-warning">Belum Diproses</div> 
-                            <a href="javascript:;" class="btn-batalkan-finalisasi" data-pendaftar_id="${dt.pendaftar_id}" data-nama="${dt.nama}"><iconify-icon icon="solar:close-square-outline" class=""></iconify-icon></a>`;
+                status= `<div class="badge rounded-pill fs-2 text-bg-warning text-dark">Belum Diproses <a href="javascript:;" class="btn-batalkan-finalisasi" data-pendaftar_id="${dt.pendaftar_id}" data-nama="${dt.nama}"><iconify-icon icon="solar:close-square-outline" class=""></iconify-icon></a></div>`;
             }
             else if (dt.hasil_verifikasi === 1) 
                 status= `<div class="badge rounded-pill fs-2 text-bg-success">Memenuhi</div>`;
@@ -247,6 +247,7 @@ td, th {
                     const status_pendaftaran=getStatusPendaftaran(dt);
                     const status_lulus=getStatusLulus(dt);
                     const status_verifikasi=getStatusVerifikasi(dt);
+                    const cbt=``;
 
                     const row = `<tr>
                                     <td>${no++}</td>
@@ -256,8 +257,9 @@ td, th {
                                         ${dt.program_studi} 
                                     </td>
                                     <td>${status_pendaftaran}</td>
-                                    <td>${showText(dt.verifikator)} ${status_verifikasi}</td>
+                                    <td><div>${showText(dt.verifikator)}</div> ${status_verifikasi}</td>
                                     <td>${status_lulus}</td>
+                                    <td>${cbt}</td>
                                 </tr>`;
                     dataList.append(row);
                 });

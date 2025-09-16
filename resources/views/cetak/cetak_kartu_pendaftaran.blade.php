@@ -156,7 +156,7 @@
     <div class="card">
         <div class="header">
             <img src="{{ asset('images/logo.png') }}" alt="SNPMB Logo">
-            <h1>KARTU PESERTA BEASISWA TAHUN <span id="tahun"></span></h1>
+            <h1>KARTU PESERTA BEASISWA TAHUN <span class="tahun"></span></h1>
             <h4 style="margin-top:1px;" class="nama-beasiswa"></h4>
             <hr>
             <div class="row">
@@ -222,7 +222,7 @@
         </div>
 
         <p>
-            Status Akhir : ......................................................
+            <div>Status Akhir : ......................................................</div>
         </p>
         
         <div class="footer">
@@ -238,6 +238,7 @@
                 <p style="margin-top:75px;" class="nama-lengkap">.....</p>    
             </div>           
         </div>
+        <div id="inisial" style="font-size:12px;font-style:italic;"></div>
 
         <hr>
         <h2>Tanda Terima Dokumen</h2>
@@ -341,36 +342,30 @@
         }
 
         function renderData(data){
-            if (data.beasiswa && data.pendaftar && data.pendaftar.is_finalisasi) {
+            if (data.pendaftar.is_finalisasi) {
                 let pendaftar = data.pendaftar;
                 let beasiswa = data.beasiswa;
                 let syarat = beasiswa.syarat;
-                let mahasiswa = pendaftar.mahasiswa;
-                let user = mahasiswa.user;
-                let identitas = user.identitas;
-                let foto_src=base_url+'/'+user.identitas.foto;
+
+                let foto_src=base_url+'/'+pendaftar.foto;
 
                 // console.log(pendaftar);
                 let tanggal_update = pendaftar.updated_at.split('T')[0];
 
 
                 $('.user-foto').attr('src',foto_src);
-                $('.tahun').text(data.tahun);
+                $('.tahun').text(beasiswa.tahun);
                 $('.tanggal').text(tanggal_update);
-                $('.nama-beasiswa').text(data.nama);
+                $('.nama-beasiswa').text(beasiswa.nama);
                 $('.nomor-peserta').text(pendaftar.no_pendaftaran);
-                $('.nama-lengkap').text(user.name);
-                $('.tempat-tanggal-lahir').text(identitas.tempat_lahir+'/ '+identitas.tanggal_lahir);
-                $('.nim').text(mahasiswa.nim);
-                $('.program-studi').text(`${mahasiswa.program_studi.fakultas.nama}/ ${mahasiswa.program_studi.nama}`);
+                $('.nama-lengkap').text(pendaftar.nama);
+                $('.tempat-tanggal-lahir').text(pendaftar.tempat_lahir+'/ '+pendaftar.tanggal_lahir);
+                $('.nim').text(pendaftar.nim);
+                $('.program-studi').text(`${pendaftar.fakultas}/ ${pendaftar.prodi}`);
 
-                let alamat = identitas.alamat; 
-                if(identitas.wilayah_desa){
-                    let desa = identitas.wilayah_desa;
-                    let kecamatan = desa.wilayah_kecamatan;
-                    let kabupaten = kecamatan.wilayah_kabupaten;
-                    let provinsi = kabupaten.wilayah_provinsi;
-                    alamat +=` ${desa.desa} / ${kecamatan.nama} / ${kabupaten.nama} / ${provinsi.nama}`;
+                let alamat = pendaftar.alamat; 
+                if(pendaftar.desa){
+                    alamat +=` ${pendaftar.desa} / ${pendaftar.kecamatan} / ${pendaftar.kabupaten} / ${pendaftar.provinsi}`;
                 }
                 $('.alamat').text(alamat);
 
@@ -411,9 +406,9 @@
                     width: 100,
                     height: 100
                 });                
-
                 
-                $('#nomor-peserta').val(pendaftar.no_pendaftaran);
+                // $('#nomor-peserta').val(pendaftar.no_pendaftaran);
+                $('#inisial').text("code initial : "+pendaftar.inisial);
             }else{
                 // window.location.replace(`${base_url}/pendaftar`);
             }
