@@ -408,7 +408,7 @@
                 });                
                 
                 // $('#nomor-peserta').val(pendaftar.no_pendaftaran);
-                $('#inisial').text("code initial : "+pendaftar.inisial);
+                $('#inisial').text("code app : "+pendaftar.inisial);
             }else{
                 // window.location.replace(`${base_url}/pendaftar`);
             }
