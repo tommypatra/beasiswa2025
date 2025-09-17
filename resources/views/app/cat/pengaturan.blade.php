@@ -77,7 +77,7 @@
 
                 saveData(url, type, dataForm, function(response) {
                     appShowNotification(true,['berhasil dilakukan!']);
-                    dataLoad();
+                    loadDataTab1();
                 });
             }
         });        
