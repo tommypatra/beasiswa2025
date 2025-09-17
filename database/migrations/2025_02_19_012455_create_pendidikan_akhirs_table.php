@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nisn', 50)->nullable();
             $table->string('nama_sekolah', 100)->nullable();
+            $table->string('foto_ijazah', 160)->nullable();
             $table->string('jenis', 50)->nullable();
             $table->enum('akreditasi', ['A', 'B', 'C'])->nullable();
             $table->year('tahun_lulus');

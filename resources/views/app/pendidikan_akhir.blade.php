@@ -79,6 +79,16 @@
                     <input name="nilai_akhir_lulus" id="nilai_akhir_lulus" type="text" class="form-control" required>
                     <div style="font-style: italic">rata rata nilai pada ujian nasional di Ijazah/SKHU/SKL, contoh : 93.50</div>
                 </div>
+
+                <div class="row">
+                    <div class="col-lg-12 mb-3">
+                        <label class="form-label">Upload Ijazah serta Nilai</label>
+                        <input type="file" id="foto_ijazah" name="foto_ijazah" class="form-control" accept="application/pdf">
+                        <div>upload pdf ijazah dan nilai ijazah</div>
+                        <div id="download_foto_ijazah"></div>                    
+                    </div>
+                </div>
+
             </div>
             <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
         </form>
@@ -113,6 +123,14 @@
                 $('#tahun_lulus').val(data.tahun_lulus);
                 $('#nilai_akhir_lulus').val(data.nilai_akhir_lulus);
                 $('#jurusan').val(data.jurusan);
+                if(data.foto_ijazah){
+                    $('#download_foto_ijazah').html(`
+                        <a href="${base_url}/${data.foto_ijazah}" target="_blank" class="badge text-bg-success mt-2">
+                            <iconify-icon icon="solar:download-linear" class=""></iconify-icon> Download Ijazah
+                        </a>
+                    `);
+                }
+
             }else{
                 $('#id').val("");
                 $('#nisn').val("");
@@ -122,6 +140,8 @@
                 $('#tahun_lulus').val("{{ date('Y') }}");
                 $('#nilai_akhir_lulus').val("");
                 $('#jurusan').val("");
+                $('#download_foto_ijazah').html("");
+
             }
         }
 
@@ -139,13 +159,34 @@
 
         //validasi dan save, jika id ada maka PUT/edit jika tidak ada maka POST/simpan baru
         $("#form").validate({
-            submitHandler: function(form) {
+            rules: {
+                foto_ijazah: {
+                    required: function() {
+                        return $('#id').val() === '';
+                    }
+                }
+            },
+            messages: {
+                foto_ijazah: {
+                    required: "Ijazah wajib diupload.",
+                }
+            },
+            submitHandler: function(form,event) {
+                event.preventDefault();
                 const id = $('#id').val();
-                const type = (id === '') ? 'POST' : 'PUT';
                 const url = (id === '') ? endpoint : endpoint + '/' + id;
-                saveData(url, type, $(form).serialize(), function(response) {
-                    renderData(response.status,response.data);
+
+                var formData = new FormData(form);
+                if((id !== '')){
+                    formData.append("_method", "put");
+                }
+
+                saveData(url, 'POST', formData, function(response) {
+                    // renderData(response,status, response.data);
                     appShowNotification(true, ['berhasil dilakukan!']);
+                    dataLoad();
+                    $('#foto_ijazah').val("");
+
                 });
             }
         });

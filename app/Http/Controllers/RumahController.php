@@ -59,17 +59,21 @@ class RumahController extends Controller
             $data_save = $request->validated();
 
             $data_save['user_id'] = auth()->user()->id;
-            // $data_save['foto_depan'] = upload($request->file('foto_depan'), 'foto_depan');
-            // $data_save['foto_belakang'] = upload($request->file('foto_belakang'), 'foto_belakang');
-            // $data_save['foto_ruang_tamu'] = upload($request->file('foto_ruang_tamu'), 'foto_ruang_tamu');
-            // $data_save['foto_ruang_tengah'] = upload($request->file('foto_ruang_tengah'), 'foto_ruang_tengah');
-            // $data_save['foto_dapur'] = upload($request->file('foto_dapur'), 'foto_dapur');
-            // $data_save['foto_wc'] = upload($request->file('foto_wc'), 'foto_wc');
+
+            // if ($request->hasFile('foto_rumah')) {
+            $data_save['foto_rumah'] = upload($request->file('foto_rumah'), 'foto_rumah');
+            // }
+
             $data = Rumah::create($data_save);
             DB::commit();
             return response()->json(['status' => true, 'message' => 'data baru berhasil dibuat', 'data' => $data], 201);
         } catch (\Exception $e) {
             DB::rollBack();
+            if ($data_save['foto_rumah'] && Storage::disk('public')->exists($data_save['foto_rumah'])) {
+                Storage::disk('public')->delete($data_save['foto_rumah']);
+            }
+
+
             return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat membuat data baru: ' . $e->getMessage()], 500);
         }
     }
@@ -177,6 +181,15 @@ class RumahController extends Controller
             if (!izinkanAkses("Admin") &&  $data->user_id !== auth()->user()->id) {
                 return response()->json(['status' => false, 'message' => 'akses anda ditolak'], 403);
             }
+
+            if ($request->hasFile('foto_rumah')) {
+                // Hapus file lama jika ada
+                if ($data->foto_rumah && Storage::disk('public')->exists($data->foto_rumah)) {
+                    Storage::disk('public')->delete($data->foto_rumah);
+                }
+                $data_save['foto_rumah'] = upload($request->file('foto_rumah'), 'foto_rumah');
+            }
+
             $data->update($data_save);
 
             DB::commit();
@@ -200,9 +213,13 @@ class RumahController extends Controller
                 return response()->json(['status' => false, 'message' => 'akses anda ditolak'], 403);
             }
 
-
+            $path = $data->foto_rumah;
             $data->delete();
+
             DB::commit();
+            if ($path && Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
             return response()->json(null, 204);
             // return response()->json(['status' => true, 'message' => 'hapus data berhasil dilakukan'], 200);
         } catch (\Exception $e) {

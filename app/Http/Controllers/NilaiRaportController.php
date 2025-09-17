@@ -7,6 +7,7 @@ use App\Models\NilaiRaport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\NilaiRaportRequest;
 use App\Http\Resources\DataRaportResource;
 use App\Http\Resources\NilaiRaportResource;
@@ -54,14 +55,27 @@ class NilaiRaportController extends Controller
             DB::beginTransaction();
             $data_save = $request->validated();
             $data_save['user_id'] = auth()->user()->id;
+
+            for ($i = 1; $i <= 6; $i++) {
+                $field = "foto_raport_smt_$i";
+                $data_save[$field] = upload($request->file($field), $field);
+            }
+
             $data = NilaiRaport::create($data_save);
             DB::commit();
             return response()->json(['status' => true, 'message' => 'data baru berhasil dibuat', 'data' => $data], 201);
         } catch (\Exception $e) {
             DB::rollBack();
-            if ($data_save['kartu_NilaiRaport'] && Storage::disk('public')->exists($data_save['kartu_NilaiRaport'])) {
-                Storage::disk('public')->delete($data_save['kartu_NilaiRaport']);
+
+            for ($i = 1; $i <= 6; $i++) {
+                $field = "foto_raport_smt_$i";
+                if ($data_save[$field] && Storage::disk('public')->exists($data_save[$field])) {
+                    Storage::disk('public')->delete($data_save[$field]);
+                }
             }
+
+
+
             return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat membuat data baru: ' . $e->getMessage()], 500);
         }
     }
@@ -144,8 +158,19 @@ class NilaiRaportController extends Controller
                 return response()->json(['status' => false, 'message' => 'akses anda ditolak'], 403);
             }
 
-
             $data_save = $request->validated();
+            for ($i = 1; $i <= 6; $i++) {
+                $field = "foto_raport_smt_$i";
+                if ($request->hasFile($field)) {
+                    // hapus file lama kalau ada
+                    if ($data->$field && Storage::disk('public')->exists($data->$field)) {
+                        Storage::disk('public')->delete($data->$field);
+                    }
+                    // upload file baru
+                    $data_save[$field] = upload($request->file($field), $field);
+                }
+            }
+
             $data->update($data_save);
             DB::commit();
             return response()->json(['status' => true, 'message' => 'berhasil diperbarui', 'data' => $data], 200);
@@ -167,8 +192,21 @@ class NilaiRaportController extends Controller
                 return response()->json(['status' => false, 'message' => 'akses anda ditolak'], 403);
             }
 
+            $path = [];
+            for ($i = 1; $i <= 6; $i++) {
+                $field = "foto_raport_smt_$i";
+                $path[$field] = $data->$field ? $data->$field : null;
+            }
+
             $data->delete();
+
             DB::commit();
+            foreach ($path as $index => $item) {
+                if ($item && Storage::disk('public')->exists($item)) {
+                    Storage::disk('public')->delete($item);
+                }
+            }
+
             return response()->json(null, 204);
             // return response()->json(['status' => true, 'message' => 'hapus data berhasil dilakukan'], 200);
         } catch (\Exception $e) {

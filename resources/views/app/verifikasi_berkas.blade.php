@@ -152,6 +152,7 @@
                                         </div>
                                     </div>                                    
                                     <div id="syarat-upload"></div>
+                                    <div id="download-dokumen"></div>
                                     <hr>
                                     <div id="syarat-form-validasi" >
                                         <form id="form">

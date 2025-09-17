@@ -71,6 +71,16 @@
                     <select name="sumber_listrik_id" id="sumber_listrik_id" class="form-control" required></select>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-lg-12 mb-3">
+                    <label class="form-label">Foto Rumah</label>
+                    <input type="file" id="foto_rumah" name="foto_rumah" class="form-control" accept="application/pdf">
+                    <div>upload pdf foto rumah minimal memuat : Rumah Bagian Depan, Ruang Tamu dan Dapur</div>
+                    <div id="download_foto_rumah"></div>                    
+                </div>
+            </div>
+
             <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
         </form>
     </div>
@@ -168,6 +178,15 @@
                 $('#sumber_air_id').val(data.sumber_air_id);
                 $('#sumber_listrik_id').val(data.sumber_listrik_id);
                 $('#bayar_listrik_id').val(data.bayar_listrik_id);
+
+                if(data.foto_rumah){
+                    $('#download_foto_rumah').html(`
+                        <a href="${base_url}/${data.foto_rumah}" target="_blank" class="badge text-bg-success mt-2">
+                            <iconify-icon icon="solar:download-linear" class=""></iconify-icon> Download Foto Rumah
+                        </a>
+                    `);
+                }
+
             }else{
                 $('#id').val("");
                 $('#jumlah_orang_tinggal').val("");
@@ -179,6 +198,7 @@
                 $('#sumber_air_id').val("");
                 $('#sumber_listrik_id').val("");
                 $('#bayar_listrik_id').val("");
+                $('#download_foto_rumah').html("");
             }
         }
 
@@ -208,18 +228,37 @@
             dataLoad();
         });
 
-        //validasi dan save, jika id ada maka PUT/edit jika tidak ada maka POST/simpan baru
         $("#form").validate({
-            submitHandler: function(form) {
+            rules: {
+                foto_rumah: {
+                    required: function() {
+                        return $('#id').val() === '';
+                    }
+                }
+            },
+            messages: {
+                foto_rumah: {
+                    required: "Foto rumah wajib diupload.",
+                }
+            },
+            submitHandler: function(form,event) {
+                event.preventDefault();
                 const id = $('#id').val();
-                const type = (id === '') ? 'POST' : 'PUT';
                 const url = (id === '') ? endpoint : endpoint + '/' + id;
-                saveData(url, type, $(form).serialize(), function(response) {
+
+                var formData = new FormData(form);
+                if((id !== '')){
+                    formData.append("_method", "put");
+                }
+
+                saveData(url, 'POST', formData, function(response) {
                     renderData(response.data);
                     appShowNotification(true, ['berhasil dilakukan!']);
+                    $('#foto_rumah').val("");
                 });
             }
         });
+
 
     });
 </script>

@@ -174,9 +174,13 @@ class IdentitasController extends Controller
                 return response()->json(['status' => false, 'message' => 'akses anda ditolak'], 403);
             }
 
-
+            $path = $data->foto;
             $data->delete();
+
             DB::commit();
+            if ($path && Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
             return response()->json(null, 204);
             // return response()->json(['status' => true, 'message' => 'hapus data berhasil dilakukan'], 200);
         } catch (\Exception $e) {

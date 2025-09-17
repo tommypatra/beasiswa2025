@@ -99,3 +99,15 @@
     </div>
   </a>
 </li>
+
+<li class="sidebar-item menu-mahasiswa">
+  <a class="sidebar-link justify-content-between" 
+    href="{{route('buku-rekening')}}" aria-expanded="false">
+    <div class="d-flex align-items-center gap-3">
+      <span class="d-flex">
+        <iconify-icon icon="solar:notebook-line-duotone" class=""></iconify-icon>
+      </span>
+      <span class="hide-menu">Buku Rekening</span>
+    </div>
+  </a>
+</li>

@@ -56,6 +56,7 @@ use App\Http\Controllers\SurveiNilaiController;
 use App\Http\Controllers\VerifikatorController;
 use App\Http\Controllers\WilayahDesaController;
 use App\Http\Middleware\JwtAuthenticateRefresh;
+use App\Http\Controllers\BukuRekeningController;
 use App\Http\Controllers\ProgramStudiController;
 use App\Http\Controllers\RuanganUjianController;
 use App\Http\Controllers\UploadSyaratController;
@@ -243,10 +244,13 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::resource('pendidikan-akhir', PendidikanAkhirController::class);
         Route::resource('orang-tua', OrangTuaController::class);
         Route::resource('nilai-raport', NilaiRaportController::class);
+        Route::resource('buku-rekening', BukuRekeningController::class);
         Route::resource('pendaftar', PendaftarController::class);
         Route::resource('upload-syarat', UploadSyaratController::class);
         Route::resource('rumah', RumahController::class);
 
+
+        Route::get('aktifkan-nomor-rekening/{rekening_id}', [BukuRekeningController::class, 'aktifkanRekening']);
         Route::get('detail-pendaftar/{pendaftar_id}', [PendaftarController::class, 'detailPendaftar']);
 
         Route::put('batalkan-pendaftaran/{id}', [PendaftarController::class, 'pembatalan']);

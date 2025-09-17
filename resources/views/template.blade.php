@@ -218,6 +218,10 @@
         window.location.replace(`${base_url}/login`);
       }
 
+    $(document).on('input', '.huruf-kapital', function () {
+        this.value = this.value.toUpperCase();
+    });
+
     $(document).ready(function() {
       $.ajaxSetup({
         beforeSend: function(xhr) {

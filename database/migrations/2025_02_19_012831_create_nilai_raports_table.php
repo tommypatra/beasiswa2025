@@ -29,6 +29,12 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->restrictOnDelete();
 
             $table->boolean('verifikasi_lapangan_hasil')->nullable();
+            $table->string('foto_raport_smt_1', 160)->nullable();
+            $table->string('foto_raport_smt_2', 160)->nullable();
+            $table->string('foto_raport_smt_3', 160)->nullable();
+            $table->string('foto_raport_smt_4', 160)->nullable();
+            $table->string('foto_raport_smt_5', 160)->nullable();
+            $table->string('foto_raport_smt_6', 160)->nullable();
             $table->text('verifikasi_lapangan_catatan')->nullable();
             $table->decimal('verifikasi_lapangan_skor', 5, 2)->nullable();
 

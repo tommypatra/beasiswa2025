@@ -90,6 +90,11 @@ class WebController extends Controller
         return view('app.pendidikan');
     }
 
+    public function bukuRekening()
+    {
+        return view('app.buku_rekening');
+    }
+
     public function daftarBaru($kategori)
     {
         if ($kategori == 'pegawai') {

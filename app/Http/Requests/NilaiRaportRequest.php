@@ -36,6 +36,13 @@ class NilaiRaportRequest extends FormRequest
             'smt_5_peringkat' => 'nullable|numeric',
             'smt_6_nilai' => 'required|numeric',
             'smt_6_peringkat' => 'nullable|numeric',
+            'foto_raport_smt_1' => ($isCreate ? 'required' : 'nullable') . '|file|mimes:pdf|max:4096',
+            'foto_raport_smt_2' => ($isCreate ? 'required' : 'nullable') . '|file|mimes:pdf|max:4096',
+            'foto_raport_smt_3' => ($isCreate ? 'required' : 'nullable') . '|file|mimes:pdf|max:4096',
+            'foto_raport_smt_4' => ($isCreate ? 'required' : 'nullable') . '|file|mimes:pdf|max:4096',
+            'foto_raport_smt_5' => ($isCreate ? 'required' : 'nullable') . '|file|mimes:pdf|max:4096',
+            'foto_raport_smt_6' => ($isCreate ? 'required' : 'nullable') . '|file|mimes:pdf|max:4096',
+
         ];
     }
 
@@ -54,6 +61,14 @@ class NilaiRaportRequest extends FormRequest
             'smt_5_peringkat' => 'peringkat semester 5',
             'smt_6_nilai' => 'nilai semester 6',
             'smt_6_peringkat' => 'peringkat semester 6',
+
+            'foto_raport_smt_1' => 'file pdf raport semester 6',
+            'foto_raport_smt_2' => 'file pdf raport semester 2',
+            'foto_raport_smt_3' => 'file pdf raport semester 3',
+            'foto_raport_smt_4' => 'file pdf raport semester 4',
+            'foto_raport_smt_5' => 'file pdf raport semester 5',
+            'foto_raport_smt_6' => 'file pdf raport semester 6',
+
         ];
     }
 }

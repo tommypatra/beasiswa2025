@@ -43,6 +43,7 @@ Route::get('/pendidikan-akhir', [WebController::class, 'pendidikanAkhir'])->name
 Route::get('/orang-tua', [WebController::class, 'dataOrangTua'])->name('orang-tua');
 Route::get('/identitas', [WebController::class, 'identitas'])->name('identitas');
 Route::get('/pendaftar', [WebController::class, 'pendaftar'])->name('pendaftar');
+Route::get('/buku-rekening', [WebController::class, 'bukuRekening'])->name('buku-rekening');
 Route::get('/nilai-raport', [WebController::class, 'nilaiRaport'])->name('nilai-raport');
 Route::get('/rumah', [WebController::class, 'rumah'])->name('rumah');
 Route::get('/berkas-pendaftaran/{id}', [WebController::class, 'berkasPendaftaran'])->name('berkas-pendaftaran');

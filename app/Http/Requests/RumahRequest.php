@@ -32,6 +32,7 @@ class RumahRequest extends FormRequest
             'bayar_listrik_id' => 'required|numeric',
             'sumber_air_id' => 'required|numeric',
             'sumber_listrik_id' => 'required|numeric',
+            'foto_rumah' => ($isCreate ? 'required' : 'nullable') . '|file|mimes:pdf|max:4096',
         ];
     }
 
@@ -47,6 +48,7 @@ class RumahRequest extends FormRequest
             'bayar_listrik_id' => 'biaya listrik bulanan',
             'sumber_air_id' => 'sumber air',
             'sumber_listrik_id' => 'sumber listrik',
+            'foto_rumah' => 'foto_rumah',
         ];
     }
 }

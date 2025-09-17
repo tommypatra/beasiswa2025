@@ -28,6 +28,7 @@ return new class extends Migration
             $table->foreign('sumber_listrik_id')->references('id')->on('referensi_pilihans')->restrictOnDelete();
             $table->foreignId('user_id');
             $table->foreign('user_id')->references('id')->on('users')->restrictOnDelete();
+            $table->string('foto_rumah', 160)->nullable();
 
             $table->boolean('verifikasi_lapangan_hasil')->nullable();
             $table->text('verifikasi_lapangan_catatan')->nullable();

@@ -60,6 +60,13 @@
                         <label class="form-label">Alamat</label>
                         <textarea name="alamat" id="alamat" rows="3" class="form-control" required></textarea>
                     </div>
+
+                    <div class="col-sm-12 mb-3">
+                        <div class="alert alert-info" role="alert">
+                            Khusus Pengisian kabupaten dan kelurahan caranya "Wajib di Ketik dulu untuk mencari, setelah itu Wajib memilih yang muncul" ! jika tidak data gagal masuk
+                        </div>
+                    </div>
+
                     <div class="col-sm-4 mb-3">
                         <label class="form-label">Kabupaten/ Kota</label>
                         <input name="wilayah_kabupaten" id="wilayah_kabupaten" data-id="" type="text" class="form-control" required>
@@ -68,7 +75,7 @@
                     <div class="col-sm-4 mb-3">
                         <label class="form-label">Kelurahan/ Desa</label>
                         <input name="wilayah_desa" id="wilayah_desa" data-id="" type="text" class="form-control" required>
-                        pilih terlebih dahulu kabupaten setelah itu wajib ketik dan pilih kelurahan/desan
+                        pilih terlebih dahulu kabupaten setelah itu wajib ketik dan pilih kelurahan/desa
                     </div>
                     <div class="col-sm-4 mb-3">
                         <label class="form-label">Nomor HP/WA</label>

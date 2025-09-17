@@ -22,6 +22,8 @@ class PendidikanAkhirRequest extends FormRequest
     public function rules(): array
     {
         $id = $this->route('role');
+        $isCreate = $this->isMethod('post');
+
         return [
             'nama_sekolah' => 'required|string',
             'jenis' => 'required|string',
@@ -30,6 +32,8 @@ class PendidikanAkhirRequest extends FormRequest
             'nisn' => 'required|numeric',
             'tahun_lulus' => 'required|numeric',
             'nilai_akhir_lulus' => 'required|numeric',
+            'foto_ijazah' => ($isCreate ? 'required' : 'nullable') . '|file|mimes:pdf|max:4096',
+
         ];
     }
 
@@ -43,6 +47,7 @@ class PendidikanAkhirRequest extends FormRequest
             'nisn' => 'nisn',
             'tahun_lulus' => 'tahun lulus',
             'nilai_akhir_lulus' => 'nilai lulus',
+            'foto_ijazah' => 'ijazah'
         ];
     }
 }

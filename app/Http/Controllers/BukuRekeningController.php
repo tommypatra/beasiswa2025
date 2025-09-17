@@ -3,26 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\BukuRekening;
 use Illuminate\Http\Request;
-use App\Models\PendidikanAkhir;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Requests\PendidikanAkhirRequest;
-use App\Http\Resources\PendidikanAkhirResource;
-use App\Http\Resources\DataPendidikanAkhirResource;
+use App\Http\Requests\BukuRekeningRequest;
+use App\Http\Resources\BukuRekeningResource;
 
-class PendidikanAkhirController extends Controller
+class BukuRekeningController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $dataQuery = PendidikanAkhir::with(['user.mahasiswa.programstudi.fakultas', 'user.identitas'])->orderBy('nisn', 'asc')->orderBy('nama_sekolah', 'asc');
+        $dataQuery = BukuRekening::with(['user.mahasiswa.programStudi.fakultas', 'user.identitas'])->orderBy('id', 'asc');
 
         if ($request->filled('search')) {
-            $dataQuery->where('nama_sekolah', 'like', '%' . $request->search . '%');
+            $dataQuery->where('bank', 'like', '%' . $request->search . '%')
+                ->whereOr('nomor', 'like', '%' . $request->search . '%');
         }
 
         if ($request->filled('user_id')) {
@@ -34,7 +34,7 @@ class PendidikanAkhirController extends Controller
         $limit = $request->filled('limit') ? $request->limit : $default_limit;
         $data = $dataQuery->paginate($limit);
         $resourceCollection = $data->getCollection()->map(function ($item) {
-            return new PendidikanAkhirResource($item);
+            return new BukuRekeningResource($item);
         });
         $data->setCollection($resourceCollection);
 
@@ -49,23 +49,29 @@ class PendidikanAkhirController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(PendidikanAkhirRequest $request)
+    public function store(BukuRekeningRequest $request)
     {
         try {
             DB::beginTransaction();
-            $datasave = $request->validated();
-            $datasave['user_id'] = auth()->user()->id;
-            $data_save['foto_ijazah'] = upload($request->file('foto_ijazah'), 'foto_ijazah');
+            $data_save = $request->validated();
+            $data_save['user_id'] = auth()->user()->id;
+            $data_save['foto_buku'] = upload($request->file('foto_buku'), 'foto_buku');
 
-            $data = PendidikanAkhir::create($datasave);
+
+            if ($data_save['is_aktif'] == 1) {
+                BukuRekening::where('user_id', auth()->user()->id)
+                    ->where('is_aktif', 1)
+                    ->update(['is_aktif' => null]);
+            }
+
+            $data = BukuRekening::create($data_save);
             DB::commit();
             return response()->json(['status' => true, 'message' => 'data baru berhasil dibuat', 'data' => $data], 201);
         } catch (\Exception $e) {
             DB::rollBack();
-            if ($data_save['foto_ijazah'] && Storage::disk('public')->exists($data_save['foto_ijazah'])) {
-                Storage::disk('public')->delete($data_save['foto_ijazah']);
+            if ($data_save['foto_buku'] && Storage::disk('public')->exists($data_save['foto_buku'])) {
+                Storage::disk('public')->delete($data_save['foto_buku']);
             }
-
             return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat membuat data baru: ' . $e->getMessage()], 500);
         }
     }
@@ -73,48 +79,15 @@ class PendidikanAkhirController extends Controller
     /**
      * Display the specified resource.
      */
-    public function dataPendidikanAkhir(int $id)
-    {
-        try {
-            $dataQuery = User::with(['pendidikanAkhir'])->where('id', $id)->firstOrFail();
-
-            $nilaiUjian   = floatval($dataQuery->pendidikanAkhir->nilai_akhir_lulus ?? 0);
-            $akreditasi   = $dataQuery->pendidikanAkhir->akreditasi ?? null;
-            // skor akreditasi
-            $skorAkredit = skorAkreditasi($akreditasi);
-
-            // bobot
-            $bobot_ujian       = 0.7;
-            $bobot_akreditasi  = 0.3;
-
-            // hitung skor akhir
-            $skorAkhir = ($nilaiUjian * $bobot_ujian) + ($skorAkredit * $bobot_akreditasi);
-            $skorAkhir = round($skorAkhir, 2);
-            $dataQuery->skor_akhir = $skorAkhir;
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Data ditemukan',
-                'data' => new DataPendidikanAkhirResource($dataQuery),
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-                'data' => null,
-            ], 404);
-        }
-    }
-
-
     public function show(string $id)
     {
         try {
-            $dataQuery = PendidikanAkhir::with(['user', 'user.identitas'])->where('id', $id)->firstOrFail();
+            $dataQuery = BukuRekening::with(['user.mahasiswa.programStudi.fakultas', 'user.identitas'])->where('id', $id)->firstOrFail();
+
             return response()->json([
                 'status' => true,
                 'message' => 'Data ditemukan',
-                'data' => new PendidikanAkhirResource($dataQuery),
+                'data' => new BukuRekeningResource($dataQuery),
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -128,25 +101,56 @@ class PendidikanAkhirController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(PendidikanAkhirRequest $request, string $id)
+    public function update(BukuRekeningRequest $request, string $id)
     {
         try {
             DB::beginTransaction();
             $data_save = $request->validated();
 
-            $data = PendidikanAkhir::where('id', $id)->firstOrFail();
+            $data = BukuRekening::where('id', $id)->firstOrFail();
             if (!izinkanAkses("Admin") &&  $data->user_id !== auth()->user()->id) {
                 return response()->json(['status' => false, 'message' => 'akses anda ditolak'], 403);
             }
-            if ($request->hasFile('foto_ijazah')) {
+
+            if ($request->hasFile('foto_buku')) {
                 // Hapus file lama jika ada
-                if ($data->foto_ijazah && Storage::disk('public')->exists($data->foto_ijazah)) {
-                    Storage::disk('public')->delete($data->foto_ijazah);
+                if ($data->foto_buku && Storage::disk('public')->exists($data->foto_buku)) {
+                    Storage::disk('public')->delete($data->foto_buku);
                 }
-                $data_save['foto_ijazah'] = upload($request->file('foto_ijazah'), 'foto_ijazah');
+                $data_save['foto_buku'] = upload($request->file('foto_buku'), 'foto_buku');
             }
 
+            if ($data_save['is_aktif'] == 1) {
+                BukuRekening::where('user_id', auth()->user()->id)
+                    ->where('is_aktif', 1)->where('id', '!=', $data->id)
+                    ->update(['is_aktif' => null]);
+            }
+
+
             $data->update($data_save);
+            DB::commit();
+            return response()->json(['status' => true, 'message' => 'berhasil diperbarui', 'data' => $data], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat memperbarui : ' . $e->getMessage(), 'data' => null], 500);
+        }
+    }
+
+    public function aktifkanRekening(string $id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $data = BukuRekening::where('id', $id)->firstOrFail();
+            if (!izinkanAkses("Admin") &&  $data->user_id !== auth()->user()->id) {
+                return response()->json(['status' => false, 'message' => 'akses anda ditolak'], 403);
+            }
+
+            BukuRekening::where('user_id', auth()->user()->id)
+                ->where('is_aktif', 1)->where('id', '!=', $data->id)
+                ->update(['is_aktif' => null]);
+
+            $data->update(['is_aktif' => 1]);
 
             DB::commit();
             return response()->json(['status' => true, 'message' => 'berhasil diperbarui', 'data' => $data], 200);
@@ -163,18 +167,19 @@ class PendidikanAkhirController extends Controller
     {
         try {
             DB::beginTransaction();
-            $data = PendidikanAkhir::where('id', $id)->firstOrFail();
+            $data = BukuRekening::where('id', $id)->firstOrFail();
             if (!izinkanAkses("Admin") &&  $data->user_id !== auth()->user()->id) {
                 return response()->json(['status' => false, 'message' => 'akses anda ditolak'], 403);
             }
 
-            $path = $data->foto_ijazah;
+            $path = $data->foto_buku;
             $data->delete();
 
             DB::commit();
             if ($path && Storage::disk('public')->exists($path)) {
                 Storage::disk('public')->delete($path);
             }
+
             return response()->json(null, 204);
             // return response()->json(['status' => true, 'message' => 'hapus data berhasil dilakukan'], 200);
         } catch (\Exception $e) {
