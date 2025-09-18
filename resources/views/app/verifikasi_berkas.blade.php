@@ -562,6 +562,17 @@
 
         }
 
+        function getFileType(fileUrl) {
+            let ext = fileUrl.split('.').pop().toLowerCase();
+
+            if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+                return 'image';
+            } else if (ext === 'pdf') {
+                return 'pdf';
+            }
+            return 'image';
+        }
+
         function showSyarat(){
             resetFormSyarat();
             $('#validasi-final').hide();
@@ -605,8 +616,9 @@
             $("#verifikasi_berkas_hasil").attr('data-bobot',data.bobot);
 
             if (data.upload_syarat){
-                let jenis = data.jenis;
+                // let jenis = data.jenis;
                 let url = base_url+'/'+data.upload_syarat.dokumen;
+                let jenis = getFileType(url);
                 if(is_verifikasi_berkas_aktif){
                     $("#verifikasi_berkas_hasil").prop("disabled", false);
                     $("#verifikasi_berkas_catatan").prop("disabled", false);
