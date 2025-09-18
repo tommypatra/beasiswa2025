@@ -178,7 +178,7 @@
 
         async function dataPeserta() {
             let search = $('#search-peserta').val();
-            let url = `${base_url}/api/peserta-wawancara?is_admin=1&beasiswa_id=${beasiswa_id}&search=${search}`;
+            let url = `${base_url}/api/get-data-peserta-wawancara?is_admin=1&beasiswa_id=${beasiswa_id}&search=${search}`;
             let response = await execAsync(`${url}`, 'GET', token);
 
             const dataList = $('#data-list-peserta');

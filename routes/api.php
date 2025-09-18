@@ -116,7 +116,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     Route::get('get-data-kondisi-rumah/{id}', [RumahController::class, 'dataKondisiRumah']);
     Route::get('get-data-dokumentasi-survei/{id}', [DokumentasiSurveiController::class, 'dataDokumentasiSurvei']);
 
-
+    Route::get('get-data-peserta-wawancara', [PesertaWawancaraController::class, 'index']);
     Route::get('get-data-dokumen-upload/{id}/', [UploadSyaratController::class, 'dataDokumenUpload']);
 
     // Route::get('data-pekerjaan', [PekerjaanController::class, 'index']);
@@ -163,18 +163,11 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::get('daftar-peserta-wawancara', [PesertaWawancaraController::class, 'index']);
         Route::get('cari-peserta-wawancara/{id}', [PesertaWawancaraController::class, 'show']);
 
-
         Route::resource('wawancara-nilai', WawancaraNilaiController::class);
         Route::get('proses-wawancara/{id}', [WawancaraNilaiController::class, 'prosesWawancara']);
         Route::put('akhiri-wawancara/{id}', [WawancaraNilaiController::class, 'akhiriWawancara']);
         Route::get('pilih-peserta-wawancara', [PesertaWawancaraController::class, 'pilihPesertaWawancara']);
 
-        //untuk pewawancara
-        Route::get('pewawancara/{beasiswa_id}', [PewawancaraController::class, 'index']);
-        Route::get('pewawancara/show/{id}', [PewawancaraController::class, 'show']);
-        Route::post('pewawancara', [PewawancaraController::class, 'store']);
-        Route::delete('pewawancara/{id}', [PewawancaraController::class, 'destroy']);
-        Route::put('pewawancara/{id}', [PewawancaraController::class, 'update']);
 
         Route::resource('peserta-wawancara', PesertaWawancaraController::class);
     });
@@ -240,6 +233,15 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::delete('surveyor/{id}', [SurveyorController::class, 'destroy']);
         Route::put('surveyor/{id}', [SurveyorController::class, 'update']);
         Route::resource('surveyor-peserta', SurveiPesertaController::class);
+
+        //untuk pewawancara
+        Route::get('pewawancara/{beasiswa_id}', [PewawancaraController::class, 'index']);
+        Route::get('pewawancara/show/{id}', [PewawancaraController::class, 'show']);
+        Route::post('pewawancara', [PewawancaraController::class, 'store']);
+        Route::delete('pewawancara/{id}', [PewawancaraController::class, 'destroy']);
+        Route::put('pewawancara/{id}', [PewawancaraController::class, 'update']);
+
+        Route::resource('admin-peserta-wawancara', PesertaWawancaraController::class);
     });
 
     Route::middleware(['cek.akses:mahasiswa'])->group(function () {
