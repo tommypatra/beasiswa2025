@@ -307,7 +307,7 @@
 
         async function dataLoad() {
             var search = $('#search-input').val();
-            var url = `${base_url}/api/daftar-peserta-wawancara?beasiswa_id=${beasiswa_id}&search=${search}`;
+            var url = `${base_url}/api/peserta-wawancara?beasiswa_id=${beasiswa_id}&search=${search}`;
 
             fetchData(url, function(response) {
                 renderData(response);
@@ -412,7 +412,7 @@
             let peserta_wawancara_id=$(this).data('peserta_wawancara_id');
             let status_wawancara=$(this).data('status_wawancara');
             if(status_wawancara==0){
-                const url = base_url+'/api/cari-peserta-wawancara/' + peserta_wawancara_id;
+                const url = base_url+'/api/peserta-wawancara/' + peserta_wawancara_id;
                 const dataForm = new URLSearchParams();
                 dataForm.append("status", "1");
                 saveData(url, 'PUT', dataForm.toString(), function(response) {
