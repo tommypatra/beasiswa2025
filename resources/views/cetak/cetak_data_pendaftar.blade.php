@@ -113,8 +113,8 @@
     <div class="card">
         <div class="header">
             <img src="{{ asset('images/logo.png') }}" alt="SNPMB Logo">
-            <h1>DATA PESERTA BEASISWA <span id="tahun"></span></h1>
-            <h4 style="margin-top:1px;" class="nama-beasiswa"></h4>
+            <h1>DATA PESERTA BEASISWA TAHUN <span id="tahun-beasiswa"></span></h1>
+            <h4 style="margin-top:1px;" id="nama-beasiswa"></h4>
             <hr>    
         </div>
 
@@ -227,9 +227,18 @@
         initPage();
 
         async function initPage() {
+            await loadDataBeasiswa();
             $('#loadingProgress').show().text("0%");
             await dataLoad();
             $('#loadingProgress').text("Selesai").fadeOut(1000);
+        }
+
+        async function loadDataBeasiswa() {
+            let url = `${base_url}/api/get-data-beasiswa/${beasiswa_id}`;
+            const response = await execAsync(`${url}`, 'GET', token);
+            let beasiswa=response.data;
+            $('#tahun-beasiswa').text(`${beasiswa.tahun}`);
+            $('#nama-beasiswa').text(`${beasiswa.nama}`);
         }
 
         async function dataLoad() {
@@ -303,7 +312,7 @@
                                     <td>${dt.email}</td>
                                     <td>${dt.no_hp}</td>
                                     <td>${label(dt.sekolah)}</td>
-                                    <td>${dt.tahun_lulus_sekolah}</td>
+                                    <td>${label(dt.tahun_lulus_sekolah)}</td>
                                     <td>${status_pendaftaran}</td>
                                     <td>${status_verifikasi}</td>
                                     <td>${status_kelulusan}</td>

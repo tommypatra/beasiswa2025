@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Beasiswa;
 use App\Models\Pewawancara;
 use Illuminate\Http\Request;
+use App\Models\PesertaWawancara;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PewawancaraRequest;
 use App\Http\Resources\PewawancaraResource;
+use App\Http\Resources\CetakPewawancaraBeasiswaResource;
 
 class PewawancaraController extends Controller
 {
@@ -44,6 +46,34 @@ class PewawancaraController extends Controller
         $data = $dataQuery->paginate($limit);
         $resourceCollection = $data->getCollection()->map(function ($item) {
             return new PewawancaraResource($item);
+        });
+        $data->setCollection($resourceCollection);
+
+        $dataRespon = [
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ];
+        return response()->json($dataRespon);
+    }
+
+
+    public function cetakPewawancara(Request $request, $beasiswa_id)
+    {
+
+        $dataQuery = PesertaWawancara::with(['pewawancara.user', 'wawancaraNilai', 'pendaftar.mahasiswa.user.identitas', 'pendaftar.mahasiswa.programStudi.fakultas'])
+            ->whereHas('pendaftar', function ($q) use ($request) {
+                $q->where('beasiswa_id', $request->beasiswa_id);
+            })
+            ->orderBy('pendaftar_id', 'asc')
+            ->orderBy('pewawancara_id', 'asc');
+
+        $default_limit = env('DEFAULT_LIMIT', 30);
+        $limit = $request->filled('limit') ? $request->limit : $default_limit;
+        $data = $dataQuery->paginate($limit);
+
+        $resourceCollection = $data->getCollection()->map(function ($item) {
+            return new CetakPewawancaraBeasiswaResource($item);
         });
         $data->setCollection($resourceCollection);
 

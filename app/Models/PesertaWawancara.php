@@ -14,6 +14,12 @@ class PesertaWawancara extends Model
         return $this->belongsTo(Pewawancara::class);
     }
 
+    public function wawancaraNilai()
+    {
+        return $this->hasMany(WawancaraNilai::class, 'pendaftar_id', 'pendaftar_id')
+            ->whereColumn('pewawancara_id', 'pewawancara_id')
+            ->with('soalWawancara');
+    }
 
     public function pendaftar()
     {
