@@ -618,6 +618,9 @@
                 $(`#verifikasi_berkas_catatan`).val(data.upload_syarat.verifikasi_berkas_catatan);
                 $(`#verifikasi_berkas_skor`).val(data.upload_syarat.verifikasi_berkas_skor);
 
+                
+                $('#download-dokumen').html(`<a href="${url}" class="btn btn-success mt-2" target="_blank">Download Manual</a>`);
+
                 if(jenis=='pdf'){
                     openPdf(document.getElementById('dokumen-embed'), url);
                 }else{
