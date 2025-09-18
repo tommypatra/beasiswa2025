@@ -176,8 +176,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::delete('pewawancara/{id}', [PewawancaraController::class, 'destroy']);
         Route::put('pewawancara/{id}', [PewawancaraController::class, 'update']);
 
-        // Route::resource('peserta-wawancara', PesertaWawancaraController::class);
-
+        Route::resource('peserta-wawancara', PesertaWawancaraController::class);
     });
 
     Route::middleware(['cek.akses:pengelola'])->group(function () {
