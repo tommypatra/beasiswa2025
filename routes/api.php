@@ -160,6 +160,8 @@ Route::middleware('jwt.auth.refresh')->group(function () {
 
     Route::middleware(['cek.akses:pewawancara'])->group(function () {
         // Route::resource('peserta-wawancara', PesertaWawancaraController::class);
+        Route::get('daftar-peserta-wawancara', [PesertaWawancaraController::class, 'index']);
+
         Route::resource('wawancara-nilai', WawancaraNilaiController::class);
         Route::get('proses-wawancara/{id}', [WawancaraNilaiController::class, 'prosesWawancara']);
         Route::put('akhiri-wawancara/{id}', [WawancaraNilaiController::class, 'akhiriWawancara']);

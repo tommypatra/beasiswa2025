@@ -307,7 +307,7 @@
 
         async function dataLoad() {
             var search = $('#search-input').val();
-            var url = `${base_url}/api/peserta-wawancara?beasiswa_id=${beasiswa_id}&search=${search}`;
+            var url = `${base_url}/api/daftar-peserta-wawancara?beasiswa_id=${beasiswa_id}&search=${search}`;
 
             fetchData(url, function(response) {
                 renderData(response);
