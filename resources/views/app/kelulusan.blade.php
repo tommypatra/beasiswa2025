@@ -60,11 +60,14 @@
                         <button class="btn btn-success" id="btn-refresh">
                             <i class="ti ti-reload"></i>
                         </button>
+                        <button class="btn btn-success" id="btn-cetak">
+                            <iconify-icon icon="solar:printer-outline" class="fs-5"></iconify-icon>
+                        </button>
                         <button class="btn btn-success" id="btn-filter">
                             <iconify-icon icon="solar:sort-vertical-outline" class="fs-5"></iconify-icon>
                         </button>
                         <button class="btn btn-primary" id="btn-sinkronisasi">
-                            <i class="ti ti-server"></i> Sinkronisasi
+                            <i class="ti ti-server"></i> Sync
                         </button>
                     </div>
                 </div>
@@ -327,6 +330,16 @@
                     url += `&filter[${key}]=${val}`;
                 }
             });
+
+            $('#btn-cetak').click(function(){
+                const params = new URLSearchParams();
+                const kelulusan    = $('#status_lulus').val();
+                if (kelulusan)   params.append('kelulusan', kelulusan);
+
+                const url = `${base_url}/cetak-data-kelulusan/${beasiswa_id}?${params.toString()}`;
+                window.open(url, '_blank');
+            });
+
 
             // ambil semua value dari select yang punya id diawali "sort"
             $('[id^="sort"]').each(function (idx) {

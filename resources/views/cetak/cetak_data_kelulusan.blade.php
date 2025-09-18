@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Peserta Seleksi Beasiswa</title>
+    <title>Daftar Data Kelulusan</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="shortcut icon" type="image/png" href="{{ asset('images/logo.png') }}" />
     <style>
@@ -113,7 +113,7 @@
     <div class="card">
         <div class="header">
             <img src="{{ asset('images/logo.png') }}" alt="SNPMB Logo">
-            <h1>DATA PESERTA BEASISWA <span id="tahun"></span></h1>
+            <h1>DATA KELULUSAN BEASISWA <span id="tahun"></span></h1>
             <h4 style="margin-top:1px;" class="nama-beasiswa"></h4>
             <hr>    
         </div>
@@ -128,27 +128,20 @@
                         <th width="40%">Nama</th>
                         <th width="10%">NIM</th>
                         <th width="5%">Jenis Kelamin</th>
-                        <th width="10%">Tempat Lahir</th>
-                        <th width="10%">Tanggal Lahir</th>
-                        <th width="10%">Tahun Masuk</th>
                         <th width="10%">Fakultas</th>
                         <th width="10%">Program Studi</th>
-                        <th width="20%">Alamat</th>
-                        <th width="5%">Kecamatan</th>
-                        <th width="5%">Kabupaten</th>
-                        <th width="5%">Provinsi</th>
-                        <th width="10%">Email</th>
-                        <th width="10%">HP</th>
-                        <th width="10%">Asal Sekolah</th>
-                        <th width="10%">Tahun Lulus Sekolah</th>
-                        <th width="10%">Status Pendaftaran</th>
-                        <th width="10%">Status Verifikasi</th>
+                        <th width="10%">Ekonomi</th>
+                        <th width="10%">Pendidikan</th>
+                        <th width="10%">Berkas</th>
+                        <th width="10%">CBT</th>
+                        <th width="10%">Survei</th>
+                        <th width="10%">Wawancara</th>
                         <th width="10%">Status Kelulusan</th>
                     </tr>
                 </thead>
                 <tbody id="data-list">
                     <tr>
-                        <td colspan="14">tidak ditemukan</td>
+                        <td colspan="13">tidak ditemukan</td>
                     </tr>
                 </tbody>
             </table>
@@ -233,16 +226,13 @@
         }
 
         async function dataLoad() {
-            const dataList = $('#data-list');
-            const url = window.location.href;
-            const queryString = url.split('?')[1];
             let page = 1;
             let hasNext = true;
             g_nomor = 1;
-
+            const dataList = $('#data-list');
             dataList.empty();
             while (hasNext) {
-                let url = `${base_url}/api/daftar-pendaftar-beasiswa/${beasiswa_id}?limit=${g_limit}&page=${page}&${queryString}`;
+                let url = `${base_url}/api/kelulusan?${beasiswa_id}?limit=${g_limit}&page=${page}`;
                 try {
                     const response = await fetch(url, {
                         method: 'GET',
@@ -279,33 +269,21 @@
         function renderData(dataRespon,dataList){
             if(dataRespon.length>0){
                 $.each(dataRespon, function(data, dt) {
-                    let status_pendaftaran = (dt.is_finalisasi)?"Selesai":"Proses";
-                    if(dt.is_batal==1){
-                        status_pendaftaran = 'Batal, '+dt.alasan_batal;
-                    }
-                    const status_verifikasi = dt.hasil_verifikasi == 1 ? "MS"  : dt.hasil_verifikasi == 0  ? "TMS" : "";
-                    const status_kelulusan = dt.is_lulus == 1 ? "Lulus"  : dt.is_lulus == 0  ? "Tidak Lulus" : "";
+                    const status_kelulusan = dt.status.is_lulus == 1 ? "Lulus"  : dt.status.is_lulus == 0  ? "Tidak Lulus" : "";
 
                     const row = `<tr>
                                     <td>${g_nomor++}</td>
-                                    <td>${dt.nama}</td>
-                                    <td>${dt.nim}</td>
-                                    <td>${dt.jenis_kelamin}</td>
-                                    <td>${dt.tempat_lahir}</td>
-                                    <td>${dt.tanggal_lahir}</td>
-                                    <td>${dt.tahun_masuk}</td>
-                                    <td>${dt.fakultas}</td>
-                                    <td>${dt.program_studi}</td>
-                                    <td>${dt.alamat} ${dt.desa}</td>
-                                    <td>${dt.kecamatan}</td>
-                                    <td>${dt.kabupaten}</td>
-                                    <td>${dt.provinsi}</td>
-                                    <td>${dt.email}</td>
-                                    <td>${dt.no_hp}</td>
-                                    <td>${label(dt.sekolah)}</td>
-                                    <td>${dt.tahun_lulus_sekolah}</td>
-                                    <td>${status_pendaftaran}</td>
-                                    <td>${status_verifikasi}</td>
+                                    <td>${dt.mahasiswa.nama}</td>
+                                    <td>${dt.mahasiswa.nim}</td>
+                                    <td>${dt.mahasiswa.jenis_kelamin}</td>
+                                    <td>${dt.mahasiswa.fakultas}</td>
+                                    <td>${dt.mahasiswa.program_studi}</td>
+                                    <td>${label(dt.nilai.ekonomi)}</td>
+                                    <td>${label(dt.nilai.pendidikan)}</td>
+                                    <td>${label(dt.nilai.berkas)}</td>
+                                    <td>${label(dt.nilai.cbt)}</td>
+                                    <td>${label(dt.nilai.survei)}</td>
+                                    <td>${label(dt.nilai.wawancara)}</td>
                                     <td>${status_kelulusan}</td>
                                 </tr>`;
                     dataList.append(row);

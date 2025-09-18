@@ -78,8 +78,8 @@ td, th {
                         <button class="btn btn-success" id="btn-refresh">
                             <i class="ti ti-reload"></i>
                         </button>
-                        <button class="btn btn-secondary" id="btn-filter">
-                            <i class="ti ti-filter"></i>
+                        <button class="btn btn-secondary" id="btn-cetak">
+                            <iconify-icon icon="solar:printer-outline" class="fs-5"></iconify-icon>
                         </button>
                     </div>
                 </div>
@@ -221,6 +221,10 @@ td, th {
             $('#label-beasiswa').html(`<h4>${beasiswa.nama}</h4>`);
         }
 
+        $('#btn-cetak').click(function(){
+            const url = `${base_url}/cetak-verifikator-beasiswa/${id}`;
+            window.open(url, '_blank');
+        });
 
         function renderData(response) {
             const dataList = $('#data-list');

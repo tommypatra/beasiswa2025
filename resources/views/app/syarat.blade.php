@@ -175,7 +175,7 @@
         dataLoad();
 
         async function initPage() {
-            await loadDataSelect('#beasiswa_id', `data-beasiswa?tahun=${tahun}&limit=100`);
+            await loadDataSelect('#beasiswa_id', `data-beasiswa?show_all=1&tahun=${tahun}&limit=100`);
             await loadDataBeasiswa();
         }
 
