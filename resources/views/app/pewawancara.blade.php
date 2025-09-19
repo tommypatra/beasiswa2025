@@ -246,7 +246,11 @@ td, th {
         $('#btn-generate').click(function(){
             if(confirm('Generate ulang nilai akhir dari peserta wawancara?')){
                 const url = `${base_url}/api/generate-nilai-akhir-wawancara/${id}`;
-                const response = execAsync(`${url}`, 'GET', token);                
+                fetchData(url, function(response) {
+                    if(response.status){
+                        alert('generate ulang nilai akhir berhasil dilakukan');
+                    }        
+                },true);
             }
         });
 
