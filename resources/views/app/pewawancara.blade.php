@@ -265,7 +265,7 @@ td, th {
             if (data.length > 0) {
                 $.each(data, function(index, dt) {
                     let peserta="";
-                    console.log(dt);
+                    // console.log(dt);
                     if(dt.peserta_wawancara.length>0){
                         peserta=`<ul class="list">`;
                         $.each(dt.peserta_wawancara, function(index, item) {
@@ -335,7 +335,7 @@ td, th {
                 daftar_peserta.empty();
                 if(result.data.data.length>0){
                     $.each(result.data.data, function(index, dt) {
-                        console.log(dt);
+                        // console.log(dt);
                         let data_pewawancara=``;
                         if(dt.wawancara.length>0){
                             data_pewawancara=`<ul class="list">`;
@@ -452,7 +452,7 @@ td, th {
 
         // Handle search-input
         $(document).on('input', '#search-input', function() {
-            console.log('Event input berjalan');
+            // console.log('Event input berjalan');
             dataLoad();
         });      
 
