@@ -137,7 +137,7 @@
                         <th width="10%">Survei</th>
                         <th width="10%">Rincian Wawancara</th>
                         <th width="10%">Nilai Akhir Wawancara</th>
-                        <th width="10%">Keterangan</th>
+                        <th width="10%">Status Lulus</th>
                     </tr>
                 </thead>
                 <tbody id="data-list">
@@ -280,7 +280,7 @@
         function renderData(dataRespon,dataList){
             if(dataRespon.length>0){
                 $.each(dataRespon, function(data, dt) {
-                    // const status_kelulusan = dt.status.is_lulus == 1 ? "Lulus"  : dt.status.is_lulus == 0  ? "Tidak Lulus" : "";
+                    const status_kelulusan = dt.status.is_lulus == 1 ? "Lulus"  : dt.status.is_lulus == 0  ? "Tidak Lulus" : "";
                     let daftar_nilai=``;
                     if(dt.wawancara.length>0){
                         daftar_nilai=`<ul>`;
@@ -303,7 +303,7 @@
                                     <td>${label(dt.nilai.survei)}</td>
                                     <td>${daftar_nilai}</td>
                                     <td>${label(dt.nilai.wawancara)}</td>
-                                    <td></td>
+                                    <td>${status_kelulusan}</td>
                                 </tr>`;
                     dataList.append(row);
                 });                        
