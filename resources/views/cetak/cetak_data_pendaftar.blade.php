@@ -42,6 +42,7 @@
             border: 1px solid #000;
             border-radius: 10px;
             background-color: #f9f9f9;
+            overflow-x: auto; /* Tambahan penting: scroll horizontal kalau tabel lebar */
         }
 
         .header {
@@ -70,31 +71,44 @@
 
         .content {
             margin-top: 20px;
-            overflow-x: auto;   /* scroll horizontal kalau tidak muat */
+            /* overflow-x: auto;   /* scroll horizontal kalau tidak muat */
         }
 
-        .content table {
+       .content table {
             font-size: 14px;
             width: 100%;
             border-collapse: collapse;
-            min-width: 1200px; /* biar kolom tetap punya ruang, bisa diubah sesuai kebutuhan */
+            table-layout: fixed; /* membuat kolom tidak melebar otomatis */
+            word-wrap: break-word; /* teks panjang otomatis wrap */
+            min-width: 1200px; /* optional, bisa disesuaikan */
         }
 
-        .content th, 
+        .content th,
         .content td {
             border: 1px solid #000;
             padding: 4px;
             text-align: left;
-            white-space: nowrap; /* cegah teks panjang patah ke bawah */
+            white-space: normal; /* ganti nowrap supaya teks wrap */
         }
 
-
         @media print {
+            @page {
+                size: landscape;
+                margin: 10mm; /* bisa sesuaikan */
+            }
+
             body {
                 background: white;
-                zoom: 75%;
-                margin-top:10px;
+                zoom: 75%; /* optional */
+                margin-top: 10px;
             }
+
+            /* Contoh tambahan: pastikan tabel tidak melebar keluar */
+            /* table {
+                width: 100%;
+                table-layout: fixed; 
+                word-wrap: break-word;
+            } */
 
             .card {
                 border: none;
@@ -125,18 +139,15 @@
                 <thead>
                     <tr>
                         <th width="5%">No</th>
-                        <th width="40%">Nama</th>
+                        <th width="30%">Nama</th>
                         <th width="10%">NIM</th>
                         <th width="5%">Jenis Kelamin</th>
-                        <th width="10%">Tempat Lahir</th>
-                        <th width="10%">Tanggal Lahir</th>
-                        <th width="10%">Tahun Masuk</th>
-                        <th width="10%">Fakultas</th>
-                        <th width="10%">Program Studi</th>
-                        <th width="20%">Alamat</th>
-                        <th width="5%">Kecamatan</th>
-                        <th width="5%">Kabupaten</th>
-                        <th width="5%">Provinsi</th>
+                        <th width="15%">Tempat/Tanggal Lahir</th>
+                        <th width="5%">Tahun Masuk</th>
+                        <th width="15%">Fakultas/ Program Studi</th>
+                        <th width="25%">Alamat</th>
+                        <th width="15%">Kecamatan/ Kabupaten</th>
+                        <th width="15%">Provinsi</th>
                         <th width="10%">Email</th>
                         <th width="10%">HP</th>
                         <th width="10%">Asal Sekolah</th>
@@ -300,14 +311,11 @@
                                     <td>${dt.nama}</td>
                                     <td>${dt.nim}</td>
                                     <td>${dt.jenis_kelamin}</td>
-                                    <td>${dt.tempat_lahir}</td>
-                                    <td>${dt.tanggal_lahir}</td>
+                                    <td>${dt.tempat_lahir}/ ${dt.tanggal_lahir}</td>
                                     <td>${dt.tahun_masuk}</td>
-                                    <td>${dt.fakultas}</td>
-                                    <td>${dt.program_studi}</td>
+                                    <td>${dt.fakultas}/ </td>
                                     <td>${dt.alamat} ${dt.desa}</td>
-                                    <td>${dt.kecamatan}</td>
-                                    <td>${dt.kabupaten}</td>
+                                    <td>${dt.kecamatan}/ ${dt.kabupaten}</td>
                                     <td>${dt.provinsi}</td>
                                     <td>${dt.email}</td>
                                     <td>${dt.no_hp}</td>

@@ -86,7 +86,7 @@ td, th {
                             <ul class="dropdown-menu">
                                 <li>
                                     <a class="dropdown-item" href="#" id="btn-cetak">
-                                        <iconify-icon icon="solar:printer-outline" class="me-2"></iconify-icon> Cetak
+                                        <iconify-icon icon="solar:printer-outline" class="me-2"></iconify-icon> Cetak Rekap
                                     </a>
                                 </li>
                                 <li>

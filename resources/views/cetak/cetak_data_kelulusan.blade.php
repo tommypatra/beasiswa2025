@@ -42,6 +42,7 @@
             border: 1px solid #000;
             border-radius: 10px;
             background-color: #f9f9f9;
+            overflow-x: auto; /* Tambahan penting: scroll horizontal kalau tabel lebar */
         }
 
         .header {
@@ -70,31 +71,44 @@
 
         .content {
             margin-top: 20px;
-            overflow-x: auto;   /* scroll horizontal kalau tidak muat */
+            /* overflow-x: auto;   /* scroll horizontal kalau tidak muat */
         }
 
-        .content table {
+       .content table {
             font-size: 14px;
             width: 100%;
             border-collapse: collapse;
-            min-width: 1200px; /* biar kolom tetap punya ruang, bisa diubah sesuai kebutuhan */
+            table-layout: fixed; /* membuat kolom tidak melebar otomatis */
+            word-wrap: break-word; /* teks panjang otomatis wrap */
+            min-width: 1200px; /* optional, bisa disesuaikan */
         }
 
-        .content th, 
+        .content th,
         .content td {
             border: 1px solid #000;
             padding: 4px;
             text-align: left;
-            white-space: nowrap; /* cegah teks panjang patah ke bawah */
+            white-space: normal; /* ganti nowrap supaya teks wrap */
         }
 
-
         @media print {
+            @page {
+                size: landscape;
+                margin: 10mm; /* bisa sesuaikan */
+            }
+
             body {
                 background: white;
-                zoom: 75%;
-                margin-top:10px;
+                zoom: 75%; /* optional */
+                margin-top: 10px;
             }
+
+            /* Contoh tambahan: pastikan tabel tidak melebar keluar */
+            /* table {
+                width: 100%;
+                table-layout: fixed; 
+                word-wrap: break-word;
+            } */
 
             .card {
                 border: none;
@@ -125,18 +139,18 @@
                 <thead>
                     <tr>
                         <th width="5%">No</th>
-                        <th width="40%">Nama</th>
+                        <th width="20%">Nama</th>
                         <th width="10%">NIM</th>
                         <th width="5%">Jenis Kelamin</th>
                         <th width="10%">Fakultas</th>
                         <th width="10%">Program Studi</th>
-                        <th width="10%">Ekonomi</th>
-                        <th width="10%">Pendidikan</th>
-                        <th width="10%">Berkas</th>
-                        <th width="10%">CBT</th>
-                        <th width="10%">Survei</th>
-                        <th width="10%">Rincian Wawancara</th>
-                        <th width="10%">Nilai Akhir Wawancara</th>
+                        <th width="5%">Ekonomi</th>
+                        <th width="5%">Pendidikan</th>
+                        <th width="5%">Berkas</th>
+                        <th width="5%">CBT</th>
+                        <th width="5%">Survei</th>
+                        <th width="30%">Rincian Wawancara</th>
+                        <th width="5%">Nilai Akhir Wawancara</th>
                         <th width="10%">Status Lulus</th>
                     </tr>
                 </thead>

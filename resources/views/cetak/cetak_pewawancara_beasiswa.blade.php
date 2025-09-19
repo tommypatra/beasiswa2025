@@ -42,6 +42,7 @@
             border: 1px solid #000;
             border-radius: 10px;
             background-color: #f9f9f9;
+            overflow-x: auto; /* Tambahan penting: scroll horizontal kalau tabel lebar */
         }
 
         .header {
@@ -70,37 +71,44 @@
 
         .content {
             margin-top: 20px;
-            overflow-x: auto;   /* scroll horizontal kalau tidak muat */
+            /* overflow-x: auto;   /* scroll horizontal kalau tidak muat */
         }
 
-        .soal { 
-            white-space: normal; 
-            word-break: break-word;
-            font-style:italic;
-        }
-
-        .content table {
+       .content table {
             font-size: 14px;
             width: 100%;
             border-collapse: collapse;
-            min-width: 1200px; /* biar kolom tetap punya ruang, bisa diubah sesuai kebutuhan */
+            table-layout: fixed; /* membuat kolom tidak melebar otomatis */
+            word-wrap: break-word; /* teks panjang otomatis wrap */
+            min-width: 1200px; /* optional, bisa disesuaikan */
         }
 
-        .content th, 
+        .content th,
         .content td {
             border: 1px solid #000;
             padding: 4px;
             text-align: left;
-            white-space: nowrap; /* cegah teks panjang patah ke bawah */
+            white-space: normal; /* ganti nowrap supaya teks wrap */
         }
 
-
         @media print {
+            @page {
+                size: landscape;
+                margin: 10mm; /* bisa sesuaikan */
+            }
+
             body {
                 background: white;
-                zoom: 75%;
-                margin-top:10px;
+                zoom: 75%; /* optional */
+                margin-top: 10px;
             }
+
+            /* Contoh tambahan: pastikan tabel tidak melebar keluar */
+            /* table {
+                width: 100%;
+                table-layout: fixed; 
+                word-wrap: break-word;
+            } */
 
             .card {
                 border: none;
@@ -130,26 +138,20 @@
             <table id="mytable">
                 <thead>
                     <tr>
-                        <th rowspan="2">No</th>
-                        <th colspan="5">Peserta</th>
-                        <th colspan="3">Pewawancara</th>
-                        <th rowspan="2">Status Kelulusan</th>
-
-                    </tr>
-                    <tr>
-                        <th>Nama</th>
-                        <th>NIM</th>
-                        <th>Jenis Kelamin</th>
-                        <th>Fakultas</th>
-                        <th>Program Studi</th>
-                        <th>Nama</th>
-                        <th>Rincian Wawancara</th>
-                        <th>Nilai</th>
+                        <th width="5%">No</th>
+                        <th width="20%">Nama</th>
+                        <th width="10%">NIM</th>
+                        <th width="5%">Jenis Kelamin</th>
+                        <th width="10%">Fakultas</th>
+                        <th width="10%">Program Studi</th>
+                        <th width="15%">Pewawancara</th>
+                        <th width="30%">Rincian Wawancara</th>
+                        <th width="10%">Nilai</th>
                     </tr>
                 </thead>
                 <tbody id="data-list">
                     <tr>
-                        <td colspan="8">tidak ditemukan</td>
+                        <td colspan="9">tidak ditemukan</td>
                     </tr>
                 </tbody>
             </table>
@@ -287,7 +289,6 @@
         function renderData(dataRespon,dataList){
             if(dataRespon.length>0){
                 $.each(dataRespon, function(data, dt) {
-                    const status_kelulusan = dt.status == 1 ? "Lulus"  : dt.status == 0  ? "Tidak Lulus" : "";
                     
                     let rincian_wawancara='';
                     if(dt.hasil_wawancara.length>0){
@@ -300,7 +301,7 @@
                                                     <div>${rw.catatan}</div> 
                                                 </li>`;
                         });
-                        rincian_wawancara+='</li>';
+                        rincian_wawancara+='</ul>';
 
                     }
 
@@ -314,7 +315,6 @@
                                     <td>${dt.pewawancara.nama}</td>
                                     <td>${rincian_wawancara}</td>
                                     <td>${label(dt.nilai)}</td>
-                                    <td>${status_kelulusan}</td>
                                 </tr>`;
                     dataList.append(row);
                 });                        

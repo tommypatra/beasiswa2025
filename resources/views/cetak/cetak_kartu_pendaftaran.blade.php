@@ -13,18 +13,36 @@
             /* margin: 5mm; */
             margin-top:10px;
         }        
+
+        #loadingProgress {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(51, 51, 51, 0.9);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            z-index: 9999;
+            display: none; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            transition: opacity 0.3s ease;
+        }
+
         
         body {
             font-family: Arial, sans-serif;
         }
 
         .card {
-            width: 750px;
+            width: 90%;
             margin: 20px auto;
             padding: 20px;
             border: 1px solid #000;
             border-radius: 10px;
             background-color: #f9f9f9;
+            overflow-x: auto; /* Tambahan penting: scroll horizontal kalau tabel lebar */
         }
 
         .header {
@@ -49,95 +67,48 @@
             justify-content: center;
             gap: 20px;
             margin-top: 10px;
-        }
-
-        .foto-peserta {
-            width: 120px;
-            height: 150px;
-            border: 1px solid #000;
-            background-color: #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .foto-peserta img {
-            width: 120px;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .data-peserta {
-            flex-grow: 1;
-        }
-
-        .data-peserta table {
-            text-align: left;
-            margin: 5px 0;
-            font-size: 14px;
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .data-peserta th, td {
-            padding: 3px;
-        }
-
-        .data-peserta th {
-            text-align: left;
-            vertical-align: top;
-            font-weight: bold;
-        }
-
-        .data-peserta td {
-            text-align: left;
-            vertical-align: top;
-        }        
+        }  
 
         .content {
             margin-top: 20px;
+            /* overflow-x: auto;   /* scroll horizontal kalau tidak muat */
         }
-        .content table {
+
+       .content table {
             font-size: 14px;
             width: 100%;
             border-collapse: collapse;
+            table-layout: fixed; /* membuat kolom tidak melebar otomatis */
+            word-wrap: break-word; /* teks panjang otomatis wrap */
+            min-width: 1200px; /* optional, bisa disesuaikan */
         }
-        .content table, .content th, .content td {
+
+        .content th,
+        .content td {
             border: 1px solid #000;
-        }
-        .content th, .content td {
             padding: 4px;
             text-align: left;
-        }
-
-        .footer {
-            display: flex;
-            justify-content: space-between; 
-            align-items: center; 
-            margin-top: 20px;
-        }
-
-        #qrcode_label1 #qrcode_label2 {
-            flex: 1; 
-            text-align: left;
-        }
-
-        #ttd1 {
-            flex: 1; 
-            text-align: center;
-        }
-
-        #ttd2 {
-            flex: 1; 
-            text-align: center;
+            white-space: normal; /* ganti nowrap supaya teks wrap */
         }
 
         @media print {
+            @page {
+                size: landscape;
+                margin: 10mm; /* bisa sesuaikan */
+            }
+
             body {
                 background: white;
-                zoom: 75%;
-                margin-top:10px;
+                zoom: 75%; /* optional */
+                margin-top: 10px;
             }
+
+            /* Contoh tambahan: pastikan tabel tidak melebar keluar */
+            /* table {
+                width: 100%;
+                table-layout: fixed; 
+                word-wrap: break-word;
+            } */
 
             .card {
                 border: none;

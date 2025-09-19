@@ -42,6 +42,7 @@
             border: 1px solid #000;
             border-radius: 10px;
             background-color: #f9f9f9;
+            overflow-x: auto; /* Tambahan penting: scroll horizontal kalau tabel lebar */
         }
 
         .header {
@@ -70,31 +71,44 @@
 
         .content {
             margin-top: 20px;
-            overflow-x: auto;   /* scroll horizontal kalau tidak muat */
+            /* overflow-x: auto;   /* scroll horizontal kalau tidak muat */
         }
 
-        .content table {
+       .content table {
             font-size: 14px;
             width: 100%;
             border-collapse: collapse;
-            min-width: 1200px; /* biar kolom tetap punya ruang, bisa diubah sesuai kebutuhan */
+            table-layout: fixed; /* membuat kolom tidak melebar otomatis */
+            word-wrap: break-word; /* teks panjang otomatis wrap */
+            min-width: 1200px; /* optional, bisa disesuaikan */
         }
 
-        .content th, 
+        .content th,
         .content td {
             border: 1px solid #000;
             padding: 4px;
             text-align: left;
-            white-space: nowrap; /* cegah teks panjang patah ke bawah */
+            white-space: normal; /* ganti nowrap supaya teks wrap */
         }
 
-
         @media print {
+            @page {
+                size: landscape;
+                margin: 10mm; /* bisa sesuaikan */
+            }
+
             body {
                 background: white;
-                zoom: 75%;
-                margin-top:10px;
+                zoom: 75%; /* optional */
+                margin-top: 10px;
             }
+
+            /* Contoh tambahan: pastikan tabel tidak melebar keluar */
+            /* table {
+                width: 100%;
+                table-layout: fixed; 
+                word-wrap: break-word;
+            } */
 
             .card {
                 border: none;
