@@ -244,12 +244,12 @@
                                         <div class="card-body">
                                             <span class="badge text-bg-light fs-2 py-1 px-2 lh-sm mb-3">Tahun ${dt.tahun}</span>
                                             <h5>${showText(dt.nama)}</h5>
-                                            <div>${showText(dt.deskripsi)}</div>
-                                            <hr>
+                                            <p>${showText(dt.deskripsi)}</p>
                                             <div>
                                                 Pendaftaran : ${dt.daftar_mulai} sd ${dt.daftar_selesai} ${is_pendaftaran_aktif}
                                             </div>
-                                            
+                                            <hr>
+
                                             ${syarat_tahun_lulus_sma}
                                             ${syarat_tahun_angkatan_mahasiswa}
                                             <div>
