@@ -58,13 +58,13 @@ class PendaftarRequest extends FormRequest
             } elseif (!$data->data_mahasiswa) {
                 $validator->errors()->add('pendaftaran', 'Maaf, lengkapi dulu data mahasiswa!');
             } elseif (!$data->nilai_raport) {
-                $validator->errors()->add('pendaftaran', 'Maaf, nilai raport tidak boleh kosong!');
+                $validator->errors()->add('pendaftaran', 'Maaf, nilai raport tidak boleh kosong dan upload raport anda!');
             } elseif (!$data->orang_tua) {
                 $validator->errors()->add('pendaftaran', 'Maaf, data orang tua belum terisi!');
             } elseif (!$data->rumah) {
-                $validator->errors()->add('pendaftaran', 'Maaf, wajib mengisi data rumah!');
+                $validator->errors()->add('pendaftaran', 'Maaf, wajib mengisi data rumah dan upload foto rumah anda!');
             } elseif (!$data->pendidikan_akhir) {
-                $validator->errors()->add('pendaftaran', 'Maaf, data SMA anda belum terisi!');
+                $validator->errors()->add('pendaftaran', 'Maaf, data SMA anda belum terisi dan upload ijazah anda!');
             } elseif (!$data->angkatan_mahasiswa) {
                 $validator->errors()->add('pendaftaran', 'Maaf, syarat tahun angkatan mahasiswa tidak memenuhi!');
             } elseif (!$data->lulus_sma) {

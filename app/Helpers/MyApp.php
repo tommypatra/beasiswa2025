@@ -157,14 +157,23 @@ if (!function_exists('validasiPendaftaran')) {
         if ($beasiswa->perlu_data_orang_tua) {
             $data['orang_tua'] = ($user->orangTua) ? true : false;
         }
-        if ($beasiswa->perlu_data_orang_tua) {
-            $data['nilai_raport'] = ($user->nilaiRaport) ? true : false;
+        if ($beasiswa->perlu_data_nilai_raport) {
+            $data['nilai_raport'] = (
+                $user->nilaiRaport && (
+                    !empty($user->nilaiRaport->foto_raport_smt_1) &&
+                    !empty($user->nilaiRaport->foto_raport_smt_2) &&
+                    !empty($user->nilaiRaport->foto_raport_smt_3) &&
+                    !empty($user->nilaiRaport->foto_raport_smt_4) &&
+                    !empty($user->nilaiRaport->foto_raport_smt_5) &&
+                    !empty($user->nilaiRaport->foto_raport_smt_6)
+                )
+            ) ? true : false;
         }
         if ($beasiswa->perlu_data_rumah) {
-            $data['rumah'] = ($user->rumah) ? true : false;
+            $data['rumah'] = ($user->rumah && !empty($user->rumah->foto_rumah));
         }
-        if ($beasiswa->perlu_data_rumah) {
-            $data['pendidikan_akhir'] = ($user->pendidikanAkhir) ? true : false;
+        if ($beasiswa->perlu_data_pendidikan_akhir) {
+            $data['pendidikan_akhir'] = ($user->pendidikanAkhir && !empty($user->pendidikanAkhir->foto_ijazah));
         }
 
         $tahun_lulus_sma = ($user->pendidikanAkhir) ? $user->pendidikanAkhir->tahun_lulus : "";
