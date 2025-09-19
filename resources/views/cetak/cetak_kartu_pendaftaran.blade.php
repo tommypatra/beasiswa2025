@@ -63,11 +63,27 @@
 
         .row {
             display: flex;
-            align-items: center;
-            justify-content: center;
+            align-items: flex-start; /* rata atas */
+            justify-content: flex-start; /* rata kiri */
             gap: 20px;
             margin-top: 10px;
-        }  
+        }
+
+        .data-peserta {
+            flex: 1;             /* tabel mengambil sisa ruang di row */
+        }
+
+        .data-peserta table {
+            width: 100%;         /* pastikan tabel penuh */
+            text-align: left;    /* teks rata kiri */
+        }
+
+
+        .data-peserta table th,
+        .data-peserta table td {
+            text-align: left;
+            vertical-align: top;
+        }
 
         .content {
             margin-top: 20px;
@@ -80,7 +96,6 @@
             border-collapse: collapse;
             table-layout: fixed; /* membuat kolom tidak melebar otomatis */
             word-wrap: break-word; /* teks panjang otomatis wrap */
-            min-width: 1200px; /* optional, bisa disesuaikan */
         }
 
         .content th,
@@ -91,29 +106,40 @@
             white-space: normal; /* ganti nowrap supaya teks wrap */
         }
 
+        .footer {
+            display: flex;            /* jadikan flex container */
+            justify-content: space-between;  /* memberi jarak antar kolom */
+            align-items: flex-start;  /* atas rata atas */
+        }
+
+        .footer > div {
+            width: 30%;               /* sesuaikan lebar kolom */
+            text-align: left;         /* rata kiri */
+        }
+
         @media print {
             @page {
-                size: landscape;
-                margin: 10mm; /* bisa sesuaikan */
+                size: legal;
+                margin: 5mm;     /* margin cetak */
             }
 
             body {
                 background: white;
-                zoom: 75%; /* optional */
-                margin-top: 10px;
+                zoom: 80%;       /* pastikan zoom normal untuk print */
+                margin: 0;
             }
 
-            /* Contoh tambahan: pastikan tabel tidak melebar keluar */
-            /* table {
-                width: 100%;
-                table-layout: fixed; 
-                word-wrap: break-word;
-            } */
-
             .card {
-                border: none;
-                box-shadow: none;
-                page-break-after: always;
+                overflow: visible !important;  /* hilangkan scroll */
+                width: 90% !important;
+            }
+
+            .content {
+                overflow: visible !important;  /* hilangkan scroll horizontal */
+            }
+
+            button {
+                display: none;                 /* hilangkan tombol copy saat print */
             }
         }        
     </style>
@@ -137,7 +163,7 @@
                 <div class="data-peserta">               
                     <table>
                         <tr>
-                            <th width="40%">Nomor Peserta</th>
+                            <th width="30%">Nomor Peserta</th>
                             <td width="1%">:</td>
                             <td class="nomor-peserta"></td>
                         </tr>
@@ -147,7 +173,7 @@
                             <td class="nama-lengkap"></td>
                         </tr>
                         <tr>
-                            <th>Tempat/ Tanggal Lahir</th>
+                            <th>TTL</th>
                             <td>:</td>
                             <td class="tempat-tanggal-lahir"></td>
                         </tr>

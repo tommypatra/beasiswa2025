@@ -34,6 +34,7 @@ class SyaratResource extends JsonResource
             'jenis'         => $this->jenis,
             'contoh'        => $this->contoh,
             'bobot'         => $this->bobot,
+            'urut'         => $this->urut,
             'deskripsi'     => $this->deskripsi,
             'is_wajib'      => $this->is_wajib,
             'is_aktif'      => $this->is_aktif,

@@ -90,6 +90,10 @@
                             <label class="form-label">Beasiswa</label>
                             <select name="beasiswa_id" id="beasiswa_id"  class="form-control" required></select>
                         </div>
+						<div class="col-lg-3 mb-3">
+                            <label class="form-label">Urut</label>
+                            <input name="urut" id="urut" type="text" class="form-control">
+                        </div>
 						<div class="col-lg-6 mb-3">
                             <label class="form-label">Nama</label>
                             <input name="nama" id="nama" type="text" class="form-control" required>
@@ -195,6 +199,7 @@
             pagination.empty();
             if (data.length > 0) {
                 $.each(data, function(index, dt) {
+                    const urut=(dt.urut)?`<span class="badge rounded-pill text-bg-primary fs-2">${dt.urut}</span>`:"";
                     const contoh=(dt.contoh)?`
                     <a href="${base_url}/${dt.contoh}" target="_blank"><span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">Contoh</span></a>
                     <a href="javascript:;" class="hapus-contoh" data-id="${dt.id}"><iconify-icon icon="solar:trash-bin-minimalistic-outline" class=""></iconify-icon></a>
@@ -204,6 +209,8 @@
                                 <td>
                                     ${dt.nama}/ ${dt.jenis}
                                     <div>${contoh}</div>
+                                    <div>${urut}</div>
+                                    
                                 </td>
                                 <td>${dt.deskripsi}</td>
                                 <td>${(dt.is_wajib)?'Wajib':'Tidak Wajib'}</td>
@@ -320,6 +327,7 @@
                 $('#id').val(response.data.id);
                 $('#beasiswa_id').val(response.data.beasiswa_id);
                 $('#nama').val(response.data.nama);
+                $('#urut').val(response.data.urut);
                 $('#jenis').val(response.data.jenis);
                 $('#is_wajib').val(response.data.is_wajib);
                 $('#bobot').val(response.data.bobot);

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('jenis', 100)->nullable();
             $table->string('contoh', 180)->nullable();
             $table->integer('bobot')->nullable();
+            $table->integer('urut')->nullable();
             $table->text('deskripsi')->nullable();
             $table->text('instrumen_opsi')->nullable();
             $table->boolean('is_wajib')->default(true);

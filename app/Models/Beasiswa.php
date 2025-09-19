@@ -79,7 +79,8 @@ class Beasiswa extends Model
 
     public function syarat()
     {
-        return $this->hasMany(Syarat::class);
+        // return $this->hasMany(Syarat::class);
+        return $this->hasMany(Syarat::class)->orderBy('beasiswa_id')->orderBy('urut')->orderBy('id');
     }
 
     public function soalWawancara()

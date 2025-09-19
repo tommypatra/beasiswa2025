@@ -19,7 +19,8 @@ class SyaratController extends Controller
     {
         $dataQuery = Syarat::with(['beasiswa'])
             ->orderBy('beasiswa_id', 'desc')
-            ->orderBy('nama', 'desc');
+            ->orderBy('urut', 'asc')
+            ->orderBy('id', 'asc');
 
         if ($request->filled('search')) {
             $search = $request->search;
