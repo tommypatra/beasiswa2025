@@ -125,213 +125,178 @@
 <body>
 
     <div id="data-list"></div>
-
-
     <div id="loadingProgress">0%</div>
     <script src="{{ asset('template/materialm/assets/libs/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ asset('js/app.js') }}"></script>
+
     <script>
-    var beasiswa;
-    const g_limit = 50;
-    let g_nomor = 1;
-        
-    function label($string){
-        return ($string)?$string:"";
-    }
+        var beasiswa;
+        const g_limit = 50;
 
-	$(document).ready(function() {
-        const token = localStorage.getItem('access_token');
-        function forceLogout(){
-            localStorage.clear();
-            window.location.replace(`${base_url}/login`);
-        }        
+        // Helper
+        function label(str){
+            return str ? str : "";
+        }
 
+        $(document).ready(function() {
+            const token = localStorage.getItem('access_token');
 
-        $.ajaxSetup({
-            beforeSend: function(xhr) {
-            xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-            },          
-            complete: function(xhr) {
-                //baca respon jika ada authorization maka refresh token
-                let responHeader = xhr.getResponseHeader('Authorization');
-                if (responHeader) {
-                    let newToken = responHeader.replace('Bearer ', '').trim();
-                    access_token = newToken;
-                    localStorage.setItem('access_token', newToken);
-                }
-                //jika token tidak berlaku
-                if (xhr.status === 401) {
-                    forceLogout();
-                }
+            function forceLogout(){
+                localStorage.clear();
+                window.location.replace(`${base_url}/login`);
             }
-        });
-        cekAkses();
-        initPage();
 
-        async function initPage() {
-            loadDataBeasiswa();
-            $('#loadingProgress').show().text("0%");
-            await dataLoad();
-            $('#loadingProgress').text("Selesai").fadeOut(1000);
-        }
-
-        async function loadDataBeasiswa() {
-            let url = `${base_url}/api/get-data-beasiswa/${beasiswa_id}`;
-            const response = await execAsync(`${url}`, 'GET', token);
-            beasiswa=response.data;
-            // $('#tahun-beasiswa').text(`${beasiswa.tahun}`);
-            // $('#nama-beasiswa').text(`${beasiswa.nama}`);
-        }
-
-
-        async function dataLoad() {
-            let page = 1;
-            let hasNext = true;
-            g_nomor = 1;
-            const dataList = $('#data-list');
-            dataList.empty();
-            while (hasNext) {
-                let url = `${base_url}/api/cetak-wawancara/${beasiswa_id}?sort=2&limit=${g_limit}&page=${page}`;
-                try {
-                    const response = await fetch(url, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`, 
-                            'Content-Type': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
+            $.ajaxSetup({
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },          
+                complete: function(xhr) {
+                    let responHeader = xhr.getResponseHeader('Authorization');
+                    if (responHeader) {
+                        let newToken = responHeader.replace('Bearer ', '').trim();
+                        localStorage.setItem('access_token', newToken);
                     }
+                    if (xhr.status === 401) forceLogout();
+                }
+            });
 
-                    const result = await response.json();
-                    renderData(result.data.data,dataList);
+            cekAkses();
+            initPage();
 
-                    const progress = Math.round((result.data.current_page / result.data.last_page) * 100);
-                    $('#loadingProgress').text(progress + "%");
+            async function initPage() {
+                await loadDataBeasiswa();
+                $('#loadingProgress').show().text("0%");
+                await dataLoad();
+                $('#loadingProgress').text("Selesai").fadeOut(1000);
+            }
 
-                    if (result.data.current_page < result.data.last_page) {
-                        page++;
-                    } else {
+            async function loadDataBeasiswa() {
+                let url = `${base_url}/api/get-data-beasiswa/${beasiswa_id}`;
+                const response = await execAsync(url,'GET',token);
+                beasiswa = response.data;
+            }
+
+            async function dataLoad() {
+                let page = 1;
+                let hasNext = true;
+                const pewawancaraGroups = {}; // global untuk gabung data per pewawancara
+
+                while(hasNext){
+                    let url = `${base_url}/api/cetak-wawancara/${beasiswa_id}?sort=2&limit=${g_limit}&page=${page}`;
+                    try {
+                        const response = await fetch(url, {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                        const result = await response.json();
+
+                        // Gabung data per pewawancara
+                        result.data.data.forEach(dt => {
+                            const id = dt.pewawancara.pewawancara_id;
+                            if (!pewawancaraGroups[id]) pewawancaraGroups[id] = { pewawancara: dt.pewawancara, data: [] };
+                            pewawancaraGroups[id].data.push(dt);
+                        });
+
+                        const progress = Math.round((result.data.current_page / result.data.last_page) * 100);
+                        $('#loadingProgress').text(progress + "%");
+
+                        if(result.data.current_page < result.data.last_page) page++;
+                        else hasNext = false;
+
+                    } catch (err){
+                        console.error("Error load data:", err);
                         hasNext = false;
                     }
-
-                } catch (error) {
-                    console.error("Error load data:", error);
-                    hasNext = false;
                 }
+
+                renderAllGroups(pewawancaraGroups);
             }
 
-        }
+            function renderAllGroups(groups){
+                const container = $('#data-list');
+                container.empty();
 
-        function renderData(dataRespon) {
-            if (dataRespon.length === 0) {
-                $('#data-list').html('data tidak ditemukan');
-                return;
+                Object.values(groups).forEach(group => {
+                    const pewawancara = group.pewawancara;
+                    let nomor = 1;
+
+                    const rows = group.data.map(dt => {
+                        let rincian_wawancara = '';
+                        if(dt.hasil_wawancara && dt.hasil_wawancara.length>0){
+                            rincian_wawancara = '<ul>';
+                            dt.hasil_wawancara.forEach(rw => {
+                                rincian_wawancara += `<li>
+                                    <div>${rw.soal} (bobot: ${rw.persentase_nilai})</div>
+                                    <div>Nilai: ${rw.nilai}</div>
+                                    <div>Catatan: ${rw.catatan}</div>
+                                </li>`;
+                            });
+                            rincian_wawancara += '</ul>';
+                        }
+
+                        return `<tr>
+                            <td>${nomor++}</td>
+                            <td>${dt.mahasiswa.nama} / ${dt.mahasiswa.nim}</td>
+                            <td>${dt.mahasiswa.jenis_kelamin}</td>
+                            <td>${dt.mahasiswa.fakultas} / ${dt.mahasiswa.program_studi}</td>
+                            <td>${rincian_wawancara}</td>
+                            <td>${label(dt.nilai)}</td>
+                        </tr>`;
+                    }).join('');
+
+                    const cardHtml = `
+                    <div class="card">
+                        <div class="header">
+                            <img src="{{ asset('images/logo.png') }}" alt="Logo" style="width:80px;">
+                            <h1>HASIL WAWANCARA SELEKSI BEASISWA TAHUN ${beasiswa.tahun}</h1>
+                            <h3>${beasiswa.nama}</h3>
+                            <hr>
+                            <div>Pewawancara: ${pewawancara.nama.toUpperCase()}</div>
+                        </div>
+
+                        <div class="content">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th width="5%">No</th>
+                                        <th width="20%">Nama/ NIM</th>
+                                        <th width="5%">Jenis Kelamin</th>
+                                        <th width="10%">Fakultas/ Program Studi</th>
+                                        <th width="30%">Rincian Wawancara</th>
+                                        <th width="10%">Nilai</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${rows}</tbody>
+                            </table>
+
+                            <div style="
+                                margin-top: 20px;
+                                width: 300px;
+                                height: 120px;
+                                float: right;
+                                text-align: left;
+                            ">
+                                Kendari, .................................<br>
+                                Pewawancara,<br><br><br><br><br>
+                                <span style="text-decoration: underline; font-weight: bold;">
+                                    ${pewawancara.nama.toUpperCase()}
+                                </span>
+                            </div>
+                            <div style="clear: both;"></div>
+                        </div>
+                    </div>`;
+
+                    container.append(cardHtml);
+                });
             }
 
-            // Group data berdasarkan pewawancara_id
-            let grouped = {};
-            dataRespon.forEach(dt => {
-                const id = dt.pewawancara.pewawancara_id;
-                if (!grouped[id]) grouped[id] = {
-                    pewawancara: dt.pewawancara,
-                    data: []
-                };
-                grouped[id].data.push(dt);
-            });
-
-            // Kosongkan container utama
-            const container = $('#data-list').parent(); // kita akan append card baru ke parent content
-            container.empty();
-
-            // Render setiap grup
-            Object.values(grouped).forEach(group => {
-                const pewawancara = group.pewawancara;
-                let nomor = 1; 
-                const rows = group.data.map(dt => {
-                    let rincian_wawancara = '';
-                    if (dt.hasil_wawancara && dt.hasil_wawancara.length > 0) {
-                        rincian_wawancara = '<ul>';
-                        dt.hasil_wawancara.forEach(rw => {
-                            rincian_wawancara += `<li>
-                                <div class="soal">${rw.soal} (bobot : ${rw.persentase_nilai})</div>
-                                <hr>
-                                <div>${rw.nilai}</div>
-                                <div>${rw.catatan}</div>
-                            </li>`;
-                        });
-                        rincian_wawancara += '</ul>';
-                    }
-
-                    return `<tr>
-                                <td>${nomor++}</td>
-                                <td>${dt.mahasiswa.nama}/ ${dt.mahasiswa.nim}</td>
-                                <td>${dt.mahasiswa.jenis_kelamin}</td>
-                                <td>${dt.mahasiswa.fakultas}/ ${dt.mahasiswa.program_studi}</td>
-                                <td>${rincian_wawancara}</td>
-                                <td>${label(dt.nilai)}</td>
-                            </tr>`;
-                }).join('');
-
-                // Buat card baru per pewawancara
-                const cardHtml = `<div class="card">
-                    <div class="header">
-                        <img src="{{ asset('images/logo.png') }}" alt="Logo" style="width:80px;">
-                        <h1>HASIL WAWANCARA SELEKSI BEASISWA TAHUN <span class="tahun-beasiswa"></span></h1>
-                        <h3><span class="nama-beasiswa"></span></h3>
-                        <hr>
-                    </div>
-
-
-                    <div class="content">
-                        <div>
-                            Pewawancara : ${pewawancara.nama.toUpperCase()}
-                        </div>
-                        <br>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th width="5%">No</th>
-                                    <th width="20%">Nama/ NIM</th>
-                                    <th width="5%">Jenis Kelamin</th>
-                                    <th width="10%">Fakultas/ Program Studi</th>
-                                    <th width="30%">Rincian Wawancara</th>
-                                    <th width="10%">Nilai</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${rows}
-                            </tbody>
-                        </table>
-
-                        <div style="
-                            margin-top: 20px;
-                            width: 300px;       /* lebar area tanda tangan */
-                            height: 120px;      /* tinggi area tanda tangan */
-                            float: right;       /* posisi kanan bawah */
-                            text-align: left;   /* teks rata kiri */
-                        ">
-                            Kendari, .................................
-                            Pewawancara,<br><br><br><br><br>
-                            <span style="text-decoration: underline; font-weight: bold;">
-                                ${pewawancara.nama.toUpperCase()}
-                            </span>
-                        </div>
-                        <div style="clear: both;"></div>
-
-                    </div>
-                </div>`;
-
-                container.append(cardHtml);
-            });
-            $('.tahun-beasiswa').text(`${beasiswa.tahun}`);
-            $('.nama-beasiswa').text(`${beasiswa.nama}`);
-        }
-
-
-    });
+        });
     </script>
+
 </body>
 </html>
