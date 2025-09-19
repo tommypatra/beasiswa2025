@@ -124,80 +124,19 @@
 </head>
 <body>
 
-    <div class="card">
-        <div class="header">
-            <img src="{{ asset('images/logo.png') }}" alt="SNPMB Logo">
-            <h1>DATA PEWAWANCARA BEASISWA TAHUN <span id="tahun-beasiswa"></span></h1>
-            <h4 style="margin-top:1px;" id="nama-beasiswa"></h4>
-            <hr>    
-        </div>
-
-        <button id="copyTableBtn" onclick="copyTable()">Copy ke Excel</button>
-
-        <div class="content">
-            <table id="mytable">
-                <thead>
-                    <tr>
-                        <th width="5%">No</th>
-                        <th width="20%">Nama</th>
-                        <th width="10%">NIM</th>
-                        <th width="5%">Jenis Kelamin</th>
-                        <th width="10%">Fakultas</th>
-                        <th width="10%">Program Studi</th>
-                        <th width="15%">Pewawancara</th>
-                        <th width="30%">Rincian Wawancara</th>
-                        <th width="10%">Nilai</th>
-                    </tr>
-                </thead>
-                <tbody id="data-list">
-                    <tr>
-                        <td colspan="9">tidak ditemukan</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-
-    </div>
+    <div id="data-list"></div>
 
 
     <div id="loadingProgress">0%</div>
     <script src="{{ asset('template/materialm/assets/libs/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ asset('js/app.js') }}"></script>
     <script>
+    var beasiswa;
     const g_limit = 50;
     let g_nomor = 1;
         
     function label($string){
         return ($string)?$string:"";
-    }
-
-
-    function copyTable2() {
-        var urlField = document.getElementById('mytable')
-        var range = document.createRange()
-        range.selectNode(urlField)
-        window.getSelection().addRange(range)
-        document.execCommand('copy')
-        alert("berhasil tersalin");
-    }   
-    
-    function copyTable() {
-        let text = "";
-        const rows = document.querySelectorAll("#mytable tr");
-
-        rows.forEach(row => {
-            let cols = row.querySelectorAll("th, td");
-            let rowData = [];
-            cols.forEach(col => rowData.push(col.innerText));
-            text += rowData.join("\t") + "\n"; // pakai tab untuk Excel
-        });
-
-        navigator.clipboard.writeText(text).then(() => {
-            alert("Tabel berhasil disalin! Silakan paste di Excel.");
-        }).catch(err => {
-            console.error("Gagal copy:", err);
-        });
     }
 
 	$(document).ready(function() {
@@ -239,9 +178,9 @@
         async function loadDataBeasiswa() {
             let url = `${base_url}/api/get-data-beasiswa/${beasiswa_id}`;
             const response = await execAsync(`${url}`, 'GET', token);
-            let beasiswa=response.data;
-            $('#tahun-beasiswa').text(`${beasiswa.tahun}`);
-            $('#nama-beasiswa').text(`${beasiswa.nama}`);
+            beasiswa=response.data;
+            // $('#tahun-beasiswa').text(`${beasiswa.tahun}`);
+            // $('#nama-beasiswa').text(`${beasiswa.nama}`);
         }
 
 
@@ -252,7 +191,7 @@
             const dataList = $('#data-list');
             dataList.empty();
             while (hasNext) {
-                let url = `${base_url}/api/cetak-pewawancara-beasiswa/${beasiswa_id}?limit=${g_limit}&page=${page}`;
+                let url = `${base_url}/api/cetak-wawancara/${beasiswa_id}?sort=2&limit=${g_limit}&page=${page}`;
                 try {
                     const response = await fetch(url, {
                         method: 'GET',
@@ -286,40 +225,111 @@
 
         }
 
-        function renderData(dataRespon,dataList){
-            if(dataRespon.length>0){
-                $.each(dataRespon, function(data, dt) {
-                    
-                    let rincian_wawancara='';
-                    if(dt.hasil_wawancara.length>0){
-                        rincian_wawancara='<ul>';
-                        $.each(dt.hasil_wawancara, function(index, rw) {
-                            rincian_wawancara+=`<li>
-                                                    <div class="soal">${rw.soal} (bobot : ${rw.persentase_nilai})</div>
-                                                    <hr>
-                                                    <div>${rw.nilai}</div> 
-                                                    <div>${rw.catatan}</div> 
-                                                </li>`;
-                        });
-                        rincian_wawancara+='</ul>';
+        function renderData(dataRespon) {
+            if (dataRespon.length === 0) {
+                $('#data-list').html('data tidak ditemukan');
+                return;
+            }
 
+            // Group data berdasarkan pewawancara_id
+            let grouped = {};
+            dataRespon.forEach(dt => {
+                const id = dt.pewawancara.pewawancara_id;
+                if (!grouped[id]) grouped[id] = {
+                    pewawancara: dt.pewawancara,
+                    data: []
+                };
+                grouped[id].data.push(dt);
+            });
+
+            // Kosongkan container utama
+            const container = $('#data-list').parent(); // kita akan append card baru ke parent content
+            container.empty();
+
+            // Render setiap grup
+            Object.values(grouped).forEach(group => {
+                const pewawancara = group.pewawancara;
+                let nomor = 1; 
+                const rows = group.data.map(dt => {
+                    let rincian_wawancara = '';
+                    if (dt.hasil_wawancara && dt.hasil_wawancara.length > 0) {
+                        rincian_wawancara = '<ul>';
+                        dt.hasil_wawancara.forEach(rw => {
+                            rincian_wawancara += `<li>
+                                <div class="soal">${rw.soal} (bobot : ${rw.persentase_nilai})</div>
+                                <hr>
+                                <div>${rw.nilai}</div>
+                                <div>${rw.catatan}</div>
+                            </li>`;
+                        });
+                        rincian_wawancara += '</ul>';
                     }
 
-                    const row = `<tr>
-                                    <td>${g_nomor++}</td>
-                                    <td>${dt.mahasiswa.nama}</td>
-                                    <td>${dt.mahasiswa.nim}</td>
-                                    <td>${dt.mahasiswa.jenis_kelamin}</td>
-                                    <td>${dt.mahasiswa.fakultas}</td>
-                                    <td>${dt.mahasiswa.program_studi}</td>
-                                    <td>${dt.pewawancara.nama}</td>
-                                    <td>${rincian_wawancara}</td>
-                                    <td>${label(dt.nilai)}</td>
-                                </tr>`;
-                    dataList.append(row);
-                });                        
-            }
+                    return `<tr>
+                                <td>${nomor++}</td>
+                                <td>${dt.mahasiswa.nama}/ ${dt.mahasiswa.nim}</td>
+                                <td>${dt.mahasiswa.jenis_kelamin}</td>
+                                <td>${dt.mahasiswa.fakultas}/ ${dt.mahasiswa.program_studi}</td>
+                                <td>${rincian_wawancara}</td>
+                                <td>${label(dt.nilai)}</td>
+                            </tr>`;
+                }).join('');
+
+                // Buat card baru per pewawancara
+                const cardHtml = `<div class="card">
+                    <div class="header">
+                        <img src="{{ asset('images/logo.png') }}" alt="Logo" style="width:80px;">
+                        <h1>HASIL WAWANCARA SELEKSI BEASISWA TAHUN <span class="tahun-beasiswa"></span></h1>
+                        <h3><span class="nama-beasiswa"></span></h3>
+                        <hr>
+                    </div>
+
+
+                    <div class="content">
+                        <div>
+                            Pewawancara : ${pewawancara.nama.toUpperCase()}
+                        </div>
+                        <br>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th width="5%">No</th>
+                                    <th width="20%">Nama/ NIM</th>
+                                    <th width="5%">Jenis Kelamin</th>
+                                    <th width="10%">Fakultas/ Program Studi</th>
+                                    <th width="30%">Rincian Wawancara</th>
+                                    <th width="10%">Nilai</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rows}
+                            </tbody>
+                        </table>
+
+                        <div style="
+                            margin-top: 20px;
+                            width: 300px;       /* lebar area tanda tangan */
+                            height: 120px;      /* tinggi area tanda tangan */
+                            float: right;       /* posisi kanan bawah */
+                            text-align: left;   /* teks rata kiri */
+                        ">
+                            Kendari, .................................
+                            Pewawancara,<br><br><br><br><br>
+                            <span style="text-decoration: underline; font-weight: bold;">
+                                ${pewawancara.nama.toUpperCase()}
+                            </span>
+                        </div>
+                        <div style="clear: both;"></div>
+
+                    </div>
+                </div>`;
+
+                container.append(cardHtml);
+            });
+            $('.tahun-beasiswa').text(`${beasiswa.tahun}`);
+            $('.nama-beasiswa').text(`${beasiswa.nama}`);
         }
+
 
     });
     </script>

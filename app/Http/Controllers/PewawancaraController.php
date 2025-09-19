@@ -58,16 +58,21 @@ class PewawancaraController extends Controller
     }
 
 
-    public function cetakPewawancara(Request $request, $beasiswa_id)
+    public function cetakWawancara(Request $request, $beasiswa_id)
     {
 
         $dataQuery = PesertaWawancara::with(['pewawancara.user', 'wawancaraNilai', 'pendaftar.mahasiswa.user.identitas', 'pendaftar.mahasiswa.programStudi.fakultas'])
             ->whereHas('pendaftar', function ($q) use ($request) {
                 $q->where('beasiswa_id', $request->beasiswa_id);
-            })
-            ->orderBy('pendaftar_id', 'asc')
-            ->orderBy('pewawancara_id', 'asc');
+            });
 
+        if ($request->sort == 1) {
+            $dataQuery->orderBy('pendaftar_id', 'asc')
+                ->orderBy('pewawancara_id', 'asc');
+        } else {
+            $dataQuery->orderBy('pewawancara_id', 'asc')
+                ->orderBy('pendaftar_id', 'asc');
+        }
         $default_limit = env('DEFAULT_LIMIT', 30);
         $limit = $request->filled('limit') ? $request->limit : $default_limit;
         $data = $dataQuery->paginate($limit);

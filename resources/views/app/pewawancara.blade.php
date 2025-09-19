@@ -85,8 +85,13 @@ td, th {
                             </button>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a class="dropdown-item" href="#" id="btn-cetak">
-                                        <iconify-icon icon="solar:printer-outline" class="me-2"></iconify-icon> Cetak Rekap
+                                    <a class="dropdown-item" href="#" id="btn-cetak-wawancara">
+                                        <iconify-icon icon="solar:printer-outline" class="me-2"></iconify-icon> Cetak Hasil Wawancara
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#" id="btn-cetak-rekap">
+                                        <iconify-icon icon="solar:printer-outline" class="me-2"></iconify-icon> Cetak Rekap Wawancara
                                     </a>
                                 </li>
                                 <li>
@@ -238,8 +243,13 @@ td, th {
             $('#label-beasiswa').html(`<h4>${beasiswa.nama}</h4>`);
         }
 
-        $('#btn-cetak').click(function(){
-            const url = `${base_url}/cetak-pewawancara-beasiswa/${id}`;
+        $('#btn-cetak-rekap').click(function(){
+            const url = `${base_url}/cetak-rekap-wawancara/${id}`;
+            window.open(url, '_blank');
+        });
+
+        $('#btn-cetak-wawancara').click(function(){
+            const url = `${base_url}/cetak-hasil-wawancara/${id}`;
             window.open(url, '_blank');
         });
 

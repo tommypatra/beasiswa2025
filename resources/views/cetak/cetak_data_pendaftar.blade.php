@@ -132,7 +132,7 @@
             <hr>    
         </div>
 
-        <button id="copyTableBtn" onclick="copyTable()">Copy ke Excel</button>
+        <button id="copyTableBtn" onclick="copyTable2()">Copy ke Excel</button>
 
         <div class="content">
             <table id="mytable">

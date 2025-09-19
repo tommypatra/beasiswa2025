@@ -132,24 +132,22 @@
             <hr>    
         </div>
 
-        <button id="copyTableBtn" onclick="copyTable()">Copy ke Excel</button>
+        <button id="copyTableBtn" onclick="copyTable2()">Copy ke Excel</button>
 
         <div class="content">
             <table id="mytable">
                 <thead>
                     <tr>
                         <th width="5%">No</th>
-                        <th width="20%">Nama</th>
-                        <th width="10%">NIM</th>
+                        <th width="20%">Nama/ NIM</th>
                         <th width="5%">Jenis Kelamin</th>
-                        <th width="10%">Fakultas</th>
-                        <th width="10%">Program Studi</th>
-                        <th width="5%">Ekonomi</th>
-                        <th width="5%">Pendidikan</th>
-                        <th width="5%">Berkas</th>
-                        <th width="5%">CBT</th>
-                        <th width="5%">Survei</th>
-                        <th width="30%">Rincian Wawancara</th>
+                        <th width="10%">Fakultas/ Program Studi</th>
+                        <th width="5%">Nilai Ekonomi</th>
+                        <th width="5%">Nilai Pendidikan</th>
+                        <th width="5%">Nilai Berkas</th>
+                        <th width="5%">Nilai CBT</th>
+                        <th width="5%">Nilai Survei</th>
+                        <th width="30%">Hasil Wawancara</th>
                         <th width="5%">Nilai Akhir Wawancara</th>
                         <th width="10%">Status Lulus</th>
                     </tr>
@@ -305,11 +303,9 @@
                     }
                     const row = `<tr>
                                     <td>${g_nomor++}</td>
-                                    <td>${dt.mahasiswa.nama}</td>
-                                    <td>${dt.mahasiswa.nim}</td>
+                                    <td>${dt.mahasiswa.nama}/ ${dt.mahasiswa.nim}</td>
                                     <td>${dt.mahasiswa.jenis_kelamin}</td>
-                                    <td>${dt.mahasiswa.fakultas}</td>
-                                    <td>${dt.mahasiswa.program_studi}</td>
+                                    <td>${dt.mahasiswa.fakultas}/ ${dt.mahasiswa.program_studi}</td>
                                     <td>${label(dt.nilai.ekonomi)}</td>
                                     <td>${label(dt.nilai.pendidikan)}</td>
                                     <td>${label(dt.nilai.berkas)}</td>

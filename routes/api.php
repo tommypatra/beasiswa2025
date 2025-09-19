@@ -243,7 +243,8 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::post('pewawancara', [PewawancaraController::class, 'store']);
         Route::delete('pewawancara/{id}', [PewawancaraController::class, 'destroy']);
         Route::put('pewawancara/{id}', [PewawancaraController::class, 'update']);
-        Route::get('cetak-pewawancara-beasiswa/{beasiswa_id}', [PewawancaraController::class, 'cetakPewawancara']);
+
+        Route::get('cetak-wawancara/{beasiswa_id}', [PewawancaraController::class, 'cetakWawancara']);
 
 
         Route::resource('admin-peserta-wawancara', PesertaWawancaraController::class);

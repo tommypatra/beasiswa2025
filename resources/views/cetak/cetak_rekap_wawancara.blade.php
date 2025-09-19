@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cetak Verifikator Beasiswa</title>
+    <title>Daftar Pewawanara Beasiswa</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="shortcut icon" type="image/png" href="{{ asset('images/logo.png') }}" />
     <style>
@@ -127,12 +127,12 @@
     <div class="card">
         <div class="header">
             <img src="{{ asset('images/logo.png') }}" alt="SNPMB Logo">
-            <h1>DATA VERIFIKATOR BEASISWA TAHUN <span id="tahun-beasiswa"></span></h1>
+            <h1>DATA PEWAWANCARA BEASISWA TAHUN <span id="tahun-beasiswa"></span></h1>
             <h4 style="margin-top:1px;" id="nama-beasiswa"></h4>
             <hr>    
         </div>
 
-        <button id="copyTableBtn" onclick="copyTable()">Copy ke Excel</button>
+        <button id="copyTableBtn" onclick="copyTable2()">Copy ke Excel</button>
 
         <div class="content">
             <table id="mytable">
@@ -141,21 +141,17 @@
                         <th width="5%">No</th>
                         <th width="20%">Nama</th>
                         <th width="10%">NIM</th>
-                        <th width="20%">Verifikator</th>
+                        <th width="5%">Jenis Kelamin</th>
                         <th width="10%">Fakultas</th>
                         <th width="10%">Program Studi</th>
-                        <th width="10%">Ekonomi</th>
-                        <th width="10%">Pendidikan</th>
-                        <th width="10%">Berkas</th>
-                        <th width="10%">CBT</th>
-                        <th width="10%">Survei</th>
-                        <th width="10%">Wawancara</th>
-                        <th width="10%">Status Kelulusan</th>
+                        <th width="15%">Pewawancara</th>
+                        <th width="30%">Rincian Wawancara</th>
+                        <th width="10%">Nilai</th>
                     </tr>
                 </thead>
                 <tbody id="data-list">
                     <tr>
-                        <td colspan="13">tidak ditemukan</td>
+                        <td colspan="9">tidak ditemukan</td>
                     </tr>
                 </tbody>
             </table>
@@ -234,7 +230,7 @@
         initPage();
 
         async function initPage() {
-            await loadDataBeasiswa();
+            loadDataBeasiswa();
             $('#loadingProgress').show().text("0%");
             await dataLoad();
             $('#loadingProgress').text("Selesai").fadeOut(1000);
@@ -256,7 +252,7 @@
             const dataList = $('#data-list');
             dataList.empty();
             while (hasNext) {
-                let url = `${base_url}/api/kelulusan?${beasiswa_id}?limit=${g_limit}&page=${page}`;
+                let url = `${base_url}/api/cetak-wawancara/${beasiswa_id}?sort=1&limit=${g_limit}&page=${page}`;
                 try {
                     const response = await fetch(url, {
                         method: 'GET',
@@ -293,7 +289,21 @@
         function renderData(dataRespon,dataList){
             if(dataRespon.length>0){
                 $.each(dataRespon, function(data, dt) {
-                    const status_kelulusan = dt.status.is_lulus == 1 ? "Lulus"  : dt.status.is_lulus == 0  ? "Tidak Lulus" : "";
+                    
+                    let rincian_wawancara='';
+                    if(dt.hasil_wawancara.length>0){
+                        rincian_wawancara='<ul>';
+                        $.each(dt.hasil_wawancara, function(index, rw) {
+                            rincian_wawancara+=`<li>
+                                                    <div class="soal">${rw.soal} (bobot : ${rw.persentase_nilai})</div>
+                                                    <hr>
+                                                    <div>${rw.nilai}</div> 
+                                                    <div>${rw.catatan}</div> 
+                                                </li>`;
+                        });
+                        rincian_wawancara+='</ul>';
+
+                    }
 
                     const row = `<tr>
                                     <td>${g_nomor++}</td>
@@ -302,13 +312,9 @@
                                     <td>${dt.mahasiswa.jenis_kelamin}</td>
                                     <td>${dt.mahasiswa.fakultas}</td>
                                     <td>${dt.mahasiswa.program_studi}</td>
-                                    <td>${label(dt.nilai.ekonomi)}</td>
-                                    <td>${label(dt.nilai.pendidikan)}</td>
-                                    <td>${label(dt.nilai.berkas)}</td>
-                                    <td>${label(dt.nilai.cbt)}</td>
-                                    <td>${label(dt.nilai.survei)}</td>
-                                    <td>${label(dt.nilai.wawancara)}</td>
-                                    <td>${status_kelulusan}</td>
+                                    <td>${dt.pewawancara.nama}</td>
+                                    <td>${rincian_wawancara}</td>
+                                    <td>${label(dt.nilai)}</td>
                                 </tr>`;
                     dataList.append(row);
                 });                        
