@@ -109,14 +109,22 @@
                 table-layout: fixed; 
                 word-wrap: break-word;
             } */
-
             .card {
                 border: none;
                 box-shadow: none;
                 page-break-after: always;
+                overflow: visible !important;  /* Hapus scroll saat print */
+                width: 100%;                   /* Lebar maksimal untuk print */
+                padding: 10px 5px;             /* Bisa disesuaikan */
             }
+            /* .card {
+                border: none;
+                box-shadow: none;
+                page-break-after: always;
+            } */
         }        
     </style>
+
     <script>
         const base_url="{{ url('/') }}";
         const beasiswa_id="{{ $beasiswa_id }}";
@@ -254,12 +262,12 @@
                         <div class="header">
                             <img src="{{ asset('images/logo.png') }}" alt="Logo" style="width:80px;">
                             <h1>HASIL WAWANCARA SELEKSI BEASISWA TAHUN ${beasiswa.tahun}</h1>
-                            <h3>${beasiswa.nama}</h3>
+                            <h3>${beasiswa.nama.toUpperCase()}</h3>
                             <hr>
-                            <div>Pewawancara: ${pewawancara.nama.toUpperCase()}</div>
                         </div>
 
                         <div class="content">
+                            <div>PEWAWANCARA : ${pewawancara.nama.toUpperCase()}</div>
                             <table>
                                 <thead>
                                     <tr>
@@ -276,7 +284,7 @@
 
                             <div style="
                                 margin-top: 20px;
-                                width: 300px;
+                                width: 350px;
                                 height: 120px;
                                 float: right;
                                 text-align: left;
