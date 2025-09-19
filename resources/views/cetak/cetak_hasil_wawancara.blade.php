@@ -284,7 +284,7 @@
 
                             <div style="
                                 margin-top: 20px;
-                                width: 200px;
+                                width: 350px;
                                 height: 120px;
                                 float: right;
                                 text-align: left;
