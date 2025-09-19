@@ -222,9 +222,9 @@ class KelulusanController extends Controller
             }
 
             // Nilai wawancara
-            if (($beasiswa['ada_wawancara'] ?? 0) === 1) {
-                $data_post['nilai_wawancara'] = (float)PesertaWawancara::where('pendaftar_id', $pendaftar_id)->avg('nilai');
-            }
+            // if (($beasiswa['ada_wawancara'] ?? 0) === 1) {
+            $data_post['nilai_wawancara'] = (float)PesertaWawancara::where('pendaftar_id', $pendaftar_id)->avg('nilai');
+            // }
 
             $data_post['nilai_ekonomi'] = ($data_post['nilai_rumah'] + $data_post['nilai_orang_tua']) / 2;
             $data_post['nilai_pendidikan'] = ($data_post['nilai_pendidikan_akhir'] + $data_post['nilai_raport']) / 2;

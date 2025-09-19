@@ -79,9 +79,23 @@ td, th {
                         <button class="btn btn-success" id="btn-refresh">
                             <i class="ti ti-reload"></i>
                         </button>
-                        <button class="btn btn-secondary" id="btn-cetak">
-                            <iconify-icon icon="solar:printer-outline" class="fs-5"></iconify-icon>
-                        </button>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <iconify-icon icon="solar:settings-linear" class="fs-5"></iconify-icon>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="#" id="btn-cetak">
+                                        <iconify-icon icon="solar:printer-outline" class="me-2"></iconify-icon> Cetak
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#" id="btn-generate">
+                                        <iconify-icon icon="mdi:refresh-circle" class="me-2"></iconify-icon> Generate Nilai Akhir
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
                 
@@ -228,6 +242,14 @@ td, th {
             const url = `${base_url}/cetak-pewawancara-beasiswa/${id}`;
             window.open(url, '_blank');
         });
+
+        $('#btn-generate').click(function(){
+            if(confirm('Generate ulang nilai akhir dari peserta wawancara?')){
+                const url = `${base_url}/api/generate-nilai-akhir-wawancara/${id}`;
+                const response = execAsync(`${url}`, 'GET', token);                
+            }
+        });
+
 
         function renderData(response) {
             const dataList = $('#data-list');

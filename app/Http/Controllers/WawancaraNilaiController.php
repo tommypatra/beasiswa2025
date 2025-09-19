@@ -159,29 +159,103 @@ class WawancaraNilaiController extends Controller
     {
         try {
             DB::beginTransaction();
-            $data = PesertaWawancara::with(['pendaftar'])->where('id', $id)->firstOrFail();
 
-            $totalJawaban = WawancaraNilai::where('pendaftar_id', $data->pendaftar_id)
+            $data = PesertaWawancara::with(['pendaftar'])->findOrFail($id);
+
+            // ambil semua jawaban wawancara beserta bobot soalnya
+            $jawaban = WawancaraNilai::where('pendaftar_id', $data->pendaftar_id)
                 ->whereHas('pewawancara', function ($q) {
-                    $q->where('user_id', auth()->user()->id);
+                    $q->where('user_id', auth()->id());
                 })
-                ->count();
+                ->with('soalWawancara:id,persentase_nilai,beasiswa_id')
+                ->get();
 
+            // total soal untuk beasiswa terkait
             $totalSoal = SoalWawancara::where('beasiswa_id', $data->pendaftar->beasiswa_id)->count();
-            if ($totalJawaban < $totalSoal) {
-                return response()->json(['status' => false, 'message' => 'Masih ada soal wawancara yang belum dinilai', 'data' => null], 500);
+
+            if ($jawaban->count() < $totalSoal) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Masih ada soal wawancara yang belum dinilai',
+                    'data' => null
+                ], 500);
             }
-            $totalNilai = WawancaraNilai::where('pendaftar_id', $data->pendaftar_id)
-                ->whereHas('pewawancara', function ($q) {
-                    $q->where('user_id', auth()->user()->id);
-                })
-                ->sum('nilai');
-            $data->update(['nilai' => ($totalNilai / $totalSoal), 'status' => "2"]);
+
+            // hitung rata-rata berbobot
+            $totalBobot = $jawaban->sum(fn($j) => $j->soalWawancara->persentase_nilai ?? 0);
+            $totalNilai = $jawaban->sum(fn($j) => ($j->nilai ?? 0) * ($j->soalWawancara->persentase_nilai ?? 0));
+
+            $nilaiAkhir = $totalBobot > 0 ? round($totalNilai / $totalBobot, 2) : 0;
+
+            // update peserta wawancara
+            $data->update([
+                'nilai' => $nilaiAkhir,
+                'status' => "2"
+            ]);
+
             DB::commit();
-            return response()->json(['status' => true, 'message' => 'berhasil diperbarui', 'data' => $data], 200);
+            return response()->json([
+                'status' => true,
+                'message' => 'berhasil diperbarui',
+                'data' => $data
+            ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat memperbarui : ' . $e->getMessage(), 'data' => null], 500);
+            return response()->json([
+                'status' => false,
+                'message' => 'terjadi kesalahan saat memperbarui : ' . $e->getMessage(),
+                'data' => null
+            ], 500);
+        }
+    }
+
+    public function generateNilaiAkhir($beasiswaId)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Ambil semua peserta wawancara (sudah termasuk pewawancara_id)
+            $pesertaList = PesertaWawancara::whereHas('pendaftar', function ($q) use ($beasiswaId) {
+                $q->where('beasiswa_id', $beasiswaId);
+            })->with('pendaftar')->get();
+
+            foreach ($pesertaList as $peserta) {
+                // Ambil semua jawaban peserta untuk pewawancara ini
+                $jawaban = WawancaraNilai::where('pendaftar_id', $peserta->pendaftar_id)
+                    ->where('pewawancara_id', $peserta->pewawancara_id) // <= sesuai pewawancaranya
+                    ->with('soalWawancara:id,persentase_nilai,beasiswa_id')
+                    ->get();
+
+                if ($jawaban->isEmpty()) {
+                    continue; // skip kalau belum ada jawaban
+                }
+
+                $totalBobot = $jawaban->sum(fn($j) => $j->soalWawancara->persentase_nilai ?? 0);
+                $totalNilai = $jawaban->sum(fn($j) => ($j->nilai ?? 0) * ($j->soalWawancara->persentase_nilai ?? 0));
+
+                $nilaiAkhir = $totalBobot > 0 ? round($totalNilai / $totalBobot, 2) : 0;
+
+                // Update nilai akhir peserta sesuai pewawancaranya
+                $peserta->update([
+                    'nilai' => $nilaiAkhir,
+                    'status' => 2 // contoh: 2 = selesai
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Generate ulang nilai akhir selesai',
+                'data' => $pesertaList
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'message' => 'Error saat generate ulang: ' . $e->getMessage(),
+                'data' => null
+            ], 500);
         }
     }
 

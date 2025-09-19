@@ -135,8 +135,9 @@
                         <th width="10%">Berkas</th>
                         <th width="10%">CBT</th>
                         <th width="10%">Survei</th>
-                        <th width="10%">Wawancara</th>
-                        <th width="10%">Status Kelulusan</th>
+                        <th width="10%">Rincian Wawancara</th>
+                        <th width="10%">Nilai Akhir Wawancara</th>
+                        <th width="10%">Keterangan</th>
                     </tr>
                 </thead>
                 <tbody id="data-list">
@@ -279,8 +280,15 @@
         function renderData(dataRespon,dataList){
             if(dataRespon.length>0){
                 $.each(dataRespon, function(data, dt) {
-                    const status_kelulusan = dt.status.is_lulus == 1 ? "Lulus"  : dt.status.is_lulus == 0  ? "Tidak Lulus" : "";
-
+                    // const status_kelulusan = dt.status.is_lulus == 1 ? "Lulus"  : dt.status.is_lulus == 0  ? "Tidak Lulus" : "";
+                    let daftar_nilai=``;
+                    if(dt.wawancara.length>0){
+                        daftar_nilai=`<ul>`;
+                        $.each(dt.wawancara, function(data, dw) {
+                            daftar_nilai+=`<li>${dw.pewawancara}: ${dw.nilai}</li>`;
+                        });
+                        daftar_nilai+=`</ul>`;
+                    }
                     const row = `<tr>
                                     <td>${g_nomor++}</td>
                                     <td>${dt.mahasiswa.nama}</td>
@@ -293,8 +301,9 @@
                                     <td>${label(dt.nilai.berkas)}</td>
                                     <td>${label(dt.nilai.cbt)}</td>
                                     <td>${label(dt.nilai.survei)}</td>
+                                    <td>${daftar_nilai}</td>
                                     <td>${label(dt.nilai.wawancara)}</td>
-                                    <td>${status_kelulusan}</td>
+                                    <td></td>
                                 </tr>`;
                     dataList.append(row);
                 });                        
