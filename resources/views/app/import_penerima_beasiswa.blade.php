@@ -131,7 +131,7 @@
     <script src="{{ asset('js/app.js') }}"></script>
 
     <script>
-    const g_limit=1;
+    const g_limit=50;
     const sk_penerima_id="{{ $sk_penerima_id }}";
     var g_nomor;
 
