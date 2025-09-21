@@ -53,11 +53,11 @@ class PendidikanAkhirController extends Controller
     {
         try {
             DB::beginTransaction();
-            $datasave = $request->validated();
-            $datasave['user_id'] = auth()->user()->id;
+            $data_save = $request->validated();
+            $data_save['user_id'] = auth()->user()->id;
             $data_save['foto_ijazah'] = upload($request->file('foto_ijazah'), 'foto_ijazah');
 
-            $data = PendidikanAkhir::create($datasave);
+            $data = PendidikanAkhir::create($data_save);
             DB::commit();
             return response()->json(['status' => true, 'message' => 'data baru berhasil dibuat', 'data' => $data], 201);
         } catch (\Exception $e) {
@@ -138,6 +138,7 @@ class PendidikanAkhirController extends Controller
             if (!izinkanAkses("Admin") &&  $data->user_id !== auth()->user()->id) {
                 return response()->json(['status' => false, 'message' => 'akses anda ditolak'], 403);
             }
+
             if ($request->hasFile('foto_ijazah')) {
                 // Hapus file lama jika ada
                 if ($data->foto_ijazah && Storage::disk('public')->exists($data->foto_ijazah)) {

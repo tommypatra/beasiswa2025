@@ -19,6 +19,11 @@
 
         <form id="form">
             <input type="hidden" id="id" name="id">
+            <div class="alert alert-primary" role="alert">
+                Untuk nilai akhir wajib diisi dengan 0 - 100, jika ada koma cara mengisinya ganti dengan titik contoh : 89.78
+                <br>Wajib mengupload ijazah asli atau fotocopy pdf yg sudah dilegalisir ukurang maksimal 3MB
+            </div>
+
             <div class="row">
                 <div class="col-lg-4 mb-3">
                     <label class="form-label">Tahun Lulus</label>

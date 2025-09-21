@@ -231,15 +231,23 @@ class AuthController extends Controller
 
                     $tahun_masuk = $request->filled('thnmasuk') ? substr($request->thnmasuk, 0, 4) : null;
 
-                    Mahasiswa::create([
-                        'nim'              => $request->nim ?? null,
-                        'tahun_masuk'      => $tahun_masuk,
-                        'ukt'              => $request->ukt ?? null,
-                        'sumber_biaya_id'  => 7,
-                        'program_studi_id' => $prodi->id,
-                        'kartu_mahasiswa' => 'images/kartumhs.png',
-                        'user_id'          => $user->id,
-                    ]);
+
+                    try {
+                        Mahasiswa::create([
+                            'nim'              => $request->nim ?? null,
+                            'tahun_masuk'      => $tahun_masuk,
+                            'ukt'              => $request->ukt ?? null,
+                            'sumber_biaya_id'  => 7,
+                            'program_studi_id' => $prodi->id,
+                            'kartu_mahasiswa'  => 'images/kartumhs.png',
+                            'user_id'          => $user->id,
+                        ]);
+                    } catch (\Illuminate\Database\QueryException $e) {
+                        if ($e->getCode() == 23000) {
+                            throw new \Exception("NIM {$request->nim} sudah terdaftar. Silakan hubungi admin untuk membantu mereset akun email anda.");
+                        }
+                        throw $e;
+                    }
 
                     // Role mahasiswa
                     UserRole::create([

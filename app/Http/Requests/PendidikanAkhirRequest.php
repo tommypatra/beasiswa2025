@@ -21,7 +21,6 @@ class PendidikanAkhirRequest extends FormRequest
      */
     public function rules(): array
     {
-        $id = $this->route('role');
         $isCreate = $this->isMethod('post');
 
         return [

@@ -75,7 +75,7 @@
                     <div class="col-sm-4 mb-3">
                         <label class="form-label">Kelurahan/ Desa</label>
                         <input name="wilayah_desa" id="wilayah_desa" data-id="" type="text" class="form-control" required>
-                        pilih terlebih dahulu kabupaten setelah itu wajib ketik dan pilih kelurahan/desa
+                        ketik nama desa setelah itu wajib di pilih kelurahan/desa
                     </div>
                     <div class="col-sm-4 mb-3">
                         <label class="form-label">Nomor HP/WA</label>
@@ -299,9 +299,37 @@
             select: function (event, ui) {
                 $(this).val(ui.item.value); 
                 $(this).attr("data-id", ui.item.id);
-                $('')
                 return false;
             }
+        });
+
+        $("#wilayah_desa").on("blur", function(){
+            let desaId = $(this).attr("data-id");
+            if(!desaId){
+                $("#wilayah_desa").focus();
+                $(this).val(""); // kosongkan isi text
+            }
+        });
+
+        $("#wilayah_kabupaten").on("blur", function(){
+            let kabupaten_id = $(this).attr("data-id");
+            if(!kabupaten_id){
+                $("#wilayah_kabupaten").focus();
+                $(this).val(""); // kosongkan isi text
+            }
+        });
+
+        // reset data-id setiap kali user mengetik manual
+        $("#wilayah_kabupaten").on("input", function(){
+            $(this).attr("data-id", "");
+
+            $('#wilayah_desa').attr("data-id", "");
+            $('#wilayah_desa').val("");
+        });
+
+        // reset data-id setiap kali user mengetik manual
+        $("#wilayah_desa").on("input", function(){
+            $(this).attr("data-id", "");
         });
 
     });

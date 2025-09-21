@@ -27,7 +27,7 @@
             <input type="hidden" id="id" name="id">
             <div class="alert alert-primary" role="alert">
                 Untuk nilai rata rata wajib diisi dengan 0 - 100, jika ada koma cara mengisinya ganti dengan titik contoh : 89.78
-                <br>Untuk peringat boleh kosong atau isikan dengan angka contoh 1 atau 2 atau 3 dst
+                <br>Untuk peringkat boleh kosong atau isikan dengan angka contoh 1 atau 2 atau 3 dst
                 <br>Wajib mengupload raport pdf yg sudah dilegalisir ukurang maksimal 3MB
             </div>                    
 
