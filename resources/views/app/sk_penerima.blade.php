@@ -17,7 +17,7 @@
 <div class="card">
     <div class="card-body">
         <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">
-            <h5 class="card-title fw-semibold">Daftar Penerima Beasiswa</h5>
+            <h5 class="card-title fw-semibold">Daftar SK Beasiswa</h5>
             <div class="d-flex gap-2">
                 <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;" >
                 <button class="btn btn-primary" id="btn-tambah-sk" >
@@ -193,7 +193,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Penerima <span class="judul-modal"></span></h5>
+                <h5 class="modal-title">Daftar <span class="judul-modal"></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body ">

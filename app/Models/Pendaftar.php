@@ -25,7 +25,7 @@ class Pendaftar extends Model
 
     public function uploadSyarat()
     {
-        return $this->hasOne(UploadSyarat::class);
+        return $this->hasMany(UploadSyarat::class);
     }
 
     public function mahasiswa()

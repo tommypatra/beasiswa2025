@@ -614,6 +614,7 @@
             //untuk akhir untuk pengaturan opsi instrumen
 
             $("#verifikasi_berkas_hasil").attr('data-bobot',data.bobot);
+            $('#download-dokumen').html(``);
 
             if (data.upload_syarat){
                 // let jenis = data.jenis;

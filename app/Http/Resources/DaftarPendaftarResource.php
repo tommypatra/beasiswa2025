@@ -18,12 +18,31 @@ class DaftarPendaftarResource extends JsonResource
         $beasiswa = $this->beasiswa;
         $kelulusan = $this->kelulusan;
         $mahasiswa = $this->mahasiswa;
+
+        $syarat = $beasiswa?->syarat ?? collect();
+        $upload = $this->uploadSyarat ?? collect();
+
+        $jumlahSyaratWajib = $syarat->where('is_wajib', 1)->count();
+        $jumlahUploadWajib = $upload->filter(function ($u) {
+            return $u->syarat && $u->syarat->is_wajib == 1;
+        })->count();
+
+        $upload_detail = $upload->map(function ($u) {
+            return [
+                'nama'    => $u->syarat?->nama,
+                'dokumen' => $u->dokumen,
+            ];
+        })->values();
+
+        $progress = $jumlahSyaratWajib > 0 ? round(($jumlahUploadWajib / $jumlahSyaratWajib) * 100, 2) : 0;
         $identitas = $this->mahasiswa->user->identitas;
         $verifikasi = $this->verifikatorPendaftar;
         $verifikator = $this->verifikatorPendaftar?->verifikator?->user;
 
         $pendidikan_akhir = $this->mahasiswa->user->pendidikanAkhir;
         $user = $this->mahasiswa->user;
+
+
         return [
             'pendaftar_id' => $this->id,
             'url_id' => $this->url_id,
@@ -49,6 +68,8 @@ class DaftarPendaftarResource extends JsonResource
             'tempat_lahir' => $identitas->tempat_lahir,
             'no_hp' => $identitas->no_hp,
             'foto' => $identitas->foto,
+            'upload_detail' => $upload_detail,
+            'progress_upload_syarat' => $progress,
             'ukt' => $mahasiswa->ukt,
             'program_studi' => $mahasiswa->programStudi?->nama,
             'singkatan_program_studi' => $mahasiswa->programStudi?->singkatan,

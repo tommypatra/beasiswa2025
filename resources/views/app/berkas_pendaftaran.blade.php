@@ -108,7 +108,7 @@ function renderData(data){
             var upload_syarat="";
             // console.log(dt.upload_syarat);
             var upload_syarat_id="";
-
+            var sudah_upload=`<span class="badge rounded-pill bg-danger fs-2">Belum Upload</span>`;
             if(dt.upload_syarat){
                 let timestamp = dt.upload_syarat.created_at.replace('T', ' ').split('.')[0];
                 upload_syarat_id=dt.upload_syarat.id;
@@ -127,6 +127,7 @@ function renderData(data){
                                     </div>
                                     <span class="badge rounded-pill fw-medium fs-2 d-flex align-items-center bg-success-subtle text-success text-end"><i class="ti ti-calendar"></i> ${waktuLalu(timestamp)}</span>
                                 </div>`;
+                sudah_upload=`<span class="badge rounded-pill bg-success fs-2"> Sudah Upload</span>`;
             }else{
                 if(dt.is_wajib)
                     siap_finaliasi=false;
@@ -135,7 +136,7 @@ function renderData(data){
                                 <div class="card-body">
                                     <div class="d-sm-flex d-block align-items-center justify-content-between">
                                         <div>
-                                            <h5 class="card-title fw-semibold">${dt.nama}</h5>
+                                            <h5 class="card-title fw-semibold">${dt.nama} ${sudah_upload}</h5>                                            
                                         </div>
                                         <div class="d-flex gap-2">
                                             <span class="badge rounded-pill fs-2 bg-secondary-subtle text-secondary">${dt.jenis}</span>

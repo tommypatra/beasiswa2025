@@ -178,6 +178,7 @@ td, th {
 @section('scriptJs')
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
 <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js" integrity="sha256-AlTido85uXPlSyyaZNsjJXeCs07eSv3r43kyCVc8ChI=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script src="{{ asset('js/jquery-validation-1.19.5/dist/jquery.validate.min.js')}}"></script>
 <script src="{{ asset('js/crud.js') }}"></script>
@@ -195,6 +196,28 @@ td, th {
             // await loadDataSelect('#program_studi_id', `data-program-studi`);
         }
 
+        function initPopover() {
+            $('[data-bs-toggle="popover"]').popover({
+                html: true,
+                trigger: 'manual',
+                placement: 'top',
+                sanitize: false
+            }).on("mouseenter", function () {
+                let _this = this;
+                $(this).popover("show");
+                $(".popover").on("mouseleave", function () {
+                    $(_this).popover('hide');
+                });
+            }).on("mouseleave", function () {
+                let _this = this;
+                setTimeout(function () {
+                    if (!$(".popover:hover").length) {
+                        $(_this).popover("hide");
+                    }
+                }, 200);
+            });
+        }
+
         async function loadDataBeasiswa() {
             let url = `${base_url}/api/get-data-beasiswa/${id}`;
             const response = await execAsync(`${url}`, 'GET', token);
@@ -203,12 +226,42 @@ td, th {
         }
 
         function getStatusPendaftaran(dt) {
-            if (dt.is_batal) return `<div class="badge rounded-pill fs-2 text-bg-danger">Batal</div>
-                                    <div class="fs-2">${showText(dt.alasan_batal)}</div>`;
-            if (dt.is_finalisasi==1) return `<div class="badge rounded-pill fs-2 text-bg-success text-dark">Selesai <a href="${base_url}/cetak-kartu-pendaftaran/${dt.url_id}" target="_blank" ><iconify-icon icon="solar:printer-outline" class=""></iconify-icon></a></div>
-                                            <div class="badge rounded-pill fs-2 text-bg-secondary">${dt.no_pendaftaran}</div>                                            
-                                            `;
-            return `<div class="badge rounded-pill fs-2 text-bg-warning">Proses</div>`;
+            // buat list dokumen yg sudah diupload
+            let uploadList = "";
+            if (dt.upload_detail && dt.upload_detail.length > 0) {
+                uploadList = `<ul class="list-unstyled m-0">`;
+                dt.upload_detail.forEach(u => {
+                    uploadList += `<li>
+                        <a href="${base_url}/${u.dokumen}" target="_blank">${u.nama}</a>
+                    </li>`;
+                });
+                uploadList += `</ul>`;
+            } else {
+                uploadList = "<em>Belum ada dokumen</em>";
+            }
+
+            const popoverAttr = `data-bs-toggle="popover" data-bs-html="true" data-bs-content='${uploadList}'`;
+
+            if (dt.is_batal) {
+                return `<div class="badge rounded-pill fs-2 text-bg-danger" ${popoverAttr}>
+                            Batal ${dt.progress_upload_syarat}%
+                        </div>
+                        <div class="fs-2">${showText(dt.alasan_batal)}</div>`;
+            }
+
+            if (dt.is_finalisasi == 1) {
+                return `<div class="badge rounded-pill fs-2 text-bg-success text-dark" ${popoverAttr}>
+                            Selesai ${dt.progress_upload_syarat}%
+                            <a href="${base_url}/cetak-kartu-pendaftaran/${dt.url_id}" target="_blank">
+                                <iconify-icon icon="solar:printer-outline"></iconify-icon>
+                            </a>
+                        </div>
+                        <div class="badge rounded-pill fs-2 text-bg-secondary">${dt.no_pendaftaran}</div>`;
+            }
+
+            return `<div class="badge rounded-pill fs-2 text-bg-warning" ${popoverAttr}>
+                        Proses ${dt.progress_upload_syarat}%
+                    </div>`;
         }
 
         function getStatusLulus(dt) {
@@ -263,6 +316,7 @@ td, th {
                                 </tr>`;
                     dataList.append(row);
                 });
+                initPopover();
                 renderPagination(response.data, pagination);
             }else{
                 const row = `<tr>

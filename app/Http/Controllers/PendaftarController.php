@@ -29,13 +29,13 @@ class PendaftarController extends Controller
         $dataQuery = Pendaftar::with([
             'verifikatorPendaftar.verifikator.user',
             'beasiswa.jenisBeasiswa',
+            'beasiswa.syarat',
+            'uploadSyarat.syarat',
             'kelulusan',
             'mahasiswa.programStudi.fakultas',
             'mahasiswa.user.identitas',
             'mahasiswa.user.pendidikanAkhir'
-        ])
-            ->where('beasiswa_id', $id_beasiswa)
-            ->orderBy('created_at', 'desc');
+        ])->where('beasiswa_id', $id_beasiswa)->orderBy('created_at', 'desc');
 
         if ($request->filled('search')) {
             $search = $request->search;
