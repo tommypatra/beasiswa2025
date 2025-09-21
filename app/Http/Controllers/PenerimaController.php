@@ -52,6 +52,7 @@ class PenerimaController extends Controller
         return response()->json($dataRespon);
     }
 
+
     /**
      * Store a newly created resource in storage.
      */

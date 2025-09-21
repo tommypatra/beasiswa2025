@@ -19,6 +19,7 @@ use App\Http\Controllers\Controller;
 use App\Models\VerifikatorPendaftar;
 use App\Http\Requests\KelulusanRequest;
 use App\Http\Resources\KelulusanResource;
+use App\Http\Resources\DataPesertaLulusResource;
 use App\Http\Requests\SimpanValidasiFinalRequest;
 use App\Http\Requests\SimpanValidasiSyaratRequest;
 
@@ -33,7 +34,6 @@ class KelulusanController extends Controller
             'pendaftar.mahasiswa.user.identitas',
             'pendaftar.mahasiswa.programStudi.fakultas'
         ]);
-
 
         $dataQuery->where(function ($query) {
             $query->whereHas('pendaftar', function ($q) {
@@ -150,6 +150,40 @@ class KelulusanController extends Controller
             DB::rollBack();
             return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat membuat data baru: ' . $e->getMessage()], 500);
         }
+    }
+
+    function dataPesertaLulus(Request $request, $beasiswa_id, $sk_penerima_id)
+    {
+        $dataQuery = Kelulusan::with([
+            'pendaftar.beasiswa',
+            'pendaftar.mahasiswa.user',
+            'pendaftar.mahasiswa.user.identitas',
+            'pendaftar.mahasiswa.programStudi.fakultas',
+            'pendaftar.mahasiswa.user.penerima' => function ($q) use ($sk_penerima_id) {
+                $q->where('sk_penerima_id', $sk_penerima_id);
+            }
+        ])
+            ->where('is_lulus', 1)
+            ->whereHas('pendaftar.beasiswa', function ($q) use ($beasiswa_id) {
+                $q->where('id', $beasiswa_id);
+            });
+
+        $default_limit = env('DEFAULT_LIMIT', 30);
+        $limit = $request->filled('limit') ? $request->limit : $default_limit;
+        $data = $dataQuery->paginate($limit);
+
+        $resourceCollection = $data->getCollection()->map(function ($item) {
+            return new DataPesertaLulusResource($item);
+        });
+        $data->setCollection($resourceCollection);
+
+
+        $dataRespon = [
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ];
+        return response()->json($dataRespon);
     }
 
     public function prosesKelulusan(Request $request)

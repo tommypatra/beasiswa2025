@@ -15,9 +15,15 @@ return new class extends Migration
             $table->id();
             $table->foreignId('sk_penerima_id')->nullable();
             $table->foreign('sk_penerima_id')->references('id')->on('sk_penerimas')->restrictOnDelete();
+
             $table->foreignId('user_id')->nullable();
-            $table->text('keterangan')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->restrictOnDelete();
+
+            $table->foreignId('buku_rekening_id')->nullable();
+            $table->foreign('buku_rekening_id')->references('id')->on('buku_rekenings')->restrictOnDelete();
+
+            $table->text('keterangan')->nullable();
+
             $table->unique(['sk_penerima_id', 'user_id']);
             $table->timestamps();
         });

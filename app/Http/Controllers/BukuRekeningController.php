@@ -18,16 +18,13 @@ class BukuRekeningController extends Controller
      */
     public function index(Request $request)
     {
-        $dataQuery = BukuRekening::with(['user.mahasiswa.programStudi.fakultas', 'user.identitas'])->orderBy('id', 'asc');
+        $user_id = auth()->user()->id;
+        $dataQuery = BukuRekening::with(['user.mahasiswa.programStudi.fakultas', 'user.identitas'])->where('user_id', $user_id)->orderBy('id', 'asc');
+
 
         if ($request->filled('search')) {
             $dataQuery->where('bank', 'like', '%' . $request->search . '%')
                 ->whereOr('nomor', 'like', '%' . $request->search . '%');
-        }
-
-        if ($request->filled('user_id')) {
-            $user_id = $request->user_id;
-            $dataQuery->where('user_id', $user_id);
         }
 
         $default_limit = env('DEFAULT_LIMIT', 30);

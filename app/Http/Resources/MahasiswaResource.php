@@ -42,6 +42,8 @@ class MahasiswaResource extends JsonResource
             'fakultas_id' => $mahasiswa->programStudi->fakultas->id,
             'fakultas' => $mahasiswa->programStudi->fakultas->nama,
             'fakultas_singkatan' => $mahasiswa->programStudi->fakultas->singkatan,
+            'penerima' => $this->user->penerima,
+            'buku_rekening' => $user->bukuRekening,
             'created_at' => $mahasiswa->created_at,
             'updated_at' => $mahasiswa->updated_at,
         ];

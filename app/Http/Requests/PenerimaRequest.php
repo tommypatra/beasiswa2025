@@ -29,6 +29,11 @@ class PenerimaRequest extends FormRequest
                 'integer',
                 'exists:sk_penerimas,id'
             ],
+            'buku_rekening_id'  => [
+                'nullable',
+                'integer',
+                'exists:buku_rekenings,id'
+            ],
             'user_id'  => [
                 'required',
                 'integer',
@@ -42,6 +47,7 @@ class PenerimaRequest extends FormRequest
         return [
             'keterangan' => 'keterangan',
             'user_id' => 'user',
+            'buku_rekening_id' => 'nomor rekening',
             'sk_penerima_id' => 'sk penerima',
         ];
     }

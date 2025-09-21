@@ -6,6 +6,7 @@ async function loadDataVerifikator() {
     renderDataVerifikator(response);
 }
 
+
 function renderDataVerifikator(response) {
     const dataList = $('#data-list-verifikator');
     const pagination = $('#pagination-verifikator');
@@ -52,6 +53,11 @@ $(document).ready(function() {
             loadDataVerifikator(); 
         }
     });
+
+    $('#btn-import-penerima').click(function(){
+        const url = `${base_url}/import-penerima-beasiswa/${sk_penerima_id}`;
+        window.open(url, '_blank');
+    })
 
     // Handle page change
     $(document).on('click', '.nav-verifikator .page-link', function() {

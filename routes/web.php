@@ -71,6 +71,8 @@ Route::get('/registrasi-peserta', [WebController::class, 'registrasiPeserta'])->
 Route::get('/verifikasi-peserta', [WebController::class, 'verifikasiPeserta'])->name('verifikasi-peserta');
 
 
+Route::get('/import-penerima-beasiswa/{sk_penerima_id}', [WebController::class, 'importPenerimaBeasiswa'])->name('import-penerima-beasiswa');
+
 Route::get('/cetak-data-pendaftar/{beasiswa_id}', [WebController::class, 'cetakDataPendaftar'])->name('cetak-data-pendaftar');
 Route::get('/cetak-data-kelulusan/{beasiswa_id}', [WebController::class, 'cetakDataKelulusan'])->name('cetak-data-kelulusan');
 

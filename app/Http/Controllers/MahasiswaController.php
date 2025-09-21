@@ -25,7 +25,7 @@ class MahasiswaController extends Controller
      */
     public function index(Request $request)
     {
-        $dataQuery = Mahasiswa::with(['programstudi.fakultas', 'user', 'user.identitas'])->orderBy('program_studi_id', 'asc')->orderBy('nim', 'asc');
+        $dataQuery = Mahasiswa::with(['programstudi.fakultas', 'user', 'user.identitas', 'user.penerima'])->orderBy('program_studi_id', 'asc')->orderBy('nim', 'asc');
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -215,15 +215,30 @@ class MahasiswaController extends Controller
     public function cekNim(Request $request)
     {
         try {
-            $data = Mahasiswa::with(['user'])->where('nim', $request->nim)->first();
+            $data = Mahasiswa::with([
+                'programstudi.fakultas',
+                'user',
+                'user.identitas',
+                'user.penerima' => function ($q) use ($request) {
+                    if ($request->filled('sk_penerima_id')) {
+                        $q->where('sk_penerima_id', $request->sk_penerima_id);
+                    }
+                },
+                'user.bukuRekening' => function ($q) {
+                    $q->where('is_aktif', 1);
+                }
+
+            ])->where('nim', $request->nim)->first();
 
             if ($data) {
                 return response()->json([
+                    'data' => new MahasiswaResource($data),
                     'status' => true,
-                    'message' => 'sudah terdaftar untuk ' . $data->user->email . ' atas nama ' . $data->user->name,
+                    'message' => 'ditemukan untuk ' . $data->user->email . ' atas nama ' . $data->user->name,
                 ], 200);
             } else {
                 return response()->json([
+                    'data' => null,
                     'status' => false,
                     'message' => 'Nim tidak ditemukan'
                 ], 200);

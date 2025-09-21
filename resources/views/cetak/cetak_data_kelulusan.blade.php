@@ -255,7 +255,7 @@
             const dataList = $('#data-list');
             dataList.empty();
             while (hasNext) {
-                let url = `${base_url}/api/kelulusan?beasiswa_id=${beasiswa_id}?limit=${g_limit}&page=${page}`;
+                let url = `${base_url}/api/kelulusan?beasiswa_id=${beasiswa_id}&limit=${g_limit}&page=${page}`;
                 try {
                     const response = await fetch(url, {
                         method: 'GET',

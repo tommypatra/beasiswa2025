@@ -226,6 +226,9 @@
                         <button class="btn btn-success" id="btn-refresh-penerima" >
                             <i class="ti ti-reload"></i>
                         </button>
+                        <button class="btn btn-primary fs-4" id="btn-import-penerima" >
+                            <iconify-icon icon="solar:import-outline" class=""></iconify-icon>
+                        </button>
                     </div>
                 </div>
 
