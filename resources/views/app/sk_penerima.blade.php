@@ -373,9 +373,9 @@
     });
 </script>
 
-<script src="{{ asset('js/web/sk_penerima.js?v=2') }}"></script>
-<script src="{{ asset('js/web/penerima.js?v=2') }}"></script>
-<script src="{{ asset('js/web/jadwal_monitoring.js?v=2') }}"></script>
-<script src="{{ asset('js/web/verifikator_laporan.js?v=2') }}"></script>
+<script src="{{ asset('js/web/sk_penerima.js?v=3') }}"></script>
+<script src="{{ asset('js/web/penerima.js?v=3') }}"></script>
+<script src="{{ asset('js/web/jadwal_monitoring.js?v=3') }}"></script>
+<script src="{{ asset('js/web/verifikator_laporan.js?v=3') }}"></script>
 
 @endsection

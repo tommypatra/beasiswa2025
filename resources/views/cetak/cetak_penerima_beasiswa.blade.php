@@ -119,7 +119,7 @@
     </style>
     <script>
         const base_url="{{ url('/') }}";
-        const beasiswa_id="{{ $beasiswa_id }}";
+        const sk_penerima_id="{{ $sk_penerima_id }}";    
     </script>
 </head>
 <body>
@@ -127,7 +127,7 @@
     <div class="card">
         <div class="header">
             <img src="{{ asset('images/logo.png') }}" alt="SNPMB Logo">
-            <h1>DATA PENERIMA BEASISWA TAHUN <span id="tahun-beasiswa"></span></h1>
+            <h1>DATA PENERIMA BEASISWA</span></h1>
             <h4 style="margin-top:1px;" id="nama-beasiswa"></h4>
             <hr>    
         </div>
@@ -237,11 +237,11 @@
         }
 
         async function loadDataBeasiswa() {
-            let url = `${base_url}/api/get-data-beasiswa/${beasiswa_id}`;
+            let url = `${base_url}/api/get-data-sk-penerima/${sk_penerima_id}`;
             const response = await execAsync(`${url}`, 'GET', token);
             let beasiswa=response.data;
-            $('#tahun-beasiswa').text(`${beasiswa.tahun}`);
-            $('#nama-beasiswa').text(`${beasiswa.nama}`);
+            // $('#tahun-beasiswa').text(`${beasiswa.tahun}`);
+            $('#nama-beasiswa').html(`${beasiswa.nama}<br>Nomor SK : ${beasiswa.nomor_sk} Tanggal : ${beasiswa.tanggal_sk}`);
         }
 
 
@@ -252,7 +252,7 @@
             const dataList = $('#data-list');
             dataList.empty();
             while (hasNext) {
-                let url = `${base_url}/api/penerima?beasiswa_id=${beasiswa_id}&limit=${g_limit}&page=${page}`;
+                let url = `${base_url}/api/penerima?sk_penerima_id=${sk_penerima_id}&limit=${g_limit}&page=${page}`;
                 try {
                     const response = await fetch(url, {
                         method: 'GET',

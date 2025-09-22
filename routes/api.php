@@ -77,6 +77,7 @@ use App\Http\Controllers\DokumentasiSurveiController;
 use App\Http\Controllers\VerifikatorLaporanController;
 use App\Http\Controllers\VerifikatorPenerimaController;
 use App\Http\Controllers\VerifikatorPendaftarController;
+use App\Models\SkPenerima;
 
 Route::post('auth-cek', [AuthController::class, 'index']);
 Route::post('cek-data-akun-sia', [AuthController::class, 'cekDataAkunSia']);
@@ -115,6 +116,9 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     Route::get('get-data-raport/{id}', [NilaiRaportController::class, 'dataRaport']);
     Route::get('get-data-kondisi-rumah/{id}', [RumahController::class, 'dataKondisiRumah']);
     Route::get('get-data-dokumentasi-survei/{id}', [DokumentasiSurveiController::class, 'dataDokumentasiSurvei']);
+    Route::get('get-data-sk-penerima/{id}', [SkPenerimaController::class, 'show']);
+
+
 
     Route::get('get-data-peserta-wawancara', [PesertaWawancaraController::class, 'index']);
     Route::get('get-data-dokumen-upload/{id}/', [UploadSyaratController::class, 'dataDokumenUpload']);
