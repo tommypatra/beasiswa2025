@@ -48,7 +48,6 @@ Route::get('/nilai-raport', [WebController::class, 'nilaiRaport'])->name('nilai-
 Route::get('/rumah', [WebController::class, 'rumah'])->name('rumah');
 Route::get('/berkas-pendaftaran/{id}', [WebController::class, 'berkasPendaftaran'])->name('berkas-pendaftaran');
 
-Route::get('/cetak-kartu-pendaftaran/{url_id}', [WebController::class, 'cetakKartuPendaftaran'])->name('cetak-kartu-pendaftaran');
 Route::get('/daftar-baru/{kategori}', [WebController::class, 'daftarBaru'])->name('daftar-baru');
 Route::get('/verifikator/{beasiswa_id}', [WebController::class, 'verifikator'])->name('verifikator');
 Route::get('/verifikasi-berkas', [WebController::class, 'verifikasiBerkas'])->name('verifikasi-berkas');
@@ -73,11 +72,13 @@ Route::get('/verifikasi-peserta', [WebController::class, 'verifikasiPeserta'])->
 
 Route::get('/import-penerima-beasiswa/{sk_penerima_id}', [WebController::class, 'importPenerimaBeasiswa'])->name('import-penerima-beasiswa');
 
+//untuk cetak
+Route::get('/cetak-kartu-pendaftaran/{url_id}', [WebController::class, 'cetakKartuPendaftaran'])->name('cetak-kartu-pendaftaran');
 Route::get('/cetak-data-pendaftar/{beasiswa_id}', [WebController::class, 'cetakDataPendaftar'])->name('cetak-data-pendaftar');
 Route::get('/cetak-data-kelulusan/{beasiswa_id}', [WebController::class, 'cetakDataKelulusan'])->name('cetak-data-kelulusan');
-
 Route::get('/cetak-hasil-wawancara/{beasiswa_id}', [WebController::class, 'cetakHasilWawancara'])->name('cetak-hasil-wawancara');
 Route::get('/cetak-rekap-wawancara/{beasiswa_id}', [WebController::class, 'cetakRekapWawancara'])->name('cetak-rekap-wawancara');
+Route::get('/cetak-penerima-beasiswa/{beasiswa_id}', [WebController::class, 'cetakPenerimaBeasiswa'])->name('cetak-penerima-beasiswa');
 
 //route untuk pengaturan cat
 Route::get('/pengaturan-cat/{id}', [WebController::class, 'pengaturanCat']);

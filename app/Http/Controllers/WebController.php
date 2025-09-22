@@ -50,6 +50,11 @@ class WebController extends Controller
         return view('cetak.cetak_rekap_wawancara', ['beasiswa_id' => $id]);
     }
 
+    public function cetakPenerimaBeasiswa($id)
+    {
+        return view('cetak.cetak_penerima_beasiswa', ['beasiswa_id' => $id]);
+    }
+
 
     public function importPenerimaBeasiswa($id)
     {
