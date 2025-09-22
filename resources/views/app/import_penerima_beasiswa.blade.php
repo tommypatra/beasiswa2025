@@ -324,7 +324,7 @@
 
                         $(row).find("input.cek-baris").attr("data-user_id",dataWeb.user_id);
                         $(row).find("input.cek-baris").attr("data-buku_rekening_id",buku_rekening_id);
-                        $(row).find("input.cek-baris").attr("data-penerima_id",penerima.id);
+                        $(row).find("input.cek-baris").attr("data-penerima_id",penerima_id);
 
 
                         $(row).find("td:eq(5)").text(`${rekening}`);
