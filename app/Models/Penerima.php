@@ -18,6 +18,11 @@ class Penerima extends Model
         return $this->hasMany(Laporan::class);
     }
 
+    public function bukuRekening()
+    {
+        return $this->belongsTo(BukuRekening::class);
+    }
+
     public function skPenerima()
     {
         return $this->belongsTo(SkPenerima::class);

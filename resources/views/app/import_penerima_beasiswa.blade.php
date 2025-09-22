@@ -257,7 +257,7 @@
             let no = 1;
             if(data.length>0){
                 $.each(data, function(index, dt) {
-                    checkbox=`<input type="checkbox" class="cek-baris" data-user_id="" buku_rekening_id="" data-mahasiswa="">`;
+                    checkbox=`<input type="checkbox" class="cek-baris" data-user_id="" data-buku_rekening_id="" data-penerima_id="" data-mahasiswa="">`;
                     let sudah_terdata=``;
                     // if(dt.is_terdata_sk){
                     //     checkbox=``;
@@ -310,28 +310,38 @@
                     $(row).find("input.cek-baris").attr("data-user_id","");
                     $(row).find("input.cek-baris").attr("data-mahasiswa","");
                     $(row).find("input.cek-baris").attr("data-buku_rekening_id","");
-                    
+                    $(row).find("input.cek-baris").attr("data-penerima_id");
 
+                    
                     if(result.status){
                         const dataWeb = result.data;
-                        const penerima = dataWeb.penerima.length>0 ? dataWeb.penerima[0].sk_penerima_id:null; 
+                        const penerima = dataWeb.penerima.length>0 ? dataWeb.penerima[0]:null; 
+                        const penerima_id = penerima?.sk_penerima_id ?? null;
+
                         const buku_rekening = dataWeb.buku_rekening.length>0 ? dataWeb.buku_rekening[0]:null;        
                         const rekening = (buku_rekening)?`${buku_rekening.bank} ${buku_rekening.nomor} ${buku_rekening.nama_pemilik}`:``;
-                        const nomor_rekening = (buku_rekening)?buku_rekening.nomor:``;
-                        const buku_rekening_id = (buku_rekening)?buku_rekening.buku_rekening_id:``;
+                        const buku_rekening_id = (buku_rekening)?buku_rekening.id:``;
 
+                        $(row).find("input.cek-baris").attr("data-user_id",dataWeb.user_id);
                         $(row).find("input.cek-baris").attr("data-buku_rekening_id",buku_rekening_id);
+                        $(row).find("input.cek-baris").attr("data-penerima_id",penerima.id);
+
+
+                        $(row).find("td:eq(5)").text(`${rekening}`);
                         
-                        if(penerima!=sk_penerima_id){
+                        if(penerima_id!=sk_penerima_id){
                             $(row).find("input.cek-baris").attr("data-user_id",dataWeb.user_id);
-                            $(row).find("td:eq(5)").text(`${rekening}`);
                             $(row).find("td:eq(6)").text(`data valid nim ${dataWeb.nim} / ${dataWeb.name} / ${dataWeb.program_studi} dari ioss`);
                             $(row).find("td:last").text("ready");
                         }else{
-                            $(row).find("input.cek-baris").remove();
-                            $(row).find("td:eq(5)").text(``);
                             $(row).find("td:eq(6)").text(`sudah terdata dalam SK`);
                             $(row).find("td:last").text(`idle`);
+                            if ((!penerima.buku_rekening_id && buku_rekening) || (buku_rekening && buku_rekening.id != penerima.buku_rekening_id)) {
+                                $(row).find("td:eq(6)").text("perbaikan nomor rekening");
+                                $(row).find("td:last").text("ready");
+                            } else {
+                                $(row).find("input.cek-baris").remove();
+                            }
                         }
                     }else{
                         const responseSIA = await fetch(`https://sia.iainkendari.ac.id/api/kkn/cariNim?iddata=${nim}`);
@@ -375,11 +385,12 @@
                 const user_id = $(row).find("input.cek-baris").attr("data-user_id");
                 const mahasiswa = $(row).find("input.cek-baris").attr("data-mahasiswa");
                 const buku_rekening_id = $(row).find("input.cek-baris").attr("data-buku_rekening_id");
+                const penerima_id = $(row).find("input.cek-baris").attr("data-penerima_id");
 
                 // console.log(status_data,user_id,mahasiswa);
                 if(status_data=='ready'){
                     if(user_id){
-                        const simpan_ke_sk = await simpanKeSk(user_id,buku_rekening_id);
+                        const simpan_ke_sk = await simpanKeSk(penerima_id, user_id,buku_rekening_id);
                         if(simpan_ke_sk.status){
                             $(row).find("input.cek-baris").remove();
                         }
@@ -397,16 +408,25 @@
             $("#loadingProgress").text("Selesai").fadeOut(1000);
         });
 
-        async function simpanKeSk(user_id,buku_rekening_id){
+        async function simpanKeSk(penerima_id,user_id,buku_rekening_id){
             try {
-                let response = await fetch(`${base_url}/api/penerima`, {
-                    method: "POST",
+                let method = "POST";
+                let url = `${base_url}/api/penerima`;
+                if(penerima_id){
+                    method = "PUT";
+                    url = `${base_url}/api/penerima/${penerima_id}`;
+                }
+
+                let response = await fetch(url, {
+                    method: method,
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": "Bearer " + access_token
                     },
-                    body: JSON.stringify({ user_id: user_id,buku_rekening_id:buku_rekening_id,sk_penerima_id:sk_penerima_id })
-                });                
+                    body: JSON.stringify({user_id: user_id, buku_rekening_id:buku_rekening_id, sk_penerima_id:sk_penerima_id })
+                });
+
+
                 const result = await response.json();
                 if(result.status){
                     return ({status:true,message:"berhasil tersimpan"})

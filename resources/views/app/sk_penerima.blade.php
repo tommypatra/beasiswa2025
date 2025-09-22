@@ -226,9 +226,25 @@
                         <button class="btn btn-success" id="btn-refresh-penerima" >
                             <i class="ti ti-reload"></i>
                         </button>
-                        <button class="btn btn-primary fs-4" id="btn-import-penerima" >
-                            <iconify-icon icon="solar:import-outline" class=""></iconify-icon>
-                        </button>
+
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <iconify-icon icon="solar:settings-linear" class="fs-5"></iconify-icon>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="#" id="btn-cetak-penerima">
+                                        <iconify-icon icon="solar:printer-linear" class="me-2 fs-4"></iconify-icon> Cetak Penerima
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#" id="btn-import-penerima">
+                                        <iconify-icon icon="solar:import-outline" class="me-2 fs-4"></iconify-icon> Import Peserta
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
                     </div>
                 </div>
 
@@ -237,9 +253,10 @@
                         <thead>
                             <tr>
                                 <th width="5%">No</th>
-                                <th width="50%">Nama/Nim</th>
-                                <th width="20%">Fakultas</th>
-                                <th width="20%">Program Studi</th>
+                                <th width="35%">Nama/Nim</th>
+                                <th width="15%">Fakultas</th>
+                                <th width="15%">Program Studi</th>
+                                <th width="15%">Nomor Rekening</th>
                                 <th width="20%">Keterangan</th>
                                 <th>Aksi</th>
                             </tr>
@@ -356,9 +373,9 @@
     });
 </script>
 
-<script src="{{ asset('js/web/sk_penerima.js?v=1') }}"></script>
-<script src="{{ asset('js/web/penerima.js?v=1') }}"></script>
-<script src="{{ asset('js/web/jadwal_monitoring.js?v=1') }}"></script>
-<script src="{{ asset('js/web/verifikator_laporan.js?v=1') }}"></script>
+<script src="{{ asset('js/web/sk_penerima.js?v=2') }}"></script>
+<script src="{{ asset('js/web/penerima.js?v=2') }}"></script>
+<script src="{{ asset('js/web/jadwal_monitoring.js?v=2') }}"></script>
+<script src="{{ asset('js/web/verifikator_laporan.js?v=2') }}"></script>
 
 @endsection

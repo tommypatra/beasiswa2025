@@ -219,7 +219,9 @@ class MahasiswaController extends Controller
                 'programstudi.fakultas',
                 'user',
                 'user.identitas',
+                'user.penerima',
                 'user.penerima' => function ($q) use ($request) {
+                    $q->with(['bukuRekening']);
                     if ($request->filled('sk_penerima_id')) {
                         $q->where('sk_penerima_id', $request->sk_penerima_id);
                     }

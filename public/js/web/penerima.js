@@ -15,6 +15,17 @@ function renderDataPenerima(response) {
     pagination.empty();
     if (data.length > 0) {
         $.each(data, function(index, dt) {
+
+            let buku_rekening=`<span class="badge text-bg-danger fs-2">belum terupload</span>`;
+            if(dt.terupload_buku_rekening_id){
+                buku_rekening=`${dt.terupload_bank} ${dt.terupload_nomor} ${dt.terupload_nama_pemilik} <span class="badge text-bg-success fs-2">sudah sinkron</span>`;
+            }else{
+                if(dt.tersedia_buku_rekening_id){
+                    buku_rekening=`${dt.tersedia_bank} ${dt.tersedia_nomor} ${dt.tersedia_nama_pemilik} <span class="badge text-bg-warning fs-2">belum sinkron</span>`;
+                }
+            }
+
+
             const row = `<tr>
                         <td>${no++}</td>
                         <td>
@@ -28,6 +39,7 @@ function renderDataPenerima(response) {
                         </td>
                         <td>${dt.program_studi}</td>
                         <td>${dt.fakultas}</td>
+                        <td>${buku_rekening}</td>
                         <td>${showText(dt.keterangan)}</td>
                         <td>
                             <button class="btn btn-danger btn-hapus-penerima" data-id="${dt.penerima_id}" type="button"><iconify-icon icon="solar:trash-bin-2-outline"></iconify-icon></button>
@@ -190,4 +202,15 @@ $(document).ready(function() {
             `)
             .appendTo(ul);
     };
+
+    $('#btn-import-penerima').click(function(){
+        const url = `${base_url}/import-penerima-beasiswa/${sk_penerima_id}`;
+        window.open(url, '_blank');
+    })
+
+    $('#btn-cetak-penerima').click(function(){
+        const url = `${base_url}/cetak-penerima-beasiswa/${sk_penerima_id}`;
+        window.open(url, '_blank');
+    })
+
 });

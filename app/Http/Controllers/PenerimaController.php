@@ -16,8 +16,14 @@ class PenerimaController extends Controller
      */
     public function index(Request $request)
     {
-        $dataQuery = Penerima::with(['user.identitas', 'user.mahasiswa.programStudi.fakultas'])
-            ->orderBy('id', 'asc');
+        $dataQuery = Penerima::with([
+            'bukuRekening',
+            'user.identitas',
+            'user.mahasiswa.programStudi.fakultas',
+            'user.bukuRekening' => function ($q) {
+                $q->where('is_aktif', 1);
+            }
+        ])->orderBy('id', 'asc');
 
         if ($request->filled('search')) {
             $search = $request->search;

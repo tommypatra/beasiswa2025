@@ -15,12 +15,49 @@ class PenerimaResource extends JsonResource
     public function toArray(Request $request): array
     {
         // return parent::toArray($request);
+
+        $rekening_aktif = $this->user->bukuRekening->first(); // atau [0]
+        if ($rekening_aktif) {
+            $tersedia_buku_rekening_id   = $rekening_aktif->id;
+            $tersedia_nomor   = $rekening_aktif->nomor;
+            $tersedia_bank    = $rekening_aktif->bank;
+            $tersedia_nama_pemilik = $rekening_aktif->nama_pemilik;
+        } else {
+            $tersedia_buku_rekening_id   = null;
+            $tersedia_nomor   = null;
+            $tersedia_bank    = null;
+            $tersedia_nama_pemilik = null;
+        }
+
+        $rekening_terupload = $this->bukuRekening;
+        if ($rekening_terupload) {
+            $terupload_buku_rekening_id   = $rekening_terupload->id;
+            $terupload_nomor   = $rekening_terupload->nomor;
+            $terupload_bank    = $rekening_terupload->bank;
+            $terupload_nama_pemilik = $rekening_terupload->nama_pemilik;
+        } else {
+            $terupload_buku_rekening_id   = null;
+            $terupload_nomor   = null;
+            $terupload_bank    = null;
+            $terupload_nama_pemilik = null;
+        }
+
         return [
             'sk_penerima_id' => $this->sk_penerima_id,
             'penerima_id' => $this->id,
             'user_id' => $this->user_id,
             'name' => $this->user->name,
             'email' => $this->user->email,
+
+            'terupload_buku_rekening_id'  => $terupload_buku_rekening_id,
+            'terupload_nomor'  => $terupload_nomor,
+            'terupload_bank'    => $terupload_bank,
+            'terupload_nama_pemilik' => $terupload_nama_pemilik,
+
+            'tersedia_buku_rekening_id' => $tersedia_buku_rekening_id,
+            'tersedia_nomor' => $tersedia_nomor,
+            'tersedia_bank' => $tersedia_bank,
+            'tersedia_nama_pemilik' => $tersedia_nama_pemilik,
 
             'identitas_id' => $this->user->identitas->id,
             'foto' => $this->user->identitas->foto,
