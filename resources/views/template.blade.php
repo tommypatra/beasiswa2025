@@ -210,7 +210,7 @@
   <!-- solar icons -->
   <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
   <script src="{{ asset('js/sweetalert2/dist/sweetalert2.min.js')}}"></script>
-  <script src="{{ asset('js/app.js?v=6') }}"></script>
+  <script src="{{ asset('js/app.js?v=3') }}"></script>
   <script>
     const token = localStorage.getItem('access_token');
     function forceLogout(){
