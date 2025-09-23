@@ -316,7 +316,8 @@
                     if(result.status){
                         const dataWeb = result.data;
                         const penerima = dataWeb.penerima.length>0 ? dataWeb.penerima[0]:null; 
-                        const penerima_id = penerima?.sk_penerima_id ?? null;
+                        const penerima_id = penerima?.id ?? null;
+                        const cek_sk_penerima_id = penerima?.sk_penerima_id ?? null;
 
                         const buku_rekening = dataWeb.buku_rekening.length>0 ? dataWeb.buku_rekening[0]:null;        
                         const rekening = (buku_rekening)?`${buku_rekening.bank} ${buku_rekening.nomor} ${buku_rekening.nama_pemilik}`:``;
@@ -329,7 +330,7 @@
 
                         $(row).find("td:eq(5)").text(`${rekening}`);
                         
-                        if(penerima_id!=sk_penerima_id){
+                        if(cek_sk_penerima_id!=sk_penerima_id){
                             $(row).find("input.cek-baris").attr("data-user_id",dataWeb.user_id);
                             $(row).find("td:eq(6)").text(`data valid nim ${dataWeb.nim} / ${dataWeb.name} / ${dataWeb.program_studi} dari ioss`);
                             $(row).find("td:last").text("ready");

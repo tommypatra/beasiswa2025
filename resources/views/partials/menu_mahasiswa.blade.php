@@ -16,9 +16,9 @@
     </div>
   </a>
 </li>
-{{-- <li class="sidebar-item menu-mahasiswa">
+<li class="sidebar-item menu-mahasiswa">
   <a class="sidebar-link justify-content-between" 
-    href="{{ route('sk-penerima-beasiswa') }}" aria-expanded="false">
+    href="{{ route('sk-penerima-mahasiswa') }}" aria-expanded="false">
     <div class="d-flex align-items-center gap-3">
       <span class="d-flex">
         <iconify-icon icon="solar:book-2-linear" class=""></iconify-icon>
@@ -26,7 +26,7 @@
       <span class="hide-menu">SK Penerima Beasiswa</span>
     </div>
   </a>
-</li> --}}
+</li>
 
 <li class="nav-small-cap menu-mahasiswa">
     <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>

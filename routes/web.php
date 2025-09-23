@@ -56,7 +56,7 @@ Route::get('/verifikasi-berkas', [WebController::class, 'verifikasiBerkas'])->na
 Route::get('/kelulusan/{beasiswa_id}', [WebController::class, 'kelulusan'])->name('kelulusan');
 Route::get('/surveyor/{beasiswa_id}', [WebController::class, 'surveyor'])->name('surveyor');
 Route::get('/sk-penerima', [WebController::class, 'skPenerima'])->name('sk-penerima');
-Route::get('/sk-penerima-beasiswa', [WebController::class, 'skPenerimaBeasiswa'])->name('sk-penerima-beasiswa');
+Route::get('/sk-penerima-mahasiswa', [WebController::class, 'skPenerimaMahasiswa'])->name('sk-penerima-mahasiswa');
 
 Route::get('/pewawancara/{beasiswa_id}', [WebController::class, 'pewawancara'])->name('pewawancara');
 
@@ -78,7 +78,7 @@ Route::get('/cetak-data-pendaftar/{beasiswa_id}', [WebController::class, 'cetakD
 Route::get('/cetak-data-kelulusan/{beasiswa_id}', [WebController::class, 'cetakDataKelulusan'])->name('cetak-data-kelulusan');
 Route::get('/cetak-hasil-wawancara/{beasiswa_id}', [WebController::class, 'cetakHasilWawancara'])->name('cetak-hasil-wawancara');
 Route::get('/cetak-rekap-wawancara/{beasiswa_id}', [WebController::class, 'cetakRekapWawancara'])->name('cetak-rekap-wawancara');
-Route::get('/cetak-penerima-beasiswa/{sk_penerima_id}', [WebController::class, 'cetakPenerimaBeasiswa'])->name('cetak-penerima-beasiswa');
+Route::get('/cetak-penerima-mahasiswa/{sk_penerima_id}', [WebController::class, 'cetakPenerimaMahasiswa'])->name('cetak-penerima-mahasiswa');
 
 //route untuk pengaturan cat
 Route::get('/pengaturan-cat/{id}', [WebController::class, 'pengaturanCat']);

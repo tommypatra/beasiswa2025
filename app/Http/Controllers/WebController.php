@@ -76,9 +76,9 @@ class WebController extends Controller
         return view('app.sk_penerima');
     }
 
-    public function skPenerimaBeasiswa()
+    public function skPenerimaMahasiswa()
     {
-        return view('app.sk_penerima_beasiswa');
+        return view('app.sk_penerima_mahasiswa');
     }
 
 

@@ -14,8 +14,14 @@
 @endsection
 
 @section('container')
+
+        <div class="alert alert-primary" role="alert">
+            Buku rekening di isi ketika anda sudah dinyatakan lulus pada suatu seleksi beasiswa!
+        </div>
+
 <div class="card">
     <div class="card-body">
+
         <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">
             <h5 class="card-title fw-semibold">Daftar Buku Rekening</h5>
             <div class="d-flex gap-2">

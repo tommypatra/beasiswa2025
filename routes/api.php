@@ -117,6 +117,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     Route::get('get-data-kondisi-rumah/{id}', [RumahController::class, 'dataKondisiRumah']);
     Route::get('get-data-dokumentasi-survei/{id}', [DokumentasiSurveiController::class, 'dataDokumentasiSurvei']);
     Route::get('get-data-sk-penerima/{id}', [SkPenerimaController::class, 'show']);
+    Route::get('get-data-sk-penerima-mahasiswa', [PenerimaController::class, 'skPenerimaMahasiswa']);
 
 
 
@@ -272,6 +273,8 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::put('batalkan-pendaftaran/{id}', [PendaftarController::class, 'pembatalan']);
         Route::put('pendaftaran-selesai/{id}', [PendaftarController::class, 'pendaftaranSelesai']);
         Route::put('daftar-kembali/{id}', [PendaftarController::class, 'daftarKembali']);
+
+        Route::put('ganti-nomor-rekening/{id}', [PenerimaController::class, 'gantiNomorRekening']);
     });
 });
 

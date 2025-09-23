@@ -33,7 +33,8 @@ function renderDataPenerima(response) {
                                 <img src="${base_url}/${dt.foto}" style="width: 70px; height: auto; border-radius: 2px;">
                                 <div>
                                     <div class="fw-bold">${dt.name}/ ${dt.nim}</div>
-                                    <div style="font-size:12px;font-style:italic;">Alamat: ${dt.alamat} Kel/Desa ${dt.desa}, Kec. ${dt.kecamatan}, Kota/Kab. ${dt.kabupaten}, Prov. ${dt.provinsi}</div>
+                                    <div>${dt.email}</div>
+                                    <div style="font-size:12px;font-style:italic;">Kel/Desa ${dt.desa}, Kec. ${dt.kecamatan}, Kota/Kab. ${dt.kabupaten}, Prov. ${dt.provinsi}</div>
                                 </div>
                             </div>
                         </td>

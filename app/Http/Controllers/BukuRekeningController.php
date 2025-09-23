@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\BukuRekeningRequest;
 use App\Http\Resources\BukuRekeningResource;
+use App\Models\Penerima;
 
 class BukuRekeningController extends Controller
 {
@@ -19,28 +20,36 @@ class BukuRekeningController extends Controller
     public function index(Request $request)
     {
         $user_id = auth()->user()->id;
-        $dataQuery = BukuRekening::with(['user.mahasiswa.programStudi.fakultas', 'user.identitas'])->where('user_id', $user_id)->orderBy('id', 'asc');
-
+        $dataQuery = BukuRekening::with([
+            'user.mahasiswa.programStudi.fakultas',
+            'user.identitas'
+        ])->where('user_id', $user_id)->orderBy('id', 'asc');
 
         if ($request->filled('search')) {
-            $dataQuery->where('bank', 'like', '%' . $request->search . '%')
-                ->whereOr('nomor', 'like', '%' . $request->search . '%');
+            $dataQuery->where(function ($q) use ($request) {
+                $q->where('bank', 'like', '%' . $request->search . '%')
+                    ->orWhere('nomor', 'like', '%' . $request->search . '%');
+            });
         }
 
         $default_limit = env('DEFAULT_LIMIT', 30);
         $limit = $request->filled('limit') ? $request->limit : $default_limit;
-        $data = $dataQuery->paginate($limit);
-        $resourceCollection = $data->getCollection()->map(function ($item) {
-            return new BukuRekeningResource($item);
-        });
-        $data->setCollection($resourceCollection);
 
-        $dataRespon = [
+        if ($limit > 0) {
+            // pakai pagination
+            $data = $dataQuery->paginate($limit);
+            $resourceCollection = $data->getCollection()->map(fn($item) => new BukuRekeningResource($item));
+            $data->setCollection($resourceCollection);
+        } else {
+            // ambil semua data tanpa pagination
+            $data = $dataQuery->get()->map(fn($item) => new BukuRekeningResource($item));
+        }
+
+        return response()->json([
             'status' => true,
             'message' => 'Pengambilan data dilakukan',
             'data' => $data,
-        ];
-        return response()->json($dataRespon);
+        ]);
     }
 
     /**
@@ -132,6 +141,8 @@ class BukuRekeningController extends Controller
             return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat memperbarui : ' . $e->getMessage(), 'data' => null], 500);
         }
     }
+
+
 
     public function aktifkanRekening(string $id)
     {
