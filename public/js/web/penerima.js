@@ -34,7 +34,8 @@ function renderDataPenerima(response) {
                                 <div>
                                     <div class="fw-bold">${dt.name}/ ${dt.nim}</div>
                                     <div>${dt.email}</div>
-                                    <div style="font-size:12px;font-style:italic;">Kel/Desa ${dt.desa}, Kec. ${dt.kecamatan}, Kota/Kab. ${dt.kabupaten}, Prov. ${dt.provinsi}</div>
+                                    <div><a href="https://web.whatsapp.com/send?phone=${formatNoHpIndo(dt.no_hp)}&text=_Bismillah_, ${dt.name}" target="_blank">WA : ${dt.no_hp}</a></div>
+                                    <div style="font-size:12px;font-style:italic;">Kota/Kab. ${dt.kabupaten}, Prov. ${dt.provinsi}</div>
                                 </div>
                             </div>
                         </td>

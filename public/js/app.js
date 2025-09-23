@@ -441,3 +441,22 @@ function initTimeInput(selector) {
         }
     });
 }
+
+function formatNoHpIndo(no_hp) {
+    if (!no_hp) return "";
+    let hp = no_hp.toString().replace(/[\s\.\-]/g, '');
+
+    if (hp.startsWith("+62")) {
+        return hp;
+    }
+
+    if (hp.startsWith("62")) {
+        return "+" + hp;
+    }
+
+    if (hp.startsWith("0")) {
+        return "+62" + hp.substring(1);
+    }
+
+    return hp;
+}

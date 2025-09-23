@@ -84,7 +84,7 @@
 
     function renderSelectRekening(dt) {
         // const penerima = 
-        let select = `<select class="form-control w-100 pilih_nomor_rekening" data-old="${dt.buku_rekening_id}" data-id="${dt.sk_penerima_id}">`;
+        let select = `<select class="form-control w-100 pilih_nomor_rekening" data-old="${dt.buku_rekening_id}" data-id="${dt.id}">`;
         select+=`<option value="">- pilih -</option>`
         data_buku_rekening.forEach(function(item) {
             if(dt.buku_rekening_id==item.id)
@@ -106,32 +106,21 @@
         pagination.empty();
         if (data.length > 0) {
             $.each(data, function(index, dt) {
-                const pejabat_ttd=(dt.ttd_nama)?dt.ttd_nama+'/ '+dt.ttd_jabatan:"";
-                const monitoring=(dt.monitoring)?`<span class="badge rounded-pill bg-primary fs-2">${dt.monitoring.nama}</span>`:"";
+                const sk_penerima = dt.sk_penerima;
+                const monitoring=(sk_penerima.monitoring)?`<span class="badge rounded-pill bg-primary fs-2">${sk_penerima.monitoring.nama}</span>`:"";
 
                 let verifikator_laporan = '';
-                if (dt.verifikator_laporan?.length > 0) {
-                    verifikator_laporan = `<ul id="daftar-verifikator">${dt.verifikator_laporan.map(v => `<li>${v.user.name}</li>`).join('')}</ul>`;
+                if (sk_penerima.verifikator_laporan?.length > 0) {
+                    verifikator_laporan = `<ul id="daftar-verifikator">${sk_penerima.verifikator_laporan.map(v => `<li>${v.user.name}</li>`).join('')}</ul>`;
                 }
 
                 const row = `<tr>
                             <td>${no++}</td>
-                            <td>${dt.tanggal_sk.substring(0, 4)}</td>
-                            <td>${dt.nama} <div>${monitoring}</div></td>
-                            <td>${dt.nomor_sk}/ ${dt.tanggal_sk}</td>
+                            <td>${sk_penerima.tanggal_sk.substring(0, 4)}</td>
+                            <td>${sk_penerima.nama} <div>${monitoring}</div></td>
+                            <td>${sk_penerima.nomor_sk}/ ${sk_penerima.tanggal_sk}</td>
                             <td>${renderSelectRekening(dt)}</td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item btn-daftar-penerima" data-perihal="${dt.nama}" data-id="${dt.id}" href="javascript:;"><iconify-icon icon="solar:notebook-broken"></iconify-icon> Daftar Penerima</a></li>
-                                        <li><a class="dropdown-item btn-jadwal-monitoring" data-perihal="${dt.nama}" data-id="${dt.id}" href="javascript:;"><iconify-icon icon="solar:calendar-linear"></iconify-icon> Jadwal Monitoring</a></li>
-                                        <li><a class="dropdown-item btn-daftar-verifikator" data-perihal="${dt.nama}" data-id="${dt.id}" href="javascript:;"><iconify-icon icon="solar:user-check-linear"></iconify-icon> Verifikator Monitoring</a></li>
-                                        <li><a class="dropdown-item btn-ganti-sk" data-id="${dt.id}" href="javascript:;"><iconify-icon icon="solar:pen-new-round-outline"></iconify-icon> Ganti</a></li>
-                                        <li><a class="dropdown-item btn-hapus-sk" data-id="${dt.id}" href="javascript:;"><iconify-icon icon="solar:trash-bin-2-outline"></iconify-icon> Hapus</a></li>
-                                    </ul>
-                                </div>
-                            </td>
+                            <td></td>
                         </tr>`;
                 dataList.append(row);
             });
@@ -180,7 +169,7 @@
                 const id = select.attr('data-id');
                 const val = select.val();
                 const url = base_url + '/api/ganti-nomor-rekening/' + id;
-                const dataForm = { nomor_rekening_id: val };
+                const dataForm = { buku_rekening_id: val };
 
                 saveData(url, "PUT", dataForm, function(response) {
                     appShowNotification(true, ['berhasil dilakukan!']);
