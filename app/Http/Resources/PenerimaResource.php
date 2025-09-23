@@ -45,6 +45,7 @@ class PenerimaResource extends JsonResource
         return [
             'sk_penerima_id' => $this->sk_penerima_id,
             'penerima_id' => $this->id,
+            'is_mobile_dev' => isMobileDev(),
             'user_id' => $this->user_id,
             'name' => $this->user->name,
             'email' => $this->user->email,

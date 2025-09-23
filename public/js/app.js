@@ -442,15 +442,10 @@ function initTimeInput(selector) {
     });
 }
 
-
-function getWhatsAppLink(phone, message) {
+function getWhatsAppLink(isMobile, phone, message) {
     const nomorFormatted = formatNoHpIndo(phone); 
     const nomorForUrl = nomorFormatted.replace('+', '');    
     const pesan = encodeURIComponent(message || "");
-
-    // Deteksi device
-    const ua = navigator.userAgent || navigator.vendor || window.opera;
-    const isMobile = /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua.toLowerCase());
 
     let link;
     if (isMobile) {

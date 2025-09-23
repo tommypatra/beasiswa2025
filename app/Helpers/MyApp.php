@@ -417,3 +417,39 @@ if (!function_exists('izinkanAkses')) {
         return true;
     }
 }
+
+
+function isMobileDev()
+{
+    if (!empty($_SERVER['HTTP_USER_AGENT'])) {
+        $user_ag = $_SERVER['HTTP_USER_AGENT'];
+        if (preg_match('/(Mobile|Android|Tablet|GoBrowser|[0-9]x[0-9]*|uZardWeb\/|Mini|Doris\/|Skyfire\/|iPhone|Fennec\/|Maemo|Iris\/|CLDC\-|Mobi\/)/uis', $user_ag)) {
+            return true;
+        };
+    };
+    return false;
+}
+
+if (!function_exists('kirimwa')) {
+    function kirimwa($hp = "", $pesan = '')
+    {
+        $retval = "";
+        if ($hp <> "") {
+            $tmphp = explode("/", $hp);
+            foreach ($tmphp as $hp) {
+                $hp = trim($hp);
+                $hp = str_replace(array("-", " "), array("", ""), $hp);
+                $hp = preg_replace("/[^a-zA-Z0-9\s]/", "", $hp);
+
+                if (substr($hp, 0, 1) == "0")
+                    $hp = "+62" . substr($hp, 1, strlen($hp));
+
+                if (isMobileDev())
+                    $retval = $retval . "<a href='https://wa.me/" . $hp . "?text=" . $pesan . "' target='_blank'>" . $hp . "</a> ";
+                else
+                    $retval = $retval . "<a href='https://web.whatsapp.com/send?phone=" . $hp . "&text=" . $pesan . "' target='_blank'>" . $hp . "</a> ";
+            }
+        }
+        return $retval;
+    }
+}
