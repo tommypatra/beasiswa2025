@@ -442,21 +442,36 @@ function initTimeInput(selector) {
     });
 }
 
+
+function getWhatsAppLink(phone, message) {
+    const nomorFormatted = formatNoHpIndo(phone); 
+    const nomorForUrl = nomorFormatted.replace('+', '');    
+    const pesan = encodeURIComponent(message || "");
+
+    // Deteksi device
+    const ua = navigator.userAgent.toLowerCase();
+    const isMobile = /android|iphone|ipad|ipod/i.test(ua);
+
+    let link;
+    if (isMobile) {
+        // HP → langsung ke aplikasi WhatsApp
+        link = `whatsapp://send?phone=${nomorForUrl}&text=${pesan}`;
+    } else {
+        // Laptop/desktop → WhatsApp Web
+        link = `https://web.whatsapp.com/send?phone=${nomorForUrl}&text=${pesan}`;
+    }
+
+    return {
+        link: link,
+        nomor: nomorFormatted
+    };
+}
+
 function formatNoHpIndo(no_hp) {
     if (!no_hp) return "";
     let hp = no_hp.toString().replace(/[\s\.\-]/g, '');
-
-    if (hp.startsWith("+62")) {
-        return hp;
-    }
-
-    if (hp.startsWith("62")) {
-        return "+" + hp;
-    }
-
-    if (hp.startsWith("0")) {
-        return "+62" + hp.substring(1);
-    }
-
+    if (hp.startsWith("+62")) return hp;
+    if (hp.startsWith("62")) return "+" + hp;
+    if (hp.startsWith("0")) return "+62" + hp.substring(1);
     return hp;
 }

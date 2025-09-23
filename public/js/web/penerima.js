@@ -24,7 +24,7 @@ function renderDataPenerima(response) {
                     buku_rekening=`${dt.tersedia_bank} ${dt.tersedia_nomor} ${dt.tersedia_nama_pemilik} <span class="badge text-bg-warning fs-2">belum sinkron</span>`;
                 }
             }
-
+            const kirim_wa = getWhatsAppLink(dt.no_hp, `_Bismillah_, ${dt.name}`);
 
             const row = `<tr>
                         <td>${no++}</td>
@@ -34,7 +34,7 @@ function renderDataPenerima(response) {
                                 <div>
                                     <div class="fw-bold">${dt.name}/ ${dt.nim}</div>
                                     <div>${dt.email}</div>
-                                    <div><a href="https://web.whatsapp.com/send?phone=${formatNoHpIndo(dt.no_hp)}&text=_Bismillah_, ${dt.name}" target="_blank">WA : ${dt.no_hp}</a></div>
+                                    <div><a href="${kirim_wa.link}" target="_blank">WA : ${kirim_wa.nomor}</a></div>
                                     <div style="font-size:12px;font-style:italic;">Kota/Kab. ${dt.kabupaten}, Prov. ${dt.provinsi}</div>
                                 </div>
                             </div>
