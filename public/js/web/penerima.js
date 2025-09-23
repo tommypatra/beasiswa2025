@@ -34,7 +34,7 @@ function renderDataPenerima(response) {
                                 <div>
                                     <div class="fw-bold">${dt.name}/ ${dt.nim}</div>
                                     <div>${dt.email}</div>
-                                    <div><a href="${kirim_wa.link}" target="_blank">WA : ${kirim_wa.nomor}</a></div>
+                                    <div><a href="${kirim_wa.link}" target="_blank">${kirim_wa.nomor}</a></div>
                                     <div style="font-size:12px;font-style:italic;">Kota/Kab. ${dt.kabupaten}, Prov. ${dt.provinsi}</div>
                                 </div>
                             </div>

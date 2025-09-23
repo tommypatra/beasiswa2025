@@ -449,15 +449,13 @@ function getWhatsAppLink(phone, message) {
     const pesan = encodeURIComponent(message || "");
 
     // Deteksi device
-    const ua = navigator.userAgent.toLowerCase();
-    const isMobile = /android|iphone|ipad|ipod/i.test(ua);
+    const ua = navigator.userAgent || navigator.vendor || window.opera;
+    const isMobile = /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua.toLowerCase());
 
     let link;
     if (isMobile) {
-        // HP → langsung ke aplikasi WhatsApp
         link = `whatsapp://send?phone=${nomorForUrl}&text=${pesan}`;
     } else {
-        // Laptop/desktop → WhatsApp Web
         link = `https://web.whatsapp.com/send?phone=${nomorForUrl}&text=${pesan}`;
     }
 
