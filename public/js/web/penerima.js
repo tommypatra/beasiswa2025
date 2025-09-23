@@ -33,7 +33,7 @@ function renderDataPenerima(response) {
                                 <img src="${base_url}/${dt.foto}" style="width: 70px; height: auto; border-radius: 2px;">
                                 <div>
                                     <div class="fw-bold">${dt.name}/ ${dt.nim}</div>
-                                    <div>${dt.email}</div>
+                                    <div>${dt.email} ${dt.is_mobile_dev}</div>
                                     <div><a href="${kirim_wa.link}" target="_blank">${kirim_wa.nomor}</a></div>
                                     <div style="font-size:12px;font-style:italic;">Kota/Kab. ${dt.kabupaten}, Prov. ${dt.provinsi}</div>
                                 </div>
