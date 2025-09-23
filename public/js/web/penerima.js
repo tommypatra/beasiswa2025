@@ -24,7 +24,7 @@ function renderDataPenerima(response) {
                     buku_rekening=`${dt.tersedia_bank} ${dt.tersedia_nomor} ${dt.tersedia_nama_pemilik} <span class="badge text-bg-warning fs-2">belum sinkron</span>`;
                 }
             }
-            const kirim_wa = getWhatsAppLink(dt.is_mobile_dev, dt.no_hp, `_Bismillah_, ${dt.name}`);
+            const kirim_wa = getWhatsAppLink(dt.is_mobile_dev, dt.no_hp, `_Bismillah_, ${dt.name.toLowerCase()}`);
 
             const row = `<tr>
                         <td>${no++}</td>
