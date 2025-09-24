@@ -142,6 +142,47 @@ class BukuRekeningController extends Controller
         }
     }
 
+    public function sinkronRekening(string $id)
+    {
+        DB::beginTransaction();
+        try {
+            $data = Penerima::with([
+                'bukuRekening',
+                'user.bukuRekening' => function ($q) {
+                    $q->where('is_aktif', 1);
+                }
+            ])
+                ->where('sk_penerima_id', $id)
+                ->whereNull('buku_rekening_id')
+                ->whereHas('user.bukuRekening', function ($q) {
+                    $q->where('is_aktif', 1);
+                })
+                ->get();
+
+            foreach ($data as $penerima) {
+                $rekening = $penerima->user->bukuRekening->first();
+                if ($rekening) {
+                    $penerima->update([
+                        'buku_rekening_id' => $rekening->id,
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Sinkronisasi berhasil',
+                'data'   => $data->count()
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status'  => false,
+                'message' => 'Sinkronisasi gagal: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
 
     public function aktifkanRekening(string $id)

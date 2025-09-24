@@ -199,6 +199,7 @@
     const endpoint = base_url+'/api/fakultas';
     var page = 1;
     var data_referensi;
+    var kegiatan_id;
     $(document).ready(function() {
         initPage()
 
@@ -230,6 +231,11 @@
             $('#btn-refresh').prop('disabled', !aktif);
             $('#btn-filter').prop('disabled', !aktif);
         }
+
+        $(document).on("click", ".dropdown-item", function (e) {
+            e.preventDefault();
+            kegiatan_id = $(this).data("val"); // ambil data-val
+        });        
 
         async function loadMonitoring() {
             let search = $('#filter_monitoring').val();
@@ -426,6 +432,11 @@
                     name: 'monitoring_id',
                     value: $('#label_monitoring').attr('data-id')
                 });
+                dataArr.push({
+                    name: 'kegiatan_id',
+                    value: kegiatan_id
+                });
+                
                 let dataPayload = $.param(dataArr);
 
                 saveData(base_url+url, type, dataPayload, function(response) {                    
@@ -485,13 +496,11 @@
         //hapus data
         $(document).on('click', '.btn-hapus', function() {
             const id = $(this).data('id');
-            showDataById(endpoint, id, function(response) {
-                $('#id').val(response.data.id);
-                $('#singkatan').val(response.data.singkatan);
-                $('#urut').val(response.data.urut);
-                $('#nama').val(response.data.nama);
-                showModalForm();
-            });
+            if(id!=="")
+                deleteData(base_url+'/api/butir-kegiatan', id, function() {
+                    appShowNotification(true,['berhasil dilakukan!']);
+                    loadDataButirKegiatan();
+                });
         });
 
 

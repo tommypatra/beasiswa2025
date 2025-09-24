@@ -18,10 +18,20 @@ function renderDataPenerima(response) {
 
             let buku_rekening=`<span class="badge text-bg-danger fs-2">belum terupload</span>`;
             if(dt.terupload_buku_rekening_id){
-                buku_rekening=`${dt.terupload_bank} ${dt.terupload_nomor} ${dt.terupload_nama_pemilik} <span class="badge text-bg-success fs-2">sudah sinkron</span>`;
+                buku_rekening=`
+                <a href="${base_url}/${dt.terupload_foto_buku}" target="_blank">
+                    ${dt.terupload_bank} ${dt.terupload_nomor} ${dt.terupload_nama_pemilik}
+                </a> 
+                <span class="badge text-bg-success fs-2">sudah sinkron</span>
+            `;
             }else{
                 if(dt.tersedia_buku_rekening_id){
-                    buku_rekening=`${dt.tersedia_bank} ${dt.tersedia_nomor} ${dt.tersedia_nama_pemilik} <span class="badge text-bg-warning fs-2">belum sinkron</span>`;
+                    buku_rekening=`
+                    <a href="${base_url}/${dt.tersedia_foto_buku}" target="_blank">
+                        ${dt.tersedia_bank} ${dt.tersedia_nomor} ${dt.tersedia_nama_pemilik} 
+                    </a>
+                    <span class="badge text-bg-warning fs-2">belum sinkron</span>
+                    `;
                 }
             }
             const kirim_wa = getWhatsAppLink(dt.is_mobile_dev, dt.no_hp, `_Bismillah_, ${dt.name.toLowerCase()}`);
@@ -211,8 +221,22 @@ $(document).ready(function() {
     })
 
     $('#btn-cetak-penerima').click(function(){
-        const url = `${base_url}/cetak-penerima-beasiswa/${sk_penerima_id}`;
+        const url = `${base_url}/cetak-penerima-mahasiswa/${sk_penerima_id}`;
         window.open(url, '_blank');
+    })
+
+    $('#btn-sinkron-rekening').click(async function(){
+        if(confirm('apakah anda yakin sinkron rekening sekarang?')){
+            let response = await asyncFunction(`${base_url}/api/sinkron-rekening/${sk_penerima_id}`);
+            if(response.status){
+                if(response.data>0){
+                    appShowNotification(true,[`sinkron ${response.data} nomor rekening berhasil dilakukan`]);
+                    loadDataPenerima();
+                }else{
+                    alert("tidak ada proses sinkron nomor rekening");
+                }
+            }
+        }
     })
 
 });

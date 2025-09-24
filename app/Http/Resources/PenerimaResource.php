@@ -22,11 +22,13 @@ class PenerimaResource extends JsonResource
             $tersedia_nomor   = $rekening_aktif->nomor;
             $tersedia_bank    = $rekening_aktif->bank;
             $tersedia_nama_pemilik = $rekening_aktif->nama_pemilik;
+            $tersedia_foto_buku = $rekening_aktif->foto_buku;
         } else {
             $tersedia_buku_rekening_id   = null;
             $tersedia_nomor   = null;
             $tersedia_bank    = null;
             $tersedia_nama_pemilik = null;
+            $tersedia_foto_buku = null;
         }
 
         $rekening_terupload = $this->bukuRekening;
@@ -35,11 +37,13 @@ class PenerimaResource extends JsonResource
             $terupload_nomor   = $rekening_terupload->nomor;
             $terupload_bank    = $rekening_terupload->bank;
             $terupload_nama_pemilik = $rekening_terupload->nama_pemilik;
+            $terupload_foto_buku = $rekening_terupload->foto_buku;
         } else {
             $terupload_buku_rekening_id   = null;
             $terupload_nomor   = null;
             $terupload_bank    = null;
             $terupload_nama_pemilik = null;
+            $terupload_foto_buku = null;
         }
 
         return [
@@ -54,11 +58,13 @@ class PenerimaResource extends JsonResource
             'terupload_nomor'  => $terupload_nomor,
             'terupload_bank'    => $terupload_bank,
             'terupload_nama_pemilik' => $terupload_nama_pemilik,
+            'terupload_foto_buku' => $terupload_foto_buku,
 
             'tersedia_buku_rekening_id' => $tersedia_buku_rekening_id,
             'tersedia_nomor' => $tersedia_nomor,
             'tersedia_bank' => $tersedia_bank,
             'tersedia_nama_pemilik' => $tersedia_nama_pemilik,
+            'tersedia_foto_buku' => $tersedia_foto_buku,
 
             'identitas_id' => $this->user->identitas->id,
             'foto' => $this->user->identitas->foto,

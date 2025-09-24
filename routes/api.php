@@ -186,6 +186,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::put('pengelola/registasi-peserta-wawancara/{id}', [PesertaWawancaraController::class, 'registasiPeserta']);
         Route::get('pengelola/peserta-verifikasi', [VerifikatorPendaftarController::class, 'pesertaVerifikasi']);
         Route::get('data-peserta-lulus/{beasiswa_id}/{sk_penerima_id}', [KelulusanController::class, 'dataPesertaLulus']);
+        Route::get('sinkron-rekening/{sk_penerima_id}', [BukuRekeningController::class, 'sinkronRekening']);
     });
 
     Route::middleware(['cek.akses:admin'])->group(function () {

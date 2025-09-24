@@ -238,6 +238,11 @@
                                     </a>
                                 </li>
                                 <li>
+                                    <a class="dropdown-item" href="#" id="btn-sinkron-rekening">
+                                        <iconify-icon icon="ic:baseline-cloud-sync" class="me-2 fs-4"></iconify-icon> Sinkron Rekening
+                                    </a>
+                                </li>
+                                <li>
                                     <a class="dropdown-item" href="#" id="btn-import-penerima">
                                         <iconify-icon icon="solar:import-outline" class="me-2 fs-4"></iconify-icon> Import Peserta
                                     </a>

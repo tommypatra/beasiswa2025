@@ -32,7 +32,7 @@
                     <tr>
                         <th width="5%">No</th>
                         <th width="10%">Tahun</th>
-                        <th width="20%">Perihal/ Monitorin Beasiswa</th>
+                        <th width="20%">Perihal/ Monitoring Beasiswa</th>
                         <th width="15%">Nomor/ Tanggal SK</th>
                         <th width="20%">Nomor Rekening</th>
                         <th width="5%">Aksi</th>
