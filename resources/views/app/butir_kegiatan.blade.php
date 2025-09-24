@@ -424,7 +424,7 @@
         //validasi dan save, jika id ada maka PUT/edit jika tidak ada maka POST/simpan baru
         $("#form-kegiatan").validate({
             submitHandler: function(form) {
-                const id = $('#id').val();
+                const id = $('#form-kegiatan #id').val();
                 const type = (id === '') ? 'POST' : 'PUT';
                 const url = (id === '') ? '/api/kegiatan' : '/api/kegiatan/' + id;
                 let dataArr = $(form).serializeArray();
@@ -458,7 +458,7 @@
         //validasi dan save, jika id ada maka PUT/edit jika tidak ada maka POST/simpan baru
         $("#form-butir-kegiatan").validate({
             submitHandler: function(form) {
-                const id = $('#id').val();
+                const id = $('#form-butir-kegiatan #id').val();
                 const type = (id === '') ? 'POST' : 'PUT';
                 const url = (id === '') ? '/api/butir-kegiatan' : '/api/butir-kegiatan/' + id;
                 let dataArr = $(form).serializeArray();
@@ -482,14 +482,16 @@
         $(document).on('click', '.btn-ganti', function() {
             const id = $(this).data('id');
             showDataById(base_url+'/api/butir-kegiatan', id, function(response) {
-                $('#id').val(response.data.id);
-                $('#nilai').val(response.data.nilai);
-                $('#bukti').val(response.data.bukti);
-                $('#keterangan').val(response.data.keterangan);
-                $('#tingkat_id').val(response.data.tingkat_id);
-                $('#pjp_id').val(response.data.pjp_id);
-                $('#nama').val(response.data.nama);
-                showModalForm();
+                if(response.status){
+                    $('#form-butir-kegiatan #id').val(response.data.id);
+                    $('#form-butir-kegiatan #nilai').val(response.data.nilai);
+                    $('#form-butir-kegiatan #bukti').val(response.data.bukti);
+                    $('#form-butir-kegiatan #keterangan').val(response.data.keterangan);
+                    $('#form-butir-kegiatan #tingkat_id').val(response.data.tingkat_id);
+                    $('#form-butir-kegiatan #pjp_id').val(response.data.pjp_id);
+                    $('#form-butir-kegiatan #nama').val(response.data.nama);
+                    showModalFormButirKegiatan();
+                }
             });
         });
 
@@ -508,9 +510,9 @@
             const id = $('#label_kegiatan').attr("data-id");
             if(id!==""){
                 showDataById(base_url+'/api/kegiatan', id, function(response) {
-                    $('#id').val(response.data.id);
-                    $('#nama').val(response.data.nama);
-                    $('#nilai_minimal').val(response.data.nilai_minimal);
+                    $('#form-kegiatan #id').val(response.data.id);
+                    $('#form-kegiatan #nama').val(response.data.nama);
+                    $('#form-kegiatan #nilai_minimal').val(response.data.nilai_minimal);
                     showModalFormKegiatan();
                 });                
             }
