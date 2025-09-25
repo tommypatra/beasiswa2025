@@ -119,7 +119,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     Route::get('get-data-dokumentasi-survei/{id}', [DokumentasiSurveiController::class, 'dataDokumentasiSurvei']);
     Route::get('get-data-sk-penerima/{id}', [SkPenerimaController::class, 'show']);
     Route::get('get-data-sk-penerima-mahasiswa', [PenerimaController::class, 'skPenerimaMahasiswa']);
-    Route::get('get-data-sk-beasiswa/{id}', [SkPenerimaController::class, 'show']);
+    Route::get('get-data-sk-beasiswa/{id}', [SkPenerimaController::class, 'skPenerimaMahasiswa']);
 
 
 

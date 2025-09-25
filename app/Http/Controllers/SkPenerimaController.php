@@ -73,12 +73,38 @@ class SkPenerimaController extends Controller
             $dataQuery = SkPenerima::with([
                 'monitoring.kegiatan',
                 'verifikatorLaporan.user',
+                'penerima',
+            ])->where('id', $id)->firstOrFail();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data ditemukan',
+                'data' => new SkPenerimaResource($dataQuery),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+                'data' => null,
+            ], 404);
+        }
+    }
+
+
+    public function skPenerimaMahasiswa(string $id)
+    {
+        try {
+            // $user_id = auth()->user()->id;
+
+            $dataQuery = SkPenerima::with([
+                'monitoring.kegiatan',
+                'verifikatorLaporan.user',
                 'penerima' => function ($q) {
                     $q->where('user_id', auth()->user()->id);
                 },
             ])->whereHas('penerima', function ($q) {
                 $q->where('user_id', auth()->id());
-            })->firstOrFail();
+            })->where("id", $id)->firstOrFail();
 
             return response()->json([
                 'status' => true,
