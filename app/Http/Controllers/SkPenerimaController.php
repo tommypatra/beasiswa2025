@@ -16,11 +16,15 @@ class SkPenerimaController extends Controller
      */
     public function index(Request $request)
     {
-        $dataQuery = SkPenerima::with(['monitoring', 'verifikatorLaporan.user'])
+        $dataQuery = SkPenerima::with(['monitoring.kegiatan', 'verifikatorLaporan.user'])
             ->withCount('penerima')->orderBy('tanggal_sk', 'desc')->orderBy('nama', 'asc');
 
         if ($request->filled('search')) {
             $dataQuery->where('nama', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('sk_penerima_id')) {
+            $dataQuery->where('id', $request->sk_penerima_id);
         }
 
         $default_limit = env('DEFAULT_LIMIT', 30);
@@ -64,7 +68,7 @@ class SkPenerimaController extends Controller
     public function show(string $id)
     {
         try {
-            $dataQuery = SkPenerima::where('id', $id)->firstOrFail();
+            $dataQuery = SkPenerima::with(['monitoring.kegiatan', 'verifikatorLaporan.user'])->firstOrFail();
             return response()->json([
                 'status' => true,
                 'message' => 'Data ditemukan',

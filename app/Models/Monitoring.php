@@ -15,7 +15,8 @@ class Monitoring extends Model
 
     public function kegiatan()
     {
-        return $this->hasMany(Kegiatan::class);
+        return $this->hasMany(Kegiatan::class)->orderBy('urut', 'asc')
+            ->orderBy('id', 'asc');
     }
 
     public function skPenerima()

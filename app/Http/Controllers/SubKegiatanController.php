@@ -16,7 +16,7 @@ class SubKegiatanController extends Controller
      */
     public function index(Request $request)
     {
-        $dataQuery = SubKegiatan::with(['tingkat', 'pjp'])->orderBy('id', 'asc');
+        $dataQuery = SubKegiatan::with(['tingkat', 'pjp'])->orderBy('urut', 'asc')->orderBy('id', 'asc');
 
         if ($request->filled('search')) {
             $search = $request->search;

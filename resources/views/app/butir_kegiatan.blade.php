@@ -112,7 +112,11 @@
                 </div>
                 <div class="modal-body ">
                     <div class="row">
-						<div class="col-lg-12 mb-3">
+						<div class="col-lg-4 mb-3">
+                            <label class="form-label">Urut</label>
+                            <input name="urut" id="urut" type="number" class="form-control">
+                        </div>
+						<div class="col-lg-8 mb-3">
                             <label class="form-label">Nama</label>
                             <input name="nama" id="nama" type="text" class="form-control" required>
                         </div>
@@ -144,7 +148,11 @@
                 </div>
                 <div class="modal-body ">
                     <div class="row">
-						<div class="col-lg-12 mb-3">
+						<div class="col-lg-4 mb-3">
+                            <label class="form-label">Urut</label>
+                            <input name="urut" id="urut" type="number" class="form-control">
+                        </div>
+						<div class="col-lg-8 mb-3">
                             <label class="form-label">Nama</label>
                             <input name="nama" id="nama" type="text" class="form-control" required>
                         </div>
@@ -298,9 +306,10 @@
                 $.each(data, function(index, dt) {
                     const tingkat=(dt.tingkat)?dt.tingkat.nama:"";
                     const pjp=(dt.pjp)?dt.pjp.nama:"";
+                    const label_urut=(dt.urut)?`<span class="badge text-bg-primary">${dt.urut}</span>`:"";
                     const row = `<tr>
                                 <td>${no++}</td>
-                                <td>${dt.nama}</td>
+                                <td>${dt.nama} ${label_urut}</td>
                                 <td>${tingkat}</td>
                                 <td>${pjp}</td>
                                 <td>${showText(dt.bukti)}</td>
@@ -484,6 +493,7 @@
             showDataById(base_url+'/api/butir-kegiatan', id, function(response) {
                 if(response.status){
                     $('#form-butir-kegiatan #id').val(response.data.id);
+                    $('#form-butir-kegiatan #urut').val(response.data.urut);
                     $('#form-butir-kegiatan #nilai').val(response.data.nilai);
                     $('#form-butir-kegiatan #bukti').val(response.data.bukti);
                     $('#form-butir-kegiatan #keterangan').val(response.data.keterangan);
@@ -511,6 +521,7 @@
             if(id!==""){
                 showDataById(base_url+'/api/kegiatan', id, function(response) {
                     $('#form-kegiatan #id').val(response.data.id);
+                    $('#form-kegiatan #urut').val(response.data.urut);
                     $('#form-kegiatan #nama').val(response.data.nama);
                     $('#form-kegiatan #nilai_minimal').val(response.data.nilai_minimal);
                     showModalFormKegiatan();

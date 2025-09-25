@@ -16,7 +16,7 @@ class KegiatanController extends Controller
      */
     public function index(Request $request)
     {
-        $dataQuery = Kegiatan::orderBy('id', 'asc');
+        $dataQuery = Kegiatan::orderBy('urut', 'asc')->orderBy('id', 'asc');
 
         if ($request->filled('search')) {
             $search = $request->search;

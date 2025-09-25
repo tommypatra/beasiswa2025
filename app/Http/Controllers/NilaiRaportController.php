@@ -56,10 +56,10 @@ class NilaiRaportController extends Controller
             $data_save = $request->validated();
             $data_save['user_id'] = auth()->user()->id;
 
-            for ($i = 1; $i <= 6; $i++) {
-                $field = "foto_raport_smt_$i";
-                $data_save[$field] = upload($request->file($field), $field);
-            }
+            // for ($i = 1; $i <= 6; $i++) {
+            //     $field = "foto_raport_smt_$i";
+            //     $data_save[$field] = upload($request->file($field), $field);
+            // }
 
             $data = NilaiRaport::create($data_save);
             DB::commit();
@@ -67,14 +67,12 @@ class NilaiRaportController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            for ($i = 1; $i <= 6; $i++) {
-                $field = "foto_raport_smt_$i";
-                if ($data_save[$field] && Storage::disk('public')->exists($data_save[$field])) {
-                    Storage::disk('public')->delete($data_save[$field]);
-                }
-            }
-
-
+            // for ($i = 1; $i <= 6; $i++) {
+            //     $field = "foto_raport_smt_$i";
+            //     if ($data_save[$field] && Storage::disk('public')->exists($data_save[$field])) {
+            //         Storage::disk('public')->delete($data_save[$field]);
+            //     }
+            // }
 
             return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat membuat data baru: ' . $e->getMessage()], 500);
         }
@@ -159,17 +157,17 @@ class NilaiRaportController extends Controller
             }
 
             $data_save = $request->validated();
-            for ($i = 1; $i <= 6; $i++) {
-                $field = "foto_raport_smt_$i";
-                if ($request->hasFile($field)) {
-                    // hapus file lama kalau ada
-                    if ($data->$field && Storage::disk('public')->exists($data->$field)) {
-                        Storage::disk('public')->delete($data->$field);
-                    }
-                    // upload file baru
-                    $data_save[$field] = upload($request->file($field), $field);
-                }
-            }
+            // for ($i = 1; $i <= 6; $i++) {
+            //     $field = "foto_raport_smt_$i";
+            //     if ($request->hasFile($field)) {
+            //         // hapus file lama kalau ada
+            //         if ($data->$field && Storage::disk('public')->exists($data->$field)) {
+            //             Storage::disk('public')->delete($data->$field);
+            //         }
+            //         // upload file baru
+            //         $data_save[$field] = upload($request->file($field), $field);
+            //     }
+            // }
 
             $data->update($data_save);
             DB::commit();

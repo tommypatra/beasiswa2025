@@ -20,6 +20,7 @@ class KegiatanRequest extends FormRequest
     {
         return [
             'nama' => 'required|string|max:150',
+            'urut'   => 'nullable|numeric',
             'nilai_minimal'   => [
                 'required',
                 'numeric',
@@ -39,6 +40,7 @@ class KegiatanRequest extends FormRequest
     {
         return [
             'nama' => 'nama kegiatan',
+            'urut'   => 'urut data',
             'nilai_minimal' => 'nilai minimal',
             'monitoring_id' => 'monitoring',
         ];

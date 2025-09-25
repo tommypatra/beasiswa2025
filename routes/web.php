@@ -71,6 +71,7 @@ Route::get('/verifikasi-peserta', [WebController::class, 'verifikasiPeserta'])->
 
 
 Route::get('/import-penerima-beasiswa/{sk_penerima_id}', [WebController::class, 'importPenerimaBeasiswa'])->name('import-penerima-beasiswa');
+Route::get('/laporan-penerima-beasiswa/{sk_penerima_id}', [WebController::class, 'laporanPenerimaBeasiswa'])->name('laporan-penerima-beasiswa');
 
 //untuk cetak
 Route::get('/cetak-kartu-pendaftaran/{url_id}', [WebController::class, 'cetakKartuPendaftaran'])->name('cetak-kartu-pendaftaran');

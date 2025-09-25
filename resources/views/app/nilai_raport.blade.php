@@ -26,39 +26,40 @@
         <form id="form">
             <input type="hidden" id="id" name="id">
             <div class="alert alert-primary" role="alert">
-                Untuk nilai rata rata wajib diisi dengan 0 - 100, jika ada koma cara mengisinya ganti dengan titik contoh : 89.78
+                Untuk Nilai Rata-Rata/ Total wajib diisi, jika ada koma cara mengisinya ganti dengan titik contoh : 1089.78
                 <br>Untuk peringkat boleh kosong atau isikan dengan angka contoh 1 atau 2 atau 3 dst
-                <br>Wajib mengupload raport pdf yg sudah dilegalisir ukurang maksimal 3MB
             </div>                    
 
             <h5>Kelas X</h5>
             <div class="row">
                 <div class="col-sm-5 mb-3">
                     <label class="form-label">Semester 1</label>
-                    <div>Nilai Rata-Rata</div>
+                    <div>Nilai Rata-Rata/ Total</div>
                     <input name="smt_1_nilai" id="smt_1_nilai" type="number" class="form-control" required>                    
                     <div>Peringkat</div>
                     <input name="smt_1_peringkat" id="smt_1_peringkat" type="number" class="form-control" >
-                    <div>
+                    <i>peringkat boleh dikosongkan</i>
+                    {{-- <div>
                         <label class="form-label">Upload Raport Semester 1</label>
                         <input type="file" id="foto_raport_smt_1" name="foto_raport_smt_1" class="form-control" accept="application/pdf">
                         
                         <div id="download_foto_raport_smt_1"></div>                    
-                    </div>
+                    </div> --}}
 
                 </div>
                 <div class="col-sm-5 mb-3">
                     <label class="form-label">Semester 2</label>
-                    <div>Nilai Rata-Rata</div>
+                    <div>Nilai Rata-Rata/ Total</div>
                     <input name="smt_2_nilai" id="smt_2_nilai" type="number" class="form-control" required>
                     <div>Peringkat</div>
                     <input name="smt_2_peringkat" id="smt_2_peringkat" type="number" class="form-control" >
-                    <div>
+                    <i>peringkat boleh dikosongkan</i>
+                    {{-- <div>
                         <label class="form-label">Upload Raport Semester 2</label>
                         <input type="file" id="foto_raport_smt_2" name="foto_raport_smt_2" class="form-control" accept="application/pdf">
                         
                         <div id="download_foto_raport_smt_2"></div>                    
-                    </div>
+                    </div> --}}
                 </div>
             </div>
             <hr>
@@ -66,29 +67,31 @@
             <div class="row">
                 <div class="col-sm-5 mb-3">
                     <label class="form-label">Semester 3</label>
-                    <div>Nilai Rata-Rata</div>
+                    <div>Nilai Rata-Rata/ Total</div>
                     <input name="smt_3_nilai" id="smt_3_nilai" type="number" class="form-control" required>
                     <div>Peringkat</div>
                     <input name="smt_3_peringkat" id="smt_3_peringkat" type="number" class="form-control" >
-                    <div>
+                    <i>peringkat boleh dikosongkan</i>
+                    {{-- <div>
                         <label class="form-label">Upload Raport Semester 3</label>
                         <input type="file" id="foto_raport_smt_3" name="foto_raport_smt_3" class="form-control" accept="application/pdf">
                         
                         <div id="download_foto_raport_smt_3"></div>                    
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="col-sm-5 mb-3">
                     <label class="form-label">Semester 4</label>
-                    <div>Nilai Rata-Rata</div>
+                    <div>Nilai Rata-Rata/ Total</div>
                     <input name="smt_4_nilai" id="smt_4_nilai" type="number" class="form-control" required>
                     <div>Peringkat</div>
                     <input name="smt_4_peringkat" id="smt_4_peringkat" type="number" class="form-control" >
-                    <div>
+                    <i>peringkat boleh dikosongkan</i>
+                    {{-- <div>
                         <label class="form-label">Upload Raport Semester 4</label>
                         <input type="file" id="foto_raport_smt_4" name="foto_raport_smt_4" class="form-control" accept="application/pdf">
                         
                         <div id="download_foto_raport_smt_4"></div>                    
-                    </div>
+                    </div> --}}
                 </div>
             </div>
             <hr>
@@ -97,29 +100,31 @@
             <div class="row">
                 <div class="col-sm-5 mb-3">
                     <label class="form-label">Semester 5</label>
-                    <div>Nilai Rata-Rata</div>
+                    <div>Nilai Rata-Rata/ Total</div>
                     <input name="smt_5_nilai" id="smt_5_nilai" type="number" class="form-control" required>
                     <div>Peringkat</div>
                     <input name="smt_5_peringkat" id="smt_5_peringkat" type="number" class="form-control" >
-                    <div>
+                    <i>peringkat boleh dikosongkan</i>
+                    {{-- <div>
                         <label class="form-label">Upload Raport Semester 5</label>
                         <input type="file" id="foto_raport_smt_5" name="foto_raport_smt_5" class="form-control" accept="application/pdf">
                         
                         <div id="download_foto_raport_smt_5"></div>                    
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="col-sm-5 mb-3">
                     <label class="form-label">Semester 6</label>
-                    <div>Nilai Rata-Rata</div>
+                    <div>Nilai Rata-Rata/ Total</div>
                     <input name="smt_6_nilai" id="smt_6_nilai" type="number" class="form-control" required>
                     <div>Peringkat</div>
                     <input name="smt_6_peringkat" id="smt_6_peringkat" type="number" class="form-control" >
-                    <div>
+                    <i>peringkat boleh dikosongkan</i>
+                    {{-- <div>
                         <label class="form-label">Upload Raport Semester 6</label>
                         <input type="file" id="foto_raport_smt_6" name="foto_raport_smt_6" class="form-control" accept="application/pdf">
                         
                         <div id="download_foto_raport_smt_6"></div>                    
-                    </div>
+                    </div> --}}
                 </div>
             </div>
             <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
@@ -165,16 +170,16 @@
             $(`#smt_${i}_nilai`).val(ada ? data[`smt_${i}_nilai`] : "");
             $(`#smt_${i}_peringkat`).val(ada ? data[`smt_${i}_peringkat`] : "");
 
-            let field = `foto_raport_smt_${i}`;
-            if (ada && data[field]) {
-                $(`#download_${field}`).html(`
-                    <a href="${base_url}/${data[field]}" target="_blank" class="badge text-bg-success mt-2">
-                        <iconify-icon icon="solar:download-linear" class=""></iconify-icon> Download Raport Semester ${i}
-                    </a>
-                `);
-            } else {
-                $(`#download_${field}`).html(""); // kosongin kalau ga ada
-            }
+            // let field = `foto_raport_smt_${i}`;
+            // if (ada && data[field]) {
+            //     $(`#download_${field}`).html(`
+            //         <a href="${base_url}/${data[field]}" target="_blank" class="badge text-bg-success mt-2">
+            //             <iconify-icon icon="solar:download-linear" class=""></iconify-icon> Download Raport Semester ${i}
+            //         </a>
+            //     `);
+            // } else {
+            //     $(`#download_${field}`).html(""); // kosongin kalau tdk ada
+            // }
         }
     }
 
@@ -198,75 +203,76 @@
         });
 
         $("#form").validate({
-            rules: {
-                foto_raport_smt_1: {
-                    required: function() {
-                        return $('#id').val() === '';
-                    }
-                },
-                foto_raport_smt_2: {
-                    required: function() {
-                        return $('#id').val() === '';
-                    }
-                },
-                foto_raport_smt_3: {
-                    required: function() {
-                        return $('#id').val() === '';
-                    }
-                },
-                foto_raport_smt_4: {
-                    required: function() {
-                        return $('#id').val() === '';
-                    }
-                },
-                foto_raport_smt_5: {
-                    required: function() {
-                        return $('#id').val() === '';
-                    }
-                },
-                foto_raport_smt_6: {
-                    required: function() {
-                        return $('#id').val() === '';
-                    }
-                },
-            },
-            messages: {
-                foto_raport_smt_1: {
-                    required: "file raport semester 1 wajib diupload.",
-                },
-                foto_raport_smt_2: {
-                    required: "file raport semester 2 wajib diupload.",
-                },
-                foto_raport_smt_3: {
-                    required: "file raport semester 3 wajib diupload.",
-                },
-                foto_raport_smt_4: {
-                    required: "file raport semester 4 wajib diupload.",
-                },
-                foto_raport_smt_5: {
-                    required: "file raport semester 5 wajib diupload.",
-                },
-                foto_raport_smt_6: {
-                    required: "file raport semester 6 wajib diupload.",
-                },
-            },
+            // rules: {
+            //     foto_raport_smt_1: {
+            //         required: function() {
+            //             return $('#id').val() === '';
+            //         }
+            //     },
+            //     foto_raport_smt_2: {
+            //         required: function() {
+            //             return $('#id').val() === '';
+            //         }
+            //     },
+            //     foto_raport_smt_3: {
+            //         required: function() {
+            //             return $('#id').val() === '';
+            //         }
+            //     },
+            //     foto_raport_smt_4: {
+            //         required: function() {
+            //             return $('#id').val() === '';
+            //         }
+            //     },
+            //     foto_raport_smt_5: {
+            //         required: function() {
+            //             return $('#id').val() === '';
+            //         }
+            //     },
+            //     foto_raport_smt_6: {
+            //         required: function() {
+            //             return $('#id').val() === '';
+            //         }
+            //     },
+            // },
+            // messages: {
+            //     foto_raport_smt_1: {
+            //         required: "file raport semester 1 wajib diupload.",
+            //     },
+            //     foto_raport_smt_2: {
+            //         required: "file raport semester 2 wajib diupload.",
+            //     },
+            //     foto_raport_smt_3: {
+            //         required: "file raport semester 3 wajib diupload.",
+            //     },
+            //     foto_raport_smt_4: {
+            //         required: "file raport semester 4 wajib diupload.",
+            //     },
+            //     foto_raport_smt_5: {
+            //         required: "file raport semester 5 wajib diupload.",
+            //     },
+            //     foto_raport_smt_6: {
+            //         required: "file raport semester 6 wajib diupload.",
+            //     },
+            // },
             submitHandler: function(form,event) {
                 event.preventDefault();
                 const id = $('#id').val();
                 const url = (id === '') ? endpoint : endpoint + '/' + id;
+                const method = (id === '')?'POST':'PUT';
 
-                var formData = new FormData(form);
-                if((id !== '')){
-                    formData.append("_method", "put");
-                }
+                // var formData = new FormData(form);
+                // if((id !== '')){
+                //     formData.append("_method", "put");
+                // }
 
-                saveData(url, 'POST', formData, function(response) {
+                saveData(url, method, $(form).serialize(), function(response) {
                     appShowNotification(true, ['berhasil dilakukan!']);
                     dataLoad();
 
-                    for (let i = 1; i <= 6; i++) {
-                        $(`#foto_raport_smt_${i}`).val("");
-                    }
+                    // for (let i = 1; i <= 6; i++) {
+                    //     $(`#foto_raport_smt_${i}`).val("");
+                    // }
 
                 });
             }

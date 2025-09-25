@@ -1,7 +1,7 @@
 @extends('template')
 
 @section('scriptHead')
-<title>SK Penerima Beasiswa</title>
+<title>Laporan Penerima Beasiswa</title>
 <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet">
 <style>
     #daftar-verifikator {
@@ -14,10 +14,13 @@
 
 @section('container')
 
+<h4 id="nama-sk">SK Penerima Beasiswa</h4>
+<div id="detail-sk" class="mb-2"></div>
+<div id="daftar-tombol" class="mb-3"></div>
 <div class="card">
     <div class="card-body">
         <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">
-            <h5 class="card-title fw-semibold">Daftar SK Beasiswa</h5>
+            <h5 class="card-title fw-semibold">Laporan Penerima Beasiswa</h5>
             <div class="d-flex gap-2">
                 <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;" >
                 <button class="btn btn-success" id="btn-refresh-sk" >
@@ -31,10 +34,9 @@
                 <thead>
                     <tr>
                         <th width="5%">No</th>
-                        <th width="10%">Tahun</th>
-                        <th width="20%">Perihal/ Monitoring Beasiswa</th>
-                        <th width="15%">Nomor/ Tanggal SK</th>
-                        <th width="20%">Nomor Rekening</th>
+                        <th width="20%">Item</th>
+                        <th width="20%">Bukti Dokumen</th>
+                        <th width="15%">Keterangan</th>
                         <th width="5%">Aksi</th>
                     </tr>
                 </thead>
@@ -65,22 +67,48 @@
 
 <script type="text/javascript">
     var page_sk = 1;
-    var data_buku_rekening = [];
+    var sk_penerima_id = "{{ $sk_penerima_id }}";
+    var kegiatan_id;
+
     async function loadDataSK() {
         let search = $('#search-input').val();
-        let response = await asyncFunction(`${base_url}/api/get-data-sk-penerima-mahasiswa?page=${page_sk}&search=${search}`);
-        renderData(response);
-    }
-
-
-    async function loadDataBukuRekening() {
-        let search = $('#search-input').val();
-        let response = await asyncFunction(`${base_url}/api/buku-rekening?limit=0&search=${search}`);
-        data_buku_rekening=[];
+        let response = await asyncFunction(`${base_url}/api/get-data-sk-beasiswa/${sk_penerima_id}`);
         if(response.status){
-            data_buku_rekening=response.data;
+            data=response.data;
+            $('#nama-sk').html(`${data.nama}`);
+            $('#detail-sk').html(`Nomor SK : ${data.nomor_sk} / Tanggal : ${data.tanggal_sk}`);
+            renderTombolKegiatan(data.monitoring.kegiatan);
         }
     }
+
+    function renderTombolKegiatan(tombol){
+        let html=``;
+        if(tombol.length>0){
+            html+=`<div class="btn-group" role="group" aria-label="Basic radio toggle button group">`;
+            $.each(tombol, function(index, dt) {
+                let active ='';    
+                if(index==0){
+                    active='checked';
+                    kegiatan_id=dt.id;
+                }
+                html+=` <input type="radio" class="btn-check daftar-kegiatan" name="kegiatan-btn" id="btnradio-${index}" value="${dt.id}" ${active}>
+                        <label class="btn btn-outline-primary" for="btnradio-${index}">${dt.nama}</label>`;
+            });
+            html+=`</div>`;
+        }
+        $('#daftar-tombol').html(html);
+    }
+
+    $(document).on('change','.daftar-kegiatan', function() {
+        kegiatan_id = $('.daftar-kegiatan:checked').val();
+    });
+
+    async function loadSubKegiatan() {
+        let search = $('#search-input').val();
+        let response = await asyncFunction(`${base_url}/api/laporan-mahasiswa/${kegiatan_id}?search=${search}`);
+    }
+
+
 
     function renderSelectRekening(dt) {
         // const penerima = 
@@ -141,8 +169,8 @@
         });
 
         async function initPage() { // agar di load secara berurutan
-            await loadDataBukuRekening();
             await loadDataSK();
+            await loadSubKegiatan();
         }
 
         $('#search-input').on('keypress', async function(e) {

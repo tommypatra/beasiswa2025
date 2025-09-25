@@ -56,6 +56,12 @@ class WebController extends Controller
     }
 
 
+    public function laporanPenerimaBeasiswa($id)
+    {
+        return view('app.laporan_penerima_beasiswa', ['sk_penerima_id' => $id]);
+    }
+
+
     public function importPenerimaBeasiswa($id)
     {
         return view('app.import_penerima_beasiswa', ['sk_penerima_id' => $id]);

@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('laporans', function (Blueprint $table) {
             $table->id();
+
+            $table->boolean('verifikasi_hasil')->nullable();
+            $table->decimal('verifikasi_skor', 5, 2)->nullable();
+            $table->text('verifikasi_catatan')->nullable();
+
             $table->boolean('is_kirim')->nullable();
             $table->enum('path_jenis', ['url', 'link'])->nullable();
             $table->string('path', 180)->nullable();

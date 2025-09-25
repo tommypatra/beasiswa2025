@@ -6,6 +6,7 @@ use App\Models\OrangTua;
 use App\Models\Mahasiswa;
 use App\Models\Pendaftar;
 use App\Models\SumberAir;
+use App\Models\SkPenerima;
 use App\Models\NilaiRaport;
 use App\Models\Pewawancara;
 use App\Models\Verifikator;
@@ -26,6 +27,7 @@ use App\Http\Controllers\RumahController;
 use App\Http\Controllers\WilayahProvinsi;
 use App\Http\Controllers\SyaratController;
 use App\Http\Controllers\WilayahKabupaten;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\RuanganController;
 use App\Http\Middleware\CekAksesMiddleware;
 use App\Http\Controllers\BeasiswaController;
@@ -77,7 +79,6 @@ use App\Http\Controllers\DokumentasiSurveiController;
 use App\Http\Controllers\VerifikatorLaporanController;
 use App\Http\Controllers\VerifikatorPenerimaController;
 use App\Http\Controllers\VerifikatorPendaftarController;
-use App\Models\SkPenerima;
 
 Route::post('auth-cek', [AuthController::class, 'index']);
 Route::post('cek-data-akun-sia', [AuthController::class, 'cekDataAkunSia']);
@@ -118,6 +119,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     Route::get('get-data-dokumentasi-survei/{id}', [DokumentasiSurveiController::class, 'dataDokumentasiSurvei']);
     Route::get('get-data-sk-penerima/{id}', [SkPenerimaController::class, 'show']);
     Route::get('get-data-sk-penerima-mahasiswa', [PenerimaController::class, 'skPenerimaMahasiswa']);
+    Route::get('get-data-sk-beasiswa/{id}', [SkPenerimaController::class, 'show']);
 
 
 
@@ -266,6 +268,9 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::resource('pendaftar', PendaftarController::class);
         Route::resource('upload-syarat', UploadSyaratController::class);
         Route::resource('rumah', RumahController::class);
+        Route::resource('laporan', LaporanController::class);
+
+        Route::get('laporan-mahasiswa/{kegiatan_id}', [LaporanController::class, 'laporanMahasiswa']);
 
 
         Route::get('aktifkan-nomor-rekening/{rekening_id}', [BukuRekeningController::class, 'aktifkanRekening']);

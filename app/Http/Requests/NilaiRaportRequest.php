@@ -36,12 +36,12 @@ class NilaiRaportRequest extends FormRequest
             'smt_5_peringkat' => 'nullable|numeric',
             'smt_6_nilai' => 'required|numeric',
             'smt_6_peringkat' => 'nullable|numeric',
-            'foto_raport_smt_1' => ($isCreate ? 'required' : 'nullable') . '|file|mimes:pdf|max:4096',
-            'foto_raport_smt_2' => ($isCreate ? 'required' : 'nullable') . '|file|mimes:pdf|max:4096',
-            'foto_raport_smt_3' => ($isCreate ? 'required' : 'nullable') . '|file|mimes:pdf|max:4096',
-            'foto_raport_smt_4' => ($isCreate ? 'required' : 'nullable') . '|file|mimes:pdf|max:4096',
-            'foto_raport_smt_5' => ($isCreate ? 'required' : 'nullable') . '|file|mimes:pdf|max:4096',
-            'foto_raport_smt_6' => ($isCreate ? 'required' : 'nullable') . '|file|mimes:pdf|max:4096',
+            'foto_raport_smt_1' => 'nullable|file|mimes:pdf|max:4096',
+            'foto_raport_smt_2' => 'nullable|file|mimes:pdf|max:4096',
+            'foto_raport_smt_3' => 'nullable|file|mimes:pdf|max:4096',
+            'foto_raport_smt_4' => 'nullable|file|mimes:pdf|max:4096',
+            'foto_raport_smt_5' => 'nullable|file|mimes:pdf|max:4096',
+            'foto_raport_smt_6' => 'nullable|file|mimes:pdf|max:4096',
 
         ];
     }

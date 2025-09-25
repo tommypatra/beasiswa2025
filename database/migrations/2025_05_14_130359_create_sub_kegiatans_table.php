@@ -27,6 +27,7 @@ return new class extends Migration
             $table->foreignId('pjp_id')->nullable();
             $table->foreign('tingkat_id')->references('id')->on('referensi_pilihans')->restrictOnDelete();
             $table->foreign('pjp_id')->references('id')->on('referensi_pilihans')->restrictOnDelete();
+            $table->smallInteger('urut')->nullable();
 
             $table->timestamps();
         });

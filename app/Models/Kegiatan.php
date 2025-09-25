@@ -10,7 +10,8 @@ class Kegiatan extends Model
 
     public function subKegiatan()
     {
-        return $this->hasMany(SubKegiatan::class);
+        return $this->hasMany(SubKegiatan::class) > orderBy('urut', 'asc')
+            ->orderBy('id', 'asc');
     }
 
     public function monitoring()

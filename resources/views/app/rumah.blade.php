@@ -32,8 +32,7 @@
                     <input name="luas_tanah" id="luas_tanah" type="text" class="form-control" placeholder="contoh: 120" required>
                     <div>dalam meter</div>
                     <div class="form-text">
-                        Masukkan luas total tanah dalam meter bujur sangkar. 
-                        Hitung dari panjang × lebar tanah , misal: 10 × 12 = 120
+                        Masukkan luas total tanah dalam meter bujur sangkar, misal:120
                     </div>                    
                 </div>
                 <div class="col-lg-4 mb-3">
@@ -41,8 +40,7 @@
                     <input name="luas_bangunan" id="luas_bangunan" type="text" class="form-control" placeholder="contoh: 90" required>
                     <div>dalam meter</div>
                     <div class="form-text">
-                        Masukkan luas total bangunan dalam meter bujur sangkar. 
-                        Hitung dari panjang × lebar bangunan , misal: 9 × 10 = 90
+                        Masukkan luas total rumah dalam meter bujur sangkar, misal:120
                     </div>                    
                 </div>
             </div>

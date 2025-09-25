@@ -21,7 +21,7 @@ class SubKegiatanRequest extends FormRequest
         return [
             'nama' => 'required|string|max:100',
             'bukti' => 'required|string|max:100',
-
+            'urut'   => 'nullable|numeric',
             'keterangan' => 'nullable|string',
             'tingkat_id'  => [
                 'nullable',
@@ -57,6 +57,7 @@ class SubKegiatanRequest extends FormRequest
             'tingkat_id' => 'tingkat',
             'pjp_id' => 'parisipasi/ jabatan/ prestasi',
             'kegiatan_id' => 'kegiatan',
+            'urut'   => 'urut data',
             'nilai' => 'nilai',
         ];
     }
