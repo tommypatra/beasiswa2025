@@ -6,6 +6,10 @@
 
 @section('container')
 <h4 id="nama-pengguna"></h4>
+<div class="alert alert-danger" role="alert">
+    Gunakan data asli, karena bisa jadi panitia akan melakukan survei ke rumahmu menggunakan data ini !
+</div>
+
 <div class="card">
     <div class="card-body">
         <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">

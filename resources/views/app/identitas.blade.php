@@ -35,6 +35,7 @@
                     <div class="col-sm-4 mb-3">
                         <label class="form-label">Inisial</label>
                         <input name="inisial" id="inisial" type="text" class="form-control">
+                        <i>boleh dikosongkan</i>
                     </div>
                     <div class="col-sm-7 mb-3">
                         <label class="form-label">Nama</label>
@@ -57,8 +58,9 @@
                         <input name="tanggal_lahir" id="tanggal_lahir" type="text" class="form-control datepicker" required>
                     </div>
                     <div class="col-sm-9 mb-3">
-                        <label class="form-label">Alamat</label>
+                        <label class="form-label">Alamat Asal/ Rumah Orang Tua </label>
                         <textarea name="alamat" id="alamat" rows="3" class="form-control" required></textarea>
+                        <i>masukan alamat asal/ orang tua yang akan disurvei</i>
                     </div>
 
                     <div class="col-sm-12 mb-3">
