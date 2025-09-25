@@ -76,9 +76,8 @@
                 <thead>
                     <tr>
                         <th width="5%">No</th>
-                        <th width="35%">Nama</th>
-                        <th width="15%">Tingkat</th>
-                        <th width="15%">Partisipasi/ Jabatan/ Prestasi</th>
+                        <th width="45%">Nama</th>
+                        <th width="15%">Tingkat/ Partisipasi/ Jabatan/ Prestasi</th>
                         <th width="15%">Bukti</th>
                         <th width="10%">Nilai</th>
                         <th>Aksi</th>
@@ -181,7 +180,11 @@
                             <label class="form-label">Nilai</label>
                             <input name="nilai" id="nilai" type="number" class="form-control" required>
                         </div>
-						<div class="col-lg-9 mb-3">
+						<div class="col-lg-12 mb-3">
+                            <label class="form-label">Contoh format</label>
+                            <input type="file" name="path_format" id="path_format" class="form-control" >
+                        </div>
+						<div class="col-lg-12 mb-3">
                             <label class="form-label">Keterangan</label>
                             <textarea name="keterangan" id="keterangan" rows="4" class="form-control" ></textarea>
                         </div>
@@ -307,11 +310,18 @@
                     const tingkat=(dt.tingkat)?dt.tingkat.nama:"";
                     const pjp=(dt.pjp)?dt.pjp.nama:"";
                     const label_urut=(dt.urut)?`<span class="badge text-bg-primary">${dt.urut}</span>`:"";
+
+                    var contoh_format=``;
+                    if(dt.path_format){
+                        contoh_format=`<div class="mt-1">
+                                            <a href="${base_url}/${dt.path_format}" target="_blank"><span class="badge text-bg-info">contoh format</span></a>
+                                            <button type="button" class="btn btn-sm btn-outline-primary btn-hapus-contoh" data-id="${dt.id}"><i class="ti ti-trash"></i></button>
+                                        </div>`;
+                    }
                     const row = `<tr>
                                 <td>${no++}</td>
-                                <td>${dt.nama} ${label_urut}</td>
-                                <td>${tingkat}</td>
-                                <td>${pjp}</td>
+                                <td>${dt.nama} ${label_urut} ${contoh_format}</td>
+                                <td>${tingkat} ${pjp}</td>
                                 <td>${showText(dt.bukti)}</td>
                                 <td>${dt.nilai}</td>
                                 <td>
@@ -361,6 +371,15 @@
 
         });        
 
+
+        $(document).on('click','.btn-hapus-contoh',function(){
+            const id=$(this).attr('data-id');
+            if(id!=="")
+                deleteData(base_url+'/api/hapus-contoh-format-laporan', id, function() {
+                    appShowNotification(true,['berhasil dilakukan!']);
+                    loadDataButirKegiatan();
+                });
+        })
 
         $(document).on('click', '#list_kegiatan .dropdown-item', function(e) {
             e.preventDefault();
@@ -415,6 +434,7 @@
 
         function formButirKegiatanReset(){
             $('#form-butir-kegiatan').trigger('reset');
+            $('#path_format').val("");
             $('#form-butir-kegiatan input[type="hidden"]').val('');
         }
 
@@ -467,29 +487,51 @@
         //validasi dan save, jika id ada maka PUT/edit jika tidak ada maka POST/simpan baru
         $("#form-butir-kegiatan").validate({
             submitHandler: function(form) {
-                const id = $('#form-butir-kegiatan #id').val();
-                const type = (id === '') ? 'POST' : 'PUT';
-                const url = (id === '') ? '/api/butir-kegiatan' : '/api/butir-kegiatan/' + id;
-                let dataArr = $(form).serializeArray();
-                dataArr.push({
-                    name: 'kegiatan_id',
-                    value: $('#label_kegiatan').attr('data-id')
-                });
-                let dataPayload = $.param(dataArr);
+                // const id = $('#form-butir-kegiatan #id').val();
+                // const type = (id === '') ? 'POST' : 'PUT';
+                // const url = (id === '') ? '/api/butir-kegiatan' : '/api/butir-kegiatan/' + id;
+                // let dataArr = $(form).serializeArray();
+                // dataArr.push({
+                //     name: 'kegiatan_id',
+                //     value: $('#label_kegiatan').attr('data-id')
+                // });
+                // let dataPayload = $.param(dataArr);
 
-                saveData(base_url+url, type, dataPayload, function(response) {                    
+                // saveData(base_url+url, type, dataPayload, function(response) {                    
+                //     appShowNotification(true,['berhasil dilakukan!']);
+                //     if(type=='POST'){
+                //         formButirKegiatanReset();
+                //     }
+                //     loadDataButirKegiatan();
+                // });
+
+                const id = $('#form-butir-kegiatan #id').val();
+                const url = (id === '') ? '/api/butir-kegiatan' : '/api/butir-kegiatan/' + id;
+
+                var formData = new FormData(form);
+                formData.append("kegiatan_id", $('#label_kegiatan').attr('data-id'));
+
+                var is_insert=true;
+                if((id !== '')){
+                    is_insert=false;
+                    formData.append("_method", "put");
+                }
+
+                saveData(url, 'POST', formData, function(response) {
                     appShowNotification(true,['berhasil dilakukan!']);
-                    if(type=='POST'){
+                    if(is_insert){
                         formButirKegiatanReset();
                     }
                     loadDataButirKegiatan();
                 });
+
             }
         });
 
         //ganti data
         $(document).on('click', '.btn-ganti', function() {
             const id = $(this).data('id');
+            $('#path_format').val("");
             showDataById(base_url+'/api/butir-kegiatan', id, function(response) {
                 if(response.status){
                     $('#form-butir-kegiatan #id').val(response.data.id);

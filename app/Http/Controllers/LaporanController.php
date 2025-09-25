@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LaporanRequest;
 use App\Http\Resources\LaporanResource;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\LaporanMahasiswaResource;
 
 class LaporanController extends Controller
@@ -63,11 +64,8 @@ class LaporanController extends Controller
                     $q2->where('user_id', $user_id);
                 });
             },
-            'laporan.penerima.user.mahasiswa',
             'kegiatan',
-            'laporan.penerima.skPenerima',
-        ])
-            ->orderBy('id', 'asc');
+        ])->orderBy('urut', 'asc')->orderBy('id', 'asc');
 
         $dataQuery->where(function ($query) use ($kegiatan_id) {
             $query->where('kegiatan_id', $kegiatan_id);
@@ -97,7 +95,12 @@ class LaporanController extends Controller
     {
         try {
             DB::beginTransaction();
-            $data = Laporan::create($request->validated());
+
+            $data_save = $request->validated();
+            $data_save['path'] = upload($request->file('path'), 'path');
+
+            $data = Laporan::create($data_save);
+
             DB::commit();
             return response()->json(['status' => true, 'message' => 'data baru berhasil dibuat', 'data' => $data], 201);
         } catch (\Exception $e) {
@@ -127,6 +130,21 @@ class LaporanController extends Controller
         }
     }
 
+
+    public function finalisasiLaporan(string $id)
+    {
+        try {
+            DB::beginTransaction();
+            $data = Laporan::where('id', $id)->firstOrFail();
+            $data->update(['is_kirim' => true]);
+            DB::commit();
+            return response()->json(['status' => true, 'message' => 'berhasil diperbarui', 'data' => $data], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat memperbarui : ' . $e->getMessage(), 'data' => null], 500);
+        }
+    }
+
     /**
      * Update the specified resource in storage.
      */
@@ -144,6 +162,7 @@ class LaporanController extends Controller
         }
     }
 
+
     /**
      * Remove the specified resource from storage.
      */
@@ -152,8 +171,12 @@ class LaporanController extends Controller
         try {
             DB::beginTransaction();
             $data = Laporan::where('id', $id)->firstOrFail();
+            $path = $data->path;
             $data->delete();
             DB::commit();
+            if ($path && Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
             return response()->json(null, 204);
             // return response()->json(['status' => true, 'message' => 'hapus data berhasil dilakukan'], 200);
         } catch (\Exception $e) {

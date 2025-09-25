@@ -29,20 +29,21 @@
             </div>
         </div>
         
+        <input type="file" name="path" id="path" style="display:none" accept="application/pdf,image/*">
+
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
                     <tr>
                         <th width="5%">No</th>
-                        <th width="20%">Item</th>
+                        <th width="25%">Item</th>
                         <th width="20%">Bukti Dokumen</th>
-                        <th width="15%">Keterangan</th>
-                        <th width="5%">Aksi</th>
+                        <th width="30%">Keterangan</th>
                     </tr>
                 </thead>
                 <tbody id="data-list">
                     <tr>
-                        <td colspan="7">data tidak ditemukan</td>
+                        <td colspan="4">data tidak ditemukan</td>
                     </tr>
                 </tbody>
             </table>
@@ -66,8 +67,10 @@
 <script src="{{ asset('js/pagination.js') }}"></script>
 
 <script type="text/javascript">
+    const endpoint = `${base_url}/api/laporan`;
     var page_sk = 1;
     var sk_penerima_id = "{{ $sk_penerima_id }}";
+    var penerima_id;
     var kegiatan_id;
 
     async function loadDataSK() {
@@ -75,6 +78,7 @@
         let response = await asyncFunction(`${base_url}/api/get-data-sk-beasiswa/${sk_penerima_id}`);
         if(response.status){
             data=response.data;
+            penerima_id=data.penerima[0].id;
             $('#nama-sk').html(`${data.nama}`);
             $('#detail-sk').html(`Nomor SK : ${data.nomor_sk} / Tanggal : ${data.tanggal_sk}`);
             renderTombolKegiatan(data.monitoring.kegiatan);
@@ -101,29 +105,16 @@
 
     $(document).on('change','.daftar-kegiatan', function() {
         kegiatan_id = $('.daftar-kegiatan:checked').val();
+        loadSubKegiatan();
     });
 
     async function loadSubKegiatan() {
         let search = $('#search-input').val();
         let response = await asyncFunction(`${base_url}/api/laporan-mahasiswa/${kegiatan_id}?search=${search}`);
+        if(response.status){
+            renderData(response);
+        }
     }
-
-
-
-    function renderSelectRekening(dt) {
-        // const penerima = 
-        let select = `<select class="form-control w-100 pilih_nomor_rekening" data-old="${dt.buku_rekening_id}" data-id="${dt.id}">`;
-        select+=`<option value="">- pilih -</option>`
-        data_buku_rekening.forEach(function(item) {
-            if(dt.buku_rekening_id==item.id)
-                select+=`<option value="${item.id}" selected>${item.nomor} - ${item.bank}</option>`
-            else
-                select+=`<option value="${item.id}">${item.nomor} - ${item.bank}</option>`
-        });
-        select+=`</select>`;
-        return select;
-    }
-
 
     function renderData(response) {
         const dataList = $('#data-list');
@@ -134,22 +125,58 @@
         pagination.empty();
         if (data.length > 0) {
             $.each(data, function(index, dt) {
-                const sk_penerima = dt.sk_penerima;
-                const monitoring=(sk_penerima.monitoring)?`<span class="badge rounded-pill bg-primary fs-2">${sk_penerima.monitoring.nama}</span>`:"";
+                var laporan_upload = `<span class="badge text-bg-danger fs-2">belum upload</span>`;
+                if(dt.laporan.length>0){
+                    laporan_upload=`<h4>Daftar Dokumen</h4>`;
+                    laporan_upload+=`<ul>`;
+                    $.each(dt.laporan, function(index, dr) {
+                        const filename = dr.path.split('/').pop();
+                        var tombol =`<span class="btn-group" role="group" >
+                                        <button type="button" class="btn btn-sm btn-outline-primary btn-hapus-laporan" data-id="${dr.id}"><i class="ti ti-trash"></i></button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary btn-finalisasi-laporan" data-id="${dr.id}"><i class="ti ti-key"></i></button>
+                                    </span>
+                                    <span class="badge rounded-pill text-bg-danger fs-2">belum finalisasi</span>`;
+                        if(dr.is_kirim){
+                            var verifikasi_hasil = '<span class="badge rounded-pill text-bg-warning fs-2">belum diverifikasi</span>';
+                            if(dr.verifikasi_hasil){
+                                verifikasi_hasil=(dr.verifikasi_hasil==1)?`<span class="badge rounded-pill text-bg-success fs-2">MS</span>`:`<span class="badge rounded-pill text-bg-info fs-2">Final</span>`;
+                            }
+                            tombol = verifikasi_hasil;
+                        }
 
-                let verifikator_laporan = '';
-                if (sk_penerima.verifikator_laporan?.length > 0) {
-                    verifikator_laporan = `<ul id="daftar-verifikator">${sk_penerima.verifikator_laporan.map(v => `<li>${v.user.name}</li>`).join('')}</ul>`;
+                        laporan_upload+=`
+                            <li class="mb-2">
+                                ${dr.keterangan}
+                                <div>
+                                    <a href="${base_url}/${dr.path}" target="_blank"><i class="ti ti-download"></i> ${filename}</a>
+                                    ${tombol}
+                                </div>
+                            </li>`;                    
+                    });
+                    laporan_upload+=`</ul>`;
                 }
 
+                const contoh_format = (dt.path_format)?`<a href="${base_url}/${dt.path_format}" target="_blank" class="btn btn-sm btn-outline-primary">download contoh format</a>`:``;
+
                 const row = `<tr>
-                            <td>${no++}</td>
-                            <td>${sk_penerima.tanggal_sk.substring(0, 4)}</td>
-                            <td>${sk_penerima.nama} <div>${monitoring}</div></td>
-                            <td>${sk_penerima.nomor_sk}/ ${sk_penerima.tanggal_sk}</td>
-                            <td>${renderSelectRekening(dt)}</td>
-                            <td><a href="${base_url}/laporan-penerima-beasiswa/${sk_penerima.id}" class="btn btn-secondary btn-sm"><iconify-icon icon="solar:notebook-linear" class="fs-5"></iconify-icon> Laporan</a></td>
-                        </tr>`;
+                                <td>${no++}</td>
+                                <td>${dt.nama}</td>
+                                <td>${dt.bukti}</td>
+                                <td>
+                                    ${dt.keterangan}
+                                    <div>${contoh_format}</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <div class="mb-2">                                        
+                                        <button class="btn btn-outline-primary btn-sm btn-upload-file" data-sub_kegiatan_id="${dt.id}" data-penerima_id="${penerima_id}">
+                                            <i class="ti ti-upload"></i> Upload ${dt.nama}  
+                                        </button>   
+                                    </div>
+                                    <div>${laporan_upload}</div>
+                                </td>
+                            </tr>`;
                 dataList.append(row);
             });
             renderPagination(response.data, pagination);
@@ -186,28 +213,62 @@
             loadDataSK();
         });
 
+        $(document).on('click','.btn-hapus-laporan', function(){
+            const id=$(this).attr('data-id');
+            deleteData(`${endpoint}`, id, function() {
+                appShowNotification(true,['berhasil dilakukan!']);
+                loadSubKegiatan();
+            });
+        });
+
+        $(document).on('click','.btn-finalisasi-laporan', async function(){
+            const id=$(this).attr('data-id');
+            if(confirm("yakin finalisasi upload dokumen ini ?")){
+                const response = await execAsync(`${base_url}/api/finalisasi-laporan/${id}`, 'GET', token);
+                if(response.status){
+                    appShowNotification(true,['berhasil dilakukan!']);
+                    loadSubKegiatan();
+                }
+            }
+        });
+
         $('#btn-refresh-sk').click(function() {
             loadDataSK();
         });
 
-        $(document).on('change','.pilih_nomor_rekening',function(){            
-            const select = $(this);
+        $(document).on("click", ".btn-upload-file", function () {
+            const subKegiatanId = $(this).data("sub_kegiatan_id");
+            const penerimaId = $(this).data("penerima_id");
 
-            if(confirm('apakah anda ingin mengganti nomor rekening ?')){
-                const id = select.attr('data-id');
-                const val = select.val();
-                const url = base_url + '/api/ganti-nomor-rekening/' + id;
-                const dataForm = { buku_rekening_id: val };
+            $("#path")
+                .off("change")
+                .on("change", function (e) {
+                    let path = e.target.files[0];
+                    if (!path) return;
 
-                saveData(url, "PUT", dataForm, function(response) {
-                    appShowNotification(true, ['berhasil dilakukan!']);
-                    select.attr('data-old',val);
-                });
-            } else {
-                // reset ke default
-                select.val(select.attr('data-old'));
-            }
+                    let keterangan = "";
+                    while (!keterangan) {
+                        keterangan = prompt("Masukkan keterangan (wajib diisi):");
+                        if (keterangan === null) return;
+                    }
+
+                    let formData = new FormData();
+                    formData.append("path", path);
+                    formData.append("sub_kegiatan_id", subKegiatanId);
+                    formData.append("penerima_id", penerimaId);
+                    formData.append("keterangan", keterangan);
+
+                    saveData(endpoint, 'POST', formData, function(response) {
+                        appShowNotification(true, ['Upload berhasil!']);
+                        loadSubKegiatan();
+                    });
+
+                })
+                .click();
         });
+
+
+
 
     });
 

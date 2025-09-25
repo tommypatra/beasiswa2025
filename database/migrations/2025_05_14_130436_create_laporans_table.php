@@ -16,7 +16,8 @@ return new class extends Migration
 
             $table->boolean('verifikasi_hasil')->nullable();
             $table->decimal('verifikasi_skor', 5, 2)->nullable();
-            $table->text('verifikasi_catatan')->nullable();
+            $table->string('verifikasi_catatan', 180)->nullable();
+            $table->string('keterangan', 180)->nullable();
 
             $table->boolean('is_kirim')->nullable();
             $table->enum('path_jenis', ['url', 'link'])->nullable();

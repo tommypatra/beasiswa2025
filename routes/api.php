@@ -257,6 +257,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
 
 
         Route::resource('admin-peserta-wawancara', PesertaWawancaraController::class);
+        Route::delete('hapus-contoh-format-laporan/{id}', [SubKegiatanController::class, 'hapusContohFormatLaporan']);
     });
 
     Route::middleware(['cek.akses:mahasiswa'])->group(function () {
@@ -279,6 +280,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::put('batalkan-pendaftaran/{id}', [PendaftarController::class, 'pembatalan']);
         Route::put('pendaftaran-selesai/{id}', [PendaftarController::class, 'pendaftaranSelesai']);
         Route::put('daftar-kembali/{id}', [PendaftarController::class, 'daftarKembali']);
+        Route::get('finalisasi-laporan/{id}', [LaporanController::class, 'finalisasiLaporan']);
 
         Route::put('ganti-nomor-rekening/{id}', [PenerimaController::class, 'gantiNomorRekening']);
     });

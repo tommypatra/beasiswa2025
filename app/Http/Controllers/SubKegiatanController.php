@@ -6,6 +6,7 @@ use App\Models\SubKegiatan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\SubKegiatanRequest;
 use App\Http\Resources\SubKegiatanResource;
 
@@ -55,7 +56,12 @@ class SubKegiatanController extends Controller
     {
         try {
             DB::beginTransaction();
-            $data = SubKegiatan::create($request->validated());
+            $data_save = $request->validated();
+            if ($request->hasFile('path_format')) {
+                $data_save['path_format'] = upload($request->file('path_format'), 'path_format');
+            }
+
+            $data = SubKegiatan::create($data_save);
             DB::commit();
             return response()->json(['status' => true, 'message' => 'data baru berhasil dibuat', 'data' => $data], 201);
         } catch (\Exception $e) {
@@ -93,12 +99,40 @@ class SubKegiatanController extends Controller
         try {
             DB::beginTransaction();
             $data = SubKegiatan::where('id', $id)->firstOrFail();
-            $data->update($request->validated());
+
+            $data_save = $request->validated();
+            if ($request->hasFile('path_format')) {
+                // Hapus file lama jika ada
+                if ($data->path_format && Storage::disk('public')->exists($data->path_format)) {
+                    Storage::disk('public')->delete($data->path_format);
+                }
+                $data_save['path_format'] = upload($request->file('path_format'), 'path_format');
+            }
+
+            $data->update($data_save);
             DB::commit();
             return response()->json(['status' => true, 'message' => 'berhasil diperbarui', 'data' => $data], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat memperbarui : ' . $e->getMessage(), 'data' => null], 500);
+        }
+    }
+
+    public function hapusContohFormatLaporan(string $id)
+    {
+        try {
+            DB::beginTransaction();
+            $data = SubKegiatan::where('id', $id)->firstOrFail();
+            $path_format = $data->path_format;
+            $data->update(['path_format' => '']);
+            DB::commit();
+            if ($path_format && Storage::disk('public')->exists($path_format)) {
+                Storage::disk('public')->delete($path_format);
+            }
+            return response()->json(null, 204);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat menghapus : ' . $e->getMessage(), 'data' => null], 500);
         }
     }
 

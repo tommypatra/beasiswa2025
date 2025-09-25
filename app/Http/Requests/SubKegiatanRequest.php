@@ -45,6 +45,7 @@ class SubKegiatanRequest extends FormRequest
                 'integer',
                 'exists:kegiatans,id'
             ],
+            'path_format' => 'nullable|file|max:4048',
         ];
     }
 
@@ -59,6 +60,7 @@ class SubKegiatanRequest extends FormRequest
             'kegiatan_id' => 'kegiatan',
             'urut'   => 'urut data',
             'nilai' => 'nilai',
+            'path_format' => 'contoh format',
         ];
     }
 }

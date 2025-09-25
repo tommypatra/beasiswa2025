@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('sub_kegiatans', function (Blueprint $table) {
             $table->id();
             $table->string('nama', 100)->nullable();
+            $table->string('path_format', 160)->nullable();
             $table->string('tingkat', 100)->nullable();
             $table->string('pjp', 100)->nullable();
             $table->string('bukti', 180)->nullable();

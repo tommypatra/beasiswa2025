@@ -68,7 +68,18 @@ class SkPenerimaController extends Controller
     public function show(string $id)
     {
         try {
-            $dataQuery = SkPenerima::with(['monitoring.kegiatan', 'verifikatorLaporan.user'])->firstOrFail();
+            // $user_id = auth()->user()->id;
+
+            $dataQuery = SkPenerima::with([
+                'monitoring.kegiatan',
+                'verifikatorLaporan.user',
+                'penerima' => function ($q) {
+                    $q->where('user_id', auth()->user()->id);
+                },
+            ])->whereHas('penerima', function ($q) {
+                $q->where('user_id', auth()->id());
+            })->firstOrFail();
+
             return response()->json([
                 'status' => true,
                 'message' => 'Data ditemukan',
