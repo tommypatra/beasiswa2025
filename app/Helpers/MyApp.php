@@ -155,8 +155,7 @@ if (!function_exists('validasiPendaftaran')) {
         $data['pendidikan_akhir'] = true;
 
         if ($beasiswa->perlu_data_orang_tua) {
-            // $data['orang_tua'] = ($user->orangTua) ? true : false;
-            $data['orang_tua'] = ($user->orangTua && !empty($user->orangTua->tanggungan));
+            $data['orang_tua'] = ($user->orangTua && ($user->orangTua->tanggungan >= 0));
         }
 
         if ($beasiswa->perlu_data_nilai_raport) {
