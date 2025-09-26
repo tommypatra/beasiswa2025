@@ -175,11 +175,12 @@ if (!function_exists('validasiPendaftaran')) {
 
 
         if ($beasiswa->perlu_data_rumah) {
-            $data['rumah'] = ($user->rumah && !empty($user->rumah->foto_rumah));
+            $data['rumah'] = (bool) $user->rumah;
+            // $data['rumah'] = ($user->rumah && !empty($user->rumah->foto_rumah));
         }
         if ($beasiswa->perlu_data_pendidikan_akhir) {
-            // $data['pendidikan_akhir'] = (bool) $user->pendidikanAkhir;
-            $data['pendidikan_akhir'] = ($user->pendidikanAkhir && !empty($user->pendidikanAkhir->foto_ijazah));
+            $data['pendidikan_akhir'] = (bool) $user->pendidikanAkhir;
+            // $data['pendidikan_akhir'] = ($user->pendidikanAkhir && !empty($user->pendidikanAkhir->foto_ijazah));
         }
 
         $tahun_lulus_sma = ($user->pendidikanAkhir) ? $user->pendidikanAkhir->tahun_lulus : "";
