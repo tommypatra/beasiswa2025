@@ -78,7 +78,7 @@
                 <div class="col-lg-12 mb-3">
                     <label class="form-label">Foto Rumah</label>
                     <input type="file" id="foto_rumah" name="foto_rumah" class="form-control" accept="application/pdf">
-                    <div>upload pdf foto rumah minimal memuat : Rumah Bagian Depan, Ruang Tamu dan Dapur</div>
+                    <div>upload pdf foto rumah minimal memuat : Rumah Bagian Depan, Ruang Tamu dan Dapur <b>(boleh kosong)</b></div>
                     <div id="download_foto_rumah"></div>                    
                 </div>
             </div>
@@ -231,18 +231,18 @@
         });
 
         $("#form").validate({
-            rules: {
-                foto_rumah: {
-                    required: function() {
-                        return $('#id').val() === '';
-                    }
-                }
-            },
-            messages: {
-                foto_rumah: {
-                    required: "Foto rumah wajib diupload.",
-                }
-            },
+            // rules: {
+            //     foto_rumah: {
+            //         required: function() {
+            //             return $('#id').val() === '';
+            //         }
+            //     }
+            // },
+            // messages: {
+            //     foto_rumah: {
+            //         required: "Foto rumah wajib diupload.",
+            //     }
+            // },
             submitHandler: function(form,event) {
                 event.preventDefault();
                 const id = $('#id').val();

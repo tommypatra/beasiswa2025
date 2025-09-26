@@ -21,7 +21,7 @@
             <input type="hidden" id="id" name="id">
             <div class="alert alert-primary" role="alert">
                 Untuk nilai akhir wajib diisi dengan 0 - 100, jika ada koma cara mengisinya ganti dengan titik contoh : 89.78
-                <br>Wajib mengupload ijazah asli atau fotocopy pdf yg sudah dilegalisir ukurang maksimal 3MB
+                <br>ijazah ukuran maksimal 3MB (boleh kosong)
             </div>
 
             <div class="row">
@@ -89,7 +89,7 @@
                     <div class="col-lg-12 mb-3">
                         <label class="form-label">Upload Ijazah serta Nilai</label>
                         <input type="file" id="foto_ijazah" name="foto_ijazah" class="form-control" accept="application/pdf">
-                        <div>upload pdf ijazah dan nilai ijazah</div>
+                        <div>upload pdf ijazah dan nilai ijazah <b>(boleh kosong)</b></div>
                         <div id="download_foto_ijazah"></div>                    
                     </div>
                 </div>
@@ -164,18 +164,18 @@
 
         //validasi dan save, jika id ada maka PUT/edit jika tidak ada maka POST/simpan baru
         $("#form").validate({
-            rules: {
-                foto_ijazah: {
-                    required: function() {
-                        return $('#id').val() === '';
-                    }
-                }
-            },
-            messages: {
-                foto_ijazah: {
-                    required: "Ijazah wajib diupload.",
-                }
-            },
+            // rules: {
+            //     foto_ijazah: {
+            //         required: function() {
+            //             return $('#id').val() === '';
+            //         }
+            //     }
+            // },
+            // messages: {
+            //     foto_ijazah: {
+            //         required: "Ijazah wajib diupload.",
+            //     }
+            // },
             submitHandler: function(form,event) {
                 event.preventDefault();
                 const id = $('#id').val();
