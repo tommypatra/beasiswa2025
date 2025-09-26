@@ -31,7 +31,8 @@ class PendidikanAkhirRequest extends FormRequest
             'nisn' => 'required|numeric',
             'tahun_lulus' => 'required|numeric',
             'nilai_akhir_lulus' => 'required|numeric',
-            'foto_ijazah' => ($isCreate ? 'required' : 'nullable') . '|file|mimes:pdf|max:4096',
+            'foto_ijazah' => 'nullable|file|mimes:pdf|max:4096',
+            // 'foto_ijazah' => ($isCreate ? 'required' : 'nullable') . '|file|mimes:pdf|max:4096',
 
         ];
     }

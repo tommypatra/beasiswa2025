@@ -55,7 +55,12 @@ class PendidikanAkhirController extends Controller
             DB::beginTransaction();
             $data_save = $request->validated();
             $data_save['user_id'] = auth()->user()->id;
-            $data_save['foto_ijazah'] = upload($request->file('foto_ijazah'), 'foto_ijazah');
+
+            // $data_save['foto_ijazah'] = upload($request->file('foto_ijazah'), 'foto_ijazah');
+            if ($request->hasFile('foto_ijazah')) {
+                $data_save['foto_ijazah'] = upload($request->file('foto_ijazah'), 'foto_ijazah');
+            }
+
 
             $data = PendidikanAkhir::create($data_save);
             DB::commit();

@@ -32,7 +32,8 @@ class RumahRequest extends FormRequest
             'bayar_listrik_id' => 'required|numeric',
             'sumber_air_id' => 'required|numeric',
             'sumber_listrik_id' => 'required|numeric',
-            'foto_rumah' => ($isCreate ? 'required' : 'nullable') . '|file|mimes:pdf|max:4096',
+            // 'foto_rumah' => ($isCreate ? 'required' : 'nullable') . '|file|mimes:pdf|max:4096',
+            'foto_rumah' => 'nullable|file|mimes:pdf|max:4096',
         ];
     }
 

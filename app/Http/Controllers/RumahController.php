@@ -59,10 +59,10 @@ class RumahController extends Controller
             $data_save = $request->validated();
 
             $data_save['user_id'] = auth()->user()->id;
-
-            // if ($request->hasFile('foto_rumah')) {
-            $data_save['foto_rumah'] = upload($request->file('foto_rumah'), 'foto_rumah');
-            // }
+            // $data_save['foto_rumah'] = upload($request->file('foto_rumah'), 'foto_rumah');
+            if ($request->hasFile('foto_rumah')) {
+                $data_save['foto_rumah'] = upload($request->file('foto_rumah'), 'foto_rumah');
+            }
 
             $data = Rumah::create($data_save);
             DB::commit();
