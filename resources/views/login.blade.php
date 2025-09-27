@@ -21,7 +21,7 @@
         border-radius: 6px;
         font-weight: bold;
         font-size: 14px;
-        z-index: 9999;
+        z-index: 99999;
         display: none; 
         box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         transition: opacity 0.3s ease;

@@ -20,7 +20,7 @@
         border-radius: 6px;
         font-weight: bold;
         font-size: 14px;
-        z-index: 9999;
+        z-index: 99999;
         display: none; 
         box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         transition: opacity 0.3s ease;
@@ -231,7 +231,7 @@
   <!-- solar icons -->
   <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
   <script src="{{ asset('js/sweetalert2/dist/sweetalert2.min.js')}}"></script>
-  <script src="{{ asset('js/app.js?v=15') }}"></script>
+  <script src="{{ asset('js/app.js?v=20') }}"></script>
   <script>
     const token = localStorage.getItem('access_token');
     function forceLogout(){

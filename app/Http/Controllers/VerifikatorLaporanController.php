@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Laporan;
+use App\Models\Penerima;
 use App\Models\SkPenerima;
 use Illuminate\Http\Request;
 use App\Models\VerifikatorLaporan;
@@ -10,6 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\SkPenerimaResource;
 use App\Http\Requests\VerifikatorLaporanRequest;
 use App\Http\Resources\VerifikatorLaporanResource;
+use App\Http\Resources\DaftarPenerimaVerifikasiResource;
 
 class VerifikatorLaporanController extends Controller
 {
@@ -54,7 +57,56 @@ class VerifikatorLaporanController extends Controller
         return response()->json($dataRespon);
     }
 
-    public function daftarVerifikasi(Request $request)
+    public function daftarPenerimaVerifikasi(Request $request, $sk_penerima_id)
+    {
+        // $dataQuery = Penerima::with(['laporan.subKegiatan', 'user.identitas', 'user.mahasiswa.programStudi.Fakultas'])
+        //     ->where('sk_penerima_id', $sk_penerima_id)
+        //     ->whereHas('laporan', function ($q) {
+        //         $q->whereNull('verifikasi_hasil');
+        //     })
+        //     ->orderBy('id', 'asc');
+
+        $dataQuery = Laporan::with([
+            'penerima.user.identitas',
+            'penerima.user.mahasiswa.programStudi.fakultas',
+            'subKegiatan'
+        ])->whereHas('penerima', function ($q) use ($sk_penerima_id) {
+            $q->where('sk_penerima_id', $sk_penerima_id);
+        })->whereNull('verifikasi_hasil')->orderBy('id', 'asc');
+
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $dataQuery->where(function ($query) use ($search) {
+                $query->whereHas('penerima.user', function ($q) use ($search) {
+                    $q->where('name', 'like', "%$search%");
+                });
+                // $query->whereHas('penerima.user', function ($q) use ($search) {
+                //     $q->where('name', 'like', "%$search%");
+                // })->orWhereHas('subKegiatan', function ($q) use ($search) {
+                //     $q->where('nama', 'like', "%$search%");
+                // });
+            });
+        }
+
+        $default_limit = env('DEFAULT_LIMIT', 30);
+        $limit = $request->filled('limit') ? $request->limit : $default_limit;
+        $data = $dataQuery->paginate($limit);
+        $resourceCollection = $data->getCollection()->map(function ($item) {
+            return new DaftarPenerimaVerifikasiResource($item);
+        });
+        $data->setCollection($resourceCollection);
+
+        $dataRespon = [
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ];
+        return response()->json($dataRespon);
+    }
+
+    public function daftarSkVerifikasi(Request $request)
     {
         $dataQuery = SkPenerima::with(['verifikatorLaporan'])
             ->withCount('penerima')

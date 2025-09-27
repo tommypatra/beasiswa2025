@@ -442,6 +442,44 @@ function initTimeInput(selector) {
     });
 }
 
+async function openPdf(container, urlPdf) {
+    container.innerHTML = ''; 
+
+    if (!urlPdf || urlPdf.trim() === '') {
+        container.innerHTML = '<p style="color:red;">Tidak ada file diupload.</p>';
+        return;
+    }
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+    try {
+        const pdf = await pdfjsLib.getDocument(urlPdf).promise;
+        const totalPages = pdf.numPages;
+
+        for (let pageNumber = 1; pageNumber <= totalPages; pageNumber++) {
+            const page = await pdf.getPage(pageNumber);
+            const viewport = page.getViewport({ scale: 1.2 });
+
+            const canvas = document.createElement('canvas');
+            canvas.style.width = '100%';
+            container.appendChild(canvas);
+
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            const context = canvas.getContext('2d');
+            const renderContext = { canvasContext: context, viewport: viewport };
+
+            await page.render(renderContext).promise;
+        }
+    } catch (error) {
+        container.innerHTML = `<p style="color:red;">Gagal memuat dokumen PDF</p>`;
+        console.error('PDF load error:', error);
+    }
+}
+
+
 function getWhatsAppLink(isMobile, phone, message) {
     const nomorFormatted = formatNoHpIndo(phone); 
     const nomorForUrl = nomorFormatted.replace('+', '');    

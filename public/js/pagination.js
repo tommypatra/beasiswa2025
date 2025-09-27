@@ -43,7 +43,7 @@ function renderPagination(response, paginationElement) {
         
         // Menampilkan jumlah data
         var totalData = response.total;
-        pagination.append('<li class="page-item disabled"><span class="page-link">Total Data: ' + totalData + '</span></li>');
+        pagination.append('<li class="page-item disabled"><span class="page-link">Total: ' + totalData + '</span></li>');
     }
 }
 

@@ -239,8 +239,10 @@
 @section('scriptJs')
 <script src="{{ asset('js/crud.js') }}"></script>
 <script src="{{ asset('js/pagination.js') }}"></script>
+<script src="{{ asset('js/gambar.js') }}"></script>
 <script src="{{ asset('js/jquery-validation-1.19.5/dist/jquery.validate.min.js')}}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js"></script>
 
 <script type="text/javascript">
     const endpoint = base_url+'/api/verifikasi-berkas';
@@ -257,52 +259,6 @@
 
     $(document).ready(function() {
         dataLoad();
-
-
-        async function openPdf(container, urlPdf) {
-            container.innerHTML = ''; // Bersihkan isi elemen dulu
-            // Cek apakah URL PDF tersedia
-            if (!urlPdf || urlPdf.trim() === '') {
-                container.innerHTML = '<p style="color:red;">Tidak ada file diupload.</p>';
-                return;
-            }
-
-            // Set worker PDF.js
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-
-            try {
-                const pdf = await pdfjsLib.getDocument(urlPdf).promise;
-                const totalPages = pdf.numPages; // Dapatkan jumlah total halaman
-
-                // Buat kontainer untuk menampung canvas per halaman
-                for (let pageNumber = 1; pageNumber <= totalPages; pageNumber++) {
-                    const page = await pdf.getPage(pageNumber);
-                    const viewport = page.getViewport({
-                        scale: 1.5
-                    });
-
-                    // Buat canvas untuk setiap halaman
-                    const canvas = document.createElement('canvas');
-                    canvas.style.width = '100%';
-                    container.appendChild(canvas);
-
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
-
-                    const context = canvas.getContext('2d');
-                    const renderContext = {
-                        canvasContext: context,
-                        viewport: viewport
-                    };
-
-                    // Render halaman
-                    await page.render(renderContext).promise;
-                }
-            } catch (error) {
-                container.innerHTML = `<p style="color:red;">Gagal memuat dokumen PDF</p>`;
-                console.error('PDF load error:', error);
-            }
-        }
 
         function renderData(response) {
             const dataList = $('#data-list');
@@ -597,7 +553,15 @@
                                     <div class="accordion-body">                                        
                                         <p>Deskripsi : ${data.deskripsi}</p>
                                         <p>${contohPath}</p>
-                                        <div id="dokumen-embed" style="margin-top:10px; height:400px; width:100%; border:1px solid #ccc; overflow:auto;"></div>                                        
+                                        <div id="kontrol-gambar" style="text-align:center; margin-top:10px; display:none;">
+                                            <button type="button" class="btn btn-sm btn-secondary" onclick="rotateImage(-90)">⟲ Putar Kiri</button>
+                                            <button type="button" class="btn btn-sm btn-secondary" onclick="rotateImage(90)">⟳ Putar Kanan</button>
+                                            <button type="button" class="btn btn-sm btn-secondary" onclick="zoomImage(1.2)">🔍 Zoom In</button>
+                                            <button type="button" class="btn btn-sm btn-secondary" onclick="zoomImage(0.8)">🔎 Zoom Out</button>
+                                        </div>                                        
+                                        <div id="dokumen-embed" 
+                                            style="margin-top:10px; height:500px; width:100%; border:1px solid #ccc; overflow:auto;">
+                                        </div>
                                     </div>
                                 </div>
                             </div>`;   
@@ -633,11 +597,21 @@
 
                 
                 $('#download-dokumen').html(`<a href="${url}" class="btn btn-success mt-2" target="_blank">Download Manual</a>`);
+                rotation = 0;
+                scale = 1;
 
                 if(jenis=='pdf'){
+                    $('#kontrol-gambar').hide();
                     openPdf(document.getElementById('dokumen-embed'), url);
                 }else{
-                    $('#dokumen-embed').html(`<img src="${url}">`)
+                    $('#dokumen-embed').html(`
+                        <div style="text-align:center;">
+                            <img id="preview-img" src="${url}" 
+                            style="max-width:95%; display:block; margin:0 auto; transition: transform 0.3s;"
+                        >
+                        </div>                    
+                    `);
+                    $('#kontrol-gambar').show();
                 }
                 // dokumenEmbed = (jenis === "pdf") ?
                 //     `<object data="${url}" type="application/pdf" width="100%" height="500px">

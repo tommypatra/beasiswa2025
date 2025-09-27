@@ -187,7 +187,9 @@ Route::middleware('jwt.auth.refresh')->group(function () {
 
 
 
-        Route::get('verifikasi-laporan/daftar', [VerifikatorLaporanController::class, 'daftarVerifikasi']);
+
+        Route::get('verifikasi-laporan/penerima/{sk_penerima_id}', [VerifikatorLaporanController::class, 'daftarPenerimaVerifikasi']);
+        Route::get('verifikasi-laporan/daftar', [VerifikatorLaporanController::class, 'daftarSkVerifikasi']);
 
         Route::put('pengelola/registasi-peserta-wawancara/{id}', [PesertaWawancaraController::class, 'registasiPeserta']);
         Route::get('pengelola/peserta-verifikasi', [VerifikatorPendaftarController::class, 'pesertaVerifikasi']);
