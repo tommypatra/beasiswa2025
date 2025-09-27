@@ -600,7 +600,7 @@
                 rotation = 0;
                 scale = 1;
 
-                if(jenis=='pdf'){
+                if (data.upload_syarat.dokumen.endsWith('.pdf')) {
                     $('#kontrol-gambar').hide();
                     openPdf(document.getElementById('dokumen-embed'), url);
                 }else{
