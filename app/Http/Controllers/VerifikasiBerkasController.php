@@ -29,6 +29,11 @@ class VerifikasiBerkasController extends Controller
                     $query->whereNotNull('hasil');
                 }
             ])
+            ->where(function ($query) use ($request) {
+                $query->WhereHas('beasiswa', function ($q) use ($request) {
+                    $q->where('is_aktif', 1);
+                });
+            })
             ->where('user_id', auth()->user()->id)
             ->orderBy('beasiswa_id', 'asc')
             ->orderBy('user_id', 'asc');
@@ -93,7 +98,7 @@ class VerifikasiBerkasController extends Controller
             $data = VerifikasiBerkas::create($request->validated());
 
 
-            
+
             DB::commit();
             return response()->json(['status' => true, 'message' => 'data baru berhasil dibuat', 'data' => $data], 201);
         } catch (\Exception $e) {

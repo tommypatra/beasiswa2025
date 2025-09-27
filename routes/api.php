@@ -185,6 +185,10 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::resource('verifikator-penerima', VerifikatorPenerimaController::class);
         Route::resource('verifikator-laporan', VerifikatorLaporanController::class);
 
+
+
+        Route::get('verifikasi-laporan/daftar', [VerifikatorLaporanController::class, 'daftarVerifikasi']);
+
         Route::put('pengelola/registasi-peserta-wawancara/{id}', [PesertaWawancaraController::class, 'registasiPeserta']);
         Route::get('pengelola/peserta-verifikasi', [VerifikatorPendaftarController::class, 'pesertaVerifikasi']);
         Route::get('data-peserta-lulus/{beasiswa_id}/{sk_penerima_id}', [KelulusanController::class, 'dataPesertaLulus']);

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\VerifikatorLaporan;
+use App\Models\SkPenerima;
 use Illuminate\Http\Request;
+use App\Models\VerifikatorLaporan;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\SkPenerimaResource;
 use App\Http\Requests\VerifikatorLaporanRequest;
 use App\Http\Resources\VerifikatorLaporanResource;
 
@@ -51,6 +53,45 @@ class VerifikatorLaporanController extends Controller
         ];
         return response()->json($dataRespon);
     }
+
+    public function daftarVerifikasi(Request $request)
+    {
+        $dataQuery = SkPenerima::with(['verifikatorLaporan'])
+            ->withCount('penerima')
+            ->withCount(['penerima as laporan_pending_count' => function ($q) {
+                $q->whereHas('laporan', function ($q2) {
+                    $q2->whereNull('verifikasi_hasil');
+                });
+            }])
+            ->whereHas('verifikatorLaporan', function ($q2) {
+                $q2->where('user_id', auth()->user()->id);
+            })
+            ->orderBy('tanggal_sk', 'desc')->orderBy('nama', 'asc');
+
+        if ($request->filled('search')) {
+            $dataQuery->where('nama', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('sk_penerima_id')) {
+            $dataQuery->where('id', $request->sk_penerima_id);
+        }
+
+        $default_limit = env('DEFAULT_LIMIT', 30);
+        $limit = $request->filled('limit') ? $request->limit : $default_limit;
+        $data = $dataQuery->paginate($limit);
+        $resourceCollection = $data->getCollection()->map(function ($item) {
+            return new SkPenerimaResource($item);
+        });
+        $data->setCollection($resourceCollection);
+
+        $dataRespon = [
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ];
+        return response()->json($dataRespon);
+    }
+
 
     /**
      * Store a newly created resource in storage.

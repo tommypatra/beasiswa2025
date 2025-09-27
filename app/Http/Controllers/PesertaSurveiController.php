@@ -41,7 +41,11 @@ class PesertaSurveiController extends Controller
                 'surveipeserta as peserta_valid' => function ($query) {
                     $query->whereNotNull('hasil');
                 }
-            ])
+            ])->where(function ($query) use ($request) {
+                $query->WhereHas('beasiswa', function ($q) use ($request) {
+                    $q->where('is_aktif', 1);
+                });
+            })
             ->where('user_id', auth()->user()->id)
             ->orderBy('beasiswa_id', 'asc')
             ->orderBy('user_id', 'asc');

@@ -38,3 +38,14 @@
         </div>
     </a>
 </li>
+<li class="sidebar-item menu-pengelola">
+    <a class="sidebar-link justify-content-between" 
+        href="{{ route('verifikasi-laporan') }}" aria-expanded="false">
+        <div class="d-flex align-items-center gap-3">
+        <span class="d-flex">
+            <iconify-icon icon="solar:checklist-minimalistic-outline" class=""></iconify-icon>
+        </span>
+        <span class="hide-menu">Verifikasi Laporan</span>
+        </div>
+    </a>
+</li>

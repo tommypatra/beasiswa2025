@@ -61,10 +61,16 @@ class PewawancaraController extends Controller
     public function cetakWawancara(Request $request, $beasiswa_id)
     {
 
-        $dataQuery = PesertaWawancara::with(['pewawancara.user', 'wawancaraNilai', 'pendaftar.mahasiswa.user.identitas', 'pendaftar.mahasiswa.programStudi.fakultas'])
+        $dataQuery = PesertaWawancara::with(['beasiswa', 'pewawancara.user', 'wawancaraNilai', 'pendaftar.mahasiswa.user.identitas', 'pendaftar.mahasiswa.programStudi.fakultas'])
             ->whereHas('pendaftar', function ($q) use ($request) {
                 $q->where('beasiswa_id', $request->beasiswa_id);
+            })
+            ->where(function ($query) use ($request) {
+                $query->WhereHas('beasiswa', function ($q) use ($request) {
+                    $q->where('is_aktif', 1);
+                });
             });
+
 
         if ($request->sort == 1) {
             $dataQuery->orderBy('pendaftar_id', 'asc')

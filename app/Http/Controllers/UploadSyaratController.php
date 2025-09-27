@@ -110,7 +110,11 @@ class UploadSyaratController extends Controller
             return response()->json(['status' => true, 'message' => 'data baru berhasil dibuat', 'data' => $data], 201);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat membuat data baru: ' . $e->getMessage()], 500);
+            $pesan_salah = $e->getMessage();
+            if ($e->getCode() == 23000) {
+                $pesan_salah = "Hapus dulu dokumen upload sebelumnya, setelah itu upload lagi kembali.";
+            }
+            return response()->json(['status' => false, 'message' => 'Terjadi kesalahan saat membuat data baru: ' . $pesan_salah], 500);
         }
     }
 

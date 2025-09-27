@@ -29,6 +29,11 @@ class WebController extends Controller
         return view('login_sia');
     }
 
+    public function verifikasiLaporan()
+    {
+        return view('app.verifikasi_laporan');
+    }
+
     public function cetakDataPendaftar($id)
     {
         return view('cetak.cetak_data_pendaftar', ['beasiswa_id' => $id]);

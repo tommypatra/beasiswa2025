@@ -69,7 +69,7 @@ Route::get('/dashboard-beasiswa/{beasiswa_id}', [WebController::class, 'dashboar
 Route::get('/registrasi-peserta', [WebController::class, 'registrasiPeserta'])->name('registrasi-peserta');
 Route::get('/verifikasi-peserta', [WebController::class, 'verifikasiPeserta'])->name('verifikasi-peserta');
 
-
+Route::get('/verifikasi-laporan', [WebController::class, 'verifikasiLaporan'])->name('verifikasi-laporan');
 Route::get('/import-penerima-beasiswa/{sk_penerima_id}', [WebController::class, 'importPenerimaBeasiswa'])->name('import-penerima-beasiswa');
 Route::get('/laporan-penerima-beasiswa/{sk_penerima_id}', [WebController::class, 'laporanPenerimaBeasiswa'])->name('laporan-penerima-beasiswa');
 
