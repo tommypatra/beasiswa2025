@@ -15,9 +15,9 @@
 
 @section('container')
 
-        <div class="alert alert-primary" role="alert">
-            Buku rekening di isi ketika anda sudah dinyatakan lulus pada suatu seleksi beasiswa!
-        </div>
+<div class="alert alert-primary" role="alert">
+    Buku rekening di isi ketika anda sudah dinyatakan lulus pada seleksi beasiswa!
+</div>
 
 <div class="card">
     <div class="card-body">

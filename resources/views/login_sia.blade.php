@@ -60,7 +60,7 @@
 
                 <form id="login-form">
                   <div class="mb-3">
-                    <label for="user" class="form-label">User</label>
+                    <label for="user" class="form-label">User AKUN SIA</label>
                     <input type="text" class="form-control" id="user" name="user" required>
                   </div>
                   <div class="mb-4">

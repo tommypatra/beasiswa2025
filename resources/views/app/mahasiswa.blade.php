@@ -33,7 +33,8 @@
                     </div>
                     <div class="col-sm-6 mb-3">
                         <label class="form-label">NIM</label>
-                        <input name="nim" id="nim" type="text" class="form-control" required>
+                        <input name="nim" id="nim" type="text" class="form-control" disabled required>
+                        jika nim anda salah, hubungi admin untuk merubah
                     </div>
                     <div class="col-sm-12 mb-3">
                         <label class="form-label">Program Studi</label>

@@ -24,7 +24,15 @@ class PesertaWawancaraController extends Controller
     public function wawancara(Request $request)
     {
         // 1. Beasiswa user sebagai verifikator
-        $beasiswaIds = Verifikator::where('user_id', auth()->id())->pluck('beasiswa_id');
+        $beasiswa = Verifikator::with(['beasiswa'])->where('user_id', auth()->id());
+        if (!$request->filled('show_all')) {
+            $beasiswa->where(function ($query) {
+                $query->whereHas('beasiswa', function ($q) {
+                    $q->where('is_aktif', 1);
+                });
+            });
+        }
+        $beasiswaIds = $beasiswa->pluck('beasiswa_id');
 
         // 3. Query beasiswa yang user jadi verifikator
         $dataQuery = Beasiswa::with('user')

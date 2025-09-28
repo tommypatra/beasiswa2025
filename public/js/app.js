@@ -128,6 +128,15 @@ function disableForm(disabled=true,formEl='#myForm'){
     $(formEl + ' input[type="submit"], ' + formEl + ' button').prop('disabled', disabled);
 }
 
+$(document).on('input', '.uppercase', function() {
+    $(this).val($(this).val().toUpperCase());
+});
+
+$(document).on('input', '.numberonly', function() {
+    this.value = this.value.replace(/[^0-9]/g, ''); 
+});
+
+
 function showHideModal(el,status=true){
     if(status){
         let myModalForm = new bootstrap.Modal(document.getElementById(el), {

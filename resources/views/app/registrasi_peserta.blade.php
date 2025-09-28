@@ -148,9 +148,6 @@
                                     </td>
                                     <td>
                                         <span class="badge rounded-pill fs-2 fw-medium bg-secondary-subtle text-secondary">Jumlah Peserta : ${dt.total_pendaftar}</span>
-                                        <hr>
-                                        <span class="badge rounded-pill fs-2 fw-medium bg-success-subtle text-success">Sudah Registrasi : ${dt.peserta_registrasi}</span>
-                                        <span class="badge rounded-pill fs-2 fw-medium bg-danger-subtle text-danger">Belum Registrasi : ${dt.total_pendaftar-dt.peserta_registrasi}</span>
                                     </td>
                                     <td class="text-center">
                                         <div class="d-flex flex-column align-items-center gap-2">

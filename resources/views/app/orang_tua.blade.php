@@ -32,7 +32,7 @@
                 <div class="row">
                     <div class="col-lg-6 mb-3">
                         <label class="form-label">Nama</label>
-                        <input name="bapak_nama" id="bapak_nama" type="text" class="form-control" required>
+                        <input name="bapak_nama" id="bapak_nama" type="text" class="form-control uppercase" required>
                     </div>
                 </div>
                 <div class="row">
@@ -65,7 +65,7 @@
                 <div class="row">
                     <div class="col-lg-6 mb-3">
                         <label class="form-label">Nama</label>
-                        <input name="ibu_nama" id="ibu_nama" type="text" class="form-control" required>
+                        <input name="ibu_nama" id="ibu_nama" type="text" class="form-control uppercase" required>
                     </div>
                 </div>
                 <div class="row">

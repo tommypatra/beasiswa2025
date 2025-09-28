@@ -386,6 +386,7 @@ td, th {
 
         // Handle page change
         $('#btn-terapkan-filter').click(function() {
+            page=1;
             dataLoad();
         });
 

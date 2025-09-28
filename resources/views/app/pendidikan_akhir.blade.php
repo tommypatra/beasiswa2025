@@ -42,13 +42,13 @@
                 </div>
                 <div class="col-lg-4 mb-3">
                     <label class="form-label">NISN</label>
-                    <input name="nisn" id="nisn" type="text" class="form-control" required>
+                    <input name="nisn" id="nisn" type="text" class="form-control uppercase" required>
                 </div>
             </div>
             <div class="row">
                 <div class="col-lg-9 mb-3">
                     <label class="form-label">Nama Sekolah</label>
-                    <input name="nama_sekolah" id="nama_sekolah" type="text" class="form-control" required>
+                    <input name="nama_sekolah" id="nama_sekolah" type="text" class="form-control uppercase" required>
                 </div>
 
                 <div class="col-lg-3 mb-3">
@@ -113,10 +113,6 @@
     var page = 1;
     $(document).ready(function() {
         dataLoad();
-
-        $(document).on('input', 'input[type="text"]', function() {
-            $(this).val($(this).val().toUpperCase());
-        });
 
         function renderData(ada,data){
             if (ada) {

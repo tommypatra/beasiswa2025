@@ -14,6 +14,11 @@
 
 @section('container')
 
+<div class="alert alert-info" role="alert">
+    Halaman ini untuk mengatur nomor rekening yang digunakan saat pencairan bantuan beasiswa, serta untuk mengupload laporan <b>bagi mahasiswa yang lulus seleksi beasiswa</b>
+</div>
+
+
 <div class="card">
     <div class="card-body">
         <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">
@@ -35,7 +40,7 @@
                         <th width="20%">Perihal/ Monitoring Beasiswa</th>
                         <th width="15%">Nomor/ Tanggal SK</th>
                         <th width="20%">Nomor Rekening</th>
-                        <th width="5%">Aksi</th>
+                        <th width="5%"></th>
                     </tr>
                 </thead>
                 <tbody id="data-list">
@@ -107,20 +112,25 @@
         if (data.length > 0) {
             $.each(data, function(index, dt) {
                 const sk_penerima = dt.sk_penerima;
-                const monitoring=(sk_penerima.monitoring)?`<span class="badge rounded-pill bg-primary fs-2">${sk_penerima.monitoring.nama}</span>`:"";
+
+                let monitoring="";
+                let btn_laporan="";
+                if(sk_penerima.monitoring){
+                    monitoring=`<span class="badge rounded-pill bg-primary fs-2">${sk_penerima.monitoring.nama}</span>`;
+                    btn_laporan=`<a href="${base_url}/laporan-penerima-beasiswa/${sk_penerima.id}" class="btn btn-secondary btn-sm"><iconify-icon icon="solar:notebook-linear" class="fs-5"></iconify-icon> Laporan</a>`;
+                }
 
                 let verifikator_laporan = '';
                 if (sk_penerima.verifikator_laporan?.length > 0) {
                     verifikator_laporan = `<ul id="daftar-verifikator">${sk_penerima.verifikator_laporan.map(v => `<li>${v.user.name}</li>`).join('')}</ul>`;
                 }
-
                 const row = `<tr>
                             <td>${no++}</td>
                             <td>${sk_penerima.tanggal_sk.substring(0, 4)}</td>
                             <td>${sk_penerima.nama} <div>${monitoring}</div></td>
                             <td>${sk_penerima.nomor_sk}/ ${sk_penerima.tanggal_sk}</td>
                             <td>${renderSelectRekening(dt)}</td>
-                            <td><a href="${base_url}/laporan-penerima-beasiswa/${sk_penerima.id}" class="btn btn-secondary btn-sm"><iconify-icon icon="solar:notebook-linear" class="fs-5"></iconify-icon> Laporan</a></td>
+                            <td>${btn_laporan}</td>
                         </tr>`;
                 dataList.append(row);
             });

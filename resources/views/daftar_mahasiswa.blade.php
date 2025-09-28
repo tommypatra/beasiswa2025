@@ -70,10 +70,11 @@
                                         <div class="col-sm-6 mb-3">
                                             <label class="form-label">Password Login</label>
                                             <input name="password" id="password" type="password" class="form-control" required minlength="8">
+                                            <span>minimal 8 huruf/angka</span>
                                         </div>
                                         <div class="col-sm-7 mb-3">
                                             <label class="form-label">Nama</label>
-                                            <input name="name" id="name" type="text" class="form-control" required minlength="3">
+                                            <input name="name" id="name" type="text" class="form-control uppercase" required minlength="3">
                                         </div>
                                         <div class="col-sm-5 mb-3">
                                             <label class="form-label">Jenis Kelamin</label>
@@ -85,7 +86,7 @@
                                         </div>
                                         <div class="col-sm-4 mb-3">
                                             <label class="form-label">Tempat Lahir</label>
-                                            <input name="tempat_lahir" id="tempat_lahir" type="text" class="form-control" required>
+                                            <input name="tempat_lahir" id="tempat_lahir" type="text" class="form-control uppercase" required>
                                         </div>
                                         <div class="col-sm-4 mb-3">
                                             <label class="form-label">Tanggal Lahir</label>
@@ -98,16 +99,16 @@
                                         <div class="col-sm-4 mb-3">
                                             <label class="form-label">Kota/ Kabupaten</label>
                                             <input name="wilayah_kabupaten" id="wilayah_kabupaten" data-id="" type="text" class="form-control" required>
-                                            wajib ketik dan pilih
+                                            wajib ketik, contoh kendari dan pilih kendari
                                         </div>
                                         <div class="col-sm-4 mb-3">
                                             <label class="form-label">Kelurahan/ Desa</label>
                                             <input name="wilayah_desa" id="wilayah_desa" data-id="" type="text" class="form-control" required>
-                                            wajib ketik dan pilih
+                                            wajib ketik, contoh mandonga dan pilih mandonga
                                         </div>
                                         <div class="col-sm-4 mb-3">
                                             <label class="form-label">Nomor HP/WA</label>
-                                            <input name="no_hp" id="no_hp" type="text" class="form-control" required>
+                                            <input name="no_hp" id="no_hp" type="text" class="form-control numberonly" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-4 mb-3">
@@ -140,13 +141,13 @@
                                     </div>
                                     <div class="col-lg-4 mb-3">
                                         <label class="form-label">NISN</label>
-                                        <input name="nisn" id="nisn" type="text" class="form-control" required minlength="10">
+                                        <input name="nisn" id="nisn" type="text" class="form-control numberonly" required minlength="10">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-9 mb-3">
                                         <label class="form-label">Nama Sekolah</label>
-                                        <input name="nama_sekolah" id="nama_sekolah" type="text" class="form-control" required>
+                                        <input name="nama_sekolah" id="nama_sekolah" type="text" class="form-control uppercase" required>
                                     </div>
                                     <div class="col-lg-3 mb-3">
                                         <label class="form-label">Akreditasi</label>
@@ -178,8 +179,8 @@
                                     </div>
                                     <div class="col-lg-4 mb-3">
                                         <label class="form-label">Nilai Akhir</label>
-                                        <input name="nilai_akhir_lulus" id="nilai_akhir_lulus" type="text" class="form-control" required>
-                                        <div style="font-style: italic">rata rata nilai pada ujian nasional di Ijazah/SKHU/SKL</div>
+                                        <input name="nilai_akhir_lulus" id="nilai_akhir_lulus" type="number" class="form-control" required>
+                                        <div style="font-style: italic">total/rata rata nilai pada ujian nasional di Ijazah/SKHU/SKL, jika biladan desimal maka koma ganti dengan . contoh 91.47</div>
                                     </div>
                                 </div>
                             </form>                    
@@ -191,7 +192,7 @@
                                 <div class="row">
                                     <div class="col-lg-6 mb-3">
                                         <label class="form-label">Nama</label>
-                                        <input name="bapak_nama" id="bapak_nama" type="text" class="form-control" required>
+                                        <input name="bapak_nama" id="bapak_nama" type="text" class="form-control uppercase" required>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -224,7 +225,7 @@
                                 <div class="row">
                                     <div class="col-lg-6 mb-3">
                                         <label class="form-label">Nama</label>
-                                        <input name="ibu_nama" id="ibu_nama" type="text" class="form-control" required>
+                                        <input name="ibu_nama" id="ibu_nama" type="text" class="form-control uppercase" required>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -273,11 +274,13 @@
                                 <div class="row">
                                     <div class="col-lg-4 mb-3">
                                         <label class="form-label">Luas Tanah</label>
-                                        <input name="luas_tanah" id="luas_tanah" type="text" class="form-control" required>
+                                        <input name="luas_tanah" id="luas_tanah" type="number" class="form-control" required>
+                                        contoh : 120
                                     </div>
                                     <div class="col-lg-4 mb-3">
                                         <label class="form-label">Luas Bangunan</label>
-                                        <input name="luas_bangunan" id="luas_bangunan" type="text" class="form-control" required>
+                                        <input name="luas_bangunan" id="luas_bangunan" type="number" class="form-control" required>
+                                        contoh : 90
                                     </div>
                                 </div>
                                 <div class="row">
@@ -367,7 +370,7 @@
     <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js" integrity="sha256-AlTido85uXPlSyyaZNsjJXeCs07eSv3r43kyCVc8ChI=" crossorigin="anonymous"></script>
     <script src="{{ asset('js/jquery-validation-1.19.5/dist/jquery.validate.min.js')}}"></script>
     <script src="{{ asset('js/sweetalert2/dist/sweetalert2.min.js')}}"></script>
-    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/app.js?v=20') }}"></script>
   
     <script>
       
@@ -471,6 +474,40 @@
                 }
             }
 
+            jQuery.validator.addMethod("phoneID", function(value, element) {
+                return this.optional(element) || /^(\+62|62|0)8[1-9][0-9]{6,11}$/.test(value);
+            }, "Nomor HP tidak valid");
+
+            //filter wilayah
+            $("#wilayah_desa").on("blur", function(){
+                let desaId = $(this).attr("data-id");
+                if(!desaId){
+                    $("#wilayah_desa").focus();
+                    $(this).val(""); // kosongkan isi text
+                }
+            });
+
+            $("#wilayah_kabupaten").on("blur", function(){
+                let kabupaten_id = $(this).attr("data-id");
+                if(!kabupaten_id){
+                    $("#wilayah_kabupaten").focus();
+                    $(this).val(""); // kosongkan isi text
+                }
+            });
+
+            // reset data-id setiap kali user mengetik manual
+            $("#wilayah_kabupaten").on("input", function(){
+                $(this).attr("data-id", "");
+
+                $('#wilayah_desa').attr("data-id", "");
+                $('#wilayah_desa').val("");
+            });
+
+            // reset data-id setiap kali user mengetik manual
+            $("#wilayah_desa").on("input", function(){
+                $(this).attr("data-id", "");
+            });
+
             
             function daftar() {
                 let formData = new FormData();
@@ -483,8 +520,9 @@
                         formData.append($(this).attr("name"), $(this).val());
                     }
                 });
-                formData.append("wilayah_desa_id", $('#wilayah_desa').data("id"));
-
+                formData.append("wilayah_desa_id", $('#wilayah_desa').attr("data-id"));
+                const email_input = $('#email').val();
+                const pass_input = $('#password').val();
                 $.ajax({
                     url: base_url+'/api/simpan-pendaftaran-mahasiswa',
                     type: 'POST',
@@ -494,8 +532,8 @@
                     dataType: 'json',
                     success: function(response) {
                         // appShowNotification(true,['berhasil dilakukan! silahkan login menggunakan akun anda']);
-                        alert('pendaftaran berhasil dilakukan! silahkan login menggunakan akun anda');
-                        window.location.replace(base_url+'/login');
+                        alert(`pendaftaran berhasil dilakukan! silahkan login menggunakan akun anda, email : ${email_input} dan password ${pass_input}`);
+                        window.location.replace(base_url+'/login-email');
                     },
                     error: function(xhr, status, error) {
                         let notif="Terjadi kesalahan. Silakan coba lagi!";
@@ -537,18 +575,46 @@
                                 return "true";                            
                             }
                         }
+                    },
+                    no_hp: {
+                        required: true,
+                        phoneID: true
                     }
                 },
                 messages: {
                     email: {
                         remote: "Email sudah terdaftar"
+                    },
+                    no_hp: {
+                        required: "Nomor HP wajib diisi",
+                        phoneID: "Nomor HP tidak valid (contoh: 0812xxxxxxx)"
                     }
                 },
                 errorPlacement: function (error, element) {
                     error.insertAfter(element);
                 }
             });
-            $("#form-step-2").validate();
+            $("#form-step-2").validate({
+                rules: {
+                    nilai_akhir_lulus: {
+                        required: true,
+                        number: true,
+                        min: 0,   // minimal 0
+                        max: 100  // maksimal 100
+                    }
+                },
+                messages: {
+                    nilai_akhir_lulus: {
+                        required: "Nilai wajib diisi",
+                        number: "Harus berupa angka",
+                        min: "Nilai minimal 0",
+                        max: "Nilai maksimal 100"
+                    }
+                },
+                errorPlacement: function (error, element) {
+                    error.insertAfter(element);
+                }
+            });
             $("#form-step-3").validate();
             $("#form-step-4").validate();
             $("#form-step-5").validate({
@@ -678,9 +744,6 @@
 
             //------------------ js untuk form 2
 
-            $('#nama_sekolah').on('input', function() {
-                $(this).val($(this).val().toUpperCase());
-            });
 
             //------------------ js untuk form mahasiswa
 

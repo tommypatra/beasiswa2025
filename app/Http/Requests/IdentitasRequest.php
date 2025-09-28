@@ -30,7 +30,7 @@ class IdentitasRequest extends FormRequest
             'no_hp' => 'required|string',
             'alamat' => 'required|string',
             'inisial' => 'nullable|string',
-            'name' => 'required|string',
+            'name' => ($isCreate ? 'required' : 'nullable') . '|string',
             'wilayah_desa_id' => 'required|numeric',
             'foto' => ($isCreate ? 'required' : 'nullable') . '|file|mimes:jpg,png,jpeg|max:2048',
         ];

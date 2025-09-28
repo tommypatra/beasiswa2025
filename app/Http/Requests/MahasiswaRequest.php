@@ -24,7 +24,7 @@ class MahasiswaRequest extends FormRequest
         // $id = $this->route('mahasiswa');
         $isCreate = $this->isMethod('post');
         return [
-            'nim' => 'required|string',
+            'nim' => ($isCreate ? 'required' : 'nullable') . '|string',
             'tahun_masuk' => 'required|numeric',
             'ukt' => 'required|numeric',
             'program_studi_id' => 'required|numeric',

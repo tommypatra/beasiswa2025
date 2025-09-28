@@ -39,7 +39,8 @@
                     </div>
                     <div class="col-sm-7 mb-3">
                         <label class="form-label">Nama</label>
-                        <input name="name" id="name" type="text" class="form-control" required>
+                        <input name="name" id="name" type="text" class="form-control" disabled required>
+                        jika nama anda salah, hubungi admin untuk merubah
                     </div>
                     <div class="col-sm-5 mb-3">
                         <label class="form-label">Jenis Kelamin</label>
@@ -51,7 +52,7 @@
                     </div>
                     <div class="col-sm-4 mb-3">
                         <label class="form-label">Tempat Lahir</label>
-                        <input name="tempat_lahir" id="tempat_lahir" type="text" class="form-control" required>
+                        <input name="tempat_lahir" id="tempat_lahir" type="text" class="form-control uppercase" required>
                     </div>
                     <div class="col-sm-4 mb-3">
                         <label class="form-label">Tanggal Lahir</label>
@@ -81,7 +82,7 @@
                     </div>
                     <div class="col-sm-4 mb-3">
                         <label class="form-label">Nomor HP/WA</label>
-                        <input name="no_hp" id="no_hp" type="text" class="form-control" required>
+                        <input name="no_hp" id="no_hp" type="text" class="form-control numberonly" required>
                     </div>
                 </div>
                 <div class="col-lg-4 mb-3">
@@ -183,6 +184,10 @@
             dateFormat: "yy-mm-dd",
         });
 
+        jQuery.validator.addMethod("phoneID", function(value, element) {
+            return this.optional(element) || /^(\+62|62|0)8[1-9][0-9]{6,11}$/.test(value);
+        }, "Nomor HP tidak valid");
+
         $('#foto').on('change', function(event) {
             let file = event.target.files[0];
             if (file) {
@@ -202,6 +207,10 @@
         //validasi dan save, jika id ada maka PUT/edit jika tidak ada maka POST/simpan baru
         $("#form").validate({
             rules: {
+                no_hp: {
+                    required: true,
+                    phoneID: true
+                },
                 foto: {
                     required: function() {
                         return $('#identitas_id').val() === '';
@@ -209,6 +218,10 @@
                 }
             },
             messages: {
+                no_hp: {
+                    required: "Nomor HP wajib diisi",
+                    phoneID: "Nomor HP tidak valid (contoh: 0812xxxxxxx)"
+                },
                 foto: {
                     required: "Foto wajib diupload.",
                 }
