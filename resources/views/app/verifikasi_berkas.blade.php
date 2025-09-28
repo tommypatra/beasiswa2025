@@ -541,7 +541,7 @@
             }    
 
             let data = data_syarat[syarat_index];
-            let contohPath = data.contoh ? `<a href="${base_url}/${data.contoh}" target="_blank">Contoh Format Dokumen</a>` : "";
+            let contohPath = data.contoh ? `<a href="${base_url}/${data.contoh}" class="btn btn-sm btn-success mt-2" target="_blank">Contoh Format Dokumen</a>` : "";
             let wajib = (data.is_wajib) ? `Wajib` : `Pilihan`;
             // let dokumenEmbed=`Tidak Mengupload Dokumen`;
             $(`#verifikasi_berkas_skor`).val('');
