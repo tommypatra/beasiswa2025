@@ -8,6 +8,11 @@ class Laporan extends Model
 {
     protected $guarded = ["id"];
 
+    public function verifikator()
+    {
+        return $this->belongsTo(UserRole::class);
+    }
+
     public function penerima()
     {
         return $this->belongsTo(Penerima::class);

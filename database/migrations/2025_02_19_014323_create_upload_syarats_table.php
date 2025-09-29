@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('verifikasi_lapangan_catatan')->nullable();
             $table->decimal('verifikasi_berkas_skor', 5, 2)->nullable();
             $table->decimal('verifikasi_lapangan_skor', 5, 2)->nullable();
-            $table->string('dokumen', 160)->nullable();
+            $table->string('dokumen', 160);
             $table->foreignId('pendaftar_id')->nullable();
             $table->foreign('pendaftar_id')->references('id')->on('pendaftars')->restrictOnDelete();
             $table->foreignId('syarat_id')->nullable();

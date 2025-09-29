@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Laporan;
 use App\Models\Penerima;
+use App\Models\UserRole;
 use App\Models\SkPenerima;
 use Illuminate\Http\Request;
 use App\Models\VerifikatorLaporan;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SkPenerimaResource;
+use App\Http\Requests\SimpanVerifikasiRequest;
 use App\Http\Requests\VerifikatorLaporanRequest;
 use App\Http\Resources\VerifikatorLaporanResource;
 use App\Http\Resources\DaftarPenerimaVerifikasiResource;
@@ -185,6 +187,28 @@ class VerifikatorLaporanController extends Controller
     /**
      * Update the specified resource in storage.
      */
+
+
+    public function simpanHasilVerifikasi(SimpanVerifikasiRequest $request, string $id)
+    {
+        try {
+            DB::beginTransaction();
+            $verifikator_id = UserRole::where('user_id', auth()->user()->id)
+                ->where("role_id", 4)->first();
+
+            $data = Laporan::where('id', $id)->firstOrFail();
+            $data_save = $request->validated();
+            $data_save['verifikator_id'] = $verifikator_id->id;
+
+            $data->update($data_save);
+            DB::commit();
+            return response()->json(['status' => true, 'message' => 'berhasil diperbarui', 'data' => $data], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat memperbarui : ' . $e->getMessage(), 'data' => null], 500);
+        }
+    }
+
     public function update(VerifikatorLaporanRequest $request, string $id)
     {
         try {

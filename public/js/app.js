@@ -136,6 +136,9 @@ $(document).on('input', '.numberonly', function() {
     this.value = this.value.replace(/[^0-9]/g, ''); 
 });
 
+function setFormEnabled(selector, state) {
+    $(selector).find(':input, button').prop('disabled', !state);
+}
 
 function showHideModal(el,status=true){
     if(status){

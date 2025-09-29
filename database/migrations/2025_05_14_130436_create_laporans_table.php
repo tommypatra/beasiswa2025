@@ -22,6 +22,8 @@ return new class extends Migration
             $table->boolean('is_kirim')->nullable();
             $table->enum('path_jenis', ['url', 'link'])->nullable();
             $table->string('path', 180)->nullable();
+            $table->foreignId('verifikator_id')->nullable();
+            $table->foreign('verifikator_id')->references('id')->on('user_roles')->restrictOnDelete();
             $table->foreignId('penerima_id')->nullable();
             $table->foreign('penerima_id')->references('id')->on('penerimas')->restrictOnDelete();
             $table->foreignId('sub_kegiatan_id')->nullable();

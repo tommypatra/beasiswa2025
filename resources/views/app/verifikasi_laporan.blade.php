@@ -59,8 +59,6 @@
 <!-- MULAI MODAL -->
 <div class="modal fade modal" id="modal-form" role="dialog">
     <div class="modal-dialog modal-xl">
-        <form id="form-verifikasi">
-            <input type="hidden" name="id" id="id" >
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" >Verifikasi Laporan <span class="judul-modal"></span></h5>
@@ -92,20 +90,20 @@
                                     <div id="laporan-detail" class="mb-3"></div>
                                     
                                     <form id="form-penilaian">
-                                        <input type="hidden" id="laporan_id" name="laporan_id">  
+                                        <input type="hidden" id="laporan_id" name="id">  
                                         <h6>Penilaian:</h6>
                                         <div class="mb-2">
                                             <select class="form-select" id="verifikasi_hasil" name="verifikasi_hasil" required>
                                                 <option value="">- pilih -</option>
-                                                <option value="sangat sesuai">Sangat Sesuai</option>
-                                                <option value="sesuai">Sesuai</option>
-                                                <option value="kurang sesuai">Kurang Sesuai</option>
-                                                <option value="tidak sesuai">Tidak Sesuai</option>
+                                                <option value="3">Sangat Sesuai</option>
+                                                <option value="2">Sesuai</option>
+                                                <option value="1">Kurang Sesuai</option>
+                                                <option value="0">Tidak Sesuai</option>
                                             </select>
                                         </div>
                                         <div class="mb-2">
                                             <textarea class="form-control" 
-                                                    rows="3" id="keterangan" name="keterangan"
+                                                    rows="3" id="verifikasi_catatan" name="verifikasi_catatan"
                                                     placeholder="Tambahkan keterangan (opsional)"></textarea>
                                         </div>
                                         <button type="submit" class="btn btn-primary btn-simpan-nilai">
@@ -122,7 +120,6 @@
                     <button type="button" class="btn btn-outline-primary " data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
-        </form>
     </div>
 </div>
 <!-- AKHIR MODAL -->
@@ -143,11 +140,6 @@
     var page_sk = 1;
     var page_penerima = 1;
     var daftar_penerima;
-    $(document).ready(function() {
-        $(".datepicker").datepicker({
-            dateFormat: "yy-mm-dd",
-        });
-    });
 
     async function loadDataSK() {
         let search = $('#search-input').val();
@@ -187,19 +179,19 @@
         }
     }    
 
-    //untuk show modal form
-    function showModalVerifikasi() {
-        var fModalForm = new bootstrap.Modal(document.getElementById('modal-form'), {
-            keyboard: false
-        });
-        fModalForm.show();
-    }
-
 
     $(document).ready(function() {
         initPage();
         async function initPage() { // agar di load secara berurutan
             await loadDataSK();
+        }
+
+        //untuk show modal form
+        function showModalVerifikasi() {
+            var fModalForm = new bootstrap.Modal(document.getElementById('modal-form'), {
+                keyboard: false
+            });
+            fModalForm.show();
         }
 
         $('#search-input').on('keypress', async function(e) {
@@ -287,6 +279,7 @@
             e.preventDefault();
             const index = $(this).data('index');
             const peserta = getPesertaByIndex(index);
+
             if (peserta) {
                 renderLaporanDetail(peserta); // tampilkan laporan di kanan
             }
@@ -295,6 +288,11 @@
         function renderLaporanDetail(peserta) {
             const container = $('#laporan-detail');
             container.empty();
+            
+            $('#verifikasi_hasil').val('');
+            $('#verifikasi_catatan').val('');
+            $('#laporan_id').val('');
+
 
             let html = `
                 <div class="d-flex align-items-center mb-3">
@@ -326,9 +324,11 @@
             `;
 
             container.html(html);
-
+            
             if (peserta.path) {
+                setFormEnabled('#form-penilaian',true);
                 const url = `${base_url}/${peserta.path}`;
+                $('#laporan_id').val(peserta.laporan_id);
                 $('#download-dokumen').html(
                     `<a href="${url}" class="btn btn-success" target="_blank">Download Manual</a>`
                 );
@@ -349,6 +349,7 @@
                     $('#kontrol-gambar').show();
                 }
             } else {
+                setFormEnabled('#form-penilaian',false);
                 $('#dokumen-embed').html('<p class="text-muted">Tidak ada dokumen</p>');
             }
         }
@@ -396,29 +397,28 @@
             loadDataSK();
         });     
 
-        function formSkReset(){
-            $('#form-sk').trigger('reset');
-            $('#form-sk input[type="hidden"]').val('');
-        }  
-
-        //validasi dan save, jika id ada maka PUT/edit jika tidak ada maka POST/simpan baru
-        $("#form-sk").validate({
+        //validasi dan save mode edit semua
+        $("#form-penilaian").validate({
+            rules: {
+                verifikasi_catatan: {
+                    required: function () {
+                        return $("#verifikasi_hasil").val() === "0";
+                    }                
+                }
+            },
+            messages: {
+                verifikasi_catatan: {
+                    required: "Catatan wajib diisi jika hasil Tidak Sesuai"
+                }
+            },            
             submitHandler: function(form) {
-                const id = $('#form-sk #id').val();
-                const type = (id === '') ? 'POST' : 'PUT';
-                const url = (id === '') ? '/api/sk-penerima' : '/api/sk-penerima/' + id;
-
-                console.log(id,type,url)
-
+                const id = $('#laporan_id').val();
+                const type = 'PUT';
+                const url = '/api/verifikasi-laporan/simpan/' + id;
                 saveData(base_url+url, type, $(form).serialize(), function(response) {                    
                     appShowNotification(true,['berhasil dilakukan!']);
-                    if(type=='POST'){
-                        formSkReset();
-                    }           
-                    loadDataSK();
-
+                    loadDataPesertaVerifikasi();
                 });
-
             }
         });
 

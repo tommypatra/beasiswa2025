@@ -35,19 +35,29 @@ if (!function_exists('daftarAkses')) {
 if (!function_exists('upload')) {
     function upload($file, $folder)
     {
+        if (!$file) {
+            return null;
+        }
+
         $ext = $file->getClientOriginalExtension();
-        $namaFile = time() . '_' . uniqid() . '.' . $ext;
-        // $namaFile = time() . '_' . $file->getClientOriginalName(); // Nama unik
+        $userId = auth()->check() ? auth()->id() : 'guest';
+        $namaFile = $userId . '_' . time() . '_' . uniqid() . '.' . $ext;
 
         $path_dokumen = $folder . '/' . date('Y');
         if (!Storage::disk('public')->exists($path_dokumen)) {
             Storage::disk('public')->makeDirectory($path_dokumen);
         }
+
         $path = $file->storeAs($path_dokumen, $namaFile, 'public');
-        return 'storage/' . $path;
-        // return Storage::url($path);
+
+        if (Storage::disk('public')->exists($path)) {
+            return 'storage/' . $path;
+        }
+
+        return null;
     }
 }
+
 
 if (!function_exists('dataWilayah')) {
     function dataWilayah($desa_id)
