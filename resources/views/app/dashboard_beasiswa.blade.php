@@ -74,9 +74,35 @@
             </table>
         </div>
       </div>
+
+      <div class="card">
+        <div class="card-body pb-0 d-flex justify-content-between align-items-center">
+            <h4 class="fs-4 mb-1 card-title">Rekap Berdasarkan Kabupaten</h4>
+            <select id="filter-rekap-kabupaten" class="form-select w-auto">
+                <option value="">Semua</option>
+                <option value="pendaftar">Proses Pendaftar</option>
+                <option value="selesai">Pendaftaran Selesai</option>
+                <option value="lulus_berkas">Lulus Berkas</option>
+                <option value="penerima">Penerima Beasiswa</option>
+            </select>          
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead class="fs-4">
+                    <tr>
+                        <th class="fs-3">NO</th>
+                        <th class="fs-3">KABUPATEN/KOTA</th>
+                        <th class="fs-3">JUMLAH</th>
+                    </tr>
+                </thead>
+                <tbody id="data-list-rekap"></tbody>
+            </table>
+        </div>
+    </div>
+
     </div>
     <div class="col-lg-3">
-      @include('app/menu_beasiswa')
+        @include('app/menu_beasiswa')
     </div>
 </div>
 
@@ -91,6 +117,7 @@
         initPage();
         async function initPage() {
             await loadDataBeasiswa();
+            await loadRekapKabupaten();
         }
 
         async function loadDataBeasiswa() {
@@ -98,9 +125,51 @@
             const response = await execAsync(`${url}`, 'GET', token);
             let beasiswa=response.data;
             $('#label-beasiswa').html(`<h4>${beasiswa.nama}</h4>`);
-
         }
 
+        async function loadRekapKabupaten() {
+            let url = `${base_url}/api/get-rekap-kabupaten/${id}`;
+            let status = $('#filter-rekap-kabupaten').val(); 
+            if (status) {
+                url += `?status=${status}`;
+            }
+            const response = await execAsync(`${url}`, 'GET', token);
+            renderDataKabupaten(response);
+        }
+
+        function renderDataKabupaten(response) {
+            const dataList = $('#data-list-rekap');
+            const data = response.data;
+            dataList.empty();
+            if (data.length > 0) {
+                let no=1;
+                let total=0;
+                $.each(data, function(index, dt) {
+                    const row = `<tr>
+                                <td width="3%">${no++}</td>
+                                <td>${dt.kabupaten}</td>
+                                <td width="15%">${dt.total}</td>
+                            </tr>`;
+                    total+=dt.total;
+                    dataList.append(row);
+                });
+                const row = `<tr>
+                            <td width="3%"></td>
+                            <td>TOTAL</td>
+                            <td width="15%">${total}</td>
+                        </tr>`;
+                dataList.append(row);
+            }else{
+                const row = `<tr>
+                                <td colspan="3">data tidak ditemukan</td>
+                            </tr>`;
+                dataList.append(row);                
+            }
+        }    
+
+        $(document).on('change', '#filter-rekap-kabupaten', function() {
+            loadRekapKabupaten();
+        });
     })
 </script>
 @endsection

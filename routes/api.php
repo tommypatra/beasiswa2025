@@ -120,11 +120,10 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     Route::get('get-data-sk-penerima/{id}', [SkPenerimaController::class, 'show']);
     Route::get('get-data-sk-penerima-mahasiswa', [PenerimaController::class, 'skPenerimaMahasiswa']);
     Route::get('get-data-sk-beasiswa/{id}', [SkPenerimaController::class, 'skPenerimaMahasiswa']);
-
-
-
     Route::get('get-data-peserta-wawancara', [PesertaWawancaraController::class, 'index']);
     Route::get('get-data-dokumen-upload/{id}/', [UploadSyaratController::class, 'dataDokumenUpload']);
+
+    Route::get('get-rekap-kabupaten/{beasiswa_id}/', [PendaftarController::class, 'rekapKabupaten']);
 
     // Route::get('data-pekerjaan', [PekerjaanController::class, 'index']);
     // Route::get('data-pendapatan', [PendapatanController::class, 'index']);

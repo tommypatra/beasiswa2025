@@ -24,6 +24,55 @@ class PendaftarController extends Controller
      * Display a listing of the resource.
      */
 
+    public function rekapKabupaten(Request $request, $beasiswa_id)
+    {
+        $query = DB::table('pendaftars')
+            ->join('mahasiswas', 'pendaftars.mahasiswa_id', '=', 'mahasiswas.id')
+            ->join('users', 'mahasiswas.user_id', '=', 'users.id')
+            ->join('identitas', 'users.id', '=', 'identitas.user_id')
+            ->where('pendaftars.beasiswa_id', $beasiswa_id);
+
+        // filter status kalau ada
+        if ($request->filled('status')) {
+            switch ($request->status) {
+                case 'selesai':
+                    $query->where('pendaftars.is_finalisasi', 1);
+                    break;
+                case 'pendaftar':
+                    $query->where('pendaftars.is_finalisasi', '!=', 1)
+                        ->where('pendaftars.is_batal', '!=', 1);
+                    break;
+                case 'lulus_berkas':
+                    $query->whereExists(function ($q) {
+                        $q->select(DB::raw(1))
+                            ->from('verifikator_pendaftars')
+                            ->whereColumn('verifikator_pendaftars.pendaftar_id', 'pendaftars.id')
+                            ->where('verifikator_pendaftars.hasil', 1);
+                    });
+                    break;
+                case 'penerima':
+                    $query->whereExists(function ($q) {
+                        $q->select(DB::raw(1))
+                            ->from('kelulusans')
+                            ->whereColumn('kelulusans.pendaftar_id', 'pendaftars.id')
+                            ->where('kelulusans.is_lulus', 1);
+                    });
+                    break;
+            }
+        }
+
+        $rekap = $query->select('identitas.kabupaten', DB::raw('count(*) as total'))
+            ->groupBy('identitas.kabupaten')
+            ->orderBy('total', 'desc')
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Rekap per kabupaten berhasil diambil',
+            'data' => $rekap,
+        ]);
+    }
+
     public function daftarPendaftar(Request $request, $id_beasiswa)
     {
         $dataQuery = Pendaftar::with([
@@ -58,7 +107,7 @@ class PendaftarController extends Controller
                     break;
                 case 'belum':
                     $dataQuery->where(function ($query) {
-                        $query->where('is_finalisasi', 0)->where('is_batal', 0);
+                        $query->where('is_finalisasi', '!=', 1)->where('is_batal', '!=', 1);
                     });
                     break;
                 case 'batal':
