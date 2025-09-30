@@ -26,7 +26,7 @@
         <button class="btn btn-success" id="btn-refresh">
             <i class="ti ti-reload"></i>
         </button>
-        <button class="btn btn-success" id="btn-cetak-pendaftaran">
+        <button class="btn btn-success" id="btn-cetak-pendaftaran" disabled>
             <i class="ti ti-printer"></i> Cetak Bukti Pendaftaran
         </button>
     </div>
@@ -99,7 +99,12 @@ function renderData(data){
         $('#beasiswa-deskripsi').text(beasiswa.nama);
         $('#identitas-pendaftar').text(`Data Mahasiswa : ${localStorage.getItem('nama')}/ ${mahasiswa.nim}/ ${mahasiswa.program_studi_nama}`);
         siap_finaliasi=true;
+
         is_finalisasi=pendaftar.is_finalisasi;
+        if(is_finalisasi)
+            $('#btn-cetak-pendaftaran').prop('disabled', false);
+        else
+            $('#btn-cetak-pendaftaran').prop('disabled', true);
         $.each(syarat, function(index, dt) {
             var is_wajib=(dt.is_wajib)?`<span class="badge rounded-pill fs-2 bg-danger">wajib</span>`:`<span class="badge rounded-pill fs-2 bg-warning">tidak wajib</span>`;
             const contoh=(dt.contoh)?`<div class="mb-2"><i><a href="${base_url}/${dt.contoh}" target="_blank"><span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1">Download Contoh Format</span></a></i></div>`:"";
@@ -235,8 +240,8 @@ $(document).ready(function() {
     $(document).on('click', '#btn-pendaftaran-selesai', function(){
         const url = `${base_url}/api/pendaftaran-selesai/${id}`;
         if(confirm('Apakah anda yakin data dan dokumen pendaftaran telah lengkap, tidak ada perubahan dan selesai?')){
-            const selesai=prompt('Ketik dengan huruf kapital "SELESAI", maka pendaftaran akan dinyatakan selesai, final dan tidak bisa lagi diubah!');            
-            if(selesai==='SELESAI')
+            const selesai = prompt('Ketik dengan huruf kapital "SELESAI", maka pendaftaran akan dinyatakan selesai, final dan tidak bisa lagi diubah!');
+            if (selesai && selesai.trim().toLowerCase() === 'selesai')
                 saveData(url, 'PUT', null, function(response) {
                     //jika berhasil
                     appShowNotification(true,['Selamat pendaftaran telah selesai, silahkan cetak bukti pendaftaran!']);

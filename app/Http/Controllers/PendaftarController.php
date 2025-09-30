@@ -477,18 +477,18 @@ class PendaftarController extends Controller
             }
 
             //untuk data pewawancara
-            $data['pewawancara'] = null;
-            if ($data->beasiswa->ada_wawancara == 1) {
-                // cari pewawancara
-                $pewawancara_id = cariPewawancara($data->beasiswa_id);
-                if ($pewawancara_id) {
-                    $data_pewawancara = PesertaWawancara::firstOrCreate(
-                        ["pendaftar_id"   => $data->id], //cari dulu pendaftar_id, jika ada maka batalkan
-                        ["pewawancara_id" => $pewawancara_id]
-                    );
-                    $data['pewawancara'] = $data_pewawancara;
-                }
-            }
+            // $data['pewawancara'] = null;
+            // if ($data->beasiswa->ada_wawancara == 1) {
+            //     // cari pewawancara
+            //     $pewawancara_id = cariPewawancara($data->beasiswa_id);
+            //     if ($pewawancara_id) {
+            //         $data_pewawancara = PesertaWawancara::firstOrCreate(
+            //             ["pendaftar_id"   => $data->id], //cari dulu pendaftar_id, jika ada maka batalkan
+            //             ["pewawancara_id" => $pewawancara_id]
+            //         );
+            //         $data['pewawancara'] = $data_pewawancara;
+            //     }
+            // }
 
 
             DB::commit();

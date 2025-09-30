@@ -212,7 +212,40 @@ td, th {
 </div>
 <!-- AKHIR MODAL -->
 
-
+<!-- MULAI MODAL -->
+<div class="modal fade modal" id="modal-tukar" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <form id="form-tukar">
+            <input type="hidden" name="pewawancara_id" id="pewawancara_id" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-label">Tukar Peserta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12 mb-3">
+                            <div id="tukar-nama">Nama :</div>                            
+                            <div id="tukar-nim">NIM :</div>                            
+                            <div id="tukar-prodi">PRODI :</div>                            
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <label class="form-label">Pilih Pewawancara</label>
+                            <select id="data-pewawancara" class="form-control"></select>
+                        </div>
+                        <div class="col-sm-12 mb-3" id="daftar-peserta-tukar">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
+                    <button type="button" class="btn btn-outline-primary " data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- AKHIR MODAL -->
 
 @endsection
 
@@ -233,15 +266,47 @@ td, th {
         async function initPage() {
             await loadDataBeasiswa();
             await dataLoad();
-            await loadDataSelect('#program_studi_id', `data-program-studi`);
+            // await loadDataSelect('#program_studi_id', `data-program-studi`);
+            await loadPewawancara();
         }
 
         async function loadDataBeasiswa() {
-            let url = `${base_url}/api/get-data-beasiswa/${id}`;
+            const url = `${base_url}/api/get-data-beasiswa/${id}`;
             const response = await execAsync(`${url}`, 'GET', token);
             let beasiswa=response.data;
             $('#label-beasiswa').html(`<h4>${beasiswa.nama}</h4>`);
         }
+
+        async function loadPewawancara() {
+            const url = `${base_url}/api/daftar-pewawancara/${id}`;
+            const response = await execAsync(`${url}`, 'GET', token);
+            let select = $('#data-pewawancara');
+            select.empty();
+            if (response.status) {
+                select.append('<option value="">-- Pilih Pewawancara --</option>');
+                response.data.forEach(item => {
+                    select.append(`<option value="${item.id}">${item.user.name}</option>`);
+                });
+            } else {
+                console.error('Gagal load pewawancara:', response.message);
+            }        
+        }
+
+        $('#data-pewawancara').change(async function(){
+            const pewawancara_id = $(this).val();
+            const url = `${base_url}/api/daftar-peserta-wawancara/${pewawancara_id}`;
+            const response = await execAsync(`${url}`, 'GET', token);
+            // let select = $('#data-pewawancara');
+            // select.empty();
+            // if (response.status) {
+            //     select.append('<option value="">-- Pilih Pewawancara --</option>');
+            //     response.data.forEach(item => {
+            //         select.append(`<option value="${item.id}">${item.user.name}</option>`);
+            //     });
+            // } else {
+            //     console.error('Gagal load pewawancara:', response.message);
+            // }        
+        });
 
         $('#btn-cetak-rekap').click(function(){
             const url = `${base_url}/cetak-rekap-wawancara/${id}`;
@@ -283,6 +348,11 @@ td, th {
                             peserta += `<li>
                                             <div class="nama">
                                                 ${mahasiswa.user.name}
+                                                <a href="javascript:;" class="tukar-peserta-wawancara" data-id="${item.id}">
+                                                    <iconify-icon icon="solar:maximize-square-broken" class=""></iconify-icon>
+                                                </a>
+
+
                                                 <a href="javascript:;" class="hapus-peserta-wawancara" data-id="${item.id}">
                                                     <iconify-icon icon="solar:trash-bin-minimalistic-outline" class=""></iconify-icon>
                                                 </a>
@@ -424,6 +494,12 @@ td, th {
             page = $(this).data('page');
             dataLoad();
         });
+
+
+        $(document).on('click', '.tukar-peserta-wawancara', function() {
+            const id = $(this).data('id');
+            showModal('modal-tukar');
+        }); 
 
         $(document).on('click', '.hapus-peserta-wawancara', function() {
             const id = $(this).data('id');

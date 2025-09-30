@@ -109,6 +109,18 @@ class PesertaWawancaraController extends Controller
         return response()->json($dataRespon);
     }
 
+    public function daftarPesertaWawancara($pewawancara_id)
+    {
+        $dataQuery = PesertaWawancara::with(['pendaftar.mahasiswa.user'])->where('pewawancara_id', $pewawancara_id)->orderBy('id', 'asc');
+        $data = $dataQuery->get();
+        $dataRespon = [
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ];
+        return response()->json($dataRespon);
+    }
+
     public function index(Request $request)
     {
         $dataQuery = Pendaftar::with([

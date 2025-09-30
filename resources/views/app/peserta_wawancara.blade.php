@@ -330,8 +330,8 @@
             if (!tmpid) return;
             if (!confirm("Apakah anda yakin akan mengakhiri wawancara ini ?")) return;
 
-            let input = prompt("Ketik SELESAI untuk benar-benar mengakhiri sesi wawancara ini dan tidak bisa lagi dilakukan perubahan nilai !");
-            if (input !== "SELESAI") 
+            const selesai = prompt('Ketik SELESAI untuk benar-benar mengakhiri sesi wawancara ini dan tidak bisa lagi dilakukan perubahan nilai !');
+            if (selesai && selesai.trim().toLowerCase() !== 'selesai')
                 return alert("Proses dibatalkan. Ketik 'SELESAI' untuk mengakhiri.");
 
             const url = `${base_url}/api/akhiri-wawancara/${tmpid}`;

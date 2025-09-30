@@ -17,10 +17,23 @@ class PewawancaraController extends Controller
     /**
      * Display a listing of the resource.
      */
+    public function dataPewawancara($beasiswa_id)
+    {
+        $dataQuery = Pewawancara::with(['user'])->where('beasiswa_id', $beasiswa_id)->orderBy('beasiswa_id', 'asc')->orderBy('user_id', 'asc');
+        $data = $dataQuery->get();
+        $dataRespon = [
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ];
+        return response()->json($dataRespon);
+    }
+
+
     public function index(Request $request, $beasiswa_id)
     {
 
-        $dataQuery = Pewawancara::with(['beasiswa', 'user', 'pesertaWawancara.pendaftar.mahasiswa.user'])->where('beasiswa_id', $request->beasiswa_id)->orderBy('beasiswa_id', 'asc')->orderBy('user_id', 'asc');
+        $dataQuery = Pewawancara::with(['beasiswa', 'user', 'pesertaWawancara.pendaftar.mahasiswa.user'])->where('beasiswa_id', $beasiswa_id)->orderBy('beasiswa_id', 'asc')->orderBy('user_id', 'asc');
 
         if ($request->filled('search')) {
             $dataQuery->where(function ($query) use ($request) {
@@ -29,6 +42,14 @@ class PewawancaraController extends Controller
                 });
                 $query->orWhereHas('pesertaWawancara.pendaftar.mahasiswa.user', function ($q) use ($request) {
                     $q->where('name', 'like', '%' . $request->search . '%');
+                });
+            });
+        }
+
+        if ($request->filled('pewawancara_id')) {
+            $dataQuery->where(function ($query) use ($request) {
+                $query->WhereHas('pesertaWawancara', function ($q) use ($request) {
+                    $q->where('pewawancara_id', $request->pewawancara_id);
                 });
             });
         }
@@ -43,11 +64,17 @@ class PewawancaraController extends Controller
 
         $default_limit = env('DEFAULT_LIMIT', 30);
         $limit = $request->filled('limit') ? $request->limit : $default_limit;
-        $data = $dataQuery->paginate($limit);
-        $resourceCollection = $data->getCollection()->map(function ($item) {
-            return new PewawancaraResource($item);
-        });
-        $data->setCollection($resourceCollection);
+
+        if ($limit > 0) {
+            $data = $dataQuery->paginate($limit);
+            $resourceCollection = $data->getCollection()->map(function ($item) {
+                return new PewawancaraResource($item);
+            });
+            $data->setCollection($resourceCollection);
+        } else
+            $data = $dataQuery->get();
+
+
 
         $dataRespon = [
             'status' => true,

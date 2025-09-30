@@ -6,6 +6,7 @@ use App\Models\Beasiswa;
 use App\Models\Pendaftar;
 use App\Models\UploadSyarat;
 use Illuminate\Http\Request;
+use App\Models\PesertaWawancara;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\VerifikatorPendaftar;
@@ -200,11 +201,36 @@ class VerifikatorPendaftarController extends Controller
     {
         try {
             DB::beginTransaction();
-            $data = VerifikatorPendaftar::where('id', $id)->firstOrFail();
 
+
+            $data = VerifikatorPendaftar::where('id', $id)->firstOrFail();
             $data->update($request->validated());
+
+            //untuk membagi verifikator
+            $beasiswa = Pendaftar::with(['beasiswa'])->where('id', $data->pendaftar_id)->firstOrFail();
+            $data_respon['verifikator'] = $data;
+            $data_respon['pewawancara'] = null;
+            if ($data->hasil == 1) {
+                if ($beasiswa->beasiswa->ada_wawancara == 1) {
+                    $peserta_wawancara = PesertaWawancara::where('pendaftar_id', $data->pendaftar_id)->first();
+
+                    // cari pewawancara
+                    $pewawancara_id = cariPewawancara($beasiswa->beasiswa->id);
+                    if (!$peserta_wawancara && $pewawancara_id) {
+                        $data_pewawancara = PesertaWawancara::firstOrCreate(
+                            ["pendaftar_id"   => $data->pendaftar_id], //cari dulu pendaftar_id, jika ada maka batalkan
+                            ["pewawancara_id" => $pewawancara_id]
+                        );
+                        $data_respon['pewawancara'] = $data_pewawancara;
+                    }
+                }
+            } else {
+                $peserta_wawancara = PesertaWawancara::where('pendaftar_id', $data->pendaftar_id)->firstOrFail();
+                $peserta_wawancara->delete();
+            }
+
             DB::commit();
-            return response()->json(['status' => true, 'message' => 'berhasil diperbarui', 'data' => $data], 200);
+            return response()->json(['status' => true, 'message' => 'berhasil diperbarui', 'data' => $data_respon], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat memperbarui : ' . $e->getMessage(), 'data' => null], 500);

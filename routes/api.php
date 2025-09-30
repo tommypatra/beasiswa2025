@@ -253,11 +253,14 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::resource('surveyor-peserta', SurveiPesertaController::class);
 
         //untuk pewawancara
+        Route::get('daftar-pewawancara/{beasiswa_id}', [PewawancaraController::class, 'dataPewawancara']);
         Route::get('pewawancara/{beasiswa_id}', [PewawancaraController::class, 'index']);
         Route::get('pewawancara/show/{id}', [PewawancaraController::class, 'show']);
         Route::post('pewawancara', [PewawancaraController::class, 'store']);
         Route::delete('pewawancara/{id}', [PewawancaraController::class, 'destroy']);
         Route::put('pewawancara/{id}', [PewawancaraController::class, 'update']);
+        Route::get('daftar-peserta-wawancara/{pewawancara_id}', [PesertaWawancaraController::class, 'daftarPesertaWawancara']);
+
 
         Route::get('cetak-wawancara/{beasiswa_id}', [PewawancaraController::class, 'cetakWawancara']);
 
