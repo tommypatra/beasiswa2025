@@ -47,6 +47,7 @@
                     <div class="col-sm-5 mb-3">
                         <label class="form-label">Nilai UKT</label>
                         <input name="ukt" id="ukt" type="number" class="form-control" required>
+                        iskan tanpa pemisah ribuan (.) contoh : 2000000
                     </div>
                     </div>
                 <div class="col-lg-4 mb-3">
