@@ -47,8 +47,8 @@
     var page_tab3=1;
 
     function loadDataTab3(){
-        var search_tab2 = $('#search-input').val();
-        var url = `${base_url}/api/sesi-ujian?beasiswa_id=${beasiswa_id}&page=${page_tab3}&search=${search_tab2}`;
+        const search_tab2 = $('#search-input-tab2').val();
+        const url = `${base_url}/api/sesi-ujian?beasiswa_id=${beasiswa_id}&page=${page_tab3}&search=${search_tab2}`;
 
         fetchData(url, function(response) {
             renderDataTab3(response);

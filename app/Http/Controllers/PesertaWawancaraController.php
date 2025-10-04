@@ -21,6 +21,57 @@ class PesertaWawancaraController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    public function cariWawancaraId($beasiswa_id)
+    {
+        $dataQuery = Pewawancara::where('user_id', auth()->id())->orderBy('id', 'asc')->firstOrFail();
+
+        $dataRespon = [
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $dataQuery,
+        ];
+        return response()->json($dataRespon);
+    }
+
+
+    public function daftarPesertaWawancara(Request $request)
+    {
+        $dataQuery = PesertaWawancara::with([
+            'pewawancara.user',
+            'pendaftar.mahasiswa.programStudi',
+            'pendaftar.mahasiswa.user',
+        ])->orderBy('id', 'asc');
+
+        if ($request->filled('pewawancara_id')) {
+            $dataQuery->where(function ($query) use ($request) {
+                $query->where('pewawancara_id', $request->pewawancara_id);
+            });
+        }
+
+        if ($request->filled('search')) {
+            $dataQuery->where(function ($query) use ($request) {
+                $query->WhereHas('pendaftar.mahasiswa.user', function ($q) use ($request) {
+                    $q->where('name', 'like', '%' . $request->search . '%');
+                });
+            });
+        }
+
+        $default_limit = env('DEFAULT_LIMIT', 30);
+        $limit = $request->filled('limit') ? $request->limit : $default_limit;
+        if ($limit > 0) {
+            $data = $dataQuery->paginate($limit);
+        } else
+            $data = $dataQuery->get();
+
+        $dataRespon = [
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ];
+        return response()->json($dataRespon);
+    }
+
     public function wawancara(Request $request)
     {
         // 1. Beasiswa user sebagai verifikator
@@ -32,6 +83,15 @@ class PesertaWawancaraController extends Controller
                 });
             });
         }
+
+        if ($request->filled('search')) {
+            $beasiswa->where(function ($query) use ($request) {
+                $query->whereHas('beasiswa', function ($q) use ($request) {
+                    $q->where('nama', 'like', '%' . $request->search . '%');
+                });
+            });
+        }
+
         $beasiswaIds = $beasiswa->pluck('beasiswa_id');
 
         // 3. Query beasiswa yang user jadi verifikator
@@ -97,22 +157,18 @@ class PesertaWawancaraController extends Controller
             ->orderBy('beasiswa_id', 'asc')
             ->orderBy('user_id', 'asc');
 
+        if ($request->filled('search')) {
+            $dataQuery->where(function ($query) use ($request) {
+                $query->whereHas('beasiswa', function ($q) use ($request) {
+                    $q->where('nama', 'like', '%' . $request->search . '%');
+                });
+            });
+        }
+
         $default_limit = env('DEFAULT_LIMIT', 30);
         $limit = $request->filled('limit') ? $request->limit : $default_limit;
         $data = $dataQuery->paginate($limit);
 
-        $dataRespon = [
-            'status' => true,
-            'message' => 'Pengambilan data dilakukan',
-            'data' => $data,
-        ];
-        return response()->json($dataRespon);
-    }
-
-    public function daftarPesertaWawancara($pewawancara_id)
-    {
-        $dataQuery = PesertaWawancara::with(['pendaftar.mahasiswa.user'])->where('pewawancara_id', $pewawancara_id)->orderBy('id', 'asc');
-        $data = $dataQuery->get();
         $dataRespon = [
             'status' => true,
             'message' => 'Pengambilan data dilakukan',
@@ -130,8 +186,16 @@ class PesertaWawancaraController extends Controller
             'mahasiswa.user.identitas',
             'mahasiswa.programStudi.fakultas'
         ])
-            ->orderBy('beasiswa_id', 'asc')
-            ->orderBy('id', 'asc');
+            ->orderBy('beasiswa_id', 'asc');
+
+        if ($request->filled('urut_pengelola'))
+            $dataQuery->orderBy('is_registrasi_wawancara', 'asc')
+                ->orderBy('updated_at', 'desc')
+                ->orderBy('id', 'asc');
+        else
+            $dataQuery->orderBy('is_registrasi_wawancara', 'desc')
+                ->orderBy('updated_at', 'desc')
+                ->orderBy('id', 'asc');
 
         // $dataQuery->where(function ($query) {
         //     $query->WhereHas('pesertaWawancara.pewawancara', function ($q) {
@@ -139,35 +203,36 @@ class PesertaWawancaraController extends Controller
         //     });
         // });
 
+        // untuk ambil data yg hasil verifikasi berkas = 1
         $dataQuery->where(function ($query) {
             $query->WhereHas('verifikatorPendaftar', function ($q) {
                 $q->where('hasil', 1);
             });
         });
 
-        // if ($request->filled('pewawancara')) {
-        //     if ($request->pewawancara)
-        //         $dataQuery->whereHas('PesertaWawancara');
-        //     else
-        //         $dataQuery->whereDoesntHave('PesertaWawancara');
-        // }
+        if ($request->filled('pewawancara')) {
+            if ($request->pewawancara == 1)
+                $dataQuery->whereHas('PesertaWawancara');
+            elseif ($request->pewawancara == 0)
+                $dataQuery->whereDoesntHave('PesertaWawancara');
+        }
 
         $dataQuery->where('beasiswa_id', $request->beasiswa_id);
 
-        if ($request->filled('search')) {
+        if ($request->filled('search'))
             $dataQuery->where(function ($query) use ($request) {
                 $query->WhereHas('mahasiswa.user', function ($q) use ($request) {
                     $q->where('name', 'like', '%' . $request->search . '%');
                 });
             });
 
-            if ($request->filled('cari_pewawancara'))
-                $dataQuery->orWhere(function ($query) use ($request) {
-                    $query->WhereHas('pesertaWawancara.pewawancara.user', function ($q) use ($request) {
-                        $q->where('name', 'like', '%' . $request->search . '%');
-                    });
-                });
-        }
+        // if ($request->filled('cari_pewawancara'))
+        //     $dataQuery->orWhere(function ($query) use ($request) {
+        //         $query->WhereHas('pesertaWawancara.pewawancara.user', function ($q) use ($request) {
+        //             $q->where('name', 'like', '%' . $request->search . '%');
+        //         });
+        //     });
+
 
         if ($request->filled('is_admin') && izinkanAkses('admin')) {
             //
@@ -278,7 +343,45 @@ class PesertaWawancaraController extends Controller
         }
     }
 
+    public function tukarPesertaWawancara(string $peserta_wawancara_id_asal, string $peserta_wawancara_id_tujuan)
+    {
+        try {
+            DB::beginTransaction();
 
+            $data_asal = PesertaWawancara::where('id', $peserta_wawancara_id_asal)->firstOrFail();
+            $data_tujuan = PesertaWawancara::where('id', $peserta_wawancara_id_tujuan)->firstOrFail();
+
+            // simpan nilai pendaftar_id agar tidak tertimpa
+            $asal_pendaftar = $data_asal->pendaftar_id;
+            $tujuan_pendaftar = $data_tujuan->pendaftar_id;
+
+            // update silang
+            $data_asal->update([
+                'pendaftar_id' => $tujuan_pendaftar,
+            ]);
+            $data_tujuan->update([
+                'pendaftar_id' => $asal_pendaftar,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Peserta wawancara berhasil ditukar',
+                'data'    => [
+                    'asal'   => $data_asal,
+                    'tujuan' => $data_tujuan,
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status'  => false,
+                'message' => 'Terjadi kesalahan saat memperbarui: ' . $e->getMessage(),
+                'data'    => null
+            ], 500);
+        }
+    }
 
     public function registasiPeserta(Request $request, string $id)
     {

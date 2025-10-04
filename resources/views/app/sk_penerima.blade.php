@@ -20,6 +20,9 @@
             <h5 class="card-title fw-semibold">Daftar SK Beasiswa</h5>
             <div class="d-flex gap-2">
                 <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;" >
+                <button class="btn btn-secondary" id="btn-cari-sk">
+                    <i class="ti ti-search"></i>
+                </button>
                 <button class="btn btn-primary" id="btn-tambah-sk" >
                     <i class="ti ti-plus"></i>
                 </button>
@@ -148,6 +151,9 @@
                     <h5 class="card-title fw-semibold">Daftar Jadwal</h5>
                     <div class="d-flex gap-2">
                         <input type="text" class="form-control" id="search-input-jadwal" placeholder="Cari..." style="max-width: 200px;" >
+                        <button class="btn btn-secondary" id="btn-cari-jadwal">
+                            <i class="ti ti-search"></i>
+                        </button>
                         <button class="btn btn-success" id="btn-refresh-jadwal" >
                             <i class="ti ti-reload"></i>
                         </button>
@@ -223,6 +229,9 @@
                     <h5 class="card-title fw-semibold">Daftar Penerima Beasiswa</h5>
                     <div class="d-flex gap-2">
                         <input type="text" class="form-control" id="search-input-penerima" placeholder="Cari..." style="max-width: 200px;" >
+                        <button class="btn btn-secondary" id="btn-cari-penerima">
+                            <i class="ti ti-search"></i>
+                        </button>
                         <button class="btn btn-success" id="btn-refresh-penerima" >
                             <i class="ti ti-reload"></i>
                         </button>
@@ -323,6 +332,9 @@
                     <h5 class="card-title fw-semibold">Daftar Verifikator</h5>
                     <div class="d-flex gap-2">
                         <input type="text" class="form-control" id="search-input-verifikator" placeholder="Cari..." style="max-width: 200px;" >
+                        <button class="btn btn-secondary" id="btn-cari-verifikator">
+                            <i class="ti ti-search"></i>
+                        </button>
                         <button class="btn btn-success" id="btn-refresh-verifikator" >
                             <i class="ti ti-reload"></i>
                         </button>

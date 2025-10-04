@@ -19,15 +19,15 @@
                     <h5 class="card-title fw-semibold">Soal Wawancara</h5>
                     <div class="d-flex gap-2">
                         <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
+                        <button class="btn btn-secondary" id="btn-cari-data">
+                            <i class="ti ti-search"></i>
+                        </button>
                         <button class="btn btn-primary" id="btn-tambah">
                             <i class="ti ti-plus"></i>
                         </button>
-                        <button class="btn btn-success" id="btn-refresh">
-                            <i class="ti ti-reload"></i>
-                        </button>
-                        <button class="btn btn-secondary" id="btn-filter">
+                        {{-- <button class="btn btn-secondary" id="btn-filter">
                             <i class="ti ti-filter"></i>
-                        </button>
+                        </button> --}}
                     </div>
                 </div>
                 
@@ -172,7 +172,7 @@
             if (data.length > 0) {
                 $.each(data, function(index, dt) {
                     const row = `<tr>
-                                <td><input type="number" data-id="${dt.id}" style="width: 80px;" class="form-control ganti-nomor-urut" value="${dt.nomor}"></td>
+                                <td><input type="number" data-id="${dt.id}" data-nomor_old="${dt.nomor}" style="width: 80px;" class="form-control ganti-nomor-urut" value="${dt.nomor}"></td>
                                 <td>${dt.soal}</td>
                                 <td>${dt.persentase_nilai}</td>
                                 <td>
@@ -212,15 +212,16 @@
         });
 
         // Handle page change
-        $('#btn-refresh').click(function() {
+        $('#btn-cari-data').click(function() {
+            page=1;
             dataLoad();
         });
 
         // Handle search-input
-        $(document).on('input', '#search-input', function() {
-            console.log('Event input berjalan');
-            dataLoad();
-        });        
+        // $(document).on('input', '#search-input', function() {
+        //     console.log('Event input berjalan');
+        //     dataLoad();
+        // });        
 
         //untuk show modal form
         function showModalForm() {
@@ -263,15 +264,19 @@
         
         $(document).on('blur', '.ganti-nomor-urut', function() {
             const id = $(this).data('id');
+            const nomor_old = $(this).attr('data-nomor_old');
+
             const val = $(this).val();
             const data = {
                 nomor:val
             };
-            if(val)
+            if(nomor_old!=val){
                 saveData(`${base_url}/api/ganti-nomor-soal-wawancara/${id}`, 'PUT', data, function(response) {
                     console.log('berhasil');
                     // appShowNotification(true,['berhasil dilakukan!']);
                 });
+                $(this).attr('data-nomor_old',val);
+            }
         });
 
         //ganti data

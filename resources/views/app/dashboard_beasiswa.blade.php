@@ -80,10 +80,10 @@
             <h4 class="fs-4 mb-1 card-title">Rekap Berdasarkan Kabupaten</h4>
             <select id="filter-rekap-kabupaten" class="form-select w-auto">
                 <option value="">Semua</option>
-                <option value="pendaftar">Proses Pendaftar</option>
-                <option value="selesai">Pendaftaran Selesai</option>
+                <option value="pendaftar">Proses</option>
+                <option value="selesai">Selesai</option>
                 <option value="lulus_berkas">Lulus Berkas</option>
-                <option value="penerima">Penerima Beasiswa</option>
+                <option value="penerima">Penerima</option>
             </select>          
         </div>
         <div class="table-responsive">

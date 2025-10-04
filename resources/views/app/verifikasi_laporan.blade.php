@@ -19,6 +19,9 @@
             <h5 class="card-title fw-semibold">Verifikasi Laporan</h5>
             <div class="d-flex gap-2">
                 <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;" >
+                <button class="btn btn-primary" id="btn-search-sk">
+                    <i class="ti ti-search"></i>
+                </button>
                 <button class="btn btn-success" id="btn-refresh-sk" >
                     <i class="ti ti-reload"></i>
                 </button>
@@ -73,8 +76,8 @@
                                     <div class="mb-3">
                                         <div class="input-group">
                                             <input type="text" class="form-control" id="search-penerima" placeholder="Cari...">
-                                            <button class="btn btn-primary" id="btn-cari">
-                                                <iconify-icon icon="solar:alt-arrow-right-bold" class="fs-3"></iconify-icon>
+                                            <button class="btn btn-primary" id="btn-search-penerima">
+                                                <i class="ti ti-search"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -194,12 +197,11 @@
             fModalForm.show();
         }
 
-        $('#search-input').on('keypress', async function(e) {
-            if (e.which === 13) {       // 13 = Enter
-                e.preventDefault();      
-                await loadDataSK(); 
-            }
+        $('#btn-search-sk').click(function(){
+            page_sk=1;
+            loadDataSK();
         });
+
 
         async function loadDetailSKPenerima() {
             let response = await asyncFunction(`${base_url}/api/get-data-sk-penerima/${sk_penerima_id}`);
@@ -218,7 +220,8 @@
             }
         }
 
-        $('#btn-cari').click(function(){
+        $('#btn-search-penerima').click(function(){
+            page_penerima=1;
             loadDataPesertaVerifikasi();
         })
 
@@ -308,10 +311,10 @@
                 <div>${peserta.keterangan_sub_kegiatan}</div>
                 <div class="mt-2"><h6>Preview Dokumen:</h6></div>
                 <div id="kontrol-gambar" style="text-align:center; margin-top:10px; display:none;">
-                    <button type="button" class="btn btn-sm btn-secondary" onclick="rotateImage(-90)">⟲ Putar Kiri</button>
-                    <button type="button" class="btn btn-sm btn-secondary" onclick="rotateImage(90)">⟳ Putar Kanan</button>
-                    <button type="button" class="btn btn-sm btn-secondary" onclick="zoomImage(1.2)">🔍 Zoom In</button>
-                    <button type="button" class="btn btn-sm btn-secondary" onclick="zoomImage(0.8)">🔎 Zoom Out</button>
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="rotateImage('preview-img',-90)">⟲ Putar Kiri</button>
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="rotateImage('preview-img',90)">⟳ Putar Kanan</button>
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="zoomImage('preview-img',1.2)">🔍 Zoom In</button>
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="zoomImage('preview-img',0.8)">🔎 Zoom Out</button>
                 </div>
 
                 <div id="dokumen-embed" 

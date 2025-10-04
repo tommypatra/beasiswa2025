@@ -295,11 +295,13 @@
                     const status_kelulusan = dt.status.is_lulus == 1 ? "Lulus"  : dt.status.is_lulus == 0  ? "Tidak Lulus" : "";
                     let daftar_nilai=``;
                     if(dt.wawancara.length>0){
-                        daftar_nilai=`<ul>`;
+                        let listTag = dt.wawancara.length > 1 ? "ol" : "ul";
+
+                        daftar_nilai=`<${listTag}>`;
                         $.each(dt.wawancara, function(data, dw) {
                             daftar_nilai+=`<li>${dw.pewawancara}: ${dw.nilai}</li>`;
                         });
-                        daftar_nilai+=`</ul>`;
+                        daftar_nilai+=`</${listTag}>`;
                     }
                     const row = `<tr>
                                     <td>${g_nomor++}</td>

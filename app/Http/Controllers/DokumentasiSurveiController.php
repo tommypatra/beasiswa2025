@@ -16,7 +16,7 @@ class DokumentasiSurveiController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request, $beasiswa_id)
+    public function index(Request $request)
     {
 
         $dataQuery = DokumentasiSurvei::with(['pendaftar.mahasiswa.user'])->orderBy('id', 'asc');
@@ -29,12 +29,8 @@ class DokumentasiSurveiController extends Controller
             });
         }
 
-        if ($request->filled('peserta_id')) {
-            $dataQuery->where(function ($query) use ($request) {
-                $query->WhereHas('pendaftar', function ($q) use ($request) {
-                    $q->where('id', $request->peserta_id);
-                });
-            });
+        if ($request->filled('pendaftar_id')) {
+            $dataQuery->where('pendaftar_id', $request->pendaftar_id);
         }
 
         if ($request->filled('user_id')) {

@@ -128,6 +128,7 @@
     <script>
         const base_url="{{ url('/') }}";
         const beasiswa_id="{{ $beasiswa_id }}";
+        const pewawancara_id="{{ $pewawancara_id }}";
     </script>
 </head>
 <body>
@@ -190,7 +191,7 @@
                 const pewawancaraGroups = {}; // global untuk gabung data per pewawancara
 
                 while(hasNext){
-                    let url = `${base_url}/api/cetak-wawancara/${beasiswa_id}?sort=2&limit=${g_limit}&page=${page}`;
+                    let url = `${base_url}/api/cetak-wawancara/${beasiswa_id}?pewawancara_id=${pewawancara_id}&sort=2&limit=${g_limit}&page=${page}`;
                     try {
                         const response = await fetch(url, {
                             method: 'GET',

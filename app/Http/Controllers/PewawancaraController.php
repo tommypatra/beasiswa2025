@@ -33,7 +33,7 @@ class PewawancaraController extends Controller
     public function index(Request $request, $beasiswa_id)
     {
 
-        $dataQuery = Pewawancara::with(['beasiswa', 'user', 'pesertaWawancara.pendaftar.mahasiswa.user'])->where('beasiswa_id', $beasiswa_id)->orderBy('beasiswa_id', 'asc')->orderBy('user_id', 'asc');
+        $dataQuery = Pewawancara::with(['beasiswa', 'user', 'pesertaWawancara.pendaftar.mahasiswa.programStudi', 'pesertaWawancara.pendaftar.mahasiswa.user'])->where('beasiswa_id', $beasiswa_id)->orderBy('beasiswa_id', 'asc')->orderBy('user_id', 'asc');
 
         if ($request->filled('search')) {
             $dataQuery->where(function ($query) use ($request) {
@@ -41,6 +41,9 @@ class PewawancaraController extends Controller
                     $q->where('name', 'like', '%' . $request->search . '%');
                 });
                 $query->orWhereHas('pesertaWawancara.pendaftar.mahasiswa.user', function ($q) use ($request) {
+                    $q->where('name', 'like', '%' . $request->search . '%');
+                });
+                $query->orWhereHas('beasiswa', function ($q) use ($request) {
                     $q->where('name', 'like', '%' . $request->search . '%');
                 });
             });
@@ -88,15 +91,32 @@ class PewawancaraController extends Controller
     public function cetakWawancara(Request $request, $beasiswa_id)
     {
 
-        $dataQuery = PesertaWawancara::with(['beasiswa', 'pewawancara.user', 'wawancaraNilai', 'pendaftar.mahasiswa.user.identitas', 'pendaftar.mahasiswa.programStudi.fakultas'])
+        $dataQuery = PesertaWawancara::with(['pendaftar.beasiswa', 'pewawancara.user', 'wawancaraNilai', 'pendaftar.mahasiswa.user.identitas', 'pendaftar.mahasiswa.programStudi.fakultas'])
             ->whereHas('pendaftar', function ($q) use ($request) {
                 $q->where('beasiswa_id', $request->beasiswa_id);
             })
             ->where(function ($query) use ($request) {
-                $query->WhereHas('beasiswa', function ($q) use ($request) {
+                $query->WhereHas('pendaftar.beasiswa', function ($q) use ($request) {
                     $q->where('is_aktif', 1);
                 });
-            });
+            })->where('status', 2);
+
+        // if ($request->filled('pewawancara_id')) {
+        //     $dataQuery->where('pewawancara_id', $request->pewawancara_id);
+        // }
+
+        if (izinkanAkses('admin')) {
+            if ($request->filled('pewawancara_id')) {
+                $dataQuery->where('pewawancara_id', $request->pewawancara_id);
+            }
+        } else {
+            $dataQuery->where(function ($query) {
+                $query->whereHas('pewawancara', function ($q) {
+                    $q->where('user_id', auth()->id());
+                });
+            })->where('pewawancara_id', $request->pewawancara_id);
+        }
+
 
 
         if ($request->sort == 1) {

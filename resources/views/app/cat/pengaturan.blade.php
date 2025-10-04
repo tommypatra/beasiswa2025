@@ -1,10 +1,10 @@
 <form id="form-pengaturan" class="mb-3">
     <input type="hidden" id="pengaturan_id" name="id">
     <div class="row">
-        <div class="col-lg-4 mb-3">
+        {{-- <div class="col-lg-4 mb-3">
             <label class="form-label">Jumlah Peserta Per Ruangan</label>
             <input name="peserta_per_ruangan" id="peserta_per_ruangan" type="number" class="form-control">
-        </div>
+        </div> --}}
         <div class="col-lg-4 mb-3">
             <label class="form-label">Tanggal Ujian</label>
             <input name="tanggal_mulai" id="tanggal_mulai" type="text" class="form-control datepicker" value="{{ date('Y-m-d')}}" required>
@@ -30,7 +30,7 @@
             const data=response.data.data;
             if(data.length>0){
                 $('#pengaturan_id').val(data[0].id);
-                $('#peserta_per_ruangan').val(data[0].peserta_per_ruangan);
+                // $('#peserta_per_ruangan').val(data[0].peserta_per_ruangan);
                 $('#tanggal_mulai').val(data[0].tanggal_mulai);
                 $('#tanggal_selesai').val(data[0].tanggal_selesai);
                 $('#cetak_kartu_ujian').val(data[0].cetak_kartu_ujian);
@@ -49,7 +49,7 @@
         loadDataTab1();
 
         $('#cetak_kartu_ujian').summernote({
-            height: 200,
+            height: 500,
             toolbar: [
                 ['style', ['style']],
                 ['font', ['bold', 'underline', 'clear']],

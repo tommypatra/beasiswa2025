@@ -38,6 +38,9 @@
             <h5 class="card-title fw-semibold">Predikat</h5>
             <div class="d-flex gap-2">
                 <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;" disabled>
+                <button class="btn btn-primary" id="btn-search" disabled>
+                    <i class="ti ti-search"></i>
+                </button>
                 <button class="btn btn-primary" id="btn-tambah" disabled>
                     <i class="ti ti-plus"></i>
                 </button>
@@ -135,6 +138,7 @@
         function statusMonitoring(aktif = true) {
             // false = disable, true = enable
             $('#search-input').prop('disabled', !aktif);
+            $('#btn-search').prop('disabled', !aktif);
             $('#btn-tambah').prop('disabled', !aktif);
             $('#btn-refresh').prop('disabled', !aktif);
             $('#btn-filter').prop('disabled', !aktif);
@@ -163,7 +167,7 @@
             const kegiatan_id = $('#label_monitoring').attr("data-id");
             const dataList = $('#data-list');
             const pagination = $('#pagination');
-            const response = await asyncFunction(`${base_url}/api/predikat?monitoring_id=${kegiatan_id}&search=${search}`);
+            const response = await asyncFunction(`${base_url}/api/predikat?monitoring_id=${kegiatan_id}&page=${page}&search=${search}`);
 
             const data=response.data.data;
             let no = (response.data.current_page - 1) * response.data.per_page + 1;
@@ -229,11 +233,10 @@
             loadData();
         });
 
-        // Handle search-input
-        $(document).on('input', '#search-input', function() {
-            // console.log('Event input berjalan');
+        $('#btn-search').click(function(){
+            page=1;
             loadData();
-        });        
+        });
 
         //untuk show modal form
         function showModalForm() {

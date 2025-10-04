@@ -67,6 +67,11 @@ class Beasiswa extends Model
         return $this->hasMany(SesiUjian::class);
     }
 
+    public function jadwalUjian()
+    {
+        return $this->hasMany(JadwalUjian::class);
+    }
+
     public function pengaturanUjian()
     {
         return $this->hasOne(PengaturanUjian::class);

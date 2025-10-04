@@ -72,14 +72,14 @@ td, th {
                     <h5 class="card-title fw-semibold">Tim Survei Lapangan</h5>
                     <div class="d-flex gap-2">
                         <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
+                        <button class="btn btn-secondary" id="btn-cari-data">
+                            <i class="ti ti-search"></i>
+                        </button>
                         <button class="btn btn-primary" id="btn-tambah">
                             <i class="ti ti-plus"></i>
                         </button>
                         <button class="btn btn-success" id="btn-refresh">
                             <i class="ti ti-reload"></i>
-                        </button>
-                        <button class="btn btn-secondary" id="btn-filter">
-                            <i class="ti ti-filter"></i>
                         </button>
                     </div>
                 </div>
@@ -181,8 +181,14 @@ td, th {
                                 <td>Kabupaten/ Provinsi</td>
                             </tr>
                             </thead>
-                            <tbody id="daftar-peserta"></tbody>
+                            <tbody id="daftar-pembagian"></tbody>
                         </table>  
+
+                        <!-- Pagination -->
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center" id="pagination-pembagian"></ul>
+                        </nav>
+
                     </div>                  
                 </div>
                 <div class="modal-footer">
@@ -211,6 +217,7 @@ td, th {
     const endpoint = base_url+'/api/surveyor';
     var id = "{{ $beasiswa_id }}";
     var page = 1;
+    var page_pembagian = 1;
     $(document).ready(function() {
         initPage();
         async function initPage() {
@@ -288,58 +295,57 @@ td, th {
             const limit = $('#jumlah').val();
             const cari = $('#cari').val();
             const filter_wilayah = $('#filter_wilayah').val();
-            var url = `${base_url}/api/surveyor-peserta?filter_wilayah=${filter_wilayah}&search=${cari}&verifikator=0&beasiswa_id=${id}&limit=${limit}`;
-            try {
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`, 
-                        'Content-Type': 'application/json'
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const result = await response.json();
-                const daftar_peserta = $('#daftar-peserta');
-
-                daftar_peserta.empty();
-                if(result.data.data.length>0){
-                    $.each(result.data.data, function(index, dt) {
-                        const identitas=dt.mahasiswa.user.identitas;
-                        const row = `<tr>
-                                        <td>
-                                            <input type="checkbox" class="pilih" name="pendaftar_id[]" value="${dt.id}">                                    
-                                        </td>
-                                        <td>
-                                            <div class="pendaftar-row">
-                                                <img class="foto" src="${base_url}/${identitas.foto}" alt="Foto Pendaftar">
-                                                <div class="pendaftar-info">
-                                                    <span class="nama">${dt.mahasiswa.user.name}</span>
-                                                    <span class="nim">${dt.mahasiswa.nim}</span>
-                                                    <span class="prodi">${dt.mahasiswa.program_studi.nama}</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            ${identitas.alamat} No. HP ${identitas.no_hp}
-                                        </td>
-                                        <td>
-                                            ${identitas.desa} / 
-                                            ${identitas.kecamatan}
-                                        </td>
-                                        <td>
-                                            ${identitas.kabupaten} /
-                                            ${identitas.provinsi}
-                                        </td>
-                                    </tr>`;
-                        daftar_peserta.append(row);
-                    });                    
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
+            const url = `${base_url}/api/surveyor-peserta?filter_wilayah=${filter_wilayah}&search=${cari}&verifikator=0&beasiswa_id=${id}&limit=${limit}`;
+            const response = await execAsync(`${url}`, 'GET', token);
+            renderPilihPeserta(response);
         }
+
+        function renderPilihPeserta(response) {
+            const dataList = $('#daftar-pembagian');
+            const pagination = $('#pagination-pembagian');
+            const data=response.data.data;
+            let no = (response.data.current_page - 1) * response.data.per_page + 1;
+            dataList.empty();
+            pagination.empty();
+            if (data.length > 0) {
+                $.each(data, function(index, dt) {
+                    const identitas=dt.mahasiswa.user.identitas;
+                    const row = `<tr>
+                                    <td>
+                                        <input type="checkbox" class="pilih" name="pendaftar_id[]" value="${dt.id}">                                    
+                                    </td>
+                                    <td>
+                                        <div class="pendaftar-row">
+                                            <img class="foto" src="${base_url}/${identitas.foto}" alt="Foto Pendaftar">
+                                            <div class="pendaftar-info">
+                                                <span class="nama">${dt.mahasiswa.user.name}</span>
+                                                <span class="nim">${dt.mahasiswa.nim}</span>
+                                                <span class="prodi">${dt.mahasiswa.program_studi.nama}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        ${identitas.alamat} No. HP ${identitas.no_hp}
+                                    </td>
+                                    <td>
+                                        ${identitas.desa} / 
+                                        ${identitas.kecamatan}
+                                    </td>
+                                    <td>
+                                        ${identitas.kabupaten} /
+                                        ${identitas.provinsi}
+                                    </td>
+                                </tr>`;
+                    dataList.append(row);
+                });
+                renderPagination(response.data, pagination);
+            }else{
+                const row = `<tr>
+                                <td colspan="3">data tidak ditemukan</td>
+                            </tr>`;
+                dataList.append(row);                
+            }
+        }    
 
         async function dataLoad() {
             var search = $('#search-input').val();
@@ -382,10 +388,18 @@ td, th {
         });        
 
         // Handle page change
-        $(document).on('click', '.page-link', function() {
+        $(document).on('click', '#pagination .page-link', function() {
             page = $(this).data('page');
             dataLoad();
         });
+
+
+        // Handle page change
+        $(document).on('click', '#pagination-pembagian .page-link', function() {
+            page_pembagian = $(this).data('page');
+            loadDataPeserta();
+        });
+
 
         $(document).on('click', '.hapus-surveyor-peserta', function() {
             const id = $(this).data('id');
@@ -395,13 +409,13 @@ td, th {
             });
         }); 
 
-        // $('#program_studi_id').change(function(){
-        //     loadDataPeserta();
-        // })
+        $('#program_studi_id').change(function(){
+            loadDataPeserta();
+        })
 
-        // $('#jumlah').blur(function(){
-        //     loadDataPeserta();
-        // })
+        $('#jumlah').blur(function(){
+            loadDataPeserta();
+        })
 
         // $('#cari').on('keyup', function() {
         //     let keyword = $(this).val().trim();
@@ -411,6 +425,12 @@ td, th {
         //         loadDataPeserta();
         //     }
         // });
+
+
+        $(document).on('click', '#btn-cari-data', function() {
+            page=1;
+            dataLoad();
+        });
 
 
         $(document).on('click', '#btn-cari', function() {
@@ -423,10 +443,10 @@ td, th {
         });
 
         // Handle search-input
-        $(document).on('input', '#search-input', function() {
-            console.log('Event input berjalan');
-            dataLoad();
-        });      
+        // $(document).on('input', '#search-input', function() {
+        //     console.log('Event input berjalan');
+        //     dataLoad();
+        // });      
 
         $('#modal-form').on('shown.bs.modal', function () {
             $(this).removeAttr('aria-hidden');

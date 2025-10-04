@@ -14,6 +14,9 @@
             <h5 class="card-title fw-semibold">Data Beasiswa</h5>
             <div class="d-flex gap-2">
                 <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
+                <button class="btn btn-primary" id="btn-search">
+                    <i class="ti ti-search"></i>
+                </button>
                 <button class="btn btn-primary" id="btn-tambah">
                     <i class="ti ti-plus"></i>
                 </button>
@@ -217,6 +220,12 @@
     $(document).ready(function() {
         dataLoad();
         loadDataSelect('#jenis_beasiswa_id','data-jenis-beasiswa?limit100');
+
+        $('#btn-search').click(function(){
+            page=1;
+            dataLoad();
+        });
+
 
         $(".datepicker").datepicker({
             dateFormat: "yy-mm-dd",

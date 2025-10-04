@@ -11,6 +11,9 @@
             <h5 class="card-title fw-semibold">Referensi Program Studi</h5>
             <div class="d-flex gap-2">
                 <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
+                <button class="btn btn-primary" id="btn-search">
+                    <i class="ti ti-search"></i>
+                </button>
                 <button class="btn btn-primary" id="btn-tambah">
                     <i class="ti ti-plus"></i>
                 </button>
@@ -160,11 +163,10 @@
             dataLoad();
         });
 
-        // Handle search-input
-        $(document).on('input', '#search-input', function() {
-            console.log('Event input berjalan');
+        $('#btn-search').click(function(){
+            page=1;
             dataLoad();
-        });        
+        });
 
         //untuk show modal form
         function showModalForm() {

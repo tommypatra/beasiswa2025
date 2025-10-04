@@ -24,7 +24,7 @@ class SoalWawancaraController extends Controller
         }
 
         if ($request->filled('search')) {
-            $dataQuery->where('nama', 'like', '%' . $request->search . '%');
+            $dataQuery->where('soal', 'like', '%' . $request->search . '%');
         }
 
         $default_limit = env('DEFAULT_LIMIT', 30);

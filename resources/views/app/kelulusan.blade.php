@@ -57,8 +57,8 @@
                     <h5 class="card-title fw-semibold">Daftar Mahasiswa</h5>
                     <div class="d-flex gap-2">
                         <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
-                        <button class="btn btn-success" id="btn-refresh">
-                            <i class="ti ti-reload"></i>
+                        <button class="btn btn-primary" id="btn-cari-data">
+                            <i class="ti ti-search"></i>
                         </button>
                         <button class="btn btn-success" id="btn-cetak">
                             <iconify-icon icon="solar:printer-outline" class="fs-5"></iconify-icon>
@@ -284,7 +284,7 @@
 
                                         <span class="badge rounded-pill fs-2 fw-medium bg-primary">Ekonomi : ${showText(dt.nilai.ekonomi)}</span>
                                         <span class="badge rounded-pill fs-2 fw-medium bg-primary">Pendidikan : ${showText(dt.nilai.pendidikan)}</span>
-                                        <span class="badge rounded-pill fs-2 fw-medium bg-primary">Berkas ${showText(dt.nilai.berkas)}</span>
+                                        <span class="badge rounded-pill fs-2 fw-medium bg-primary">Berkas : ${showText(dt.nilai.berkas)}</span>
                                         <span class="badge rounded-pill fs-2 fw-medium bg-primary">CBT : ${showText(dt.nilai.cbt)}</span>
                                         <span class="badge rounded-pill fs-2 fw-medium bg-primary">Survei : ${showText(dt.nilai.survei)}</span>
                                         <span class="badge rounded-pill fs-2 fw-medium bg-primary">Wawancara : ${showText(dt.nilai.wawancara)}</span>                                        
@@ -438,7 +438,8 @@
         });
 
 
-        $('#btn-refresh').click(function() {
+        $('#btn-cari-data').click(function() {
+            page=1;
             dataLoad();
         });
 
@@ -453,10 +454,10 @@
         });
 
 
-        $(document).on('input', '#search-input', function() {
-            console.log('Event input berjalan');
-            dataLoad();
-        });      
+        // $(document).on('input', '#search-input', function() {
+        //     console.log('Event input berjalan');
+        //     dataLoad();
+        // });      
 
         $('#catatan').summernote({
             height: 100,

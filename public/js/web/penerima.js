@@ -79,12 +79,17 @@ function showModalFormPenerima() {
 
 $(document).ready(function() {
     
-    $('#search-input-penerima').on('keypress', async function(e) {
-        if (e.which === 13) {       // 13 = Enter
-            e.preventDefault();      
-            await loadDataPenerima(); 
-        }
-    });
+    // $('#search-input-penerima').on('keypress', async function(e) {
+    //     if (e.which === 13) {       // 13 = Enter
+    //         e.preventDefault();      
+    //         await loadDataPenerima(); 
+    //     }
+    // });
+
+    $('#btn-cari-penerima').click(function(){
+        page_penerima=1;
+        loadDataPenerima();
+    })
 
     // Handle page change
     $(document).on('click', '.nav-penerima .page-link', function() {

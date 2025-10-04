@@ -77,7 +77,7 @@ Route::get('/laporan-penerima-beasiswa/{sk_penerima_id}', [WebController::class,
 Route::get('/cetak-kartu-pendaftaran/{url_id}', [WebController::class, 'cetakKartuPendaftaran'])->name('cetak-kartu-pendaftaran');
 Route::get('/cetak-data-pendaftar/{beasiswa_id}', [WebController::class, 'cetakDataPendaftar'])->name('cetak-data-pendaftar');
 Route::get('/cetak-data-kelulusan/{beasiswa_id}', [WebController::class, 'cetakDataKelulusan'])->name('cetak-data-kelulusan');
-Route::get('/cetak-hasil-wawancara/{beasiswa_id}', [WebController::class, 'cetakHasilWawancara'])->name('cetak-hasil-wawancara');
+Route::get('/cetak-hasil-wawancara/{beasiswa_id}/{pewawancara_id?}', [WebController::class, 'cetakHasilWawancara'])->name('cetak-hasil-wawancara');
 Route::get('/cetak-rekap-wawancara/{beasiswa_id}', [WebController::class, 'cetakRekapWawancara'])->name('cetak-rekap-wawancara');
 Route::get('/cetak-penerima-mahasiswa/{sk_penerima_id}', [WebController::class, 'cetakPenerimaMahasiswa'])->name('cetak-penerima-mahasiswa');
 

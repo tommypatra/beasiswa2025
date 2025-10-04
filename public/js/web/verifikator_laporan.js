@@ -47,12 +47,18 @@ function showModalFormVerifikator() {
 
 $(document).ready(function() {
     
-    $('#search-input-verifikator').on('keypress', async function(e) {
-        if (e.which === 13) {       // 13 = Enter
-            e.preventDefault();      
-            loadDataVerifikator(); 
-        }
-    });
+    $('#btn-cari-verifikator').click(function(){
+        page_verifikator=1;
+        loadDataVerifikator();
+    })
+
+
+    // $('#search-input-verifikator').on('keypress', async function(e) {
+    //     if (e.which === 13) {       // 13 = Enter
+    //         e.preventDefault();      
+    //         loadDataVerifikator(); 
+    //     }
+    // });
     
     // Handle page change
     $(document).on('click', '.nav-verifikator .page-link', function() {

@@ -414,23 +414,52 @@ if (!function_exists('dekrip')) {
     }
 }
 
-
 if (!function_exists('izinkanAkses')) {
     function izinkanAkses($grup = "global")
     {
-        if ($grup != "global") {
-            $user = auth()->user();
-            $daftar_grup = daftarAkses($user->id);
-            if (count($daftar_grup) > 0)
-                foreach ($daftar_grup as $i => $dt) {
-                    if (strtolower($grup) == strtolower($dt->role)) {
-                        return true;
-                    }
-                }
+        $user = auth()->user();
+        if ($grup == "global") {
+            return true;
+        }
+
+        $daftar_grup = daftarAkses($user->id);
+        if (count($daftar_grup) == 0) {
             return false;
         }
-        return true;
+
+        // kalau $grup berupa array
+        if (is_array($grup)) {
+            foreach ($daftar_grup as $dt) {
+                if (in_array(strtolower($dt->role), array_map('strtolower', $grup))) {
+                    return true;
+                }
+            }
+        } else {
+            // kalau $grup single string
+            foreach ($daftar_grup as $dt) {
+                if (strtolower($grup) == strtolower($dt->role)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
+
+    // function izinkanAkses($grup = "global")
+    // {
+    //     if ($grup != "global") {
+    //         $user = auth()->user();
+    //         $daftar_grup = daftarAkses($user->id);
+    //         if (count($daftar_grup) > 0)
+    //             foreach ($daftar_grup as $i => $dt) {
+    //                 if (strtolower($grup) == strtolower($dt->role)) {
+    //                     return true;
+    //                 }
+    //             }
+    //         return false;
+    //     }
+    //     return true;
+    // }
 }
 
 

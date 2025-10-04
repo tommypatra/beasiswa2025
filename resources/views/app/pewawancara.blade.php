@@ -45,16 +45,6 @@ td, th {
     margin-bottom: 3px;
 }
 
-.list {
-    list-style-type: decimal;    
-    margin-left: 20px;
-    padding-left: 20px;
-}
-
-.list li {
-    line-height: 1.5;
-}
-
 </style>
 @endsection
 
@@ -73,11 +63,11 @@ td, th {
                     <h5 class="card-title fw-semibold">Pewawancara Seleksi Beasiswa</h5>
                     <div class="d-flex gap-2">
                         <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
+                        <button class="btn btn-success" id="btn-cari-data">
+                            <i class="ti ti-search"></i>
+                        </button>
                         <button class="btn btn-primary" id="btn-tambah">
                             <i class="ti ti-plus"></i>
-                        </button>
-                        <button class="btn btn-success" id="btn-refresh">
-                            <i class="ti ti-reload"></i>
                         </button>
                         <div class="btn-group">
                             <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -153,7 +143,7 @@ td, th {
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
+                    <button type="submit" class="btn btn-primary" id="btn-simpan-pewawancara">Simpan</button>
                     <button type="button" class="btn btn-outline-primary " data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
@@ -166,7 +156,7 @@ td, th {
 <div class="modal fade modal" id="modal-pembagian" role="dialog">
     <div class="modal-dialog modal-lg">
         <form id="pembagian">
-            <input type="hidden" name="pewawancara_id" id="pewawancara_id" >
+            <input type="hidden" name="pewawancara_id" id="pembagian_pewawancara_id" >
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modal-label">Pembagian Peserta</h5>
@@ -199,11 +189,17 @@ td, th {
                             <td>Pewawancara</td>
                         </tr>
                         </thead>
-                        <tbody id="daftar-peserta"></tbody>
-                    </table>                    
+                        <tbody id="daftar-pembagian"></tbody>
+                    </table>     
+                    
+                    <!-- Pagination -->
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center" id="pagination-pembagian"></ul>
+                    </nav>
+                    
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
+                    <button type="submit" class="btn btn-primary" id="btn-simpan-pembagian">Simpan</button>
                     <button type="button" class="btn btn-outline-primary " data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
@@ -214,9 +210,11 @@ td, th {
 
 <!-- MULAI MODAL -->
 <div class="modal fade modal" id="modal-tukar" role="dialog">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog">
         <form id="form-tukar">
-            <input type="hidden" name="pewawancara_id" id="pewawancara_id" >
+            
+            <input type="hidden" name="peserta_nim_asal" id="peserta_nim_asal" >
+            <input type="hidden" name="peserta_wawancara_id_asal" id="peserta_wawancara_id_asal" >
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modal-label">Tukar Peserta</h5>
@@ -225,20 +223,18 @@ td, th {
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-sm-12 mb-3">
-                            <div id="tukar-nama">Nama :</div>                            
-                            <div id="tukar-nim">NIM :</div>                            
-                            <div id="tukar-prodi">PRODI :</div>                            
+                            <input type="text" id="nama-mahasiswa-asal" class="form-control">
                         </div>
-                        <div class="col-sm-6 mb-3">
+                        <div class="col-sm-12 mb-3">
                             <label class="form-label">Pilih Pewawancara</label>
                             <select id="data-pewawancara" class="form-control"></select>
                         </div>
-                        <div class="col-sm-12 mb-3" id="daftar-peserta-tukar">
+                        <div class="col-sm-12 mb-3" id="list-peserta-tukar">
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
+                    <button type="button" class="btn btn-primary" id="btn-simpan-tukar">Simpan</button>
                     <button type="button" class="btn btn-outline-primary " data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
@@ -261,12 +257,13 @@ td, th {
     const endpoint = base_url+'/api/pewawancara';
     var id = "{{ $beasiswa_id }}";
     var page = 1;
+    var page_pembagian = 1;
     $(document).ready(function() {
         initPage();
         async function initPage() {
             await loadDataBeasiswa();
             await dataLoad();
-            // await loadDataSelect('#program_studi_id', `data-program-studi`);
+            await loadDataSelect('#program_studi_id', `data-program-studi`);
             await loadPewawancara();
         }
 
@@ -292,21 +289,51 @@ td, th {
             }        
         }
 
-        $('#data-pewawancara').change(async function(){
-            const pewawancara_id = $(this).val();
-            const url = `${base_url}/api/daftar-peserta-wawancara/${pewawancara_id}`;
-            const response = await execAsync(`${url}`, 'GET', token);
-            // let select = $('#data-pewawancara');
-            // select.empty();
-            // if (response.status) {
-            //     select.append('<option value="">-- Pilih Pewawancara --</option>');
-            //     response.data.forEach(item => {
-            //         select.append(`<option value="${item.id}">${item.user.name}</option>`);
-            //     });
-            // } else {
-            //     console.error('Gagal load pewawancara:', response.message);
-            // }        
+        $('#data-pewawancara').change(function(){
+            let $list = $('#list-peserta-tukar');
+            $list.empty(); // bersihkan dulu setiap kali ganti pewawancara
+            $list.append('<p class="text-muted">Peserta tidak ditemukan.</p>');
+
+            if($(this).val()!=='')
+                getPesertaWawancara();
         });
+
+        async function getPesertaWawancara(){
+            const pewawancara_id = $('#data-pewawancara').val();
+            const url = `${base_url}/api/peserta-ujian-wawancara?pewawancara_id=${pewawancara_id}&limit=0`;
+            const response = await execAsync(url, 'GET', token);
+            const peserta_wawancara_id_asal = $('#peserta_wawancara_id_asal').val();
+            const peserta_nim_asal = $('#peserta_nim_asal').val();
+
+            let $list = $('#list-peserta-tukar');
+            $list.empty(); // bersihkan dulu setiap kali ganti pewawancara
+
+            if (response.status && response.data.length > 0) {
+                response.data.forEach(item => {
+                    const pesertaId = item.pendaftar.id;
+                    const noPendaftaran = item.pendaftar.no_pendaftaran;
+                    const nama = item.pendaftar.mahasiswa.user.name;
+                    const nim = item.pendaftar.mahasiswa.nim;
+                    const program_studi = item.pendaftar.mahasiswa.program_studi.nama;
+                    let check = ""
+                    if(peserta_wawancara_id_asal!=item.id && nim!=peserta_nim_asal)
+                        check =`<input class="form-check-input peserta_wawancara_id_tujuan" type="radio" 
+                                    name="peserta_wawancara_id_tujuan" id="peserta-${item.id}" 
+                                    value="${item.id}">`;
+
+                    $list.append(`
+                        <div class="form-check">
+                            ${check}
+                            <label class="form-check-label" for="peserta-${item.id}">
+                                ${nama} (${nim} / ${program_studi})
+                            </label>
+                        </div>
+                    `);
+                });
+            } else {
+                $list.append('<p class="text-muted">Peserta tidak ditemukan.</p>');
+            }
+        };
 
         $('#btn-cetak-rekap').click(function(){
             const url = `${base_url}/cetak-rekap-wawancara/${id}`;
@@ -329,7 +356,6 @@ td, th {
             }
         });
 
-
         function renderData(response) {
             const dataList = $('#data-list');
             const pagination = $('#pagination');
@@ -342,16 +368,17 @@ td, th {
                     let peserta="";
                     // console.log(dt);
                     if(dt.peserta_wawancara.length>0){
-                        peserta=`<ul class="list">`;
+                        let listTag = dt.peserta_wawancara.length > 1 ? "ol" : "ul";
+
+                        peserta=`<${listTag} class="list">`;
                         $.each(dt.peserta_wawancara, function(index, item) {
                             let mahasiswa = item.pendaftar.mahasiswa;
                             peserta += `<li>
                                             <div class="nama">
                                                 ${mahasiswa.user.name}
-                                                <a href="javascript:;" class="tukar-peserta-wawancara" data-id="${item.id}">
+                                                <a href="javascript:;" class="tukar-peserta-wawancara" data-pewawancara="${dt.user.name}" data-program_studi="${mahasiswa.program_studi.nama}" data-peserta_wawancara_id="${item.id}" data-nim="${mahasiswa.nim}" data-nama="${mahasiswa.user.name}" >
                                                     <iconify-icon icon="solar:maximize-square-broken" class=""></iconify-icon>
                                                 </a>
-
 
                                                 <a href="javascript:;" class="hapus-peserta-wawancara" data-id="${item.id}">
                                                     <iconify-icon icon="solar:trash-bin-minimalistic-outline" class=""></iconify-icon>
@@ -360,7 +387,7 @@ td, th {
                                             <div class="nim">${mahasiswa.nim}</div>
                                         </li>`;
                         });
-                        peserta+=`</ul>`;
+                        peserta+=`</${listTag}>`;
 
                     }
                     const row = `<tr>
@@ -376,6 +403,7 @@ td, th {
                                             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
                                             <ul class="dropdown-menu">
                                                 <li><a class="dropdown-item btn-tambah-peserta" data-jumlah_peserta="0" data-id="${dt.id}" href="javascript:;"><i class="far fa-edit"></i> Tambah Peserta</a></li>
+                                                <li><a class="dropdown-item" target="_blank" href="${base_url}/cetak-hasil-wawancara/${dt.beasiswa_id}/${dt.id}"><i class="far fa-edit"></i> Cetak Hasil Wawancara</a></li>
                                                 <li><a class="dropdown-item btn-ganti" data-id="${dt.id}" href="javascript:;"><i class="far fa-edit"></i> Ganti</a></li>
                                                 <li><a class="dropdown-item btn-hapus" data-id="${dt.id}" href="javascript:;"><i class="fas fa-trash-alt"></i> Hapus</a></li>
                                             </ul>
@@ -397,57 +425,57 @@ td, th {
             const limit = $('#jumlah').val();
             const cari = $('#cari').val();
             const program_studi_id = $('#program_studi_id').val();
-            var url = `${base_url}/api/peserta-wawancara?is_admin=1&search=${cari}&prodi=${program_studi_id}&pewawancara=0&beasiswa_id=${id}&limit=${limit}`;
-            try {
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`, 
-                        'Content-Type': 'application/json'
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const result = await response.json();
-                const daftar_peserta = $('#daftar-peserta');
-
-                daftar_peserta.empty();
-                if(result.data.data.length>0){
-                    $.each(result.data.data, function(index, dt) {
-                        // console.log(dt);
-                        let data_pewawancara=``;
-                        if(dt.wawancara.length>0){
-                            data_pewawancara=`<ul class="list">`;
-                            $.each(dt.wawancara, function(index, dt) {
-                                data_pewawancara+=`<li>${dt.pewawancara.user.name}</li>`;
-                            });
-                            data_pewawancara+=`</ul>`;
-                        }
-
-                        const row = `<tr>
-                                        <td>
-                                            <input type="checkbox" class="pilih" name="pendaftar_id[]" value="${dt.id}">                                    
-                                        </td>
-                                        <td>
-                                            <div class="pendaftar-row">
-                                                <img class="foto" src="${base_url}/${dt.mahasiswa.user.identitas.foto}" alt="Foto Pendaftar">
-                                                <div class="pendaftar-info">
-                                                    <span class="nama">${dt.mahasiswa.user.name}</span>
-                                                    <span class="nim">${dt.mahasiswa.nim}</span>
-                                                    <span class="prodi">${dt.mahasiswa.program_studi.nama}</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>${data_pewawancara}</td>
-                                    </tr>`;
-                        daftar_peserta.append(row);
-                    });                    
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
+            const status_pewawancara = $('#status_pewawancara').val();
+            const url = `${base_url}/api/get-data-peserta-wawancara?page=${page_pembagian}&is_admin=1&search=${cari}&prodi=${program_studi_id}&pewawancara=${status_pewawancara}&beasiswa_id=${id}&limit=${limit}`;
+            const response = await execAsync(`${url}`, 'GET', token);
+            renderPilihPeserta(response);
         }
+
+        function renderPilihPeserta(response) {
+            const dataList = $('#daftar-pembagian');
+            const pagination = $('#pagination-pembagian');
+            const data=response.data.data;
+            let no = (response.data.current_page - 1) * response.data.per_page + 1;
+            dataList.empty();
+            pagination.empty();
+            if (data.length > 0) {
+                $.each(data, function(index, dt) {
+                    // console.log(dt);
+                    let data_pewawancara=``;
+                    if(dt.wawancara.length>0){
+                        let listTag = dt.wawancara.length > 1 ? "ol" : "ul";                        
+                        data_pewawancara=`<${listTag} class="list">`;
+                        $.each(dt.wawancara, function(index, dt) {
+                            data_pewawancara+=`<li>${dt.pewawancara.user.name}</li>`;
+                        });
+                        data_pewawancara+=`</${listTag}>`;
+                    }
+
+                    const row = `<tr>
+                                    <td>
+                                        <input type="checkbox" class="pilih" name="pendaftar_id[]" value="${dt.id}">                                    
+                                    </td>
+                                    <td>
+                                        <div class="pendaftar-row">
+                                            <img class="foto" src="${base_url}/${dt.mahasiswa.user.identitas.foto}" alt="Foto Pendaftar">
+                                            <div class="pendaftar-info">
+                                                <span class="nama">${dt.mahasiswa.user.name}</span>
+                                                <span class="nim">${dt.mahasiswa.nim}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>${data_pewawancara}</td>
+                                </tr>`;
+                    dataList.append(row);
+                });
+                renderPagination(response.data, pagination);
+            }else{
+                const row = `<tr>
+                                <td colspan="3">data tidak ditemukan</td>
+                            </tr>`;
+                dataList.append(row);                
+            }
+        }    
 
         async function dataLoad() {
             var search = $('#search-input').val();
@@ -490,14 +518,76 @@ td, th {
         });        
 
         // Handle page change
-        $(document).on('click', '.page-link', function() {
+        $(document).on('click', '#pagination .page-link', function() {
             page = $(this).data('page');
             dataLoad();
         });
 
 
+        // Handle page change
+        $(document).on('click', '#pagination-pembagian .page-link', function() {
+            page_pembagian = $(this).data('page');
+            loadDataPeserta();
+        });
+
+        $("#nama-mahasiswa-asal").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: `${base_url}/api/peserta-ujian-wawancara`,
+                    type: "GET",
+                    dataType: "json",
+                    data: {
+                        beasiswa_id: id,
+                        is_admin:1,
+                        search: request.term
+                    },
+                    success: function (respon) {
+
+                        //reset data pewawancara dan list peserta
+                        $('#data-pewawancara').val('');
+                        $('#list-peserta-tukar').html(`<p class="text-muted">Peserta tidak ditemukan.</p>`);
+                        $('#peserta_wawancara_id_asal').val("");
+                        $('#peserta_nim_asal').val("");
+                        response($.map(respon.data.data, function (item) {
+                            let mahasiswa = item.pendaftar.mahasiswa;
+                            return {
+                                label: `${mahasiswa.user.name} (${mahasiswa.nim} / ${mahasiswa.program_studi.nama}) - ${item.pewawancara.user.name}`, 
+                                value: item.id,
+                                user_id: mahasiswa.user.id,
+                                nim: mahasiswa.nim,
+                            };
+                        }));
+                    }
+                });
+            },
+            appendTo: "#modal-tukar",
+            minLength: 3,
+            select: function (event, ui) {
+                $(this).val(ui.item.label);  
+
+                // simpan value lain ke hidden field
+                $("#peserta_wawancara_id_asal").val(ui.item.value); 
+                $("#peserta_nim_asal").val(ui.item.nim);
+                return false;
+            }
+        }); 
+
         $(document).on('click', '.tukar-peserta-wawancara', function() {
             const id = $(this).data('id');
+            const nim = $(this).attr('data-nim');
+            const program_studi = $(this).attr('data-program_studi');
+            const peserta_wawancara_id = $(this).attr('data-peserta_wawancara_id');
+            const nama = $(this).attr('data-nama');
+            const pewawancara = $(this).attr('data-pewawancara');
+
+            $('#peserta_wawancara_id_asal').val(peserta_wawancara_id);
+            $('#peserta_nim_asal').val(nim);
+            $('#nama-mahasiswa-asal').val(`${nama} (${nim}/ ${program_studi}) - ${pewawancara}`);
+
+            //reset data pewawancara dan list peserta
+            $('#data-pewawancara').val('');
+            $('#list-peserta-tukar').html(`<p class="text-muted">Peserta tidak ditemukan.</p>`);
+
             showModal('modal-tukar');
         }); 
 
@@ -509,13 +599,13 @@ td, th {
             });
         }); 
 
-        // $('#program_studi_id').change(function(){
-        //     loadDataPeserta();
-        // })
+        $('#program_studi_id').change(function(){
+            loadDataPeserta();
+        })
 
-        // $('#jumlah').blur(function(){
-        //     loadDataPeserta();
-        // })
+        $('#jumlah').blur(function(){
+            loadDataPeserta();
+        })
 
         // $('#cari').on('keyup', function() {
         //     let keyword = $(this).val().trim();
@@ -532,15 +622,16 @@ td, th {
 
 
         // Handle page change
-        $('#btn-refresh').click(function() {
+        $('#btn-cari-data').click(function() {
+            cari=1;
             dataLoad();
         });
 
         // Handle search-input
-        $(document).on('input', '#search-input', function() {
+        // $(document).on('input', '#search-input', function() {
             // console.log('Event input berjalan');
-            dataLoad();
-        });      
+        //     dataLoad();
+        // });      
 
         $('#modal-form').on('shown.bs.modal', function () {
             $(this).removeAttr('aria-hidden');
@@ -563,6 +654,13 @@ td, th {
             
         });
 
+        $(document).on('click','.btn-tambah-peserta',function(){
+            $('#pembagian_pewawancara_id').val($(this).data('id'));
+            loadDataPeserta();
+            showModal('modal-pembagian');
+        })
+
+
         //validasi dan save, jika id ada maka PUT/edit jika tidak ada maka POST/simpan baru
         $("#form").validate({
             submitHandler: function(form) {
@@ -580,6 +678,24 @@ td, th {
             }
         });
 
+        $("#btn-simpan-tukar").click(async function(){
+            const peserta_wawancara_id_tujuan = $('.peserta_wawancara_id_tujuan:checked').val();
+            const peserta_wawancara_id_asal = $('#peserta_wawancara_id_asal').val();
+            const pendaftar_id_tujuan = $('.pendaftar_id_tujuan').val();
+            if(peserta_wawancara_id_asal && peserta_wawancara_id_tujuan){
+                const url = `${base_url}/api/tukar-peserta-wawancara/${peserta_wawancara_id_asal}/${peserta_wawancara_id_tujuan}`;
+                const response = await execAsync(url, 'GET', token);
+                if(response.status){
+                    appShowNotification(true,['berhasil dilakukan!']);
+                    getPesertaWawancara();
+                    dataLoad();
+                    $('#peserta_wawancara_id_asal').val(peserta_wawancara_id_tujuan);
+                }
+            }else{
+                appShowNotification(false,['peserta wawancara asal atau tujuan harus dipilih terlebh dahulu!']);
+            }
+        });
+
 
         $("#pembagian").validate({
             submitHandler: function(form) {
@@ -593,12 +709,6 @@ td, th {
             }
         });
 
-
-        $(document).on('click','.btn-tambah-peserta',function(){
-            $('#pewawancara_id').val($(this).data('id'));
-            loadDataPeserta();
-            showModal('modal-pembagian');
-        })
 
         //ganti data
         $(document).on('click', '.btn-ganti', function() {

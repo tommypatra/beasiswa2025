@@ -39,6 +39,9 @@
             <h5 class="card-title fw-semibold">Wawancara Seleksi Beasiswa</h5>
             <div class="d-flex gap-2">
                 <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
+                <button class="btn btn-primary" id="btn-search">
+                    <i class="ti ti-search"></i>
+                </button>
                 <button class="btn btn-success" id="btn-refresh">
                     <i class="ti ti-reload"></i>
                 </button>
@@ -167,21 +170,28 @@
 
         async function dataLoad() {
             var search = $('#search-input').val();
-            var url = `${base_url}/api/pewawancara?search=${search}`;
+            var url = `${base_url}/api/pewawancara?page=${page}&search=${search}`;
 
             fetchData(url, function(response) {
                 renderData(response);
             },true);
         }
 
+        // Handle page change
+        $(document).on('click', '.page-link', function() {
+            page = $(this).data('page');
+            dataLoad();
+        });
+
+
         $('#btn-refresh').click(function() {
             dataLoad();
         });
 
-        $(document).on('input', '#search-input', function() {
-            console.log('Event input berjalan');
+        $('#btn-search').click(function(){
+            page=1;
             dataLoad();
-        });      
+        });
 
         $(document).on('click','.btn-daftar-peserta',function(){
             const id = $(this).data('beasiswa_id');

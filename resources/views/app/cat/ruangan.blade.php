@@ -48,8 +48,8 @@
     var page_tab2=1;
 
     function loadDataTab2(){
-        var search_tab2 = $('#search-input').val();
-        var url = `${base_url}/api/ruangan-ujian?beasiswa_id=${beasiswa_id}&page=${page_tab2}&search=${search_tab2}`;
+        // const search_tab2 = $('#search-input-tab2').val();
+        const url = `${base_url}/api/ruangan-ujian?beasiswa_id=${beasiswa_id}&page=${page_tab2}`;
 
         fetchData(url, function(response) {
             renderDataTab2(response);

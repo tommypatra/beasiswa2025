@@ -15,14 +15,14 @@ return new class extends Migration
             $table->id();
             $table->integer('sesi');
             $table->date('tanggal');
-            $table->time('jam_mulai');
-            $table->time('jam_selesai');
-            $table->foreignId('ruangan_id');
-            $table->foreign('ruangan_id')->references('id')->on('ruangans')->restrictOnDelete();
+            $table->foreignId('sesi_ujian_id');
+            $table->foreign('sesi_ujian_id')->references('id')->on('sesi_ujians')->restrictOnDelete();
+            $table->foreignId('ruangan_ujian_id');
+            $table->foreign('ruangan_ujian_id')->references('id')->on('ruangan_ujians')->restrictOnDelete();
             $table->foreignId('beasiswa_id');
             $table->foreign('beasiswa_id')->references('id')->on('beasiswas')->restrictOnDelete();
 
-            $table->unique(['beasiswa_id', 'ruangan_id', 'jam_mulai']);
+            $table->unique(['beasiswa_id', 'tanggal', 'ruangan_ujian_id', 'sesi_ujian_id']);
             $table->timestamps();
         });
     }

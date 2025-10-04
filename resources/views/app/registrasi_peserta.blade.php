@@ -2,20 +2,6 @@
 
 @section('scriptHead')
 <title>Registrasi Peserta Wawancara Seleksi Beasiswa</title>
-<style>
-
-.list {
-    list-style-type: decimal;    
-    margin-left: 20px;
-    padding-left: 20px;
-}
-
-.list li {
-    line-height: 1.5;
-}
-
-
-</style>
 @endsection
 
 @section('container')
@@ -26,6 +12,9 @@
             <h5 class="card-title fw-semibold">Registrasi Peserta Wawancara Seleksi Beasiswa</h5>
             <div class="d-flex gap-2">
                 <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
+                <button class="btn btn-primary" id="btn-search-jadwal">
+                    <i class="ti ti-search"></i>
+                </button>
                 <button class="btn btn-success" id="btn-refresh">
                     <i class="ti ti-reload"></i>
                 </button>
@@ -50,7 +39,7 @@
         </div>
         <!-- Pagination -->
         <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center" id="pagination"></ul>
+            <ul class="pagination justify-content-center pagination-jadwal" id="pagination-jadwal"></ul>
         </nav>
     </div>
 </div>
@@ -72,6 +61,9 @@
                             Registrasi
                             <div class="d-flex gap-2">
                                 <input type="text" class="form-control" id="search-peserta" placeholder="Cari..." style="max-width: 200px;">
+                                <button class="btn btn-primary" id="btn-search-peserta">
+                                    <i class="ti ti-search"></i>
+                                </button>
                                 <button class="btn btn-success" id="btn-refresh-peserta">
                                     <i class="ti ti-reload"></i>
                                 </button>
@@ -94,7 +86,7 @@
                         </div>   
                         <!-- Pagination -->
                         <nav aria-label="Page navigation">
-                            <ul class="pagination justify-content-center" id="pagination-peserta"></ul>
+                            <ul class="pagination justify-content-center pagination-peserta" id="pagination-peserta"></ul>
                         </nav>
 
                     </div>
@@ -117,7 +109,8 @@
 
 <script type="text/javascript">
     const endpoint = base_url+'/api/wawancara';
-    var page = 1;
+    var page_jadwal = 1;
+    var page_peserta = 1;
     var beasiswa_id;
     var is_wawancara_aktif=false;
 
@@ -126,7 +119,7 @@
 
         function renderData(response) {
             const dataList = $('#data-list');
-            const pagination = $('#pagination');
+            const pagination = $('#pagination-jadwal');
             const data=response.data.data;
             let no = (response.data.current_page - 1) * response.data.per_page + 1;
             dataList.empty();
@@ -168,14 +161,14 @@
 
         async function dataLoad() {
             let search = $('#search-input').val();
-            let url = `${base_url}/api/wawancara?search=${search}`;
+            let url = `${base_url}/api/wawancara?page=${page_jadwal}&search=${search}`;
             let response = await execAsync(`${url}`, 'GET', token);
             renderData(response);
         }
 
         async function dataPeserta() {
             let search = $('#search-peserta').val();
-            let url = `${base_url}/api/get-data-peserta-wawancara?is_admin=1&beasiswa_id=${beasiswa_id}&search=${search}`;
+            let url = `${base_url}/api/get-data-peserta-wawancara?page=${page_peserta}&urut_pengelola=1&is_admin=1&beasiswa_id=${beasiswa_id}&search=${search}`;
             let response = await execAsync(`${url}`, 'GET', token);
 
             const dataList = $('#data-list-peserta');
@@ -189,8 +182,9 @@
                 $.each(data, function(index, dt) {
                     let pewawancara = ``;
                     let peserta_wawancara=dt.wawancara[0];
-                    if(dt.wawancara.length>0){                        
-                        pewawancara = `<ul class="list">`;
+                    if(dt.wawancara.length>0){      
+                        let listTag = dt.wawancara.length > 1 ? "ol" : "ul";
+                        pewawancara = `<${listTag} class="list">`;
                         $.each(dt.wawancara, function(index, item) {
                             let status_wawancara=``;
                             if(dt.is_registrasi_wawancara){
@@ -205,7 +199,7 @@
 
                             pewawancara += `<li>${item.pewawancara.user.name} ${status_wawancara}</li>`;
                         });
-                        pewawancara += `<ul>`;
+                        pewawancara += `</${listTag}>`;
                     }
                     let vclass="table-warning";
                     let is_registrasi_wawancara="";
@@ -258,14 +252,28 @@
             dataPeserta();
         });
 
-        $(document).on('input', '#search-input', function() {
-            console.log('Event input berjalan');
+        // Handle page change
+        $(document).on('click', '#pagination-jadwal .page-link', function() {
+            page_jadwal = $(this).data('page');
             dataLoad();
-        });      
+        });
 
-        $(document).on('input', '#search-peserta', function() {
+        $('#btn-search-jadwal').click(function(){
+            page_jadwal=1;
+            dataLoad();
+        });
+
+        // Handle page change
+        $(document).on('click', '#pagination-peserta .page-link', function() {
+            page_peserta = $(this).data('page');
             dataPeserta();
-        });      
+        });
+
+        $('#btn-search-peserta').click(function(){
+            page_peserta=1;
+            dataPeserta();
+        });
+
 
         $(document).on('click','.btn-daftar-peserta',function(){
             beasiswa_id = $(this).data('beasiswa_id');

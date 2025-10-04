@@ -25,6 +25,9 @@
             <h5 class="card-title fw-semibold">Daftar SK Beasiswa</h5>
             <div class="d-flex gap-2">
                 <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;" >
+                <button class="btn btn-primary" id="btn-search">
+                    <i class="ti ti-search"></i>
+                </button>
                 <button class="btn btn-success" id="btn-refresh-sk" >
                     <i class="ti ti-reload"></i>
                 </button>
@@ -155,11 +158,9 @@
             await loadDataSK();
         }
 
-        $('#search-input').on('keypress', async function(e) {
-            if (e.which === 13) {       // 13 = Enter
-                e.preventDefault();      
-                await loadDataSK(); 
-            }
+        $('#btn-search').click(function(){
+            page_sk=1;
+            loadDataSK();
         });
         
         // Handle page change

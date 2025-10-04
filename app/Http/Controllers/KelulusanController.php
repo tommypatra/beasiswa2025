@@ -32,15 +32,9 @@ class KelulusanController extends Controller
             'pendaftar.beasiswa',
             'pendaftar.pesertaWawancara.pewawancara.user',
             'pendaftar.mahasiswa.user.identitas',
+            // 'pendaftar.verifikatorPendaftar',
             'pendaftar.mahasiswa.programStudi.fakultas'
         ]);
-
-        $dataQuery->where(function ($query) {
-            $query->whereHas('pendaftar', function ($q) {
-                $q->where('is_finalisasi', 1);
-            });
-        });
-
         $filters = $request->input('filter', []);
 
         foreach ($filters as $key => $val) {
@@ -94,11 +88,9 @@ class KelulusanController extends Controller
                     $q->where('name', 'like', '%' . $search . '%');
                 });
 
-                if ($request->filled('cari_pewawancara')) {
-                    $query->orWhereHas('pendaftar.pesertaWawancara.pewawancara.user', function ($q) use ($search) {
-                        $q->where('name', 'like', '%' . $search . '%');
-                    });
-                }
+                // $query->orWhereHas('pendaftar.pesertaWawancara.pewawancara.user', function ($q) use ($search) {
+                //     $q->where('name', 'like', '%' . $search . '%');
+                // });
             });
         }
 
@@ -199,7 +191,7 @@ class KelulusanController extends Controller
             $beasiswa = $request->input('beasiswa');
             $pendaftar_id = $request->pendaftar_id;
 
-            $peserta = Pendaftar::with(['mahasiswa.user'])
+            $peserta = Pendaftar::with(['verifikatorPendaftar', 'mahasiswa.user'])
                 ->where('id', $pendaftar_id)
                 ->firstOrFail();
 
@@ -226,33 +218,35 @@ class KelulusanController extends Controller
 
             // Ambil nilai orang tua
             $respOrtu = (new OrangTuaController())->dataOrangTua($user_id)->getData();
-            $data_post['nilai_orang_tua'] = (float)($respOrtu->data->verifikasi_lapangan_skor
-                ?? $respOrtu->data->skor_akhir
-                ?? 0);
+            $data_post['nilai_orang_tua'] = (float)($respOrtu->data->skor_akhir ?? 0);
+
+            $survei_ortu = (float)($respOrtu->data->verifikasi_lapangan_skor ?? 0);
+
 
             // Ambil nilai raport
-            $respRaport = (new NilaiRaportController())->dataRaport($user_id)->getData();
-            $data_post['nilai_raport'] = (float)($respRaport->data->verifikasi_lapangan_skor
-                ?? $respRaport->data->skor_akhir
-                ?? 0);
+            // $respRaport = (new NilaiRaportController())->dataRaport($user_id)->getData();
+            // $data_post['nilai_raport'] = (float)($respRaport->data->verifikasi_lapangan_skor
+            //     ?? $respRaport->data->skor_akhir
+            //     ?? 0);
 
             // Ambil nilai pendidikan akhir
             $respPendidikan = (new PendidikanAkhirController())->dataPendidikanAkhir($user_id)->getData();
-            $data_post['nilai_pendidikan_akhir'] = (float)($respPendidikan->data->verifikasi_lapangan_skor
-                ?? $respPendidikan->data->skor_akhir
-                ?? 0);
+            $data_post['nilai_pendidikan_akhir'] = (float)($respPendidikan->data->skor_akhir ?? 0);
+            $survei_pendidikan = (float)($respPendidikan->data->verifikasi_lapangan_skor ?? 0);
 
             // Ambil nilai rumah
             $respRumah = (new RumahController())->dataKondisiRumah($user_id)->getData();
-            $data_post['nilai_rumah'] = (float)($respRumah->data->verifikasi_lapangan_skor
-                ?? $respRumah->data->skor_akhir
-                ?? 0);
+            $data_post['nilai_rumah'] = (float)($respRumah->data->skor_akhir ?? 0);
+            $survei_rumah = (float)($respRumah->data->verifikasi_lapangan_skor ?? 0);
+
+            // dd($data_post);
 
             // Ambil nilai berkas upload
             $respBerkas = (new UploadSyaratController())->dataDokumenUpload($pendaftar_id)->getData();
+            $survei_berkas = 0;
             if (!empty($respBerkas->data->verifikasi_berkas)) {
-                $data_post['nilai_survei'] = (float)$respBerkas->data->verifikasi_berkas->verifikasi_lapangan_skor;
-                $data_post['nilai_berkas'] = (float)$respBerkas->data->verifikasi_berkas->total_skor;
+                $data_post['nilai_berkas'] = (float)($respBerkas->data->verifikasi_berkas->total_skor ?? 0);
+                $survei_berkas = (float)($respBerkas->data->verifikasi_berkas->verifikasi_lapangan_skor ?? 0);
             }
 
             // Nilai wawancara
@@ -260,8 +254,15 @@ class KelulusanController extends Controller
             $data_post['nilai_wawancara'] = (float)PesertaWawancara::where('pendaftar_id', $pendaftar_id)->avg('nilai');
             // }
 
-            $data_post['nilai_ekonomi'] = ($data_post['nilai_rumah'] + $data_post['nilai_orang_tua']) / 2;
-            $data_post['nilai_pendidikan'] = ($data_post['nilai_pendidikan_akhir'] + $data_post['nilai_raport']) / 2;
+            $data_post['nilai_survei'] =
+                ($survei_berkas * 0.5) +
+                ($survei_ortu * 0.2) +
+                ($survei_rumah * 0.2) +
+                ($survei_pendidikan * 0.1);
+            // $data_post['nilai_pendidikan'] = ($data_post['nilai_pendidikan_akhir'] + $data_post['nilai_raport']) / 2;
+
+            $data_post['nilai_pendidikan'] = $data_post['nilai_pendidikan_akhir'];
+            $data_post['nilai_ekonomi'] = ($survei_rumah + $survei_ortu) / 2;
 
             // Simpan data kelulusan
             $kelulusan = Kelulusan::updateOrCreate(

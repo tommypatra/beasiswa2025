@@ -13,6 +13,11 @@ class RuanganUjian extends Model
         return $this->belongsTo(Beasiswa::class);
     }
 
+    public function jadwalUjian()
+    {
+        return $this->hasMany(JadwalUjian::class);
+    }
+
     public function ruangan()
     {
         return $this->belongsTo(Ruangan::class);

@@ -136,6 +136,21 @@ $(document).on('input', '.numberonly', function() {
     this.value = this.value.replace(/[^0-9]/g, ''); 
 });
 
+function rangeNilai(element, nilai_minimal, nilai_maksimal) {
+    $(element).on('input', function () {
+        let val = parseInt($(this).val(), 10);
+
+        if (isNaN(val)) return;
+
+        if (val > nilai_maksimal) {
+            $(this).val(nilai_maksimal);
+        } else if (val < nilai_minimal) {
+            $(this).val(nilai_minimal);
+        }
+    });
+}
+
+
 function setFormEnabled(selector, state) {
     $(selector).find(':input, button').prop('disabled', !state);
 }

@@ -72,8 +72,8 @@ td, th {
                     <h5 class="card-title fw-semibold">Peserta Beasiswa</h5>
                     <div class="d-flex gap-2">
                         <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
-                        <button class="btn btn-success" id="btn-refresh">
-                            <i class="ti ti-reload"></i>
+                        <button class="btn btn-secondary" id="btn-cari-data">
+                            <i class="ti ti-search"></i>
                         </button>
                         <button class="btn btn-success" id="btn-cetak">
                             <i class="ti ti-printer"></i>
@@ -391,15 +391,16 @@ td, th {
         });
 
         // Handle page change
-        $('#btn-refresh').click(function() {
+        $('#btn-cari-data').click(function() {
+            page=1;
             dataLoad();
         });
 
         // Handle search-input
-        $(document).on('input', '#search-input', function() {
-            console.log('Event input berjalan');
-            dataLoad();
-        });      
+        // $(document).on('input', '#search-input', function() {
+        //     console.log('Event input berjalan');
+        //     dataLoad();
+        // });      
 
         $('#btn-filter').click(function(){
             var fModalForm = new bootstrap.Modal(document.getElementById('modal-filter'), {

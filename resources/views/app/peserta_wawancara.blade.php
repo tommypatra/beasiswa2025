@@ -29,16 +29,6 @@
     color: #777;
 }
 
-.list {
-    list-style-type: decimal;    
-    margin-left: 20px;
-    padding-left: 20px;
-}
-
-.list li {
-    line-height: 1.5;
-}
-
 </style>
 @endsection
 
@@ -50,8 +40,14 @@
             <h5 class="card-title fw-semibold">Peserta Wawancara</h5>
             <div class="d-flex gap-2">
                 <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
+                <button class="btn btn-primary" id="btn-search">
+                    <i class="ti ti-search"></i>
+                </button>
                 <button class="btn btn-success" id="btn-refresh">
                     <i class="ti ti-reload"></i>
+                </button>
+                <button class="btn btn-success" id="btn-print">
+                    <iconify-icon icon="solar:printer-outline" class="fs-5"></iconify-icon>
                 </button>
             </div>
         </div>
@@ -174,9 +170,12 @@
     var page = 1;
     var pewawancara;
     var pendaftar_id;
+    var global_pewawancara_id;
     var last_page;
     
     $(document).ready(function() {
+        rangeNilai('#nilai',0,100);
+        dataWawancaraId();
         dataLoad();
 
         async function wawancara_mulai() {            
@@ -237,7 +236,8 @@
                     let peserta_wawancara_id;
                     let tombol_wawancara="btn-warning";
                     if(dt.wawancara.length>0){
-                        pewawancara = `<ul class="list">`;
+                        let listTag = dt.wawancara.length > 1 ? "ol" : "ul";
+                        pewawancara = `<${listTag} class="list">`;
 
 
                         $.each(dt.wawancara, function(index, item) {
@@ -269,7 +269,7 @@
                                 }
                             }
                         });
-                        pewawancara += `<ul>`;
+                        pewawancara += `</${listTag}>`;
                     }
                     const row = `<tr>
                                     <td>${no++}</td>
@@ -305,9 +305,18 @@
             }
         }    
 
+        async function dataWawancaraId() {
+            var url = `${base_url}/api/cari-wawancara-id/${beasiswa_id}`;
+            let response = await asyncFunction(`${url}`);
+            // console.log(response)
+            if(response.status){
+                global_pewawancara_id=response.data.id;
+            }
+        }
+
         async function dataLoad() {
             var search = $('#search-input').val();
-            var url = `${base_url}/api/peserta-wawancara?beasiswa_id=${beasiswa_id}&search=${search}`;
+            var url = `${base_url}/api/peserta-wawancara?page=${page}&beasiswa_id=${beasiswa_id}&search=${search}`;
 
             fetchData(url, function(response) {
                 renderData(response);
@@ -384,10 +393,21 @@
             dataLoad();
         });
 
-        $(document).on('input', '#search-input', function() {
-            console.log('Event input berjalan');
+        $('#btn-print').click(function() {
+            const url = `${base_url}/cetak-hasil-wawancara/${beasiswa_id}/${global_pewawancara_id}`;
+            window.open(url, '_blank');
+        });
+
+        // Handle page change
+        $(document).on('click', '.page-link', function() {
+            page = $(this).data('page');
             dataLoad();
-        });      
+        });
+
+        $('#btn-search').click(function(){
+            page=1;
+            dataLoad();
+        });
 
         $('.soal-berikutnya').click(async function() {
             page++;

@@ -8,6 +8,7 @@ class Ruangan extends Model
 {
     protected $guarded = ["id"];
 
+
     public function ruanganUjian()
     {
         return $this->hasMany(RuanganUjian::class);

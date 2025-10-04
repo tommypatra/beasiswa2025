@@ -72,15 +72,15 @@ td, th {
                     <h5 class="card-title fw-semibold">Verfikator Dokumen Pendaftaran</h5>
                     <div class="d-flex gap-2">
                         <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
+                        <button class="btn btn-secondary" id="btn-cari-data">
+                            <i class="ti ti-search"></i>
+                        </button>
                         <button class="btn btn-primary" id="btn-tambah">
                             <i class="ti ti-plus"></i>
                         </button>
-                        <button class="btn btn-success" id="btn-refresh">
-                            <i class="ti ti-reload"></i>
-                        </button>
-                        <button class="btn btn-secondary" id="btn-filter">
+                        {{-- <button class="btn btn-secondary" id="btn-filter">
                             <i class="ti ti-filter"></i>
-                        </button>
+                        </button> --}}
                     </div>
                 </div>
                 
@@ -402,15 +402,16 @@ td, th {
         // });
 
         // Handle page change
-        $('#btn-refresh').click(function() {
+        $('#btn-cari-data').click(function() {
+            page=1;
             dataLoad();
         });
 
         // Handle search-input
-        $(document).on('input', '#search-input', function() {
-            console.log('Event input berjalan');
-            dataLoad();
-        });      
+        // $(document).on('input', '#search-input', function() {
+        //     console.log('Event input berjalan');
+        //     dataLoad();
+        // });      
 
         $('#modal-form').on('shown.bs.modal', function () {
             $(this).removeAttr('aria-hidden');

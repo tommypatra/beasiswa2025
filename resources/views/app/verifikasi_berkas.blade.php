@@ -39,6 +39,9 @@
             <h5 class="card-title fw-semibold">Verfikator Berkas</h5>
             <div class="d-flex gap-2">
                 <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
+                <button class="btn btn-primary" id="btn-search">
+                    <i class="ti ti-search"></i>
+                </button>
                 <button class="btn btn-success" id="btn-refresh">
                     <i class="ti ti-reload"></i>
                 </button>
@@ -307,7 +310,7 @@
 
         async function dataLoad() {
             var search = $('#search-input').val();
-            var url = `${endpoint}?search=${search}`;
+            var url = `${endpoint}?page=${page}&search=${search}`;
 
             fetchData(url, function(response) {
                 renderData(response);
@@ -327,11 +330,16 @@
             dataLoad();
         });
 
-        $(document).on('input', '#search-input', function() {
-            // console.log('Event input berjalan');
+        $('#btn-search').click(function(){
+            page=1;
             dataLoad();
-        });      
+        });
 
+        // Handle page change
+        $(document).on('click', '.page-link', function() {
+            page = $(this).data('page');
+            dataLoad();
+        });
 
         //hapus data
         $(document).on('click', '.btn-peserta', function() {
@@ -554,10 +562,10 @@
                                         <p>Deskripsi : ${data.deskripsi}</p>
                                         <p>${contohPath}</p>
                                         <div id="kontrol-gambar" style="text-align:center; margin-top:10px; display:none;">
-                                            <button type="button" class="btn btn-sm btn-secondary" onclick="rotateImage(-90)">⟲ Putar Kiri</button>
-                                            <button type="button" class="btn btn-sm btn-secondary" onclick="rotateImage(90)">⟳ Putar Kanan</button>
-                                            <button type="button" class="btn btn-sm btn-secondary" onclick="zoomImage(1.2)">🔍 Zoom In</button>
-                                            <button type="button" class="btn btn-sm btn-secondary" onclick="zoomImage(0.8)">🔎 Zoom Out</button>
+                                            <button type="button" class="btn btn-sm btn-secondary" onclick="rotateImage('preview-img',-90)">⟲ Putar Kiri</button>
+                                            <button type="button" class="btn btn-sm btn-secondary" onclick="rotateImage('preview-img',90)">⟳ Putar Kanan</button>
+                                            <button type="button" class="btn btn-sm btn-secondary" onclick="zoomImage('preview-img',1.2)">🔍 Zoom In</button>
+                                            <button type="button" class="btn btn-sm btn-secondary" onclick="zoomImage('preview-img',0.8)">🔎 Zoom Out</button>
                                         </div>                                        
                                         <div id="dokumen-embed" 
                                             style="margin-top:10px; height:500px; width:100%; border:1px solid #ccc; overflow:auto;">

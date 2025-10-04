@@ -49,6 +49,9 @@
             <h5 class="card-title fw-semibold">Peserta Survei</h5>
             <div class="d-flex gap-2">
                 <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
+                <button class="btn btn-primary" id="btn-search">
+                    <i class="ti ti-search"></i>
+                </button>
                 <button class="btn btn-success" id="btn-refresh">
                     <i class="ti ti-reload"></i>
                 </button>
@@ -111,8 +114,8 @@
                             <div class="card-body">
                                 <h5 id="info-nomor-soal">Komponen Survei</h5>
                                 <div id="daftar-komponen">
-                                    <div class="btn btn-sm btn-outline-primary mb-1" id="data-pendidikan-akhir" style="display:none">Pendidikan Akhir</div>
-                                    <div class="btn btn-sm btn-outline-primary mb-1" id="data-raport" style="display:none">Raport</div>
+                                    <div class="btn btn-sm btn-outline-primary mb-1 active" id="data-pendidikan-akhir" style="display:none">Pendidikan Akhir</div>
+                                    {{-- <div class="btn btn-sm btn-outline-primary mb-1" id="data-raport" style="display:none">Raport</div> --}}
                                     <div class="btn btn-sm btn-outline-primary mb-1" id="data-kondisi-rumah" style="display:none">Kondisi Rumah</div>
                                     <div class="btn btn-sm btn-outline-primary mb-1" id="data-orang-tua" style="display:none">Orang Tua</div>
                                     <div class="btn btn-sm btn-outline-primary mb-1" id="data-dokumen-upload">Dokumen Upload</div>
@@ -204,6 +207,8 @@
 @section('scriptJs')
 <script src="{{ asset('js/crud.js') }}"></script>
 <script src="{{ asset('js/pagination.js') }}"></script>
+<script src="{{ asset('js/gambar.js') }}"></script>
+
 <script src="{{ asset('js/jquery-validation-1.19.5/dist/jquery.validate.min.js')}}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 
@@ -224,6 +229,11 @@
     
     $(document).ready(function() {
         dataLoad();
+
+        $(document).on("click", "#daftar-komponen .btn", function() {
+            $("#daftar-komponen .btn").removeClass("active"); 
+            $(this).addClass("active");
+        });
 
         function pembalik(nilai, jumlah_pilihan){
             return (jumlah_pilihan > 1) ? (1 - ((nilai - 1) / (jumlah_pilihan - 1))) : 0;
@@ -377,6 +387,12 @@
             $('#survei-komponen').show();
             $('#survei-akhir').hide();
             data_kondisi_rumah();
+        });
+
+        // Handle page change
+        $(document).on('click', '.page-link', function() {
+            page = $(this).data('page');
+            dataLoad();
         });
 
         async function data_kondisi_rumah(){
@@ -543,10 +559,11 @@
             if (vRespon.status && Array.isArray(vRespon.data.upload)) {
                 html=`<div class="accordion" id="accordionDokumen">`;
                 vRespon.data.upload.forEach((item, index) => {
+                    console.log(item);
                     const idHeader = `heading${item.upload_syarat_id}`;
                     const idCollapse = `collapse${item.upload_syarat_id}`;
                     const dokumen_show_id = `dokumen-show-${item.upload_syarat_id}`;
-
+                    const display_kontrol_gambar =  (item.dokumen.endsWith('.pdf'))?"display:none;":"";
                     html += `                    
                     <div class="accordion-item" data-jenis="${item.jenis}" data-dokumen_show_id="${dokumen_show_id}" data-url="${item.dokumen}">
                         <h2 class="accordion-header" id="${idHeader}">
@@ -558,7 +575,15 @@
                         <div id="${idCollapse}" class="accordion-collapse collapse" aria-labelledby="${idHeader}" data-bs-parent="#accordionDokumen">
                             <div class="accordion-body">
                                 <p><strong>Deskripsi:</strong> ${item.deskripsi}</p>
-                                <div id="${dokumen_show_id}" style="margin-top:10px; height:400px; width:100%; border:1px solid #ccc; overflow:auto;"></div>
+                                <div id="kontrol-gambar-${index}" style="text-align:center; margin-top:10px; ${display_kontrol_gambar}">
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="rotateImage('img-${dokumen_show_id}',-90)">⟲ Putar Kiri</button>
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="rotateImage('img-${dokumen_show_id}',90)">⟳ Putar Kanan</button>
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="zoomImage('img-${dokumen_show_id}',1.2)">🔍 Zoom In</button>
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="zoomImage('img-${dokumen_show_id}',0.8)">🔎 Zoom Out</button>
+                                </div>                                        
+                                <div id="${dokumen_show_id}" 
+                                style="margin-top:10px; height:500px; width:100%; border:1px solid #ccc; overflow:auto;
+                                "></div>
                             </div>
                         </div>
                     </div>
@@ -639,50 +664,6 @@
         }
 
 
-        async function openPdf(container, urlPdf) {
-            container.innerHTML = ''; // Bersihkan isi elemen dulu
-            // Cek apakah URL PDF tersedia
-            if (!urlPdf || urlPdf.trim() === '') {
-                container.innerHTML = '<p style="color:red;">Tidak ada file diupload.</p>';
-                return;
-            }
-
-            // Set worker PDF.js
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-
-            try {
-                const pdf = await pdfjsLib.getDocument(urlPdf).promise;
-                const totalPages = pdf.numPages; // Dapatkan jumlah total halaman
-
-                // Buat kontainer untuk menampung canvas per halaman
-                for (let pageNumber = 1; pageNumber <= totalPages; pageNumber++) {
-                    const page = await pdf.getPage(pageNumber);
-                    const viewport = page.getViewport({
-                        scale: 1.5
-                    });
-
-                    // Buat canvas untuk setiap halaman
-                    const canvas = document.createElement('canvas');
-                    canvas.style.width = '100%';
-                    container.appendChild(canvas);
-
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
-
-                    const context = canvas.getContext('2d');
-                    const renderContext = {
-                        canvasContext: context,
-                        viewport: viewport
-                    };
-
-                    // Render halaman
-                    await page.render(renderContext).promise;
-                }
-            } catch (error) {
-                container.innerHTML = `<p style="color:red;">Gagal memuat dokumen PDF</p>`;
-                console.error('PDF load error:', error);
-            }
-        }
         $(document).on('click','.btn-hapus-dokumentasi', function () {
             const id=$(this).attr('data-dokumentasi_survei_id');
             deleteData(`${base_url}/api/dokumentasi-survei`, id, function() {
@@ -698,11 +679,14 @@
             const dokumen_show_id = accordionItem.data('dokumen_show_id');
             const container = document.getElementById(dokumen_show_id);
 
+            rotation = 0;
+            scale = 1;
+
             // Jika sudah terisi, jangan render ulang
             if (container.innerHTML.trim() !== '') return;
 
             if (jenis === 'image') {
-                container.innerHTML = `<img src="${url}" class="img-fluid" alt="Dokumen">`;
+                container.innerHTML = `<img src="${url}" id="img-${dokumen_show_id}" class="img-fluid" alt="Dokumen" style="max-width:95%; display:block; margin:0 auto; transition: transform 0.3s;">`;
             } else if (jenis === 'pdf') {
                 openPdf(container, url);
             } else {
@@ -742,21 +726,22 @@
             $('.mahasiswa-email').text(`${data_survei.email}`);
             $('.mahasiswa-photo').attr('src',base_url+'/'+data_survei.foto);
 
+            data_pendidikan_akhir();            
             
-            if(vBeasiswa.perlu_data_pendidikan_akhir){
-                data_pendidikan_akhir();            
-            }
-            else if(vBeasiswa.perlu_data_nilai_raport){
-                data_raport();            
-            }
-            else if(vBeasiswa.perlu_data_rumah){
-                data_kondisi_rumah();            
-            }
-            else if(vBeasiswa.perlu_data_orang_tua){
-                data_orang_tua();            
-            }else{
-                data_dokumen_upload();            
-            }
+            // if(vBeasiswa.perlu_data_pendidikan_akhir){
+            //     data_pendidikan_akhir();            
+            // }
+            // else if(vBeasiswa.perlu_data_nilai_raport){
+            //     data_raport();            
+            // }
+            // else if(vBeasiswa.perlu_data_rumah){
+            //     data_kondisi_rumah();            
+            // }
+            // else if(vBeasiswa.perlu_data_orang_tua){
+            //     data_orang_tua();            
+            // }else{
+            //     data_dokumen_upload();            
+            // }
             // renderSurvei(response.data);
 
             // console.log(survei_peserta);
@@ -813,23 +798,28 @@
 
         async function dataLoad() {
             var search = $('#search-input').val();
-            var url = `${base_url}/api/peserta-survei?beasiswa_id=${beasiswa_id}&search=${search}`;
+            var url = `${base_url}/api/peserta-survei?beasiswa_id=${beasiswa_id}&page=${page}&search=${search}`;
 
             fetchData(url, function(response) {
                 vBeasiswa=response.data.data[0].beasiswa;
 
-                if(vBeasiswa.perlu_data_nilai_raport){
-                    $("#data-raport").show();
-                }
-                if(vBeasiswa.perlu_data_orang_tua){
-                    $("#data-orang-tua").show();
-                }
-                if(vBeasiswa.perlu_data_pendidikan_akhir){
-                    $("#data-pendidikan-akhir").show();
-                }
-                if(vBeasiswa.perlu_data_rumah){
-                    $("#data-kondisi-rumah").show();
-                }
+                // if(vBeasiswa.perlu_data_nilai_raport){
+                //     $("#data-raport").show();
+                // }
+                // if(vBeasiswa.perlu_data_orang_tua){
+                //     $("#data-orang-tua").show();
+                // }
+                // if(vBeasiswa.perlu_data_pendidikan_akhir){
+                //     $("#data-pendidikan-akhir").show();
+                // }
+                // if(vBeasiswa.perlu_data_rumah){
+                //     $("#data-kondisi-rumah").show();
+                // }
+
+                $("#data-raport").show();
+                $("#data-orang-tua").show();
+                $("#data-pendidikan-akhir").show();
+                $("#data-kondisi-rumah").show();
 
                 renderData(response);
 
@@ -840,10 +830,10 @@
             dataLoad();
         });
 
-        $(document).on('input', '#search-input', function() {
-            // console.log('Event input berjalan');
+        $('#btn-search').click(function(){
+            page=1;
             dataLoad();
-        });      
+        });
 
         async function load_data_peserta_survei(){
             let cek_peserta = await asyncFunction(`${base_url}/api/peserta-survei/${pendaftar_id}`);
@@ -865,6 +855,9 @@
             $('#konten').show();
             $('#survei-komponen').show();
             $('#survei-akhir').hide();
+         
+            $("#daftar-komponen .btn").removeClass("active"); 
+            $('#data-pendidikan-akhir').addClass("active"); 
 
             pendaftar_id=$(this).attr('data-pendaftar_id');
             surveyor_id=$(this).attr('data-surveyor_id');
@@ -920,6 +913,13 @@
         }
 
         $('.akhiri-survei').click(async function() {
+            cek_dokumentasi = await asyncFunction(`${base_url}/api/get-data-dokumentasi-survei/${pendaftar_id}`);
+            if(!cek_dokumentasi.status){
+                appShowNotification(false,['Sebelum mengakhiri survei wajib mengupload dokumentasi survei!']);
+                return;
+            }
+
+            $("#daftar-komponen .btn").removeClass("active"); 
 
             cek_peserta = await asyncFunction(`${base_url}/api/peserta-survei/${data_survei.pendaftar_id}`);
             // console.log(cek_peserta);
@@ -956,6 +956,7 @@
             saveData(`${base_url}/api/dokumentasi-survei`, 'POST', formData, function(response) {
                 appShowNotification(true,['berhasil terupload!']);
                 dokumentasiSurvei();
+                $('#path').val("");
             });            
         });
 

@@ -76,6 +76,7 @@
 <script src="{{ asset('js/pagination.js') }}"></script>
 <script type="text/javascript">
     var beasiswa_id = "{{ $beasiswa_id }}";
+
     $(document).ready(function() {
         initPage();
         async function initPage() {

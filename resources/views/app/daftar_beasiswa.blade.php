@@ -14,6 +14,9 @@
             <h5 class="card-title fw-semibold">Daftar Beasiswa</h5>
             <div class="d-flex gap-2">
                 <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
+                <button class="btn btn-secondary" id="btn-cari">
+                    <i class="ti ti-search"></i>
+                </button>
                 <button class="btn btn-success" id="btn-refresh">
                     <i class="ti ti-reload"></i>
                 </button>
@@ -310,9 +313,9 @@
             dataLoad();
         });
 
-        // Handle search-input
-        $(document).on('input', '#search-input', function() {
-            console.log('Event input berjalan');
+        // Handle page change
+        $('#btn-cari').click(function() {
+            page=1;
             dataLoad();
         });
 

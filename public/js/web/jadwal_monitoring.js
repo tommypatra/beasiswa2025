@@ -55,12 +55,17 @@ function showModalFormJadwalPenerima() {
 
 $(document).ready(function() {
     
-    $('#search-input-jadwal-monitoring').on('keypress', async function(e) {
-        if (e.which === 13) {       // 13 = Enter
-            e.preventDefault();      
-            await loadDataJadwalMonitoring(); 
-        }
-    });
+    $('#btn-cari-jadwal').click(function(){
+        page_jadwal=1;
+        loadDataJadwalMonitoring();
+    })
+
+    // $('#search-input-jadwal-monitoring').on('keypress', async function(e) {
+    //     if (e.which === 13) {       // 13 = Enter
+    //         e.preventDefault();      
+    //         await loadDataJadwalMonitoring(); 
+    //     }
+    // });
 
     // Handle page change
     $(document).on('click', '.nav-jadwal-monitoring .page-link', function() {

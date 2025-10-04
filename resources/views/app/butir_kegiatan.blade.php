@@ -59,6 +59,9 @@
             <h5 class="card-title fw-semibold">Butir Kegiatan</h5>
             <div class="d-flex gap-2">
                 <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;" disabled>
+                <button class="btn btn-primary" id="btn-search" disabled>
+                    <i class="ti ti-search"></i>
+                </button>
                 <button class="btn btn-primary" id="btn-tambah" disabled>
                     <i class="ti ti-plus"></i>
                 </button>
@@ -237,6 +240,7 @@
 
         function statusButirKegiatan(aktif = true) {
             // false = disable, true = enable
+            $('#btn-search').prop('disabled', !aktif);
             $('#search-input').prop('disabled', !aktif);
             $('#btn-tambah').prop('disabled', !aktif);
             $('#btn-refresh').prop('disabled', !aktif);
@@ -299,11 +303,13 @@
             const kegiatan_id = $('#label_kegiatan').attr("data-id");
             const dataList = $('#data-list');
             const pagination = $('#pagination');
-            const response = await asyncFunction(`${base_url}/api/butir-kegiatan?kegiatan_id=${kegiatan_id}`);
+            const search = $('#search-input').val();
+            const response = await asyncFunction(`${base_url}/api/butir-kegiatan?kegiatan_id=${kegiatan_id}&search=${search}&page=${page}&limit=2`);
 
             const data=response.data.data;
             let no = (response.data.current_page - 1) * response.data.per_page + 1;
             dataList.empty();
+            
             pagination.empty();
             if (data.length > 0) {
                 $.each(data, function(index, dt) {
@@ -404,11 +410,11 @@
             loadDataButirKegiatan();
         });
 
-        // Handle search-input
-        $(document).on('input', '#search-input', function() {
-            // console.log('Event input berjalan');
+        $('#btn-search').click(function(){
+            page=1;
             loadDataButirKegiatan();
-        });        
+        });
+
 
         //untuk show modal form
         function showModalFormKegiatan() {

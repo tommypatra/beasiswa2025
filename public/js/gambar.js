@@ -3,18 +3,18 @@
 let rotation = 0;
 let scale = 1;
 
-function rotateImage(angle) {
+function rotateImage(element,angle) {
   rotation = (rotation + angle) % 360;
-  updateTransform();
+  updateTransform(element);
 }
 
-function zoomImage(factor) {
+function zoomImage(element, factor) {
   scale *= factor;
-  updateTransform();
+  updateTransform(element);
 }
 
-function updateTransform() {
-  const img = document.getElementById('preview-img');
+function updateTransform(element) {
+  const img = document.getElementById(element);
   if (img) {
     img.style.transform = `rotate(${rotation}deg) scale(${scale})`;
   }

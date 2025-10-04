@@ -13,9 +13,16 @@ class CekAksesMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, $role): Response
+    // public function handle(Request $request, Closure $next, $role): Response
+    // {
+    //     if (!izinkanAkses($role)) {
+    //         return response()->json(['success' => false, 'message' => 'akses ditolak'], 403);
+    //     }
+    //     return $next($request);
+    // }
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        if (!izinkanAkses($role)) {
+        if (!izinkanAkses($roles)) {
             return response()->json(['success' => false, 'message' => 'akses ditolak'], 403);
         }
         return $next($request);

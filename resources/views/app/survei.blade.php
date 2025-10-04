@@ -39,6 +39,9 @@
             <h5 class="card-title fw-semibold">Survei Peserta Seleksi Beasiswa</h5>
             <div class="d-flex gap-2">
                 <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
+                <button class="btn btn-primary" id="btn-search">
+                    <i class="ti ti-search"></i>
+                </button>
                 <button class="btn btn-success" id="btn-refresh">
                     <i class="ti ti-reload"></i>
                 </button>
@@ -178,10 +181,16 @@
             dataLoad();
         });
 
-        $(document).on('input', '#search-input', function() {
-            console.log('Event input berjalan');
+        // Handle page change
+        $(document).on('click', '.page-link', function() {
+            page = $(this).data('page');
             dataLoad();
-        });      
+        });
+
+        $('#btn-search').click(function(){
+            page=1;
+            dataLoad();
+        });
 
         $(document).on('click','.btn-daftar-peserta',function(){
             const id = $(this).data('beasiswa_id');

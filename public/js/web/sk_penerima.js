@@ -88,12 +88,17 @@ $(document).ready(function() {
         await loadDataSK();
     }
 
-    $('#search-input').on('keypress', async function(e) {
-        if (e.which === 13) {       // 13 = Enter
-            e.preventDefault();      
-            await loadDataSK(); 
-        }
-    });
+    $('#btn-cari-sk').click(function(){
+        page_sk=1;
+        loadDataSK();
+    })
+
+    // $('#search-input').on('keypress', async function(e) {
+    //     if (e.which === 13) {       // 13 = Enter
+    //         e.preventDefault();      
+    //         await loadDataSK(); 
+    //     }
+    // });
     
     // Handle page change
     $(document).on('click', '.nav-sk .page-link', function() {

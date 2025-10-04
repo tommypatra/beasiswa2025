@@ -7,6 +7,7 @@ use App\Models\Mahasiswa;
 use App\Models\Pendaftar;
 use App\Models\SumberAir;
 use App\Models\SkPenerima;
+use App\Models\JadwalUjian;
 use App\Models\NilaiRaport;
 use App\Models\Pewawancara;
 use App\Models\Verifikator;
@@ -50,6 +51,7 @@ use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\PendapatanController;
 use App\Http\Controllers\PendidikanController;
 use App\Http\Controllers\SkPenerimaController;
+use App\Http\Controllers\JadwalUjianController;
 use App\Http\Controllers\NilaiRaportController;
 use App\Http\Controllers\PewawancaraController;
 use App\Http\Controllers\SubKegiatanController;
@@ -164,10 +166,17 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     Route::get('pewawancara', [PesertaWawancaraController::class, 'pewawancara']);
     Route::get('peserta-verifikasi/{beasiswa_id}/{hasil}', [VerifikatorController::class, 'getPesertaVerifikasi']);
 
+    Route::middleware(['cek.akses:admin,pewawancara'])->group(function () {
+        Route::get('cetak-wawancara/{beasiswa_id}', [PewawancaraController::class, 'cetakWawancara']);
+    });
+
     Route::middleware(['cek.akses:pewawancara'])->group(function () {
         // Route::resource('peserta-wawancara', PesertaWawancaraController::class);
         Route::get('daftar-peserta-wawancara', [PesertaWawancaraController::class, 'index']);
         Route::get('cari-peserta-wawancara/{id}', [PesertaWawancaraController::class, 'show']);
+
+        Route::get('cari-wawancara-id/{id}', [PesertaWawancaraController::class, 'cariWawancaraId']);
+
 
         Route::resource('wawancara-nilai', WawancaraNilaiController::class);
         Route::get('proses-wawancara/{id}', [WawancaraNilaiController::class, 'prosesWawancara']);
@@ -183,8 +192,6 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::resource('penerima', PenerimaController::class);
         Route::resource('verifikator-penerima', VerifikatorPenerimaController::class);
         Route::resource('verifikator-laporan', VerifikatorLaporanController::class);
-
-
 
 
         Route::get('verifikasi-laporan/penerima/{sk_penerima_id}', [VerifikatorLaporanController::class, 'daftarPenerimaVerifikasi']);
@@ -259,14 +266,17 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::post('pewawancara', [PewawancaraController::class, 'store']);
         Route::delete('pewawancara/{id}', [PewawancaraController::class, 'destroy']);
         Route::put('pewawancara/{id}', [PewawancaraController::class, 'update']);
-        Route::get('daftar-peserta-wawancara/{pewawancara_id}', [PesertaWawancaraController::class, 'daftarPesertaWawancara']);
+        Route::get('peserta-ujian-wawancara', [PesertaWawancaraController::class, 'daftarPesertaWawancara']);
 
 
-        Route::get('cetak-wawancara/{beasiswa_id}', [PewawancaraController::class, 'cetakWawancara']);
-
+        Route::get('tukar-peserta-wawancara/{id_asal}/{id_tujuan}', [PesertaWawancaraController::class, 'tukarPesertaWawancara']);
 
         Route::resource('admin-peserta-wawancara', PesertaWawancaraController::class);
         Route::delete('hapus-contoh-format-laporan/{id}', [SubKegiatanController::class, 'hapusContohFormatLaporan']);
+
+        //generate jadwal ujian CAT
+        Route::resource('jadwal-ujian', JadwalUjianController::class);
+        Route::get('generate-jadwal-ujian/{id}', [JadwalUjianController::class, 'generateJadwal']);
     });
 
     Route::middleware(['cek.akses:mahasiswa'])->group(function () {
