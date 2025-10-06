@@ -346,6 +346,14 @@
             pesertaVerifikasi(1);
         });
 
+        $('#cari-mahasiswa').on('keypress', function(e) {
+            if (e.which === 13) {
+                e.preventDefault(); 
+                pesertaVerifikasi(1);
+            }
+        });
+
+
         // Handle page change
         $(document).on('click', '.page-link', function() {
             page = $(this).data('page');
@@ -557,7 +565,7 @@
             return 'image';
         }
 
-        function showSyarat(){
+        function showSyarat(preview_file=false){
             resetFormSyarat();
             $('#validasi-final').hide();
             $('#validasi-syarat').show();
@@ -637,16 +645,19 @@
                 
                 if (data.upload_syarat.dokumen.endsWith('.pdf')) {
                     $('#kontrol-gambar').hide();
-                    // openPdf(document.getElementById('dokumen-embed'), url);
+                    if(preview_file)
+                        openPdf(document.getElementById('dokumen-embed'), url);
                 }else{
-                    // $('#dokumen-embed').html(`
-                    //     <div style="text-align:center;">
-                    //         <img id="preview-img" src="${url}" 
-                    //         style="max-width:95%; display:block; margin:0 auto; transition: transform 0.3s;"
-                    //     >
-                    //     </div>                    
-                    // `);
-                    // $('#kontrol-gambar').show();
+                    if(preview_file){
+                        $('#dokumen-embed').html(`
+                            <div style="text-align:center;">
+                                <img id="preview-img" src="${url}" 
+                                style="max-width:95%; display:block; margin:0 auto; transition: transform 0.3s;"
+                            >
+                            </div>                    
+                        `);
+                        $('#kontrol-gambar').show();
+                    }
                 }
                 // dokumenEmbed = (jenis === "pdf") ?
                 //     `<object data="${url}" type="application/pdf" width="100%" height="500px">
@@ -702,7 +713,7 @@
         });
 
         $(document).on("click","#refresh-dokumen",function(){
-            showSyarat();
+            showSyarat(true);
         });
 
 
