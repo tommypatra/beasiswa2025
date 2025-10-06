@@ -225,8 +225,10 @@ class VerifikatorPendaftarController extends Controller
                     }
                 }
             } else {
-                $peserta_wawancara = PesertaWawancara::where('pendaftar_id', $data->pendaftar_id)->firstOrFail();
-                $peserta_wawancara->delete();
+                $peserta_wawancara = PesertaWawancara::where('pendaftar_id', $data->pendaftar_id)->first();
+                if ($peserta_wawancara) {
+                    $peserta_wawancara->delete();
+                }
             }
 
             DB::commit();
