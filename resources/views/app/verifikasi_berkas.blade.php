@@ -402,10 +402,10 @@
                 $('.mahasiswa-photo').attr('src',base_url+'/'+peserta.foto);
 
                 let nama_peserta=peserta.user.name;
-                if(!peserta.hasil){
-                    nama_peserta+=` <span class="badge rounded-pill text-bg-danger "><i class="ti ti-close"></i></span>`;
-                }else{
+                if(peserta.hasil>=0){
                     nama_peserta+=` <span class="badge rounded-pill text-bg-success "><i class="ti ti-check"></i></span>`
+                }else{
+                    nama_peserta+=` <span class="badge rounded-pill text-bg-danger ">x</span>`;
                 }
                 $('.mahasiswa-nama').html(nama_peserta);
 

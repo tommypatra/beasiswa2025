@@ -469,8 +469,22 @@ function initTimeInput(selector) {
     });
 }
 
+let currentPdfInstance = null;
+
 async function openPdf(container, urlPdf) {
-    container.innerHTML = ''; 
+    // 🔹 Hapus render sebelumnya
+    container.innerHTML = '';
+
+    // 🔹 Jika sebelumnya ada PDF instance, destroy dulu
+    if (currentPdfInstance) {
+        try {
+            await currentPdfInstance.destroy();
+            currentPdfInstance = null;
+            // console.log("PDF sebelumnya dibersihkan");
+        } catch (e) {
+            console.warn("Gagal destroy PDF sebelumnya:", e);
+        }
+    }
 
     if (!urlPdf || urlPdf.trim() === '') {
         container.innerHTML = '<p style="color:red;">Tidak ada file diupload.</p>';
@@ -482,6 +496,10 @@ async function openPdf(container, urlPdf) {
 
     try {
         const pdf = await pdfjsLib.getDocument(urlPdf).promise;
+
+        // 🔹 Simpan instance ke variabel global
+        currentPdfInstance = pdf;
+
         const totalPages = pdf.numPages;
 
         for (let pageNumber = 1; pageNumber <= totalPages; pageNumber++) {
@@ -505,7 +523,6 @@ async function openPdf(container, urlPdf) {
         console.error('PDF load error:', error);
     }
 }
-
 
 function getWhatsAppLink(isMobile, phone, message) {
     const nomorFormatted = formatNoHpIndo(phone); 
