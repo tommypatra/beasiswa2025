@@ -76,7 +76,7 @@
                                     <tr>
                                         <th width="5%">No</th>
                                         <th width="25%">Nama/ Nim</th>
-                                        <th width="25%">Nama Peserta Wawancara (Status)</th>
+                                        <th width="25%">Pewawancara (Status)</th>
                                         <th width="15%">Status Registrasi </th>
                                     </tr>
                                 </thead>

@@ -113,12 +113,28 @@ class JadwalUjianController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+
+
     public function destroy(string $id)
     {
         try {
             DB::beginTransaction();
             $data = JadwalUjian::where('id', $id)->firstOrFail();
             $data->delete();
+            DB::commit();
+            return response()->json(null, 204);
+            // return response()->json(['status' => true, 'message' => 'hapus data berhasil dilakukan'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat menghapus : ' . $e->getMessage(), 'data' => null], 500);
+        }
+    }
+
+    public function hapusJadwalUjian(string $id)
+    {
+        try {
+            DB::beginTransaction();
+            JadwalUjian::where('beasiswa_id', $id)->delete();
             DB::commit();
             return response()->json(null, 204);
             // return response()->json(['status' => true, 'message' => 'hapus data berhasil dilakukan'], 200);

@@ -75,13 +75,15 @@
 <script src="{{ asset('js/crud.js') }}"></script>
 <script src="{{ asset('js/pagination.js') }}"></script>
 <script type="text/javascript">
-    var beasiswa_id = "{{ $beasiswa_id }}";
+    const beasiswa_id = "{{ $beasiswa_id }}";
+    const tgl_hari_ini = "{{ date('Y-m-d') }}";
 
     $(document).ready(function() {
         initPage();
         async function initPage() {
             await loadDataBeasiswa();
             await loadDataRuangan();
+            $('#beasiswa_id-tab4').val(beasiswa_id);
         }
 
         $(".datepicker").datepicker({
@@ -123,6 +125,12 @@
                     break;
                 case "#tab-jadwal":
                     loadDataTab4();
+                    optionSelect('#sesi_ujian_id-tab4', `${base_url}/api/sesi-ujian?beasiswa_id=${beasiswa_id}&limit=0`, `id`, 
+                        (item) => `Sesi ${item.sesi} - ${item.jam_mulai} s.d ${item.jam_selesai}`
+                    );
+                    optionSelect('#ruangan_ujian_id-tab4', `${base_url}/api/ruangan-ujian?beasiswa_id=${beasiswa_id}&limit=0`, `id`, 
+                        (item) => `${item.ruangan} / ${item.gedung}`
+                    );
                     break;
             }
         });

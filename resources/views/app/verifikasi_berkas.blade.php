@@ -121,6 +121,12 @@
                 <div class="modal-body">
                     <div class="row"> 
                         <div class="col-lg-4 flex-column align-items-center justify-content-center text-center">
+                            <div class="input-group mb-3">
+                                <input type="text" id="cari-mahasiswa" name="cari-mahasiswa" class="form-control" placeholder="Masukkan nama atau NIM mahasiswa...">
+                                <button type="button" class="btn btn-success" id="btn-cari-mahasiswa">
+                                    <i class="bi bi-search"></i> Cari
+                                </button>
+                            </div>                            
                             <div class="card">
                                 <div class="card-body">                                
                                     <h5 id="info-halaman"></h5>
@@ -335,6 +341,10 @@
             dataLoad();
         });
 
+        $('#btn-cari-mahasiswa').click(function(){
+            pesertaVerifikasi(1);
+        });
+
         // Handle page change
         $(document).on('click', '.page-link', function() {
             page = $(this).data('page');
@@ -364,7 +374,8 @@
 
         async function pesertaVerifikasi(halaman=1) {
             try {
-                let respon_peserta = await execAsync(`${base_url}/api/peserta-verifikasi?page=${halaman}&limit=1&beasiswa_id=${beasiswa_id}`, 'GET', token);
+                const search = $('#cari-mahasiswa').val();
+                let respon_peserta = await execAsync(`${base_url}/api/peserta-verifikasi?search=${search}&page=${halaman}&limit=1&beasiswa_id=${beasiswa_id}`, 'GET', token);
                 peserta = respon_peserta.data.data[0];
                 let syarat = await execAsync(`${base_url}/api/data-upload-syarat?beasiswa_id=${beasiswa_id}&pendaftar_id=${peserta.pendaftar.id}`, 'GET', token);
                 let body = $('#body-verifikasi-berkas');

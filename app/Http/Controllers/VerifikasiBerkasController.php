@@ -66,28 +66,34 @@ class VerifikasiBerkasController extends Controller
             'pendaftar.mahasiswa.programStudi',
             'pendaftar.mahasiswa.user.identitas'
         ])
-            ->where(function ($query) use ($request) {
-                $query->whereHas('verifikator', function ($q) use ($request) {
-                    $q->where('user_id', auth()->user()->id)
-                        ->Where('beasiswa_id',  $request->beasiswa_id);
-                });
-            })
-            ->orderBy('pendaftar_id', 'asc')
+            ->whereHas('verifikator', function ($q) use ($request) {
+                $q->where('user_id', auth()->user()->id)
+                    ->where('beasiswa_id', $request->beasiswa_id);
+            });
+
+        // 🔍 tambahkan kondisi pencarian sebelum paginate
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $dataQuery->whereHas('pendaftar.mahasiswa.user', function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%');
+            });
+        }
+
+        // urutan dan pagination dilakukan terakhir
+        $dataQuery = $dataQuery->orderBy('pendaftar_id', 'asc')
             ->paginate($limit, ['*'], 'page', $page);
 
-
-        $resourceCollection = $dataQuery->getCollection()->map(function ($item) {
-            return new IdentitasPesertaResource($item);
-        });
+        // ubah ke resource
+        $resourceCollection = $dataQuery->getCollection()->map(fn($item) => new IdentitasPesertaResource($item));
         $dataQuery->setCollection($resourceCollection);
 
-        $dataRespon = [
+        return response()->json([
             'status' => true,
             'message' => 'Pengambilan data dilakukan',
             'data' => $dataQuery,
-        ];
-        return response()->json($dataRespon);
+        ]);
     }
+
     /**
      * Store a newly created resource in storage.
      */

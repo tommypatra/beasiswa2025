@@ -276,6 +276,9 @@ Route::middleware('jwt.auth.refresh')->group(function () {
 
         //generate jadwal ujian CAT
         Route::resource('jadwal-ujian', JadwalUjianController::class);
+        Route::get('hapus-jadwal-ujian/{beasiswa_id}', [JadwalUjianController::class, 'hapusJadwalUjian']);
+        Route::get('hapus-peserta-ujian/{beasiswa_id}', [JadwalUjianController::class, 'hapusPesertaUjian']);
+
         Route::get('generate-jadwal-ujian/{id}', [JadwalUjianController::class, 'generateJadwal']);
     });
 
