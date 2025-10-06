@@ -387,7 +387,7 @@
                 data_syarat=syarat.data;
                 $('.cetak-kartu-pendaftaran').attr('href',`${base_url}/cetak-kartu-pendaftaran/${peserta.pendaftar.url_id}`);
                 const link=`https://sia.iainkendari.ac.id/data/detail/${peserta.mahasiswa.nim}`;
-                $('.mahasiswa-nim').html(`Nim : <a href="${link}" targete="_blank">${peserta.mahasiswa.nim}</a>`);
+                $('.mahasiswa-nim').html(`Nim : <a href="${link}" target="_blank">${peserta.mahasiswa.nim}</a>`);
                 $('.mahasiswa-prodi').text(peserta.program_studi.nama);
                 $('.mahasiswa-no-pendaftaran').text(`Nomor Pendaftaran : ${peserta.pendaftar.no_pendaftaran}`);
                 $('.mahasiswa-email').text(`${peserta.user.email}`);
