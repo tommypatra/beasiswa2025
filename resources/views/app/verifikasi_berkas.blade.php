@@ -122,7 +122,7 @@
                     <div class="row"> 
                         <div class="col-lg-4 flex-column align-items-center justify-content-center text-center">
                             <div class="input-group mb-3">
-                                <input type="text" id="cari-mahasiswa" name="cari-mahasiswa" class="form-control" placeholder="Masukkan nama atau NIM mahasiswa...">
+                                <input type="text" id="cari-mahasiswa" name="cari-mahasiswa" class="form-control" placeholder="Cari nama mahasiswa...">
                                 <button type="button" class="btn btn-success" id="btn-cari-mahasiswa">
                                     <i class="bi bi-search"></i> Cari
                                 </button>
@@ -161,6 +161,7 @@
                                         </div>
                                     </div>                                    
                                     <div id="syarat-upload"></div>
+                                    <div id="refresh-dokumen"></div>
                                     <div id="download-dokumen"></div>
                                     <hr>
                                     <div id="syarat-form-validasi" >
@@ -386,11 +387,15 @@
                 data_syarat=syarat.data;
                 $('.cetak-kartu-pendaftaran').attr('href',`${base_url}/cetak-kartu-pendaftaran/${peserta.pendaftar.url_id}`);
                 $('.mahasiswa-nama').text(peserta.user.name);
-                $('.mahasiswa-nim').text(`Nim : ${peserta.mahasiswa.nim}`);
+                const link=`https://sia.iainkendari.ac.id/data/detail/${peserta.mahasiswa.nim}`;
+                $('.mahasiswa-nim').html(`Nim : <a href="${link}" targete="_blank">${peserta.mahasiswa.nim}</a>`);
                 $('.mahasiswa-prodi').text(peserta.program_studi.nama);
                 $('.mahasiswa-no-pendaftaran').text(`Nomor Pendaftaran : ${peserta.pendaftar.no_pendaftaran}`);
                 $('.mahasiswa-email').text(`${peserta.user.email}`);
                 $('.mahasiswa-photo').attr('src',base_url+'/'+peserta.foto);
+                if(!peserta.hasil){
+                    alert('verifikator belum menetapkan validasi final')
+                }
 
 
                 total_page_verifikasi = respon_peserta.data.last_page; 
@@ -598,6 +603,7 @@
 
             $("#verifikasi_berkas_hasil").attr('data-bobot',data.bobot);
             $('#download-dokumen').html(``);
+            $('#refresh-dokumen').html(``);
 
             if (data.upload_syarat){
                 // let jenis = data.jenis;
@@ -615,22 +621,28 @@
                 $(`#verifikasi_berkas_skor`).val(data.upload_syarat.verifikasi_berkas_skor);
 
                 
-                $('#download-dokumen').html(`<a href="${url}" class="btn btn-success mt-2" target="_blank">Download Manual</a>`);
+                $('#refresh-dokumen').html(`
+                    <div class="mt-2">
+                        <a href="javascript:;" id="refresh-dokumen">Refresh Dokumen</a> | 
+                        <a href="${url}" target="_blank">Download Manual</a>
+                    </div>`);
+
                 rotation = 0;
                 scale = 1;
-
+                $('#dokumen-embed').html('<p style="color:blue;">silahkan dowload untuk melihat preview</p>');
+                
                 if (data.upload_syarat.dokumen.endsWith('.pdf')) {
                     $('#kontrol-gambar').hide();
-                    openPdf(document.getElementById('dokumen-embed'), url);
+                    // openPdf(document.getElementById('dokumen-embed'), url);
                 }else{
-                    $('#dokumen-embed').html(`
-                        <div style="text-align:center;">
-                            <img id="preview-img" src="${url}" 
-                            style="max-width:95%; display:block; margin:0 auto; transition: transform 0.3s;"
-                        >
-                        </div>                    
-                    `);
-                    $('#kontrol-gambar').show();
+                    // $('#dokumen-embed').html(`
+                    //     <div style="text-align:center;">
+                    //         <img id="preview-img" src="${url}" 
+                    //         style="max-width:95%; display:block; margin:0 auto; transition: transform 0.3s;"
+                    //     >
+                    //     </div>                    
+                    // `);
+                    // $('#kontrol-gambar').show();
                 }
                 // dokumenEmbed = (jenis === "pdf") ?
                 //     `<object data="${url}" type="application/pdf" width="100%" height="500px">
@@ -683,6 +695,10 @@
             let total_pilihan = $(this).find("option[value!='']").length;            
             let skor_akhir = (nilai / (total_pilihan - 1)) * bobot;            
             $('#verifikasi_berkas_skor').val(skor_akhir.toFixed(2));
+        });
+
+        $(document).on("click","#refresh-dokumen",function(){
+            showSyarat();
         });
 
 
