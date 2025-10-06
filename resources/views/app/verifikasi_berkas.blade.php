@@ -33,7 +33,7 @@
 
 @section('container')
 <div id="info-beasiswa" class="mb-2"></div>
-<div class="card">
+<div class="card" id="daftar-beasiswa">
     <div class="card-body">
         <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">
             <h5 class="card-title fw-semibold">Verfikator Berkas</h5>
@@ -71,8 +71,44 @@
     </div>
 </div>
 
+<div class="card" id="daftar-peserta" style="display:none;">
+    <div class="card-body">
+        <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">
+            <h5 class="card-title fw-semibold">Daftar Peserta Verifikasi Berkas</h5>
+            <div class="d-flex gap-2">
+                <input type="text" class="form-control" id="search-input-peserta" placeholder="Cari..." style="max-width: 200px;">
+                <button class="btn btn-primary" id="btn-search-peserta">
+                    <i class="ti ti-search"></i>
+                </button>
+                <button class="btn btn-success" id="btn-refresh-peserta">
+                    <i class="ti ti-reload"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th width="5%">No</th>
+                        <th width="55%">Nama/ Nim / Prodi</th>
+                        <th width="35%">Status Verifikasi</th>
+                        <th width="5%" class="text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="data-list-peserta">
+                </tbody>
+            </table>
+        </div>
+        <!-- Pagination -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center" id="pagination-peserta"></ul>
+        </nav>
+    </div>
+</div>
+
 <!-- MULAI MODAL DAFTAR PESERTA-->
-<div class="modal fade modal" id="modal-peserta" role="dialog">
+{{-- <div class="modal fade modal" id="modal-peserta" role="dialog">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -88,7 +124,7 @@
                                 <thead>
                                     <tr>
                                         <th width="5%">No</th>
-                                        <th width="25%">Nama/ Nim</th>
+                                        <th width="25%">Nama/ Nim/</th>
                                         <th width="25%">Fakultas/ Program Studi</th>
                                         <th width="15%">Status Verifikasi </th>
                                     </tr>
@@ -105,7 +141,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 <!-- AKHIR MODAL -->
 
 <!-- MULAI MODAL VALIDASI-->
@@ -257,10 +293,13 @@
 <script type="text/javascript">
     const endpoint = base_url+'/api/verifikasi-berkas';
     var page = 1;
+    var page_peserta = 1;
+
     var current_page_verifikasi = 1;
     var total_page_verifikasi = 1;    
     var beasiswa_id;
     var verifikator_id;
+    var pendaftar_id;
     var peserta;
     var data_syarat;
     var lengkap;
@@ -269,6 +308,16 @@
 
     $(document).ready(function() {
         dataLoad();
+
+        //untuk daftar beasiswa
+        async function dataLoad() {
+            var search = $('#search-input').val();
+            var url = `${endpoint}?page=${page}&search=${search}`;
+
+            fetchData(url, function(response) {
+                renderData(response);
+            },true);
+        }
 
         function renderData(response) {
             const dataList = $('#data-list');
@@ -300,7 +349,7 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="d-flex flex-column align-items-center gap-2">
-                                            <button class="btn btn-secondary btn-mulai-verifikasi" data-beasiswa_id="${dt.beasiswa.id}" data-is_verifikasi_berkas_aktif="${dt.beasiswa.is_verifikasi_berkas_aktif}" data-verifikator_id="${dt.id}" type="button" ${tombol_aktif}>Verifikasi</button>
+                                            <button class="btn btn-primary btn-daftar-verifikasi" data-beasiswa_id="${dt.beasiswa.id}" data-is_verifikasi_berkas_aktif="${dt.beasiswa.is_verifikasi_berkas_aktif}" data-verifikator_id="${dt.id}" type="button" ${tombol_aktif}>Daftar Verifikasi</button>
                                         </div>
                                     </td>
                                 </tr>`;
@@ -315,22 +364,79 @@
             }
         }    
 
-        async function dataLoad() {
-            var search = $('#search-input').val();
-            var url = `${endpoint}?page=${page}&search=${search}`;
-
-            fetchData(url, function(response) {
-                renderData(response);
-            },true);
+        //untuk daftar peserta
+        async function dataLoadPeserta() {
+            const search = $('#search-input-peserta').val();
+            const url = `${base_url}/api/peserta-verifikasi?limit=20&search=${search}&page=${page_peserta}&beasiswa_id=${beasiswa_id}`;
+            const response = await execAsync(url, 'GET', token);
+            renderDataPeserta(response);
         }
 
-        $(document).on('click', '.btn-mulai-verifikasi', function() {
-            showModal('modal-form');
-            
+        function renderDataPeserta(response) {
+            $('#daftar-beasiswa').hide();
+            $('#daftar-peserta').show();
+
+            const dataList = $('#data-list-peserta');
+            const pagination = $('#pagination-peserta');
+            const data=response.data.data;
+            let no = (response.data.current_page - 1) * response.data.per_page + 1;
+            dataList.empty();
+            pagination.empty();
+            if (data.length > 0) {
+                $.each(data, function(index, dt) {
+                    // const tombol_aktif=is_verifikasi_berkas_aktif?"":"disabled";
+                    let hasil = `<span class="badge rounded-pill text-bg-warning fs-2">Belum Diperiksa</span>`;
+                    if(dt.hasil==1)
+                        hasil=`<span class="badge rounded-pill text-bg-success fs-2">Memenuhi Syarat</span>`;
+                    else if(dt.hasil==0)
+                        hasil=`<span class="badge rounded-pill text-bg-danger fs-2">Tidak Memenuhi Syarat</span>
+                                <div>${dt.catatan}</div>`;
+
+                    const row = `<tr>
+                                    <td>${no++}</td>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            <img src="${base_url}/${dt.foto}" width="70px" >
+                                            <div>
+                                                ${dt.user.name}/<br>  
+                                                NIM. <a href="https://sia.iainkendari.ac.id/data/detail/${dt.mahasiswa.nim}" target="_blank">${dt.mahasiswa.nim}</a>/<br>
+                                                Prodi. ${dt.program_studi.nama}
+                                            </div>                                    
+                                        </div>                                    
+                                    </td>
+                                    <td>${hasil}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-secondary btn-mulai-verifikasi" data-pendaftar_id="${dt.pendaftar.id}" type="button">
+                                            Mulai Verifikasi
+                                        </button>
+                                    </td>
+                                </tr>`;
+                    dataList.append(row);
+                });
+                renderPagination(response.data, pagination);
+            }else{
+                const row = `<tr>
+                                <td colspan="5">data tidak ditemukan</td>
+                            </tr>`;
+                dataList.append(row);                
+            }
+        }    
+
+        $(document).on('click', '.btn-daftar-verifikasi', function() {
             verifikator_id = $(this).data('verifikator_id');
             beasiswa_id = $(this).data('beasiswa_id');
             is_verifikasi_berkas_aktif = $(this).data('is_verifikasi_berkas_aktif');
-            pesertaVerifikasi();
+            dataLoadPeserta();      
+        }); 
+
+        $(document).on('click', '.btn-mulai-verifikasi', function() {
+            $('#cari-mahasiswa').val('');            
+            showModal('modal-form');            
+            pendaftar_id = $(this).data('pendaftar_id');
+            // beasiswa_id = $(this).data('beasiswa_id');
+            // is_verifikasi_berkas_aktif = $(this).data('is_verifikasi_berkas_aktif');
+            pesertaVerifikasi(1);
+            // dataLoadPeserta();      
         }); 
 
         $('#btn-refresh').click(function() {
@@ -343,7 +449,20 @@
         });
 
         $('#btn-cari-mahasiswa').click(function(){
+            pendaftar_id='';
             pesertaVerifikasi(1);
+        });
+
+        $('#cari-mahasiswa').on('keypress', function(e) {
+            if (e.which === 13) {
+                pendaftar_id='';
+                pesertaVerifikasi(1);
+            }
+        });
+
+        $('#btn-search-peserta').click(function(){
+            page_peserta=1;
+            dataLoadPeserta();
         });
 
         $('#cari-mahasiswa').on('keypress', function(e) {
@@ -355,17 +474,24 @@
 
 
         // Handle page change
-        $(document).on('click', '.page-link', function() {
+        $(document).on('click', '#pagination .page-link', function() {
             page = $(this).data('page');
             dataLoad();
         });
 
-        //hapus data
-        $(document).on('click', '.btn-peserta', function() {
-            const id = $(this).data('beasiswa_id');
-            showModal('modal-peserta');
 
+        // Handle page change
+        $(document).on('click', '#pagination-peserta .page-link', function() {
+            page_peserta = $(this).data('page');
+            dataLoadPeserta();
         });
+
+        //hapus data
+        // $(document).on('click', '.btn-peserta', function() {
+        //     const id = $(this).data('beasiswa_id');
+        //     showModal('modal-peserta');
+
+        // });
 
         function opsi_instrumen(data_opsi){
             //untuk pengaturan opsi instrumen
@@ -384,11 +510,18 @@
         async function pesertaVerifikasi(halaman=1) {
             try {
                 const search = $('#cari-mahasiswa').val();
-                let respon_peserta = await execAsync(`${base_url}/api/peserta-verifikasi?search=${search}&page=${halaman}&limit=1&beasiswa_id=${beasiswa_id}`, 'GET', token);
+                let respon_peserta = await execAsync(`${base_url}/api/peserta-verifikasi?search=${search}&page=${halaman}&limit=1&beasiswa_id=${beasiswa_id}&pendaftar_id=${pendaftar_id}`, 'GET', token);
+                
+                if(respon_peserta.data.data.length<1){
+                    alert('data peserta tidak ditemukan');
+                    return;
+                }
                 peserta = respon_peserta.data.data[0];
+
                 let syarat = await execAsync(`${base_url}/api/data-upload-syarat?beasiswa_id=${beasiswa_id}&pendaftar_id=${peserta.pendaftar.id}`, 'GET', token);
                 let body = $('#body-verifikasi-berkas');
-                let pendaftar_id = peserta.pendaftar.id;
+                //script lama pendaftar id dicari
+                // let pendaftar_id = peserta.pendaftar.id;
 
                 // console.log(syarat);
 
@@ -756,6 +889,7 @@
                         current_page_verifikasi=1;
                     }
                     pesertaVerifikasi(current_page_verifikasi);
+                    dataLoadPeserta();                    
                     dataLoad();
                 });
             }

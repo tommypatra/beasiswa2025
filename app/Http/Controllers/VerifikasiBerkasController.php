@@ -71,11 +71,19 @@ class VerifikasiBerkasController extends Controller
                     ->where('beasiswa_id', $request->beasiswa_id);
             });
 
-        // 🔍 tambahkan kondisi pencarian sebelum paginate
+        // tambahkan kondisi pencarian sebelum paginate
         if ($request->filled('search')) {
             $search = $request->search;
             $dataQuery->whereHas('pendaftar.mahasiswa.user', function ($q) use ($search) {
                 $q->where('name', 'like', '%' . $search . '%');
+            });
+        }
+
+        // tambahkan kondisi pencarian sebelum paginate
+        if ($request->filled('pendaftar_id')) {
+            $pendaftar_id = $request->pendaftar_id;
+            $dataQuery->whereHas('pendaftar', function ($q) use ($pendaftar_id) {
+                $q->where('id', $pendaftar_id);
             });
         }
 
