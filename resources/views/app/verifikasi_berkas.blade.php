@@ -166,7 +166,7 @@
                                     <hr>
                                     <div id="syarat-form-validasi" >
                                         <form id="form">
-                                            <h5>Validasi Syarat</h5>
+                                            <h5>Validasi Syarat <span id="nama-syarat"></span></h5>
                                             <input type="hidden" id="id" name="id">
                                             <div class="row">
                                                 <div class="col-lg-8 mb-3">
@@ -386,16 +386,20 @@
 
                 data_syarat=syarat.data;
                 $('.cetak-kartu-pendaftaran').attr('href',`${base_url}/cetak-kartu-pendaftaran/${peserta.pendaftar.url_id}`);
-                $('.mahasiswa-nama').text(peserta.user.name);
                 const link=`https://sia.iainkendari.ac.id/data/detail/${peserta.mahasiswa.nim}`;
                 $('.mahasiswa-nim').html(`Nim : <a href="${link}" targete="_blank">${peserta.mahasiswa.nim}</a>`);
                 $('.mahasiswa-prodi').text(peserta.program_studi.nama);
                 $('.mahasiswa-no-pendaftaran').text(`Nomor Pendaftaran : ${peserta.pendaftar.no_pendaftaran}`);
                 $('.mahasiswa-email').text(`${peserta.user.email}`);
                 $('.mahasiswa-photo').attr('src',base_url+'/'+peserta.foto);
+
+                let nama_peserta=peserta.user.name;
                 if(!peserta.hasil){
-                    // alert('verifikator belum menetapkan validasi final')
+                    nama_peserta+=` <span class="badge rounded-pill text-bg-danger "><i class="ti ti-close"></i></span>`;
+                }else{
+                    nama_peserta+=` <span class="badge rounded-pill text-bg-success "><i class="ti ti-check"></i></span>`
                 }
+                $('.mahasiswa-nama').html(nama_peserta);
 
 
                 total_page_verifikasi = respon_peserta.data.last_page; 
@@ -570,7 +574,7 @@
             // let dokumenEmbed=`Tidak Mengupload Dokumen`;
             $(`#verifikasi_berkas_skor`).val('');
             $('#info-syarat').text(` ke ${syarat_index+1} dari ${data_syarat.length}`);
-
+            $('#nama-syarat').text(data.nama);
             let syarat = `  <div>
                                 <h2>${data.nama} (${wajib})</h2>
                                 <div >
