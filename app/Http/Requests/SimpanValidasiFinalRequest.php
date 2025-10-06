@@ -29,7 +29,8 @@ class SimpanValidasiFinalRequest extends FormRequest
                 'max:100' // nilai maksimal
             ],
             'hasil' => 'required|numeric|in:0,1', // Pastikan hanya 0 atau 1 yang diterima
-            'catatan' => 'required_if:hasil,0|string',
+            'catatan' => 'required_if:hasil,0|string|nullable',
+
         ];
     }
 
