@@ -394,7 +394,7 @@
                 $('.mahasiswa-email').text(`${peserta.user.email}`);
                 $('.mahasiswa-photo').attr('src',base_url+'/'+peserta.foto);
                 if(!peserta.hasil){
-                    alert('verifikator belum menetapkan validasi final')
+                    // alert('verifikator belum menetapkan validasi final')
                 }
 
 
