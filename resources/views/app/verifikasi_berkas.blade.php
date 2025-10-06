@@ -635,13 +635,13 @@
                 
                 $('#refresh-dokumen').html(`
                     <div class="mt-2">
-                        <a href="javascript:;" id="refresh-dokumen">Refresh Dokumen</a> | 
+                        <a href="javascript:;" class="refresh-dokumen">Refresh Dokumen</a> | 
                         <a href="${url}" target="_blank">Download Manual</a>
                     </div>`);
 
                 rotation = 0;
                 scale = 1;
-                $('#dokumen-embed').html('<p style="color:blue;">silahkan dowload untuk melihat preview</p>');
+                $('#dokumen-embed').html('<a href="javascript:;" class="refresh-dokumen" style="color:blue;">klik disini untuk melihat preview dokumen</a>');
                 
                 if (data.upload_syarat.dokumen.endsWith('.pdf')) {
                     $('#kontrol-gambar').hide();
@@ -712,7 +712,7 @@
             $('#verifikasi_berkas_skor').val(skor_akhir.toFixed(2));
         });
 
-        $(document).on("click","#refresh-dokumen",function(){
+        $(document).on("click",".refresh-dokumen",function(){
             showSyarat(true);
         });
 
