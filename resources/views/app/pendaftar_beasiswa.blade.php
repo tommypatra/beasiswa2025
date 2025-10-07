@@ -252,11 +252,13 @@ td, th {
             if (dt.is_finalisasi == 1) {
                 return `<div class="badge rounded-pill fs-2 text-bg-success text-dark" ${popoverAttr}>
                             Selesai ${dt.progress_upload_syarat}%
+                            
+                        </div>
+                        <div class="badge rounded-pill fs-2 text-bg-secondary">${dt.no_pendaftaran} 
                             <a href="${base_url}/cetak-kartu-pendaftaran/${dt.url_id}" target="_blank">
                                 <iconify-icon icon="solar:printer-outline"></iconify-icon>
                             </a>
-                        </div>
-                        <div class="badge rounded-pill fs-2 text-bg-secondary">${dt.no_pendaftaran}</div>`;
+                        </div>`;
             }
 
             return `<div class="badge rounded-pill fs-2 text-bg-warning" ${popoverAttr}>

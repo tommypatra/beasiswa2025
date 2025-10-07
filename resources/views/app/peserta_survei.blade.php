@@ -614,8 +614,12 @@
             $('#survei-komponen').hide();
             $('#survei-akhir').hide();
 
+            let disabled_form=false;
+            if ((survei_peserta && survei_peserta.hasil !== null) || !is_survei_aktif) 
+                disabled_form=true;            
+
             let upload_path='';
-            if (!survei_peserta.hasil) {
+            if (!disabled_form) {
                 upload_path=`   <div class="mb-3">
                                     <label for="gambar" class="form-label">Pilih Gambar</label>
                                     <input class="form-control" type="file" name="path" id="path" accept="image/*" required>
@@ -631,18 +635,21 @@
                 </div>            
             `);
 
-            dokumentasiSurvei();
+            dokumentasiSurvei(disabled_form);
         });
 
-        async function dokumentasiSurvei(){
+        async function dokumentasiSurvei(disabled_form){
             vRespon = await asyncFunction(`${base_url}/api/get-data-dokumentasi-survei/${data_survei.pendaftar_id}`);
+            
             html=``;
             if (vRespon.status) {
+
+
                 html=`<div class="row">`;
                 vRespon.data.forEach((item, index) => {
                     let link_gambar=base_url+'/'+item.path;
                     let btn_hapus='';
-                    if (!survei_peserta.hasil) {
+                    if (!disabled_form) {
                         btn_hapus=` <button class="btn btn-danger mt-2 btn-hapus-dokumentasi" data-dokumentasi_survei_id="${item.id}" type="button" >
                                         <iconify-icon icon="solar:trash-bin-minimalistic-outline" class="nav-small-cap-icon fs-4"></iconify-icon>
                                     </button>`;            

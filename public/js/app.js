@@ -550,3 +550,46 @@ function formatNoHpIndo(no_hp) {
     if (hp.startsWith("0")) return "+62" + hp.substring(1);
     return hp;
 }
+
+/**
+ * Fungsi global untuk toggle area (misal panel filter)
+ * @param {string} triggerSelector - tombol pemicu (misal '#btn-filter')
+ * @param {string} areaSelector - elemen area yang mau ditampilkan/sembunyikan
+ * @param {object} [options] - pengaturan tambahan (opsional)
+ *    options.animation: 'fade' | 'slide' | 'none'
+ */
+function toggleArea(triggerSelector, areaSelector, options = {}) {
+    const $trigger = $(triggerSelector);
+    const $area = $(areaSelector);
+    const animation = options.animation || 'fade';
+
+    // pastikan hanya satu listener per elemen
+    $trigger.off('click.toggleArea').on('click.toggleArea', function (e) {
+        e.stopPropagation();
+
+        if ($area.is(':visible')) {
+            hideArea();
+        } else {
+            showArea();
+        }
+    });
+
+    // klik di luar area → sembunyikan
+    $(document).off('click.toggleArea').on('click.toggleArea', function (e) {
+        if (!$(e.target).closest(areaSelector + ',' + triggerSelector).length) {
+            hideArea();
+        }
+    });
+
+    function showArea() {
+        if (animation === 'fade') $area.fadeIn(150);
+        else if (animation === 'slide') $area.slideDown(150);
+        else $area.show();
+    }
+
+    function hideArea() {
+        if (animation === 'fade') $area.fadeOut(150);
+        else if (animation === 'slide') $area.slideUp(150);
+        else $area.hide();
+    }
+}

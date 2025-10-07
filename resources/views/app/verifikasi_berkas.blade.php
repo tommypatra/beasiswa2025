@@ -75,14 +75,36 @@
     <div class="card-body">
         <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">
             <h5 class="card-title fw-semibold">Daftar Peserta Verifikasi Berkas</h5>
-            <div class="d-flex gap-2">
-                <input type="text" class="form-control" id="search-input-peserta" placeholder="Cari..." style="max-width: 200px;">
-                <button class="btn btn-primary" id="btn-search-peserta">
-                    <i class="ti ti-search"></i>
-                </button>
-                <button class="btn btn-success" id="btn-refresh-peserta">
-                    <i class="ti ti-reload"></i>
-                </button>
+            <div class="d-flex align-items-start gap-2 position-relative">
+                <input type="text" class="form-control" id="search-input-peserta"
+                    placeholder="Cari..." style="max-width: 200px;">
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="btn-search-peserta" title="Cari">
+                        <i class="ti ti-search"></i>
+                    </button>
+                    <button class="btn btn-success" id="btn-refresh-peserta" title="Muat Ulang">
+                        <i class="ti ti-reload"></i>
+                    </button>
+                    <button class="btn btn-secondary" id="btn-filter-peserta" title="Filter">
+                        <i class="ti ti-filter"></i>
+                    </button>
+                </div>
+
+                <!-- Panel Filter -->
+                <div id="filter-panel" class="card shadow p-3 position-absolute bg-white border rounded-3"
+                    style="top: 110%; right: 0; width: 250px; display: none; z-index: 1000;">
+                    <div class="mb-3">
+                        <label for="filter-status" class="form-label">Status Berkas</label>
+                        <select id="filter-status" class="form-select">
+                            <option value="">Semua</option>
+                            <option value="ms">Memenuhi Syarat</option>
+                            <option value="tms">Tidak Memenuhi Syarat</option>
+                            <option value="belum">Belum Diperiksa</option>
+                            <option value="sudah">Sudah Diperiksa</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary w-100" id="btn-apply-filter">Terapkan Filter</button>
+                </div>
             </div>
         </div>
         
@@ -307,6 +329,15 @@
     var is_verifikasi_berkas_aktif=false;
 
     $(document).ready(function() {
+        
+        toggleArea('#btn-filter-peserta', '#filter-panel', { animation: 'fade' });
+
+        $('#btn-apply-filter').on('click', function() {
+            $('#filter-panel').hide();
+            page_peserta=1;
+            dataLoadPeserta();
+        });
+
         dataLoad();
 
         //untuk daftar beasiswa
@@ -367,7 +398,8 @@
         //untuk daftar peserta
         async function dataLoadPeserta() {
             const search = $('#search-input-peserta').val();
-            const url = `${base_url}/api/peserta-verifikasi?limit=20&search=${search}&page=${page_peserta}&beasiswa_id=${beasiswa_id}`;
+            const verifikasi = $('#filter-status').val();
+            const url = `${base_url}/api/peserta-verifikasi?limit=20&search=${search}&page=${page_peserta}&verifikasi=${verifikasi}&beasiswa_id=${beasiswa_id}`;
             const response = await execAsync(url, 'GET', token);
             renderDataPeserta(response);
         }
@@ -406,7 +438,7 @@
                                     </td>
                                     <td>${hasil}</td>
                                     <td class="text-center">
-                                        <button class="btn btn-secondary btn-mulai-verifikasi" data-pendaftar_id="${dt.pendaftar.id}" type="button">
+                                        <button class="btn btn-secondary btn-mulai-verifikasi" data-index="${no-1}" data-pendaftar_id="${dt.pendaftar.id}" type="button">
                                             Mulai Verifikasi
                                         </button>
                                     </td>
@@ -441,6 +473,11 @@
 
         $('#btn-refresh').click(function() {
             dataLoad();
+        });
+
+        $('#btn-refresh-peserta').click(function() {
+            page_peserta=1;
+            dataLoadPeserta();
         });
 
         $('#btn-search').click(function(){

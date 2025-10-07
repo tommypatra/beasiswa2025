@@ -79,6 +79,24 @@ class VerifikasiBerkasController extends Controller
             });
         }
 
+        if ($request->filled('verifikasi')) {
+            $verifikasi = $request->verifikasi;
+            switch ($verifikasi) {
+                case 'ms':
+                    $dataQuery->where('hasil', 1);
+                    break;
+                case 'tms':
+                    $dataQuery->where('hasil', 0);
+                    break;
+                case 'selesai':
+                    $dataQuery->whereNotNull('hasil');
+                    break;
+                case 'belum':
+                    $dataQuery->whereNull('hasil');
+                    break;
+            }
+        }
+
         // tambahkan kondisi pencarian sebelum paginate
         if ($request->filled('pendaftar_id')) {
             $pendaftar_id = $request->pendaftar_id;
