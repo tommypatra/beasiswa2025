@@ -793,6 +793,7 @@
                 // let jenis = data.jenis;
                 let url = base_url+'/'+data.upload_syarat.dokumen;
                 let jenis = getFileType(url);
+                console.log(jenis);
                 if(is_verifikasi_berkas_aktif){
                     $("#verifikasi_berkas_hasil").prop("disabled", false);
                     $("#verifikasi_berkas_catatan").prop("disabled", false);
@@ -815,7 +816,7 @@
                 scale = 1;
                 $('#dokumen-embed').html('<a href="javascript:;" class="refresh-dokumen" style="color:blue;">klik disini untuk melihat preview dokumen</a>');
                 
-                if (data.upload_syarat.dokumen.endsWith('.pdf')) {
+                if (jenis=='pdf') {
                     $('#kontrol-gambar').hide();
                     if(preview_file)
                         openPdf(document.getElementById('dokumen-embed'), url);
