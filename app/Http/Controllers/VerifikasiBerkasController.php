@@ -4,13 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Beasiswa;
 use App\Models\Verifikator;
+use App\Models\UploadSyarat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\VerifikatorPendaftar;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\VerifikasiBerkasRequest;
 use App\Http\Resources\IdentitasPesertaResource;
 use App\Http\Resources\VerifikasiBerkasResource;
+use App\Http\Requests\ReuploadDokumenSyaratRequest;
 
 class VerifikasiBerkasController extends Controller
 {
@@ -192,6 +195,45 @@ class VerifikasiBerkasController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat menghapus : ' . $e->getMessage(), 'data' => null], 500);
+        }
+    }
+
+    public function reuploadDokumenSyarat(ReuploadDokumenSyaratRequest $request)
+    {
+        try {
+            DB::beginTransaction();
+            $data_save = $request->validated();
+            $data_save['dokumen'] = upload($request->file('dokumen'), 'dokumen');
+
+
+            $upload_sebelumnya = UploadSyarat::where('syarat_id', $data_save['syarat_id'])
+                ->where('pendaftar_id', $data_save['pendaftar_id'])
+                ->first();
+
+            if ($upload_sebelumnya) {
+                if ($upload_sebelumnya->dokumen && Storage::disk('public')->exists($upload_sebelumnya->dokumen)) {
+                    Storage::disk('public')->delete($upload_sebelumnya->dokumen);
+                }
+                $upload_sebelumnya->update($data_save);
+                $data = $data_save;
+                $message = 'Dokumen berhasil diperbarui.';
+            } else {
+                $data = UploadSyarat::create($data_save);
+                $message = 'Dokumen baru berhasil diupload.';
+            }
+
+            DB::commit();
+            return response()->json(['status' => true, 'message' => $message, 'data' => $data], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            if ($data_save['dokumen'] && Storage::disk('public')->exists($data_save['dokumen'])) {
+                Storage::disk('public')->delete($data_save['dokumen']);
+            }
+            $pesan_salah = $e->getMessage();
+            if ($e->getCode() == 23000) {
+                $pesan_salah = "Hapus dulu dokumen upload sebelumnya, setelah itu upload lagi kembali.";
+            }
+            return response()->json(['status' => false, 'message' => 'Terjadi kesalahan saat membuat data baru: ' . $pesan_salah], 500);
         }
     }
 }

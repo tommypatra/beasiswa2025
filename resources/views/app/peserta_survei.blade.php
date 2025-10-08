@@ -563,7 +563,7 @@
                     const idHeader = `heading${item.upload_syarat_id}`;
                     const idCollapse = `collapse${item.upload_syarat_id}`;
                     const dokumen_show_id = `dokumen-show-${item.upload_syarat_id}`;
-                    const display_kontrol_gambar =  (item.dokumen.endsWith('.pdf'))?"display:none;":"";
+                    const display_kontrol_gambar =  (item.jenis!='image')?"display:none;":"";
                     html += `                    
                     <div class="accordion-item" data-jenis="${item.jenis}" data-dokumen_show_id="${dokumen_show_id}" data-url="${item.dokumen}">
                         <h2 class="accordion-header" id="${idHeader}">

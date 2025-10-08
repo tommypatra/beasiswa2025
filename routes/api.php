@@ -61,6 +61,7 @@ use App\Http\Controllers\VerifikatorController;
 use App\Http\Controllers\WilayahDesaController;
 use App\Http\Middleware\JwtAuthenticateRefresh;
 use App\Http\Controllers\BukuRekeningController;
+use App\Http\Controllers\PesertaUjianController;
 use App\Http\Controllers\ProgramStudiController;
 use App\Http\Controllers\RuanganUjianController;
 use App\Http\Controllers\UploadSyaratController;
@@ -143,6 +144,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::get('data-upload-syarat', [UploadSyaratController::class, 'dataUploadSyarat']);
         Route::put('simpan-validasi-syarat/{id}', [VerifikatorPendaftarController::class, 'simpanValidasiSyarat']);
         Route::put('simpan-validasi-final/{id}', [VerifikatorPendaftarController::class, 'simpanValidasiFinal']);
+        Route::post('reupload-dokumen-syarat', [VerifikasiBerkasController::class, 'reuploadDokumenSyarat']);
     });
 
     Route::middleware(['cek.akses:surveyor'])->group(function () {
@@ -277,7 +279,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         //generate jadwal ujian CAT
         Route::resource('jadwal-ujian', JadwalUjianController::class);
         Route::get('hapus-jadwal-ujian/{beasiswa_id}', [JadwalUjianController::class, 'hapusJadwalUjian']);
-        Route::get('hapus-peserta-ujian/{beasiswa_id}', [JadwalUjianController::class, 'hapusPesertaUjian']);
+        Route::get('hapus-peserta-ujian/{beasiswa_id}', [PesertaUjianController::class, 'hapusPesertaUjian']);
 
         Route::get('generate-jadwal-ujian/{id}', [JadwalUjianController::class, 'generateJadwal']);
     });

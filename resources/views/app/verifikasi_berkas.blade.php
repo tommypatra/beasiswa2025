@@ -167,6 +167,8 @@
 <!-- AKHIR MODAL -->
 
 <!-- MULAI MODAL VALIDASI-->
+<input type="file" id="fileUpload" data-nama="" data-syarat_id="" data-pendaftar_id="" style="display:none;">
+
 <div class="modal fade modal" id="modal-form" role="dialog">
     <div class="modal-dialog modal-xxl">
             <input type="hidden" name="id" id="id" >
@@ -325,6 +327,7 @@
     var peserta;
     var data_syarat;
     var lengkap;
+    var jenis;
     var syarat_index=0;
     var is_verifikasi_berkas_aktif=false;
 
@@ -487,6 +490,7 @@
 
         $('#btn-cari-mahasiswa').click(function(){
             pendaftar_id='';
+            syarat_index=1;
             pesertaVerifikasi(1);
         });
 
@@ -752,6 +756,8 @@
             let contohPath = data.contoh ? `<a href="${base_url}/${data.contoh}" class="btn btn-sm btn-success mt-2" target="_blank">Contoh Format Dokumen</a>` : "";
             let wajib = (data.is_wajib) ? `Wajib` : `Pilihan`;
             // let dokumenEmbed=`Tidak Mengupload Dokumen`;
+
+
             $(`#verifikasi_berkas_skor`).val('');
             $('#info-syarat').text(` ke ${syarat_index+1} dari ${data_syarat.length}`);
             $('#nama-syarat').text(data.nama);
@@ -792,8 +798,8 @@
             if (data.upload_syarat){
                 // let jenis = data.jenis;
                 let url = base_url+'/'+data.upload_syarat.dokumen;
-                let jenis = getFileType(url);
-                console.log(jenis);
+                jenis = getFileType(url);
+                // console.log(jenis);
                 if(is_verifikasi_berkas_aktif){
                     $("#verifikasi_berkas_hasil").prop("disabled", false);
                     $("#verifikasi_berkas_catatan").prop("disabled", false);
@@ -840,9 +846,6 @@
             }else{
                 $('#dokumen-embed').html('<p style="color:red;">Tidak ada file diupload.</p>');
             }
-
-            
-
         }
         
         //validasi dan save, jika id ada maka PUT/edit jika tidak ada maka POST/simpan baru
@@ -884,6 +887,58 @@
             let skor_akhir = (nilai / (total_pilihan - 1)) * bobot;            
             $('#verifikasi_berkas_skor').val(skor_akhir.toFixed(2));
         });
+
+        // $(document).on('keydown', function(e) {
+        //     if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'u') {
+        //         if ($('#modal-form').hasClass('show')) {
+        //             e.preventDefault();
+        //             const inputFile = $('#fileUpload');
+        //             const syarat = data_syarat[syarat_index];
+        //             inputFile.val('');
+        //             if (syarat.jenis === 'pdf') {
+        //                 inputFile.attr('accept', 'application/pdf');
+        //             } else {
+        //                 inputFile.attr('accept', 'image/*');
+        //             }
+        //             inputFile.trigger('click');
+        //         }
+        //     }
+        // });
+
+        // Saat user pilih file
+        $('#fileUpload').on('change', function() {
+            let file = this.files[0];
+            if (!file) return; // batal pilih file
+
+            const syarat = data_syarat[syarat_index];
+            let pendaftar_id = peserta.pendaftar.id;
+            let syarat_id = syarat.id;
+            let nama = syarat.nama;
+
+            if (!confirm(`Apakah anda ingin upload ${nama} ? jangan lupa arsipkan terlebih dahulu dokumen sebelumnya jika ada`)) {
+                $(this).val('');
+                return;
+            }
+
+            let konfirmasi = prompt(`Ketik "upload" untuk melanjutkan proses upload ${nama}!`);
+            if (konfirmasi?.toLowerCase() !== 'upload') {
+                alert('Proses dibatalkan.');
+                $(this).val('');
+                return;
+            }
+
+            const url = `${base_url}/api/reupload-dokumen-syarat`;
+            let formData = new FormData();
+            formData.append('pendaftar_id', pendaftar_id);
+            formData.append('syarat_id', syarat_id);
+            formData.append('dokumen', file);
+
+            saveData(url, 'POST', formData, function(response) {
+                appShowNotification(true, [response.message]);
+                pesertaVerifikasi();
+            });
+        });        
+
 
         $(document).on("click",".refresh-dokumen",function(){
             showSyarat(true);
