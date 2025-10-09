@@ -741,7 +741,7 @@
             return 'image';
         }
 
-        function showSyarat(preview_file=false){
+        function showSyarat(preview_file=true){
             resetFormSyarat();
             $('#validasi-final').hide();
             $('#validasi-syarat').show();
