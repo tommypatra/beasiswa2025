@@ -490,7 +490,7 @@
 
         $('#btn-cari-mahasiswa').click(function(){
             pendaftar_id='';
-            syarat_index=1;
+            syarat_index=0;
             pesertaVerifikasi(1);
         });
 
