@@ -470,7 +470,7 @@
             pendaftar_id = $(this).data('pendaftar_id');
             // beasiswa_id = $(this).data('beasiswa_id');
             // is_verifikasi_berkas_aktif = $(this).data('is_verifikasi_berkas_aktif');
-            syarat_index = 1;
+            syarat_index = 0;
             pesertaVerifikasi(1);
             // dataLoadPeserta();      
         }); 
