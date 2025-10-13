@@ -305,7 +305,7 @@
                     }
                     const status_verifikasi = dt.hasil_verifikasi == 1 ? "MS"  : dt.hasil_verifikasi == 0  ? "TMS" : "";
                     const status_kelulusan = dt.is_lulus == 1 ? "Lulus"  : dt.is_lulus == 0  ? "Tidak Lulus" : "";
-
+                    const catatan = dt.hasil_verifikasi == 0 ? dt.catatan_verifikasi :"";
                     const row = `<tr>
                                     <td>${g_nomor++}</td>
                                     <td>${dt.nama}</td>
@@ -322,7 +322,7 @@
                                     <td>${label(dt.sekolah)}</td>
                                     <td>${label(dt.tahun_lulus_sekolah)}</td>
                                     <td>${status_pendaftaran}</td>
-                                    <td>${status_verifikasi}</td>
+                                    <td>${status_verifikasi} <div>${catatan}</div></td>
                                     <td>${status_kelulusan}</td>
                                 </tr>`;
                     dataList.append(row);
