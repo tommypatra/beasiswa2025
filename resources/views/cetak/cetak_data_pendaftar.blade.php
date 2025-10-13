@@ -146,7 +146,8 @@
                         <th width="5%">Tahun Masuk</th>
                         <th width="15%">Fakultas/ Program Studi</th>
                         <th width="25%">Alamat</th>
-                        <th width="15%">Kecamatan/ Kabupaten</th>
+                        <th width="15%">Kecamatan</th>
+                        <th width="15%">Kabupaten</th>
                         <th width="15%">Provinsi</th>
                         <th width="10%">Email</th>
                         <th width="10%">HP</th>
@@ -315,7 +316,8 @@
                                     <td>${dt.tahun_masuk}</td>
                                     <td>${dt.fakultas}/ ${dt.program_studi} </td>
                                     <td>${dt.alamat} ${dt.desa}</td>
-                                    <td>${dt.kecamatan}/ ${dt.kabupaten}</td>
+                                    <td>${dt.kecamatan}</td>
+                                    <td>${dt.kabupaten}</td>
                                     <td>${dt.provinsi}</td>
                                     <td>${dt.email}</td>
                                     <td>${dt.no_hp}</td>
