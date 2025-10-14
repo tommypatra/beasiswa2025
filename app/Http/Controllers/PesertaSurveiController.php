@@ -51,6 +51,7 @@ class PesertaSurveiController extends Controller
                 });
             })
             ->where('beasiswa_id', $beasiswa_id)
+            ->having('total_pendaftar', '>', 0)
             ->orderBy('beasiswa_id', 'asc')
             ->orderBy('user_id', 'asc');
 
