@@ -271,6 +271,10 @@
 
             function renderData(dataRespon, dataList) {
                 if (dataRespon.length > 0) {
+                    let total_keseluruhan=0;
+                    let valid_keseluruhan=0;
+                    let persen_keseluruhan=0;
+
                     $.each(dataRespon, function(data, dt) {
                         let kabupaten = '';
                         if (Array.isArray(dt.daftar_kabupaten) && dt.daftar_kabupaten.length > 0) {
@@ -285,6 +289,9 @@
                         let total = parseInt(dt.total_pendaftar) || 0;
                         let valid = parseInt(dt.peserta_valid) || 0;
                         let persen = total > 0 ? Math.round((valid / total) * 100) : 0;
+
+                        total_keseluruhan+=total;
+                        valid_keseluruhan+=valid;
 
                         // Buat progress bar Bootstrap
                         let progressBar = `<div class="progress position-relative" style="height: 20px;">
@@ -309,6 +316,28 @@
                                 </tr>`;
                         dataList.append(row);
                     });
+
+                    persen_keseluruhan = total_keseluruhan > 0 ? Math.round((valid_keseluruhan / total_keseluruhan) * 100) : 0;
+
+                    // Buat progress bar Bootstrap
+                    let progressBar = `<div class="progress position-relative" style="height: 20px;">
+                                            <div class="progress-bar bg-success" role="progressbar"
+                                                style="width: ${persen_keseluruhan}%;" 
+                                                aria-valuenow="${persen_keseluruhan}" aria-valuemin="0" aria-valuemax="100">
+                                            </div>
+                                            <span class="position-absolute w-100 text-center fw-bold" 
+                                                style="color:black; font-size:12px;">
+                                                ${persen_keseluruhan}%
+                                            </span>
+                                        </div>`;
+                        
+                    const row = `<tr>
+                            <td colspan="4"></td>
+                            <td>${total_keseluruhan}</td>
+                            <td>${valid_keseluruhan}</td>
+                            <td>${progressBar}</td>
+                        </tr>`;
+                    dataList.append(row);                                        
                 }
             }
 
