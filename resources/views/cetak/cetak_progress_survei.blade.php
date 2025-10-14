@@ -147,9 +147,9 @@
                 <thead>
                     <tr>
                         <th width="5%">No</th>
-                        <th width="30%">Nama</th>
+                        <th width="20%">Nama</th>
                         <th width="20%">Kecamatan</th>
-                        <th width="20%">Kabupaten</th>
+                        <th width="15%">Kabupaten</th>
                         <th width="5%">Jumlah Peserta</th>
                         <th width="5%">Selesai Survei</th>
                         <th width="15%">Progress</th>
