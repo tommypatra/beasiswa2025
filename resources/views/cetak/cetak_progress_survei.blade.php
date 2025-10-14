@@ -157,7 +157,7 @@
                 </thead>
                 <tbody id="data-list">
                     <tr>
-                        <td colspan="14">tidak ditemukan</td>
+                        <td colspan="7">tidak ditemukan</td>
                     </tr>
                 </tbody>
             </table>
@@ -299,7 +299,7 @@
                                                     style="width: ${persen}%;" 
                                                     aria-valuenow="${persen}" aria-valuemin="0" aria-valuemax="100">
                                                 </div>
-                                                <span class="position-absolute w-100 text-center fw-bold" 
+                                                <span class="position-absolute text-center fw-bold" 
                                                     style="color:black; font-size:12px;">
                                                     ${persen}%
                                                 </span>
@@ -325,7 +325,7 @@
                                                 style="width: ${persen_keseluruhan}%;" 
                                                 aria-valuenow="${persen_keseluruhan}" aria-valuemin="0" aria-valuemax="100">
                                             </div>
-                                            <span class="position-absolute w-100 text-center fw-bold" 
+                                            <span class="position-absolute text-center fw-bold" 
                                                 style="color:black; font-size:12px;">
                                                 ${persen_keseluruhan}%
                                             </span>
