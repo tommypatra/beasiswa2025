@@ -271,9 +271,10 @@
 
             function renderData(dataRespon, dataList) {
                 if (dataRespon.length > 0) {
-                    let total_keseluruhan=0;
-                    let valid_keseluruhan=0;
-                    let persen_keseluruhan=0;
+                    let total_keseluruhan = 0;
+                    let valid_keseluruhan = 0;
+                    let persen_keseluruhan = 0;
+                    let color="black";
 
                     $.each(dataRespon, function(data, dt) {
                         let kabupaten = '';
@@ -289,6 +290,7 @@
                         let total = parseInt(dt.total_pendaftar) || 0;
                         let valid = parseInt(dt.peserta_valid) || 0;
                         let persen = total > 0 ? Math.round((valid / total) * 100) : 0;
+                        let color = total > 0 ? "white":"black";
 
                         total_keseluruhan+=total;
                         valid_keseluruhan+=valid;
@@ -299,8 +301,8 @@
                                                     style="width: ${persen}%;" 
                                                     aria-valuenow="${persen}" aria-valuemin="0" aria-valuemax="100">
                                                 </div>
-                                                <span class="position-absolute text-center fw-bold" 
-                                                    style="color:black; font-size:12px;">
+                                                <span class="position-absolute w-100 text-center fw-bold" 
+                                                    style="color:${color}; font-size:12px;">
                                                     ${persen}%
                                                 </span>
                                             </div>`;
@@ -318,6 +320,7 @@
                     });
 
                     persen_keseluruhan = total_keseluruhan > 0 ? Math.round((valid_keseluruhan / total_keseluruhan) * 100) : 0;
+                    color = total_keseluruhan > 0 ? "white":"black";
 
                     // Buat progress bar Bootstrap
                     let progressBar = `<div class="progress position-relative" style="height: 20px;">
@@ -325,8 +328,8 @@
                                                 style="width: ${persen_keseluruhan}%;" 
                                                 aria-valuenow="${persen_keseluruhan}" aria-valuemin="0" aria-valuemax="100">
                                             </div>
-                                            <span class="position-absolute text-center fw-bold" 
-                                                style="color:black; font-size:12px;">
+                                            <span class="position-absolute w-100 text-center fw-bold" 
+                                                style="color:${color}; font-size:12px;">
                                                 ${persen_keseluruhan}%
                                             </span>
                                         </div>`;
