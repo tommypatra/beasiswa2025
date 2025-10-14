@@ -728,7 +728,7 @@
             $('.mahasiswa-nim').text(`Nim : ${data_survei.nim}`);
             $('.mahasiswa-prodi').text(`${data_survei.fakultas}/ ${data_survei.program_studi}`);
             $('.mahasiswa-alamat').text(`${data_survei.alamat} ${data_survei.desa} ${data_survei.kecamatan} ${data_survei.kabupaten} ${data_survei.provinsi}`);
-            $('.mahasiswa-no_hp').html(`<a href="${data_survei.link_wa}bismillah,${data_survei.nama}" target="_blank">${data_survei.no_hp}</a>`);
+            $('.mahasiswa-no_hp').html(`<a href="${data_survei.link_wa}bismillah, ${data_survei.nama}" target="_blank">${data_survei.no_hp}</a>`);
             $('.mahasiswa-no-pendaftaran').text(`Nomor Pendaftaran : ${data_survei.no_pendaftaran}`);
             $('.mahasiswa-email').text(`${data_survei.email}`);
             $('.mahasiswa-photo').attr('src',base_url+'/'+data_survei.foto);
@@ -784,7 +784,7 @@
                                     </td>
                                     <td>
                                         ${dt.alamat} (${dt.desa} - ${dt.kecamatan} - ${dt.kabupaten} - ${dt.provinsi})
-                                        <a href="${dt.link_wa}bismillah,${dt.nama}" class="btn btn-secondary btn-sm" target="_blank">WA : ${dt.no_hp}</div>
+                                        <a href="${dt.link_wa}bismillah, ${dt.nama}" class="btn btn-secondary btn-sm" target="_blank">WA : ${dt.no_hp}</div>
                                     </td>
                                     <td class="text-center">
                                         ${status_survei}
