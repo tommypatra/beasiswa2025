@@ -152,9 +152,15 @@
                                         <span class="badge rounded-pill fs-2 fw-medium bg-danger-subtle text-danger">Belum Survei : ${dt.total_pendaftar-dt.peserta_valid}</span>
                                     </td>
                                     <td class="text-center">
-                                        <div class="d-flex flex-column align-items-center gap-2">
-                                            <button class="btn btn-secondary btn-daftar-peserta" data-beasiswa_id="${dt.beasiswa.id}" type="button" ${tombol_aktif}>Daftar Peserta</button>
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                                            <ul class="dropdown-menu">
+                                                <li><button class="dropdown-item btn-daftar-peserta" data-beasiswa_id="${dt.beasiswa.id}" ${tombol_aktif}>Peserta Survei</button></li>
+                                                <li><button class="dropdown-item btn-daftar-wilayah" data-beasiswa_id="${dt.beasiswa.id}">Daftar Wilayah</button></li>
+                                                <li><button class="dropdown-item btn-progress" data-beasiswa_id="${dt.beasiswa.id}">Progress Survei</button></li>
+                                            </ul>
                                         </div>
+
                                     </td>
                                 </tr>`;
                     dataList.append(row);
@@ -197,6 +203,17 @@
             window.location.href = `${base_url}/peserta-survei/${id}`;
         });
 
-    });
+        $(document).on('click','.btn-progress',function(){
+            const id = $(this).data('beasiswa_id');
+            window.open(`${base_url}/cetak-progress-survei/${id}`, '_blank');
+        });
+
+
+        $(document).on('click','.btn-daftar-wilayah',function(){
+            const id = $(this).data('beasiswa_id');
+            window.open(`${base_url}/cetak-wilayah-survei/${id}`, '_blank');        
+        });
+
+});
 </script>
 @endsection

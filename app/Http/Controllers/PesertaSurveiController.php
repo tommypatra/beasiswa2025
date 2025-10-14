@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PesertaSurveiRequest;
 use App\Http\Resources\PesertaSurveiResource;
+use App\Http\Resources\WilayahSurveiResource;
 use App\Http\Requests\NilaiSurveiAkhirRequest;
 use App\Http\Resources\ProgressSurveiResource;
 use App\Http\Resources\VerifikasiBerkasResource;
@@ -75,6 +76,46 @@ class PesertaSurveiController extends Controller
             'data' => $data,
         ];
         return response()->json($dataRespon);
+    }
+
+    public function wilayahSurvei(Request $request, $beasiswa_id)
+    {
+        $dataQuery = Pendaftar::selectRaw('
+            identitas.provinsi,
+            identitas.kabupaten,
+            identitas.kecamatan,
+            COUNT(pendaftars.id) AS jumlah_pendaftar
+        ')
+            ->join('mahasiswas', 'mahasiswas.id', '=', 'pendaftars.mahasiswa_id')
+            ->join('users', 'users.id', '=', 'mahasiswas.user_id')
+            ->join('identitas', 'identitas.user_id', '=', 'users.id')
+            ->where('pendaftars.beasiswa_id', $beasiswa_id)
+            ->whereHas('verifikatorPendaftar', function ($q) {
+                $q->where('hasil', 1);
+            })
+            ->groupBy('identitas.provinsi', 'identitas.kabupaten', 'identitas.kecamatan')
+            ->orderBy('identitas.provinsi')
+            ->orderBy('identitas.kabupaten')
+            ->orderBy('identitas.kecamatan');
+
+        $default_limit = env('DEFAULT_LIMIT', 30);
+        $limit = $request->filled('limit') ? (int) $request->limit : $default_limit;
+
+        if ($limit > 0) {
+            // pakai pagination
+            $data = $dataQuery->paginate($limit);
+            $resourceCollection = $data->getCollection()->map(fn($item) => new WilayahSurveiResource($item));
+            $data->setCollection($resourceCollection);
+        } else {
+            // ambil semua data tanpa pagination
+            $data = $dataQuery->get()->map(fn($item) => new WilayahSurveiResource($item));
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ]);
     }
 
     public function survei(Request $request)

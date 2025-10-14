@@ -43,12 +43,12 @@ use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\IdentitasController;
 use App\Http\Controllers\KelulusanController;
 use App\Http\Controllers\MahasiswaController;
-use App\Http\Controllers\PekerjaanController;
+// use App\Http\Controllers\PekerjaanController;
 use App\Http\Controllers\PendaftarController;
 use App\Http\Controllers\SesiUjianController;
 use App\Http\Controllers\SumberAirController;
 use App\Http\Controllers\MonitoringController;
-use App\Http\Controllers\PendapatanController;
+// use App\Http\Controllers\PendapatanController;
 use App\Http\Controllers\PendidikanController;
 use App\Http\Controllers\SkPenerimaController;
 use App\Http\Controllers\JadwalUjianController;
@@ -150,6 +150,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     Route::middleware(['cek.akses:surveyor'])->group(function () {
         Route::resource('peserta-survei', PesertaSurveiController::class);
         Route::get('progress-survei/{id}', [PesertaSurveiController::class, 'progressSurvei']);
+        Route::get('wilayah-survei/{id}', [PesertaSurveiController::class, 'wilayahSurvei']);
         Route::resource('survei-nilai', SurveiNilaiController::class);
         Route::get('proses-survei/{id}', [SurveiNilaiController::class, 'prosesSurvei']);
         // Route::put('akhiri-survei/{id}', [SurveiNilaiController::class, 'akhiriSurvei']);
@@ -212,7 +213,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::resource('pengaturan-ujian', PengaturanUjianController::class);
         Route::resource('ruangan-ujian', RuanganUjianController::class);
         Route::resource('sesi-ujian', SesiUjianController::class);
-        Route::resource('pekerjaan', PekerjaanController::class);
+        // Route::resource('pekerjaan', PekerjaanController::class);
         Route::resource('kelulusan', KelulusanController::class);
         Route::post('proses-kelulusan', [KelulusanController::class, 'prosesKelulusan']);
         Route::delete('hapus-kelulusan/{beasiswa_id}', [KelulusanController::class, 'hapusKelulusan']);
@@ -225,12 +226,12 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::get('batalkan-finalisasi/{id}', [PendaftarController::class, 'batalkanFinalisasi']);
 
         Route::resource('monitoring', MonitoringController::class);
-        Route::resource('pendapatan', PendapatanController::class);
-        Route::resource('pendidikan', PendidikanController::class);
-        Route::resource('sumber-biaya', SumberBiayaController::class);
-        Route::resource('sumber-air', SumberAirController::class);
-        Route::resource('sumber-listrik', SumberListrikController::class);
-        Route::resource('mck', MckController::class);
+        // Route::resource('pendapatan', PendapatanController::class);
+        // Route::resource('pendidikan', PendidikanController::class);
+        // Route::resource('sumber-biaya', SumberBiayaController::class);
+        // Route::resource('sumber-air', SumberAirController::class);
+        // Route::resource('sumber-listrik', SumberListrikController::class);
+        // Route::resource('mck', MckController::class);
         Route::resource('referensi-pilihan', ReferensiPilihanController::class);
         Route::resource('predikat', PredikatController::class);
         Route::resource('kegiatan', KegiatanController::class);

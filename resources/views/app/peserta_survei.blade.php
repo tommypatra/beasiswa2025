@@ -837,8 +837,6 @@
             },true);
         }
 
-
-
         $('#btn-progress').click(function() {
             const url = `${base_url}/cetak-progress-survei/${beasiswa_id}`;
             window.open(url, '_blank');

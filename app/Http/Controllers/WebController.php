@@ -60,6 +60,11 @@ class WebController extends Controller
         return view('cetak.cetak_progress_survei', ['beasiswa_id' => $id]);
     }
 
+    public function cetakWilayahSurvei($id)
+    {
+        return view('cetak.cetak_wilayah_survei', ['beasiswa_id' => $id]);
+    }
+
     public function cetakPenerimaMahasiswa($sk_penerima_id)
     {
         return view('cetak.cetak_penerima_beasiswa', ['sk_penerima_id' => $sk_penerima_id]);
