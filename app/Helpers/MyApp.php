@@ -497,3 +497,27 @@ if (!function_exists('kirimwa')) {
         return $retval;
     }
 }
+
+if (!function_exists('linkwa')) {
+    function linkwa($hp = "", $pesan = '')
+    {
+        $retval = "";
+        if ($hp <> "") {
+            $tmphp = explode("/", $hp);
+            foreach ($tmphp as $hp) {
+                $hp = trim($hp);
+                $hp = str_replace(array("-", " "), array("", ""), $hp);
+                $hp = preg_replace("/[^a-zA-Z0-9\s]/", "", $hp);
+
+                if (substr($hp, 0, 1) == "0")
+                    $hp = "+62" . substr($hp, 1, strlen($hp));
+
+                if (isMobileDev())
+                    $retval = "https://wa.me/" . $hp . "?text=";
+                else
+                    $retval = "https://web.whatsapp.com/send?phone=" . $hp . "&text=";
+            }
+        }
+        return $retval;
+    }
+}

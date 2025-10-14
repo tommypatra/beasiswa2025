@@ -49,6 +49,7 @@ class PesertaSurveiResource extends JsonResource
             'kecamatan' => $identitas->kecamatan,
             'kabupaten' => $identitas->kabupaten,
             'no_hp' => $identitas->no_hp,
+            'link_wa' => linkwa($identitas->no_hp),
             'provinsi' => $identitas->provinsi,
             'no_pendaftaran' => $this->no_pendaftaran,
             'url_id' => $identitas->url_id,
