@@ -141,6 +141,8 @@
             <hr>
         </div>
 
+        <button id="copyTableBtn" onclick="copyTable2()">Copy ke Excel</button>
+
 
         <div class="content">
             <table id="mytable">
@@ -179,6 +181,33 @@
             return ($string) ? $string : "";
         }
 
+        function copyTable2() {
+                var urlField = document.getElementById('mytable')
+                var range = document.createRange()
+                range.selectNode(urlField)
+                window.getSelection().addRange(range)
+                document.execCommand('copy')
+                alert("berhasil tersalin");
+            }   
+            
+            function copyTable() {
+                let text = "";
+                const rows = document.querySelectorAll("#mytable tr");
+
+                rows.forEach(row => {
+                    let cols = row.querySelectorAll("th, td");
+                    let rowData = [];
+                    cols.forEach(col => rowData.push(col.innerText));
+                    text += rowData.join("\t") + "\n"; // pakai tab untuk Excel
+                });
+
+                navigator.clipboard.writeText(text).then(() => {
+                    alert("Tabel berhasil disalin! Silakan paste di Excel.");
+                }).catch(err => {
+                    console.error("Gagal copy:", err);
+                });
+            }
+
 
         $(document).ready(function() {
             const token = localStorage.getItem('access_token');
@@ -187,7 +216,6 @@
                 localStorage.clear();
                 window.location.replace(`${base_url}/login`);
             }
-
 
             $.ajaxSetup({
                 beforeSend: function(xhr) {
