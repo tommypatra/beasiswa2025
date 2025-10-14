@@ -889,22 +889,22 @@
             $('#verifikasi_berkas_skor').val(skor_akhir.toFixed(2));
         });
 
-        // $(document).on('keydown', function(e) {
-        //     if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'u') {
-        //         if ($('#modal-form').hasClass('show')) {
-        //             e.preventDefault();
-        //             const inputFile = $('#fileUpload');
-        //             const syarat = data_syarat[syarat_index];
-        //             inputFile.val('');
-        //             if (syarat.jenis === 'pdf') {
-        //                 inputFile.attr('accept', 'application/pdf');
-        //             } else {
-        //                 inputFile.attr('accept', 'image/*');
-        //             }
-        //             inputFile.trigger('click');
-        //         }
-        //     }
-        // });
+        $(document).on('keydown', function(e) {
+            if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'u') {
+                if ($('#modal-form').hasClass('show')) {
+                    e.preventDefault();
+                    const inputFile = $('#fileUpload');
+                    const syarat = data_syarat[syarat_index];
+                    inputFile.val('');
+                    if (syarat.jenis === 'pdf') {
+                        inputFile.attr('accept', 'application/pdf');
+                    } else {
+                        inputFile.attr('accept', 'image/*');
+                    }
+                    inputFile.trigger('click');
+                }
+            }
+        });
 
         // Saat user pilih file
         $('#fileUpload').on('change', function() {
