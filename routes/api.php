@@ -149,6 +149,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
 
     Route::middleware(['cek.akses:surveyor'])->group(function () {
         Route::resource('peserta-survei', PesertaSurveiController::class);
+        Route::get('progress-survei/{id}', [PesertaSurveiController::class, 'progressSurvei']);
         Route::resource('survei-nilai', SurveiNilaiController::class);
         Route::get('proses-survei/{id}', [SurveiNilaiController::class, 'prosesSurvei']);
         // Route::put('akhiri-survei/{id}', [SurveiNilaiController::class, 'akhiriSurvei']);

@@ -52,6 +52,9 @@
                 <button class="btn btn-primary" id="btn-search">
                     <i class="ti ti-search"></i>
                 </button>
+                <button class="btn btn-primary" id="btn-progress">
+                    <iconify-icon icon="solar:course-up-outline" class="fs-4"></iconify-icon>
+                </button>
                 <button class="btn btn-success" id="btn-refresh">
                     <i class="ti ti-reload"></i>
                 </button>
@@ -833,6 +836,13 @@
 
             },true);
         }
+
+
+
+        $('#btn-progress').click(function() {
+            const url = `${base_url}/cetak-progress-survei/${beasiswa_id}`;
+            window.open(url, '_blank');
+        });
 
         $('#btn-refresh').click(function() {
             dataLoad();

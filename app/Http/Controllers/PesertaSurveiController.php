@@ -9,21 +9,73 @@ use App\Models\Pewawancara;
 use App\Models\UploadSyarat;
 use Illuminate\Http\Request;
 use App\Models\PesertaSurvei;
+use App\Models\SurveiPeserta;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\NilaiSurveiAkhirRequest;
 use App\Http\Requests\PesertaSurveiRequest;
 use App\Http\Resources\PesertaSurveiResource;
+use App\Http\Requests\NilaiSurveiAkhirRequest;
+use App\Http\Resources\ProgressSurveiResource;
 use App\Http\Resources\VerifikasiBerkasResource;
 use App\Http\Requests\SimpanValidasiFinalRequest;
 use App\Http\Requests\SimpanValidasiSyaratRequest;
-use App\Models\SurveiPeserta;
 
 class PesertaSurveiController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
+    public function progressSurvei(Request $request, $beasiswa_id)
+    {
+
+        $dataQuery = Surveyor::with([
+            'surveiPeserta.pendaftar.mahasiswa.user.identitas',
+            'beasiswa',
+            'user',
+        ])
+            ->withCount([
+                'surveipeserta as total_pendaftar' => function ($query) {
+                    $query->whereHas('pendaftar.verifikatorPendaftar', function ($q) {
+                        $q->where('hasil', 1);
+                    });
+                }
+            ])
+            ->withCount([
+                'surveipeserta as peserta_valid' => function ($query) {
+                    $query->whereNotNull('hasil');
+                }
+            ])->where(function ($query) use ($request) {
+                $query->WhereHas('beasiswa', function ($q) use ($request) {
+                    $q->where('is_aktif', 1);
+                });
+            })
+            ->where('beasiswa_id', $beasiswa_id)
+            ->orderBy('beasiswa_id', 'asc')
+            ->orderBy('user_id', 'asc');
+
+
+        $default_limit = env('DEFAULT_LIMIT', 30);
+        $limit = $request->filled('limit') ? $request->limit : $default_limit;
+
+        if ($limit > 0) {
+            // pakai pagination
+            $data = $dataQuery->paginate($limit);
+            $resourceCollection = $data->getCollection()->map(fn($item) => new ProgressSurveiResource($item));
+            $data->setCollection($resourceCollection);
+        } else {
+            // ambil semua data tanpa pagination
+            $data = $dataQuery->get()->map(fn($item) => new ProgressSurveiResource($item));
+        }
+
+        $dataRespon = [
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ];
+        return response()->json($dataRespon);
+    }
+
     public function survei(Request $request)
     {
         $dataQuery = Surveyor::with([
@@ -62,11 +114,15 @@ class PesertaSurveiController extends Controller
 
         $default_limit = env('DEFAULT_LIMIT', 30);
         $limit = $request->filled('limit') ? $request->limit : $default_limit;
-        $data = $dataQuery->paginate($limit);
-        // $resourceCollection = $data->getCollection()->map(function ($item) {
-        //     return new VerifikasiBerkasResource($item);
-        // });
-        // $data->setCollection($resourceCollection);
+
+        if ($limit > 0) {
+            // pakai pagination
+            $data = $dataQuery->paginate($limit);
+        } else {
+            // ambil semua data tanpa pagination
+            $data = $dataQuery->get();
+        }
+
 
         $dataRespon = [
             'status' => true,
