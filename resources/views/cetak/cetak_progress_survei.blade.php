@@ -290,19 +290,24 @@
                         let total = parseInt(dt.total_pendaftar) || 0;
                         let valid = parseInt(dt.peserta_valid) || 0;
                         let persen = total > 0 ? Math.round((valid / total) * 100) : 0;
-                        let color = total > 0 ? "white":"black";
+
+                        let bgClass = 'bg-danger'; // default untuk 0%
+                        if (persen >= 1 && persen <= 25) bgClass = 'bg-warning';
+                        else if (persen >= 26 && persen <= 50) bgClass = 'bg-secondary';
+                        else if (persen >= 51 && persen <= 99) bgClass = 'bg-primary';
+                        else if (persen > 99) bgClass = 'bg-success';
 
                         total_keseluruhan+=total;
                         valid_keseluruhan+=valid;
 
                         // Buat progress bar Bootstrap
                         let progressBar = `<div class="progress position-relative" style="height: 20px;">
-                                                <div class="progress-bar bg-success" role="progressbar"
+                                                <div class="progress-bar ${bgClass}" role="progressbar"
                                                     style="width: ${persen}%;" 
                                                     aria-valuenow="${persen}" aria-valuemin="0" aria-valuemax="100">
                                                 </div>
                                                 <span class="position-absolute w-100 text-center fw-bold" 
-                                                    style="color:${color}; font-size:12px;">
+                                                    style="color:black; font-size:12px;">
                                                     ${persen}%
                                                 </span>
                                             </div>`;
@@ -320,16 +325,20 @@
                     });
 
                     persen_keseluruhan = total_keseluruhan > 0 ? Math.round((valid_keseluruhan / total_keseluruhan) * 100) : 0;
-                    color = total_keseluruhan > 0 ? "white":"black";
+                    let bgClass = 'bg-danger'; // default untuk 0%
+                    if (persen_keseluruhan >= 1 && persen_keseluruhan <= 25) bgClass = 'bg-warning';
+                    else if (persen_keseluruhan >= 26 && persen_keseluruhan <= 50) bgClass = 'bg-secondary';
+                    else if (persen_keseluruhan >= 51 && persen_keseluruhan <= 99) bgClass = 'bg-primary';
+                    else if (persen_keseluruhan > 99) bgClass = 'bg-success';
 
                     // Buat progress bar Bootstrap
                     let progressBar = `<div class="progress position-relative" style="height: 20px;">
-                                            <div class="progress-bar bg-success" role="progressbar"
+                                            <div class="progress-bar ${bgClass}" role="progressbar"
                                                 style="width: ${persen_keseluruhan}%;" 
                                                 aria-valuenow="${persen_keseluruhan}" aria-valuemin="0" aria-valuemax="100">
                                             </div>
                                             <span class="position-absolute w-100 text-center fw-bold" 
-                                                style="color:${color}; font-size:12px;">
+                                                style="color:black; font-size:12px;">
                                                 ${persen_keseluruhan}%
                                             </span>
                                         </div>`;
