@@ -255,10 +255,10 @@ class KelulusanController extends Controller
             // }
 
             $data_post['nilai_survei'] =
-                ($survei_berkas * 0.5) +
-                ($survei_ortu * 0.2) +
-                ($survei_rumah * 0.2) +
-                ($survei_pendidikan * 0.1);
+                // ($survei_berkas * 0.5) +
+                ($survei_ortu * 0.4) +
+                ($survei_rumah * 0.4) +
+                ($survei_pendidikan * 0.2);
             // $data_post['nilai_pendidikan'] = ($data_post['nilai_pendidikan_akhir'] + $data_post['nilai_raport']) / 2;
 
             $data_post['nilai_pendidikan'] = $data_post['nilai_pendidikan_akhir'];
