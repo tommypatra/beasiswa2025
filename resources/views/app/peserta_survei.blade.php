@@ -121,7 +121,7 @@
                                     {{-- <div class="btn btn-sm btn-outline-primary mb-1" id="data-raport" style="display:none">Raport</div> --}}
                                     <div class="btn btn-sm btn-outline-primary mb-1" id="data-kondisi-rumah" style="display:none">Kondisi Rumah</div>
                                     <div class="btn btn-sm btn-outline-primary mb-1" id="data-orang-tua" style="display:none">Orang Tua</div>
-                                    <div class="btn btn-sm btn-outline-primary mb-1" id="data-dokumen-upload">Dokumen Upload</div>
+                                    {{-- <div class="btn btn-sm btn-outline-primary mb-1" id="data-dokumen-upload">Dokumen Upload</div> --}}
                                     <div class="btn btn-sm btn-outline-primary mb-1" id="dokumentasi-survei">Dokumentasi Survei</div>
                                 </div>
                             </div>
