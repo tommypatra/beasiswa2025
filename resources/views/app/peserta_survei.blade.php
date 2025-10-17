@@ -773,7 +773,7 @@
                 $.each(data, function(index, dt) {
                     const status_survei=(dt.survei.hasil==null)?'<span class="badge rounded-pill fs-2 fw-medium bg-danger">belum disurvei</span>':'<span class="badge rounded-pill fs-2 fw-medium bg-success">sudah disurvei</span>';
                     
-                    const row = `<tr data-survei='${JSON.stringify(dt)}'>
+                    const row = `<tr data-survei="${btoa(encodeURIComponent(JSON.stringify(dt)))}">
                                     <td>${no++}</td>
                                     <td>
                                         <div class="d-flex gap-2">
@@ -864,7 +864,9 @@
 
 
         $(document).on('click','.btn-instrumen-survei', async function(){
-            data_survei=JSON.parse($(this).closest('tr').attr('data-survei'));
+            // data_survei=JSON.parse($(this).closest('tr').attr('data-survei'));
+            let encoded = $(this).closest('tr').attr('data-survei');
+            data_survei = JSON.parse(decodeURIComponent(atob(encoded)));
             page = 1;
 
             $('#komponen').show();
