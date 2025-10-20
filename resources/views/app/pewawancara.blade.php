@@ -664,10 +664,9 @@ td, th {
         //validasi dan save, jika id ada maka PUT/edit jika tidak ada maka POST/simpan baru
         $("#form").validate({
             submitHandler: function(form) {
-                const url_simpan = `${base_url}/api/simpan-peserta-wawancara`;
                 const id = $('#id').val();
                 const type = (id === '') ? 'POST' : 'PUT';
-                const url = (id === '') ? url_simpan : url_simpan + '/' + id;
+                const url = (id === '') ? endpoint : endpoint + '/' + id;
                 saveData(url, type, $(form).serialize(), function(response) {
                     //jika berhasil
                     appShowNotification(true,['berhasil dilakukan!']);
@@ -701,7 +700,8 @@ td, th {
         $("#pembagian").validate({
             submitHandler: function(form) {
                 const type = 'POST'
-                const url = `${base_url}/api/peserta-wawancara`;
+                const url = `${base_url}/api/simpan-peserta-wawancara`;
+
                 saveData(url, type, $(form).serialize(), function(response) {
                     appShowNotification(true,['berhasil dilakukan!']);
                     loadDataPeserta();
