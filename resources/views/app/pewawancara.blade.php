@@ -167,6 +167,7 @@ td, th {
                         <div class="col-sm-3 mb-3">
                             <label class="form-label">Jumlah</label>                            
                             <input id="jumlah" type="number" class="form-control" value="10">
+                            <input type="checkbox" class="mt-2" id="pewawancara" name="pewawancara" value="1"> Ada Pewawancara
                         </div>
                         <div class="col-sm-3 mb-3">
                             <label class="form-label">Prodi</label>
@@ -181,6 +182,7 @@ td, th {
                         </div>
 
                     </div>
+                    <hr>
                     <table>
                         <thead>
                         <tr>
@@ -424,9 +426,9 @@ td, th {
         async function loadDataPeserta() {
             const limit = $('#jumlah').val();
             const cari = $('#cari').val();
+            const pewawancara = $('#pewawancara').is(':checked') ? $('#pewawancara').val() : '0';
             const program_studi_id = $('#program_studi_id').val();
-            const status_pewawancara = $('#status_pewawancara').val();
-            const url = `${base_url}/api/get-data-peserta-wawancara?page=${page_pembagian}&is_admin=1&search=${cari}&prodi=${program_studi_id}&pewawancara=${status_pewawancara}&beasiswa_id=${id}&limit=${limit}`;
+            const url = `${base_url}/api/get-data-peserta-wawancara?page=${page_pembagian}&is_admin=1&search=${cari}&prodi=${program_studi_id}&pewawancara=${pewawancara}&beasiswa_id=${id}&limit=${limit}`;
             const response = await execAsync(`${url}`, 'GET', token);
             renderPilihPeserta(response);
         }
@@ -523,7 +525,6 @@ td, th {
             dataLoad();
         });
 
-
         // Handle page change
         $(document).on('click', '#pagination-pembagian .page-link', function() {
             page_pembagian = $(this).data('page');
@@ -619,7 +620,6 @@ td, th {
         $(document).on('click', '#btn-cari', function() {
             loadDataPeserta();
         });
-
 
         // Handle page change
         $('#btn-cari-data').click(function() {

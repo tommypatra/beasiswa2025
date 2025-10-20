@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Beasiswa;
 use App\Models\Surveyor;
 use Illuminate\Http\Request;
+use App\Models\SurveiPeserta;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\VerifikatorPendaftar;
 use App\Http\Requests\SurveyorRequest;
 use App\Http\Resources\SurveyorResource;
 
@@ -92,6 +94,22 @@ class SurveyorController extends Controller
             ], 404);
         }
     }
+
+    public function batalkanFinalisasiSurveyor(string $id)
+    {
+        try {
+            DB::beginTransaction();
+            $data = SurveiPeserta::where('id', $id)->firstOrFail();
+
+            $data->update(['hasil' => null]);
+            DB::commit();
+            return response()->json(['status' => true, 'message' => 'berhasil diperbarui', 'data' => $data], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat memperbarui : ' . $e->getMessage(), 'data' => null], 500);
+        }
+    }
+
 
     /**
      * Update the specified resource in storage.

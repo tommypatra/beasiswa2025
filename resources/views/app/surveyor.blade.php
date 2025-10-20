@@ -251,6 +251,9 @@ td, th {
                             peserta += `<li>
                                             <div class="nama">
                                                 ${mahasiswa.user.name}
+                                                <a href="javascript:;" class="batalkan-finalisasi-surveyor" data-id="${item.id}">
+                                                    <iconify-icon icon="solar:rewind-back-outline" class=""></iconify-icon>
+                                                </a>
                                                 <a href="javascript:;" class="hapus-surveyor-peserta" data-id="${item.id}">
                                                     <iconify-icon icon="solar:trash-bin-minimalistic-outline" class=""></iconify-icon>
                                                 </a>
@@ -400,6 +403,16 @@ td, th {
             loadDataPeserta();
         });
 
+        
+        $(document).on('click', '.batalkan-finalisasi-surveyor', async function() {
+            const id = $(this).data('id');
+            if(confirm('yakin batalkan finalisasi surveyor?')){
+                const url = `${base_url}/api/batalkan-finalisasi-surveyor/${id}`;
+                const response = await execAsync(`${url}`, 'GET', token);
+                if(response.status)
+                    appShowNotification(true,['berhasil dilakukan!']);
+            }
+        }); 
 
         $(document).on('click', '.hapus-surveyor-peserta', function() {
             const id = $(this).data('id');

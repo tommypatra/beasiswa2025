@@ -262,6 +262,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::delete('surveyor/{id}', [SurveyorController::class, 'destroy']);
         Route::put('surveyor/{id}', [SurveyorController::class, 'update']);
         Route::resource('surveyor-peserta', SurveiPesertaController::class);
+        Route::get('batalkan-finalisasi-surveyor/{id}', [SurveyorController::class, 'batalkanFinalisasiSurveyor']);
 
         //untuk pewawancara
         Route::get('daftar-pewawancara/{beasiswa_id}', [PewawancaraController::class, 'dataPewawancara']);
