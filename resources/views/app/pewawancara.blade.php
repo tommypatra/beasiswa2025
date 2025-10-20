@@ -594,7 +594,7 @@ td, th {
 
         $(document).on('click', '.hapus-peserta-wawancara', function() {
             const id = $(this).data('id');
-            deleteData(`${base_url}/api/peserta-wawancara`, id, function() {
+            deleteData(`${base_url}/api/hapus-peserta-wawancara`, id, function() {
                 appShowNotification(true,['berhasil dilakukan!']);
                 dataLoad();
             });
@@ -664,9 +664,10 @@ td, th {
         //validasi dan save, jika id ada maka PUT/edit jika tidak ada maka POST/simpan baru
         $("#form").validate({
             submitHandler: function(form) {
+                const url_simpan = `${base_url}/api/simpan-peserta-wawancara`;
                 const id = $('#id').val();
                 const type = (id === '') ? 'POST' : 'PUT';
-                const url = (id === '') ? endpoint : endpoint + '/' + id;
+                const url = (id === '') ? url_simpan : url_simpan + '/' + id;
                 saveData(url, type, $(form).serialize(), function(response) {
                     //jika berhasil
                     appShowNotification(true,['berhasil dilakukan!']);

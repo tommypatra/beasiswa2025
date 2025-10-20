@@ -218,6 +218,12 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::post('proses-kelulusan', [KelulusanController::class, 'prosesKelulusan']);
         Route::delete('hapus-kelulusan/{beasiswa_id}', [KelulusanController::class, 'hapusKelulusan']);
 
+
+        // untuk peserta wawancara
+        Route::post('simpan-peserta-wawancara', [PesertaWawancaraController::class, 'store']);
+        Route::put('simpan-peserta-wawancara/{id}', [PesertaWawancaraController::class, 'update']);
+        Route::delete('hapus-peserta-wawancara/{id}', [PesertaWawancaraController::class, 'destroy']);
+
         Route::delete('syarat-hapus-contoh/{beasiswa_id}', [SyaratController::class, 'hapusContoh']);
 
         Route::get('generate-nilai-akhir-wawancara/{id}', [WawancaraNilaiController::class, 'generateNilaiAkhir']);
