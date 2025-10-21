@@ -385,15 +385,15 @@ class PesertaWawancaraController extends Controller
             $data_tujuan = PesertaWawancara::where('id', $peserta_wawancara_id_tujuan)->firstOrFail();
 
             // simpan nilai pendaftar_id agar tidak tertimpa
-            $asal_pendaftar = $data_asal->pendaftar_id;
-            $tujuan_pendaftar = $data_tujuan->pendaftar_id;
+            $asal_pendaftar = $data_asal->pewawancara_id;
+            $tujuan_pendaftar = $data_tujuan->pewawancara_id;
 
             // update silang
             $data_asal->update([
-                'pendaftar_id' => $tujuan_pendaftar,
+                'pewawancara_id' => $tujuan_pendaftar,
             ]);
             $data_tujuan->update([
-                'pendaftar_id' => $asal_pendaftar,
+                'pewawancara_id' => $asal_pendaftar,
             ]);
 
             DB::commit();
