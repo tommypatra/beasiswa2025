@@ -242,6 +242,12 @@ class PesertaWawancaraController extends Controller
             //
         } else {
             $dataQuery->where(function ($query) {
+                $query->whereHas('beasiswa', function ($q) {
+                    $q->whereDate('wawancara_mulai', '<=', Carbon::today());
+                });
+            });
+
+            $dataQuery->where(function ($query) {
                 $query->whereHas('pesertaWawancara.pewawancara', function ($q) {
                     $q->where('user_id', auth()->id());
                 });
@@ -255,11 +261,6 @@ class PesertaWawancaraController extends Controller
                 });
             });
         }
-
-        $dataQuery->whereHas('beasiswa', function ($q) {
-            $q->whereDate('wawancara_mulai', '<=', Carbon::today());
-        });
-
 
         $default_limit = env('DEFAULT_LIMIT', 30);
         $limit = $request->filled('limit') ? $request->limit : $default_limit;
@@ -352,13 +353,13 @@ class PesertaWawancaraController extends Controller
         }
     }
 
-    public function tandaiPesertaWawancara($id)
+    public function tandaiPendaftar($id)
     {
         try {
             DB::beginTransaction();
 
-            $data = PesertaWawancara::where('id', $id)->firstOrFail();
-            $data_save = ($data->tag) ? ['tag' => null] : ['tag' => 1];
+            $data = Pendaftar::where('id', $id)->firstOrFail();
+            $data_save = ($data->tag) ? ['tag' => 0] : ['tag' => 1];
             $data->update($data_save);
             DB::commit();
             return response()->json([

@@ -171,7 +171,7 @@
     <div id="data-list"></div>
     <div id="loadingProgress">0%</div>
     <script src="{{ asset('template/materialm/assets/libs/jquery/dist/jquery.min.js') }}"></script>
-    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/app.js?v=1') }}"></script>
 
     <script>
         var beasiswa;
@@ -220,6 +220,7 @@
                 let url = `${base_url}/api/get-data-beasiswa/${beasiswa_id}`;
                 const response = await execAsync(url,'GET',token);
                 beasiswa = response.data;
+
                 tanggal_ttd = formatTanggal(beasiswa.wawancara_mulai);
                 if(beasiswa.wawancara_mulai==beasiswa.wawancara_selesai)
                     jadwal_wawancara=formatTanggal(beasiswa.wawancara_mulai);
