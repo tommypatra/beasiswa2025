@@ -57,6 +57,7 @@ class CetakPewawancaraBeasiswaResource extends JsonResource
                 'fakultas_singkatan' => $program_studi->singkatan,
                 'user_id' => $user_mahasiswa->id,
                 'nama' => $user_mahasiswa->name,
+                'foto' => $idenitas_mahasiswa->foto,
                 'email' => $user_mahasiswa->email,
                 'jenis_kelamin' => $idenitas_mahasiswa->jenis_kelamin,
             ],

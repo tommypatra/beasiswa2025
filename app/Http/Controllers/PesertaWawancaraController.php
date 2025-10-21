@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Beasiswa;
 use App\Models\Pendaftar;
 use App\Models\Pewawancara;
@@ -153,6 +154,9 @@ class PesertaWawancaraController extends Controller
                     $query->whereNotNull('nilai');
                 }
             ])
+            ->whereHas('beasiswa', function ($q) {
+                $q->whereDate('wawancara_mulai', '<=', Carbon::today());
+            })
             ->where('user_id', auth()->user()->id)
             ->orderBy('beasiswa_id', 'asc')
             ->orderBy('user_id', 'asc');
@@ -251,6 +255,11 @@ class PesertaWawancaraController extends Controller
                 });
             });
         }
+
+        $dataQuery->whereHas('beasiswa', function ($q) {
+            $q->whereDate('wawancara_mulai', '<=', Carbon::today());
+        });
+
 
         $default_limit = env('DEFAULT_LIMIT', 30);
         $limit = $request->filled('limit') ? $request->limit : $default_limit;

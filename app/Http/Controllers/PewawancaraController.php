@@ -87,6 +87,55 @@ class PewawancaraController extends Controller
         return response()->json($dataRespon);
     }
 
+    public function cetakAbsenWawancara(Request $request, $beasiswa_id)
+    {
+
+        $dataQuery = PesertaWawancara::with(['pendaftar.beasiswa', 'pewawancara.user', 'pendaftar.mahasiswa.user.identitas', 'pendaftar.mahasiswa.programStudi.fakultas'])
+            ->whereHas('pendaftar', function ($q) use ($request) {
+                $q->where('beasiswa_id', $request->beasiswa_id);
+            })
+            ->where(function ($query) use ($request) {
+                $query->WhereHas('pendaftar.beasiswa', function ($q) use ($request) {
+                    $q->where('is_aktif', 1);
+                });
+            });
+
+        if (izinkanAkses('admin')) {
+            if ($request->filled('pewawancara_id')) {
+                $dataQuery->where('pewawancara_id', $request->pewawancara_id);
+            }
+        } else {
+            $dataQuery->where(function ($query) {
+                $query->whereHas('pewawancara', function ($q) {
+                    $q->where('user_id', auth()->id());
+                });
+            })->where('pewawancara_id', $request->pewawancara_id);
+        }
+
+        if ($request->sort == 1) {
+            $dataQuery->orderBy('pendaftar_id', 'asc')
+                ->orderBy('pewawancara_id', 'asc');
+        } else {
+            $dataQuery->orderBy('pewawancara_id', 'asc')
+                ->orderBy('pendaftar_id', 'asc');
+        }
+        $default_limit = env('DEFAULT_LIMIT', 30);
+        $limit = $request->filled('limit') ? $request->limit : $default_limit;
+        $data = $dataQuery->paginate($limit);
+
+        $resourceCollection = $data->getCollection()->map(function ($item) {
+            return new CetakPewawancaraBeasiswaResource($item);
+        });
+        $data->setCollection($resourceCollection);
+
+        $dataRespon = [
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ];
+        return response()->json($dataRespon);
+    }
+
 
     public function cetakWawancara(Request $request, $beasiswa_id)
     {

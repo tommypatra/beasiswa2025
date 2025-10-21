@@ -75,6 +75,11 @@ td, th {
                             </button>
                             <ul class="dropdown-menu">
                                 <li>
+                                    <a class="dropdown-item" href="#" id="btn-cetak-absen">
+                                        <iconify-icon icon="solar:printer-outline" class="me-2"></iconify-icon> Cetak Absen Wawancara
+                                    </a>
+                                </li>
+                                <li>
                                     <a class="dropdown-item" href="#" id="btn-cetak-wawancara">
                                         <iconify-icon icon="solar:printer-outline" class="me-2"></iconify-icon> Cetak Hasil Wawancara
                                     </a>
@@ -339,6 +344,11 @@ td, th {
 
         $('#btn-cetak-rekap').click(function(){
             const url = `${base_url}/cetak-rekap-wawancara/${id}`;
+            window.open(url, '_blank');
+        });
+
+        $('#btn-cetak-absen').click(function(){
+            const url = `${base_url}/cetak-absen-wawancara/${id}`;
             window.open(url, '_blank');
         });
 
@@ -706,6 +716,7 @@ td, th {
                     appShowNotification(true,['berhasil dilakukan!']);
                     loadDataPeserta();
                     dataLoad();
+
                 });
             }
         });

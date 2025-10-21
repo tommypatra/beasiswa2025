@@ -171,6 +171,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     Route::get('peserta-verifikasi/{beasiswa_id}/{hasil}', [VerifikatorController::class, 'getPesertaVerifikasi']);
 
     Route::middleware(['cek.akses:admin,pewawancara'])->group(function () {
+        Route::get('cetak-absen-wawancara/{beasiswa_id}', [PewawancaraController::class, 'cetakAbsenWawancara']);
         Route::get('cetak-wawancara/{beasiswa_id}', [PewawancaraController::class, 'cetakWawancara']);
     });
 
