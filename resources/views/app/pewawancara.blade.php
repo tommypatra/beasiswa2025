@@ -322,14 +322,14 @@ td, th {
                     const nama = item.pendaftar.mahasiswa.user.name;
                     const nim = item.pendaftar.mahasiswa.nim;
                     const program_studi = item.pendaftar.mahasiswa.program_studi.nama;
-                    let check = "";
+                    let check = `<input class="form-check-input" disabled>`;
                     if(peserta_wawancara_id_asal!=item.id && nim!=peserta_nim_asal)
                         check =`<input class="form-check-input peserta_wawancara_id_tujuan" type="radio" 
                                     name="peserta_wawancara_id_tujuan" id="peserta-${item.id}" 
                                     value="${item.id}">`;
 
                     if(item.tag)
-                        check="";
+                        check=`<input class="form-check-input" disabled>`;
 
                     $list.append(`
                         <div class="form-check">
