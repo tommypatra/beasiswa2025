@@ -593,3 +593,14 @@ function toggleArea(triggerSelector, areaSelector, options = {}) {
         else $area.hide();
     }
 }
+
+
+function formatTanggal(tanggal) {
+    const bulan = [
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
+
+    const [tahun, bulanIndex, hari] = tanggal.split('-');
+    return `${parseInt(hari)} ${bulan[parseInt(bulanIndex) - 1]} ${tahun}`;
+}

@@ -175,6 +175,8 @@
 
     <script>
         var beasiswa;
+        var jadwal_wawancara;
+        var tanggal_ttd;
         const g_limit = 50;
 
         // Helper
@@ -218,6 +220,11 @@
                 let url = `${base_url}/api/get-data-beasiswa/${beasiswa_id}`;
                 const response = await execAsync(url,'GET',token);
                 beasiswa = response.data;
+                tanggal_ttd = formatTanggal(beasiswa.wawancara_mulai);
+                if(beasiswa.wawancara_mulai==beasiswa.wawancara_selesai)
+                    jadwal_wawancara=formatTanggal(beasiswa.wawancara_mulai);
+                else
+                    jadwal_wawancara=formatTanggal(beasiswa.wawancara_mulai)+' s/d '+formatTanggal(beasiswa.wawancara_selesai);
             }
 
             async function dataLoad() {
@@ -303,6 +310,7 @@
 
                         <div class="content">
                             <div>PEWAWANCARA : ${pewawancara.nama.toUpperCase()}</div>
+                            <div>JADWAL WAWANCARA : ${jadwal_wawancara}</div>
                             <table>
                                 <thead>
                                     <tr>
@@ -323,7 +331,7 @@
                                 float: right;
                                 text-align: left;
                             ">
-                                Kendari, .................................<br>
+                                Kendari, ${tanggal_ttd}<br>
                                 Ketua Panitia,<br><br><br><br><br>
                                 <span>
                                     ................................................
