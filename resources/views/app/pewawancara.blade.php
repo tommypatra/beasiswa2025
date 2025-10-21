@@ -322,11 +322,14 @@ td, th {
                     const nama = item.pendaftar.mahasiswa.user.name;
                     const nim = item.pendaftar.mahasiswa.nim;
                     const program_studi = item.pendaftar.mahasiswa.program_studi.nama;
-                    let check = ""
+                    let check = "";
                     if(peserta_wawancara_id_asal!=item.id && nim!=peserta_nim_asal)
                         check =`<input class="form-check-input peserta_wawancara_id_tujuan" type="radio" 
                                     name="peserta_wawancara_id_tujuan" id="peserta-${item.id}" 
                                     value="${item.id}">`;
+
+                    if(item.tag)
+                        check="";
 
                     $list.append(`
                         <div class="form-check">
@@ -385,9 +388,14 @@ td, th {
                         peserta=`<${listTag} class="list">`;
                         $.each(dt.peserta_wawancara, function(index, item) {
                             let mahasiswa = item.pendaftar.mahasiswa;
+                            let icon = item.tag ?"solar:star-fall-minimalistic-2-bold":"solar:star-fall-minimalistic-2-linear";
                             peserta += `<li>
                                             <div class="nama">
                                                 ${mahasiswa.user.name}
+                                                <a href="javascript:;" class="tandai-peserta-wawancara" data-pewawancara="${dt.user.name}" data-program_studi="${mahasiswa.program_studi.nama}" data-peserta_wawancara_id="${item.id}" data-nim="${mahasiswa.nim}" data-nama="${mahasiswa.user.name}" >
+                                                    <iconify-icon icon="${icon}" class=""></iconify-icon>
+                                                </a>
+
                                                 <a href="javascript:;" class="tukar-peserta-wawancara" data-pewawancara="${dt.user.name}" data-program_studi="${mahasiswa.program_studi.nama}" data-peserta_wawancara_id="${item.id}" data-nim="${mahasiswa.nim}" data-nama="${mahasiswa.user.name}" >
                                                     <iconify-icon icon="solar:maximize-square-broken" class=""></iconify-icon>
                                                 </a>
@@ -583,8 +591,24 @@ td, th {
             }
         }); 
 
+        $(document).on('click', '.tandai-peserta-wawancara', async function() {
+            const id = $(this).attr('data-peserta_wawancara_id');
+            const nim = $(this).attr('data-nim');
+            const nama = $(this).attr('data-nama');
+
+            if(confirm('beri tanda pada mahasiswa atas nama '+nama+'?')){
+                const url = `${base_url}/api/tandai-peserta-wawancara/${id}`;
+                const response = await execAsync(url, 'GET', token);
+                if(response.status){
+                    appShowNotification(true,['berhasil dilakukan!']);
+                    dataLoad();                
+                }
+            }
+        }); 
+
+
         $(document).on('click', '.tukar-peserta-wawancara', function() {
-            const id = $(this).data('id');
+            const id = $(this).attr('data-id');
             const nim = $(this).attr('data-nim');
             const program_studi = $(this).attr('data-program_studi');
             const peserta_wawancara_id = $(this).attr('data-peserta_wawancara_id');

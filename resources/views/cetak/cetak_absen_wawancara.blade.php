@@ -306,11 +306,11 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th style="text-align:center;" width="5%">No</th>
-                                        <th width="45%">Nama/ NIM/ Fakultas</th>
-                                        <th style="text-align:center;" width="10%">Jenis Kelamin</th>
-                                        <th width="25%">Program Studi</th>
-                                        <th style="text-align:center;" width="15%">Tanda Tangan</th>
+                                        <th style="text-align:center;" width="5%">NO</th>
+                                        <th width="45%">NAMA/ NIM/ FAKULTAS</th>
+                                        <th style="text-align:center;" width="10%">JENIS KELAMIN</th>
+                                        <th width="25%">PROGRAM STUDI</th>
+                                        <th style="text-align:center;" width="15%">TANDA TANGAN</th>
                                     </tr>
                                 </thead>
                                 <tbody>${rows}</tbody>

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('hasil', 50)->nullable();
             $table->text('catatan')->nullable();
+            $table->boolean('tag')->nullable();
             $table->decimal('total_skor', 5, 2)->nullable();
             $table->foreignId('surveyor_id')->nullable();
             $table->foreign('surveyor_id')->references('id')->on('surveyors')->restrictOnDelete();

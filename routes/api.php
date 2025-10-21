@@ -281,6 +281,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::get('peserta-ujian-wawancara', [PesertaWawancaraController::class, 'daftarPesertaWawancara']);
 
 
+        Route::get('tandai-peserta-wawancara/{id}', [PesertaWawancaraController::class, 'tandaiPesertaWawancara']);
         Route::get('tukar-peserta-wawancara/{id_asal}/{id_tujuan}', [PesertaWawancaraController::class, 'tukarPesertaWawancara']);
 
         Route::resource('admin-peserta-wawancara', PesertaWawancaraController::class);

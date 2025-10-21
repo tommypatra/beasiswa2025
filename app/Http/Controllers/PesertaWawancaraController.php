@@ -352,6 +352,30 @@ class PesertaWawancaraController extends Controller
         }
     }
 
+    public function tandaiPesertaWawancara($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $data = PesertaWawancara::where('id', $id)->firstOrFail();
+            $data_save = ($data->tag) ? ['tag' => null] : ['tag' => 1];
+            $data->update($data_save);
+            DB::commit();
+            return response()->json([
+                'status'  => true,
+                'message' => 'Peserta wawancara berhasil ditukar',
+                'data'    => $data,
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status'  => false,
+                'message' => 'Terjadi kesalahan saat memperbarui: ' . $e->getMessage(),
+                'data'    => null
+            ], 500);
+        }
+    }
+
     public function tukarPesertaWawancara(string $peserta_wawancara_id_asal, string $peserta_wawancara_id_tujuan)
     {
         try {
