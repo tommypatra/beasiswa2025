@@ -160,7 +160,7 @@
                 </thead>
                 <tbody id="data-list">
                     <tr>
-                        <td colspan="14">tidak ditemukan</td>
+                        <td colspan="18">tidak ditemukan</td>
                     </tr>
                 </tbody>
             </table>
