@@ -325,6 +325,7 @@
                                     <td>${label(dt.tahun_lulus_sekolah)}</td>
                                     <td>${status_pendaftaran}</td>
                                     <td>${status_verifikasi} ${catatan}</td>
+                                    <td>${dt.nilai_verifikasi}</td>
                                     <td>${status_kelulusan}</td>
                                 </tr>`;
                     dataList.append(row);
