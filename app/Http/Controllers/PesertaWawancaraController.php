@@ -392,9 +392,11 @@ class PesertaWawancaraController extends Controller
             // update silang
             $data_asal->update([
                 'pewawancara_id' => $tujuan_pendaftar,
+                'user_id' => auth()->id(),
             ]);
             $data_tujuan->update([
                 'pewawancara_id' => $asal_pendaftar,
+                'user_id' => auth()->id(),
             ]);
 
             DB::commit();
