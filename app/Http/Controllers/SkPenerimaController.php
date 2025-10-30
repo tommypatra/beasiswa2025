@@ -97,7 +97,7 @@ class SkPenerimaController extends Controller
             // $user_id = auth()->user()->id;
 
             $dataQuery = SkPenerima::with([
-                'monitoring.kegiatan',
+                'monitoring.kegiatan.subKegiatan',
                 'verifikatorLaporan.user',
                 'penerima' => function ($q) {
                     $q->where('user_id', auth()->user()->id);

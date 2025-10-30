@@ -423,6 +423,7 @@ td, th {
                                             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
                                             <ul class="dropdown-menu">
                                                 <li><a class="dropdown-item btn-tambah-peserta" data-jumlah_peserta="0" data-id="${dt.id}" href="javascript:;"><i class="far fa-edit"></i> Tambah Peserta</a></li>
+                                                <li><a class="dropdown-item" target="_blank" href="${base_url}/cetak-absen-wawancara/${dt.beasiswa_id}/${dt.id}"><i class="far fa-edit"></i> Cetak Absen Wawancara</a></li>
                                                 <li><a class="dropdown-item" target="_blank" href="${base_url}/cetak-hasil-wawancara/${dt.beasiswa_id}/${dt.id}"><i class="far fa-edit"></i> Cetak Hasil Wawancara</a></li>
                                                 <li><a class="dropdown-item btn-ganti" data-id="${dt.id}" href="javascript:;"><i class="far fa-edit"></i> Ganti</a></li>
                                                 <li><a class="dropdown-item btn-hapus" data-id="${dt.id}" href="javascript:;"><i class="fas fa-trash-alt"></i> Hapus</a></li>
