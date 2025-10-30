@@ -34,6 +34,11 @@ class WebController extends Controller
         return view('app.verifikasi_laporan');
     }
 
+    public function cetakPesertaWawancara($id, $pewawancara_id = null)
+    {
+        return view('cetak.cetak_peserta_wawancara', ['beasiswa_id' => $id, 'pewawancara_id' => $pewawancara_id]);
+    }
+
     public function cetakAbsenWawancara($id, $pewawancara_id = null)
     {
         return view('cetak.cetak_absen_wawancara', ['beasiswa_id' => $id, 'pewawancara_id' => $pewawancara_id]);
