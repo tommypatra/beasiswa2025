@@ -349,7 +349,7 @@
 
             function renderData(respon){
                 const dataList = $('#data-list');
-                let nomor = (respon.per_page*respon.from)-1;
+                let nomor = respon.from;
 
                 $.each(respon.data, function(index, dt) {
                     nomor++;
