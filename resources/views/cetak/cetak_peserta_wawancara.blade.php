@@ -192,7 +192,7 @@
                         <tr>
                             <th style="text-align:center;" width="5%">NO</th>
                             <th width="30%">NAMA PESERTA</th>
-                            <th width="10%">NIM</th>
+                            <th width="15%">NIM</th>
                             <th style="text-align:center;" width="10%">JENIS KELAMIN</th>
                             <th width="15%">FAKULTAS</th>
                             <th width="15%">PROGRAM STUDI</th>
