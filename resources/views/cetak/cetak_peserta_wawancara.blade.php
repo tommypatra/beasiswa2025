@@ -227,7 +227,7 @@
         var beasiswa;
         var jadwal_wawancara;
         var tanggal_ttd;
-        const g_limit = 1;
+        const g_limit = 50;
 
         // Helper
         function label(str){
