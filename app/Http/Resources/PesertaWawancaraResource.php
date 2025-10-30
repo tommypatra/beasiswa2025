@@ -24,6 +24,8 @@ class PesertaWawancaraResource extends JsonResource
             'mahasiswa' => $this->mahasiswa,
             'user' => $this->mahasiswa->user,
             'identitas' => $this->mahasiswa->user->identitas,
+            'survei' => $this->surveiPeserta ?? null,
+            'dokumentasi_survei' => $this->dokumentasiSurvei ?? null,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

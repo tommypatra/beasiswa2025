@@ -99,7 +99,7 @@
                             </div>
                         </div>
 
-
+                        <div id="dokumentasi-survei" class="mb-4"></div>
                     </div>
                     <form id="form-wawancara" class="col-lg-8">
                         <input type="hidden" id="id" name="id">
@@ -185,6 +185,7 @@
             let pendaftar = await asyncFunction(`${base_url}/api/get-data-pendaftar/${pendaftar_id}`);
             let response = await asyncFunction(`${base_url}/api/proses-wawancara/${pendaftar_id}?beasiswa_id=${beasiswa_id}`);
             let data = pendaftar.data;
+            const dokumentasi = peserta.data.pendaftar.dokumentasi_survei;
             last_page=response.data.last_page;
 
             // console.log(peserta.data);
@@ -200,6 +201,31 @@
                 $('.akhiri-wawancara').prop('disabled',false);
                 $('.btn-simpan').prop('disabled', false);
             }
+
+            if (dokumentasi.length > 0) {
+                let dokumentasi_survei = $('#dokumentasi-survei');
+                let dok_html = `
+                    <h5 class="mb-3">Dokumentasi Survei</h5>
+                    <div class="row row-cols-2 row-cols-md-3 g-3">
+                `;
+
+                dokumentasi_survei.empty();
+
+                $.each(dokumentasi, function(index, dtdok) {
+                    let path_dok = `${base_url}/${dtdok.path}`;
+                    dok_html += `
+                        <div class="col text-center">
+                            <a href="${path_dok}" target="_blank" class="d-block">
+                                <img src="${path_dok}" class="img-fluid rounded shadow-sm" alt="Dokumentasi ${index + 1}">
+                            </a>
+                        </div>
+                    `;
+                });
+
+                dok_html += `</div>`;
+                dokumentasi_survei.html(dok_html);
+            }
+
             
             $('#modal-label').text(`Wawancara ${data.beasiswa.nama}`);
             $('.mahasiswa-nama').text(data.mahasiswa.user.name);

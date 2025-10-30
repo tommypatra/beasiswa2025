@@ -188,7 +188,9 @@ class PesertaWawancaraController extends Controller
             'Kelulusan',
             'pesertaWawancara.pewawancara.user',
             'mahasiswa.user.identitas',
-            'mahasiswa.programStudi.fakultas'
+            'mahasiswa.programStudi.fakultas',
+            'surveiPeserta',
+            'dokumentasiSurvei'
         ])
             ->orderBy('beasiswa_id', 'asc');
 
@@ -318,7 +320,7 @@ class PesertaWawancaraController extends Controller
     public function show(string $id)
     {
         try {
-            $dataQuery = PesertaWawancara::with(['pendaftar.mahasiswa.user.identitas', 'pendaftar.beasiswa'])->where('id', $id)->firstOrFail();
+            $dataQuery = PesertaWawancara::with(['pendaftar.mahasiswa.user.identitas', 'pendaftar.surveiPeserta', 'pendaftar.dokumentasiSurvei', 'pendaftar.beasiswa'])->where('id', $id)->firstOrFail();
             return response()->json([
                 'status' => true,
                 'message' => 'Data ditemukan',
