@@ -177,7 +177,7 @@
     <div class="card">
         <div class="header">
             <img src="{{ asset('images/logo.png') }}" alt="SNPMB Logo">
-            <h1>DAFTAR HADIR WAWANCARA BEASISWA TAHUN <span id="tahun-beasiswa"></span></h1>
+            <h1>DAFTAR PESERTA WAWANCARA BEASISWA TAHUN <span id="tahun-beasiswa"></span></h1>
             <h3 id="nama-beasiswa"></h3>
             <hr>
         </div>
