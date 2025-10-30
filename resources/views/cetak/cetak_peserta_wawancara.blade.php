@@ -352,7 +352,6 @@
                 let nomor = respon.from;
 
                 $.each(respon.data, function(index, dt) {
-                    nomor++;
                     const row=`<tr>
                             <td style="vertical-align:top;text-align:center;">${nomor}</td>
                             <td style="vertical-align:top;">${dt.mahasiswa.nama.toUpperCase()}</td>
@@ -362,6 +361,7 @@
                             <td style="vertical-align:midlle;">${dt.mahasiswa.program_studi}</td>
                             <td style="vertical-align:midlle;">${dt.pewawancara.nama.toUpperCase()}</td>
                         </tr>`;
+                    nomor++;
                     dataList.append(row);
                 });
             }
