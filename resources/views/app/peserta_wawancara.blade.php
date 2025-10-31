@@ -167,6 +167,7 @@
 <script type="text/javascript">
     const endpoint = base_url+'/api/peserta-wawancara';
     const beasiswa_id="{{ $id }}";
+    var page_peserta = 1;
     var page = 1;
     var pewawancara;
     var pendaftar_id;
@@ -342,7 +343,7 @@
 
         async function dataLoad() {
             var search = $('#search-input').val();
-            var url = `${base_url}/api/peserta-wawancara?page=${page}&beasiswa_id=${beasiswa_id}&search=${search}`;
+            var url = `${base_url}/api/peserta-wawancara?page=${page_peserta}&beasiswa_id=${beasiswa_id}&search=${search}`;
 
             fetchData(url, function(response) {
                 renderData(response);
@@ -426,12 +427,12 @@
 
         // Handle page change
         $(document).on('click', '.page-link', function() {
-            page = $(this).data('page');
+            page_peserta = $(this).data('page');
             dataLoad();
         });
 
         $('#btn-search').click(function(){
-            page=1;
+            page_peserta=1;
             dataLoad();
         });
 
