@@ -357,7 +357,7 @@
                         daftar_nilai=`<${listTag}>`;
                         $.each(dt.wawancara, function(data, dw) {
                             const link = `${base_url}/cetak-hasil-wawancara/${beasiswa_id}/${dw.pewawancara_id}/${dt.pendaftar_id}`;
-                            daftar_nilai+=`<li><a href="${link}" target="_blank">${dw.pewawancara}</a>: ${showText(dw.nilai)}</li>`;
+                            daftar_nilai+=`<li><a href="${link}" target="_blank">${dw.pewawancara} : ${showText(dw.nilai)}</a></li>`;
                         });
                         daftar_nilai+=`</${listTag}>`;
                     }
