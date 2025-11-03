@@ -361,7 +361,7 @@
 
                     let hasil_survei='';
                     if(dt.survei.hasil!==null){
-                        let catatan_survei = dt.survei.catatan!==null?`,<div>${dt.survei.catatan}</div><div><a href="javascript:;" data-pendaftar_id="${dt.pendaftar_id}" class="cek-dokumentasi-survei">Dokumentasi Survei</a></div>`:'';
+                        let catatan_survei = dt.survei.catatan!==null?`,<div>${dt.survei.catatan}</div>`:'';
                         if(dt.survei.hasil==4)
                             hasil_survei='Sangat Layak'+catatan_survei;
                         else if(dt.survei.hasil==3)
@@ -372,6 +372,7 @@
                             hasil_survei='Kurang Layak'+catatan_survei;
                         else
                             hasil_survei='Tidak Layak'+catatan_survei;
+                        hasil_survei += `<div><a href="javascript:;" data-pendaftar_id="${dt.pendaftar_id}" class="cek-dokumentasi-survei">dokumentasi survei</a></div>`;
                     }
                     const row = `<tr>
                                     <td>${g_nomor++}</td>
