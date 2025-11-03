@@ -42,7 +42,7 @@ class KelulusanController extends Controller
 
             switch ($key) {
                 case 'status_lulus':
-                    if ($val != 2)
+                    if ($val == 0 || $val == 1)
                         $dataQuery->where(function ($query) use ($val) {
                             $query->where('is_lulus', $val);
                         });

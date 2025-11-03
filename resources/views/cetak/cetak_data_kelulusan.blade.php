@@ -190,7 +190,10 @@
     const g_limit = 50;
     let g_nomor = 1;
     let pendaftar_id;
+    let urlParams = new URLSearchParams(window.location.search);
+    let status_lulus = urlParams.get('status_lulus');            
         
+
     function label($string){
         return ($string)?$string:"";
     }
@@ -300,7 +303,7 @@
             const dataList = $('#data-list');
             dataList.empty();
             while (hasNext) {
-                let url = `${base_url}/api/kelulusan?beasiswa_id=${beasiswa_id}&limit=${g_limit}&page=${page}`;
+                let url = `${base_url}/api/kelulusan?beasiswa_id=${beasiswa_id}&filter[status_lulus]=${status_lulus}&limit=${g_limit}&page=${page}`;
                 try {
                     const response = await fetch(url, {
                         method: 'GET',

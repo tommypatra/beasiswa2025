@@ -333,16 +333,6 @@
                 }
             });
 
-            $('#btn-cetak').click(function(){
-                const params = new URLSearchParams();
-                const kelulusan    = $('#status_lulus').val();
-                if (kelulusan)   params.append('kelulusan', kelulusan);
-
-                const url = `${base_url}/cetak-data-kelulusan/${beasiswa_id}?${params.toString()}`;
-                window.open(url, '_blank');
-            });
-
-
             // ambil semua value dari select yang punya id diawali "sort"
             $('[id^="sort"]').each(function (idx) {
                 const val = $(this).val();
@@ -355,6 +345,16 @@
                 renderData(response);
             },true);
         }
+
+
+        $('#btn-cetak').click(function(){
+            const params = new URLSearchParams();
+            const kelulusan    = $('#status_lulus').val();
+            if (kelulusan)   params.append('status_lulus', kelulusan);
+
+            const url = `${base_url}/cetak-data-kelulusan/${beasiswa_id}?${params.toString()}`;
+            window.open(url, '_blank');
+        });         
 
         // Handle page change
         $(document).on('click', '.page-link', function() {
