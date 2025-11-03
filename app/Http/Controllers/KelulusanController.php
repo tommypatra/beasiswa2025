@@ -52,9 +52,8 @@ class KelulusanController extends Controller
                         });
                     break;
                 default:
-                    $dataQuery->where(function ($query) {
-                        $dataQuery->where($key, $val);
-                    });
+                    $dataQuery->where($key, $val);
+                    $dataQuery->where(function ($query) {});
                     break;
             }
         }

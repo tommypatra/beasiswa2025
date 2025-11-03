@@ -193,6 +193,7 @@
         { value: "nilai_ekonomi", text: "Ekonomi Orang Tua" },
         { value: "nilai_pendidikan", text: "Pendidikan" },
         { value: "nilai_cbt", text: "CBT" },
+        // { value: "nilai_survei", text: "Survei" },
     ];
     
     const opsiFilter = {
@@ -319,8 +320,9 @@
             const sort3 = $('#sort3').val();
             const sort4 = $('#sort4').val();
             const sort5 = $('#sort5').val();
+            const sort6 = $('#sort6').val();
 
-            var url = `${base_url}/api/kelulusan?beasiswa_id=${beasiswa_id}&search=${search}`;
+            var url = `${base_url}/api/kelulusan?limit=5&page=${page}&beasiswa_id=${beasiswa_id}&search=${search}`;
             
             // loop semua filter
             $(".filter-item").each(function () {
@@ -353,6 +355,12 @@
                 renderData(response);
             },true);
         }
+
+        // Handle page change
+        $(document).on('click', '.page-link', function() {
+            page = $(this).data('page');
+            dataLoad();
+        });
 
         async function sinkronisasi() {
             await getPeserta();
