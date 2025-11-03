@@ -150,9 +150,10 @@ class PewawancaraController extends Controller
                 });
             })->where('status', 2);
 
-        // if ($request->filled('pewawancara_id')) {
-        //     $dataQuery->where('pewawancara_id', $request->pewawancara_id);
-        // }
+        if ($request->filled('pendaftar_id')) {
+            if ($request->pendaftar_id)
+                $dataQuery->where('pendaftar_id', $request->pendaftar_id);
+        }
 
         if (izinkanAkses('admin')) {
             if ($request->filled('pewawancara_id')) {

@@ -30,6 +30,7 @@ class KelulusanResource extends JsonResource
         foreach ($pendaftar->pesertaWawancara as $peserta) {
             $pewawancaraUser = $peserta->pewawancara->user ?? null;
             $wawancara[] = [
+                'pewawancara_id' => $peserta->pewawancara->id,
                 'pewawancara' => $pewawancaraUser ? $pewawancaraUser->name : null,
                 'nilai' => $peserta->nilai !== null ? (float) $peserta->nilai : null,
             ];
