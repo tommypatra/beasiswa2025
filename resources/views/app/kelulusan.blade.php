@@ -322,7 +322,7 @@
             const sort5 = $('#sort5').val();
             const sort6 = $('#sort6').val();
 
-            var url = `${base_url}/api/kelulusan?limit=5&page=${page}&beasiswa_id=${beasiswa_id}&search=${search}`;
+            var url = `${base_url}/api/kelulusan?page=${page}&beasiswa_id=${beasiswa_id}&search=${search}`;
             
             // loop semua filter
             $(".filter-item").each(function () {
