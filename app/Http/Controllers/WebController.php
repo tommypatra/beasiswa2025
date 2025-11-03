@@ -353,4 +353,9 @@ class WebController extends Controller
     {
         return view('app.cat.jadwal', ['beasiswa_id' => $id]);
     }
+
+    public function detailDokumentasiSurvei($pendaftar_id)
+    {
+        return view('app.detail_dokumentasi_survei', ['pendaftar_id' => $pendaftar_id]);
+    }
 }

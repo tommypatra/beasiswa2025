@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daftar Data Kelulusan</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="{{ asset('images/logo.png') }}" />
     <style>
 
@@ -123,7 +124,7 @@
     </script>
 </head>
 <body>
-
+    <div id="loadingProgress">0%</div>
     <div class="card">
         <div class="header">
             <img src="{{ asset('images/logo.png') }}" alt="SNPMB Logo">
@@ -131,9 +132,7 @@
             <h4 style="margin-top:1px;" id="nama-beasiswa"></h4>
             <hr>    
         </div>
-
         <button id="copyTableBtn" onclick="copyTable2()">Copy ke Excel</button>
-
         <div class="content">
             <table id="mytable">
                 <thead>
@@ -147,6 +146,7 @@
                         <th width="5%">Nilai Berkas</th>
                         <th width="5%">Nilai CBT</th>
                         <th width="5%">Nilai Survei</th>
+                        <th width="20%">Catatan Survei</th>
                         <th width="30%">Hasil Wawancara</th>
                         <th width="5%">Nilai Akhir Wawancara</th>
                         <th width="10%">Status Lulus</th>
@@ -159,17 +159,37 @@
                 </tbody>
             </table>
         </div>
-
-
     </div>
 
+    <!-- MULAI MODAL -->
+    <div class="modal fade modal" id="modal-dokumentasi" role="dialog">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-label">Dokumentasi Survei</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12 mb-3" id="dokumentasi-survei"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary " data-bs-dismiss="modal">Tutup</button>
+                </div>
 
-    <div id="loadingProgress">0%</div>
+            </div>
+        </div>
+    </div>
+    <!-- AKHIR MODAL -->
+
     <script src="{{ asset('template/materialm/assets/libs/jquery/dist/jquery.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('js/app.js') }}"></script>
     <script>
     const g_limit = 50;
     let g_nomor = 1;
+    let pendaftar_id;
         
     function label($string){
         return ($string)?$string:"";
@@ -229,6 +249,7 @@
                 }
             }
         });
+        
         cekAkses();
         initPage();
 
@@ -247,6 +268,30 @@
             $('#nama-beasiswa').text(`${beasiswa.nama}`);
         }
 
+        async function loadDokumentasi() {
+            let url = `${base_url}/api/get-data-dokumentasi-survei/${pendaftar_id}`;
+            const response = await execAsync(`${url}`, 'GET', token);
+            if (response.data.length > 0) {
+                let dokumentasi_survei = $('#dokumentasi-survei');
+                let dok_html = `<div class="row row-cols-2 row-cols-md-3 g-3">`;
+
+                dokumentasi_survei.empty();
+
+                $.each(response.data, function(index, dtdok) {
+                    let path_dok = `${base_url}/${dtdok.path}`;
+                    dok_html += `
+                        <div class="col text-center">
+                            <a href="${path_dok}" target="_blank" class="d-block">
+                                <img src="${path_dok}" class="img-fluid rounded shadow-sm" alt="Dokumentasi ${index + 1}">
+                            </a>
+                        </div>
+                    `;
+                });
+
+                dok_html += `</div>`;
+                dokumentasi_survei.html(dok_html);
+            }
+        }
 
         async function dataLoad() {
             let page = 1;
@@ -289,6 +334,15 @@
 
         }
 
+        $(document).on('click','.cek-dokumentasi-survei',function(){
+            pendaftar_id=$(this).attr('data-pendaftar_id');
+            const fModal = new bootstrap.Modal(document.getElementById('modal-dokumentasi'), {
+                keyboard: false
+            });
+            fModal.show();
+            loadDokumentasi();
+        })
+
         function renderData(dataRespon,dataList){
             if(dataRespon.length>0){
                 $.each(dataRespon, function(data, dt) {
@@ -299,9 +353,25 @@
 
                         daftar_nilai=`<${listTag}>`;
                         $.each(dt.wawancara, function(data, dw) {
-                            daftar_nilai+=`<li>${dw.pewawancara}: ${dw.nilai}</li>`;
+                            daftar_nilai+=`<li>${dw.pewawancara}: ${showText(dw.nilai)}</li>`;
                         });
                         daftar_nilai+=`</${listTag}>`;
+                    }
+    
+
+                    let hasil_survei='';
+                    if(dt.survei.hasil!==null){
+                        let catatan_survei = dt.survei.catatan!==null?`,<div>${dt.survei.catatan}</div><div><a href="javascript:;" data-pendaftar_id="${dt.pendaftar_id}" class="cek-dokumentasi-survei">Dokumentasi Survei</a></div>`:'';
+                        if(dt.survei.hasil==4)
+                            hasil_survei='Sangat Layak'+catatan_survei;
+                        else if(dt.survei.hasil==3)
+                            hasil_survei='Layak'+catatan_survei;
+                        else if(dt.survei.hasil==2)
+                            hasil_survei='Cukup Layak'+catatan_survei;
+                        else if(dt.survei.hasil==1)
+                            hasil_survei='Kurang Layak'+catatan_survei;
+                        else
+                            hasil_survei='Tidak Layak'+catatan_survei;
                     }
                     const row = `<tr>
                                     <td>${g_nomor++}</td>
@@ -313,6 +383,7 @@
                                     <td>${label(dt.nilai.berkas)}</td>
                                     <td>${label(dt.nilai.cbt)}</td>
                                     <td>${label(dt.nilai.survei)}</td>
+                                    <td>${hasil_survei}</td>
                                     <td>${daftar_nilai}</td>
                                     <td>${label(dt.nilai.wawancara)}</td>
                                     <td>${status_kelulusan}</td>

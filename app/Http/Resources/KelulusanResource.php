@@ -69,6 +69,7 @@ class KelulusanResource extends JsonResource
                 'pendidikan' => (float) $this->nilai_pendidikan,
             ],
             'survei' => [
+                'nilai' => $surveiPeserta->nilai ?? null,
                 'hasil' => $surveiPeserta->hasil ?? null,
                 'catatan' => $surveiPeserta->catatan ?? null,
             ],

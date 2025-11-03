@@ -90,3 +90,5 @@ Route::get('/pengaturan-cat/{id}', [WebController::class, 'pengaturanCat']);
 Route::get('/ruangan-cat/{id}', [WebController::class, 'ruanganCat']);
 Route::get('/sesi-cat/{id}', [WebController::class, 'sesiCat']);
 Route::get('/jadwal-cat/{id}', [WebController::class, 'jadwalCat']);
+
+Route::get('/detail-dokumentasi-survei/{pendaftar_id}', [WebController::class, 'detailDokumentasiSurvei']);
