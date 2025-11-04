@@ -185,6 +185,7 @@
     var pendaftar_id;
     var last_page;
     var data_init;
+    var tgl_pengumuman;
 
     const opsiSort = [
         { value: "", text: "-- Pilih --" },
@@ -209,7 +210,6 @@
 
     $(document).ready(function() {
         init();
-        
         async function init(){
             setOptionFilter();
             await loadDataBeasiswa();
@@ -256,8 +256,11 @@
             dataList.empty();
             pagination.empty();
             if (data.length > 0) {
+                const today = new Date().setHours(0,0,0,0);
                 $.each(data, function(index, dt) {
                     let status_lulus = dt.status?.is_lulus; 
+                    let disabled_input = today < tgl_pengumuman ? '' : 'disabled';
+
                     const row = `<tr>
                                     <td>${no++}</td>
                                     <td>
@@ -277,7 +280,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <select name="is_lulus" class="form-control w-auto status-kelulusan mb-2" data-id="${dt.id}">
+                                        <select name="is_lulus" class="form-control w-auto status-kelulusan mb-2" data-id="${dt.id}" ${disabled_input}>
                                             <option value="" ${status_lulus === null || status_lulus === "" ? "selected" : ""}>-PILIH-</option>
                                             <option value="1" ${status_lulus === 1 ? "selected" : ""}>LULUS</option>
                                             <option value="0" ${status_lulus === 0 ? "selected" : ""}>TIDAK LULUS</option>
@@ -301,13 +304,13 @@
                 dataList.append(row);                
             }
         }    
-
         
         async function loadDataBeasiswa() {
             let url = `${base_url}/api/get-data-beasiswa/${beasiswa_id}`;
             const response = await execAsync(`${url}`, 'GET', token);
             let beasiswa=response.data;
             $('#label-beasiswa').html(`<h4>${beasiswa.nama}</h4>`);
+            tgl_pengumuman = new Date(beasiswa.pengumuman_akhir).setHours(0,0,0,0);
 
         }
 
@@ -344,6 +347,7 @@
             fetchData(url, function(response) {
                 renderData(response);
             },true);
+            // sesuaikanPengumuman();
         }
 
 
