@@ -350,7 +350,7 @@
         $('#btn-cetak').click(function(){
             const params = new URLSearchParams();
             const kelulusan    = $('#status_lulus').val();
-            if (kelulusan)   params.append('status_lulus', kelulusan);
+            if (kelulusan!=null)   params.append('status_lulus', kelulusan);
 
             const url = `${base_url}/cetak-data-kelulusan/${beasiswa_id}?${params.toString()}`;
             window.open(url, '_blank');
