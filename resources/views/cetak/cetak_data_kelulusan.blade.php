@@ -356,10 +356,13 @@
 
                         daftar_nilai=`<${listTag}>`;
                         $.each(dt.wawancara, function(data, dw) {
-                            link='javascript:;'
-                            if(dw.nilai)
-                                link = `${base_url}/cetak-hasil-wawancara/${beasiswa_id}/${dw.pewawancara_id}/${dt.pendaftar_id}`;
-                            daftar_nilai+=`<li><a href="${link}" target="_blank">${dw.pewawancara} : ${showText(dw.nilai)}</a></li>`;
+                            
+                            if(dw.nilai){
+                                const link = `${base_url}/cetak-hasil-wawancara/${beasiswa_id}/${dw.pewawancara_id}/${dt.pendaftar_id}`;
+                                daftar_nilai+=`<li><a href="${link}" target="_blank">${dw.pewawancara} : ${showText(dw.nilai)}</a></li>`;
+                            }else{
+                                daftar_nilai+=`<li>${dw.pewawancara}</li>`;
+                            }
                         });
                         daftar_nilai+=`</${listTag}>`;
                     }
