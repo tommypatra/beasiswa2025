@@ -180,6 +180,7 @@
 <script type="text/javascript">
     const endpoint = base_url+'/api/kelulusan';
     const beasiswa_id="{{ $beasiswa_id }}";
+    const today = new Date().setHours(0,0,0,0);
     var page = 1;
     var pewawancara;
     var pendaftar_id;
@@ -256,7 +257,6 @@
             dataList.empty();
             pagination.empty();
             if (data.length > 0) {
-                const today = new Date().setHours(0,0,0,0);
                 $.each(data, function(index, dt) {
                     let status_lulus = dt.status?.is_lulus; 
                     let disabled_input = today < tgl_pengumuman ? '' : 'disabled';
@@ -312,6 +312,9 @@
             $('#label-beasiswa').html(`<h4>${beasiswa.nama}</h4>`);
             tgl_pengumuman = new Date(beasiswa.pengumuman_akhir).setHours(0,0,0,0);
 
+            if(today >= tgl_pengumuman){
+                $('#btn-sinkronisasi').prop('disabled', true);
+            }
         }
 
         async function dataLoad() {

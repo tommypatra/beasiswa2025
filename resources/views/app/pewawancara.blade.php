@@ -267,6 +267,7 @@ td, th {
 
 <script type="text/javascript">
     const endpoint = base_url+'/api/pewawancara';
+    const today = new Date().setHours(0,0,0,0);
     var id = "{{ $beasiswa_id }}";
     var page = 1;
     var page_pembagian = 1;
@@ -284,6 +285,11 @@ td, th {
             const response = await execAsync(`${url}`, 'GET', token);
             let beasiswa=response.data;
             $('#label-beasiswa').html(`<h4>${beasiswa.nama}</h4>`);
+            tgl_pengumuman = new Date(beasiswa.pengumuman_akhir).setHours(0,0,0,0);
+            if(today >= tgl_pengumuman){
+                $('#btn-generate').hide();
+            }
+
         }
 
         async function loadPewawancara() {
