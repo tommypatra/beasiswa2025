@@ -261,12 +261,17 @@
                 if (peserta) {
                     renderLaporanDetail(peserta);
                 }
+                $('#form-penilaian').show();
             } else {
                 const row = `
                     <div class="list-group-item text-center text-muted">
                         Data tidak ditemukan
                     </div>`;
                 dataList.append(row);
+
+                $('#form-penilaian').hide();
+                $('#laporan-detail').html(row);
+                
             }
         }
 
