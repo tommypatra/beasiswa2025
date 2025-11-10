@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Laporan;
 use App\Models\Kegiatan;
+use App\Models\Penerima;
+use App\Models\SkPenerima;
 use App\Models\SubKegiatan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -85,6 +88,118 @@ class LaporanController extends Controller
             'data' => $data,
         ];
         return response()->json($dataRespon);
+    }
+
+    public function detailLaporan(Request $request, string $skId)
+    {
+        $sk = SkPenerima::with([
+            'monitoring.kegiatan.subKegiatan' => fn($q) => $q->orderBy('urut'),
+        ])->findOrFail($skId);
+
+        $kegiatanList = $sk->monitoring
+            ? $sk->monitoring->kegiatan->sortBy('urut')->values()
+            : collect();
+
+        $subIds = $kegiatanList->flatMap->subKegiatan->pluck('id');
+
+        $penerimasQuery = Penerima::with([
+            'user.identitas',
+            'user.mahasiswa.programStudi.fakultas'
+        ])
+            ->where('sk_penerima_id', $sk->id)
+            ->orderBy(
+                User::select('name')->whereColumn('users.id', 'penerimas.user_id')
+            );
+
+        $limit = (int) ($request->input('limit', env('DEFAULT_LIMIT', 30)));
+
+        if ($limit === 0) {
+            $paginator = null;
+            $penerimasCollection = $penerimasQuery->get();
+        } else {
+            $paginator = $penerimasQuery->paginate($limit)->appends($request->except('page'));
+            $penerimasCollection = $paginator->getCollection();
+        }
+
+        $penerimaIds = $penerimasCollection->pluck('id');
+        $laporans = Laporan::query()
+            ->whereIn('penerima_id', $penerimaIds)
+            ->when($subIds->isNotEmpty(), fn($q) => $q->whereIn('sub_kegiatan_id', $subIds))
+            ->orderBy('created_at', 'desc')
+            ->get([
+                'id',
+                'penerima_id',
+                'sub_kegiatan_id',
+                'path_jenis',
+                'path',
+                'is_kirim',
+                'verifikasi_hasil',
+                'verifikasi_skor',
+                'verifikasi_catatan',
+                'created_at',
+            ]);
+
+        $lapIndex = $laporans->groupBy(['penerima_id', 'sub_kegiatan_id']);
+
+        $mapped = $penerimasCollection->map(function ($p) use ($kegiatanList, $lapIndex) {
+            $u  = $p->user;
+            $mh = $u?->mahasiswa;
+            $ps = $mh?->programStudi;
+            $fk = $ps?->fakultas;
+
+            $kegs = $kegiatanList->map(function ($k) use ($p, $lapIndex) {
+                $subs = $k->subKegiatan->map(function ($s) use ($p, $lapIndex) {
+                    $lapList = collect(data_get($lapIndex, [$p->id, $s->id], [])); // selalu Collection
+
+                    return [
+                        'sub_kegiatan_id'   => $s->id,
+                        'sub_kegiatan_nama' => $s->nama,
+                        'laporans'          => $lapList->map(fn($lap) => [
+                            'laporan_id'        => $lap->id,
+                            'path_jenis'        => $lap->path_jenis,
+                            'path'              => $lap->path,
+                            'is_kirim'          => $lap->is_kirim,
+                            'verifikasi_hasil'  => $lap->verifikasi_hasil,
+                            'verifikasi_skor'   => $lap->verifikasi_skor,
+                            'verifikasi_catatan' => $lap->verifikasi_catatan,
+                            'created_at'        => optional($lap->created_at)->toDateTimeString(),
+                        ]),
+                    ];
+                });
+
+                return [
+                    'kegiatan_id'   => $k->id,
+                    'kegiatan_nama' => $k->nama,
+                    'urut'          => $k->urut,
+                    'sub_kegiatans' => $subs,
+                ];
+            });
+
+            return [
+                'penerima_id'    => $p->id,
+                'name' => $u->name ?? '(tanpa nama)',
+                'nim'            => $mh?->nim,
+                'prodi'          => $ps?->nama,
+                'fakultas'       => $fk?->nama,
+                'foto'           => $u?->identitas?->foto ?? $u?->foto ?? '',
+                'email'          => $u?->email,
+                'no_hp'             => $u?->identitas?->no_hp ?? '',
+                'kegiatan'      => $kegs,
+            ];
+        });
+
+        if ($limit === 0) {
+            return response()->json([
+                'status' => true,
+                'message' => 'ditemukan',
+                'data' => $mapped
+            ]);
+        }
+
+        $paginator->setCollection($mapped);
+
+
+        return response()->json($paginator->toArray());
     }
 
 

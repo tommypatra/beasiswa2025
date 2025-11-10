@@ -70,6 +70,7 @@ Route::get('/registrasi-peserta', [WebController::class, 'registrasiPeserta'])->
 Route::get('/verifikasi-peserta', [WebController::class, 'verifikasiPeserta'])->name('verifikasi-peserta');
 
 Route::get('/verifikasi-laporan', [WebController::class, 'verifikasiLaporan'])->name('verifikasi-laporan');
+Route::get('/detail-laporan-penerima/{sk_penerima_id}', [WebController::class, 'detailLaporanPenerima'])->name('detail-laporan-penerima');
 Route::get('/import-penerima-beasiswa/{sk_penerima_id}', [WebController::class, 'importPenerimaBeasiswa'])->name('import-penerima-beasiswa');
 Route::get('/laporan-penerima-beasiswa/{sk_penerima_id}', [WebController::class, 'laporanPenerimaBeasiswa'])->name('laporan-penerima-beasiswa');
 

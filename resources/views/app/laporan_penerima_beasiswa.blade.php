@@ -146,7 +146,7 @@
 
                         laporan_upload+=`
                             <li class="mb-2">
-                                ${dr.keterangan}
+                                ${showText(dr.keterangan)}
                                 <div>
                                     <a href="${base_url}/${dr.path}" target="_blank"><i class="ti ti-download"></i> ${filename}</a>
                                     ${tombol}
@@ -163,7 +163,7 @@
                                 <td>${dt.nama}</td>
                                 <td>${dt.bukti}</td>
                                 <td>
-                                    ${dt.keterangan}
+                                    ${showText(dt.keterangan)}
                                     <div>${contoh_format}</div>
                                 </td>
                             </tr>

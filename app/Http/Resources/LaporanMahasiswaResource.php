@@ -21,6 +21,8 @@ class LaporanMahasiswaResource extends JsonResource
             'id' => $this->id,
             'bukti' => $this->bukti,
             'laporan_id' => $this->id,
+            'path_format' => $this->path_format,
+            'kegiatan_id' => $kegiatan->id,
             'kegiatan_id' => $kegiatan->id,
             'kegiatan' => $kegiatan->nama,
             'keterangan' => $this->keterangan,

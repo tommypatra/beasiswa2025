@@ -306,7 +306,8 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::resource('rumah', RumahController::class);
         Route::resource('laporan', LaporanController::class);
 
-        Route::get('laporan-mahasiswa/{kegiatan_id}', [LaporanController::class, 'laporanMahasiswa']);
+        Route::get('laporan-mahasiswa/{sk_penerima_id}', [LaporanController::class, 'laporanMahasiswa']);
+        Route::get('detail-laporan/{sk_penerima_id}', [LaporanController::class, 'detailLaporan']);
 
 
         Route::get('aktifkan-nomor-rekening/{rekening_id}', [BukuRekeningController::class, 'aktifkanRekening']);

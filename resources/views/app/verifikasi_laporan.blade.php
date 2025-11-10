@@ -168,7 +168,14 @@
                             <td>${dt.penerima_count}</td>
                             <td>${dt.laporan_pending_count}</td>
                             <td>
-                                <button class="btn btn-primary btn-verifikasi" data-id="${dt.id}" ${disabled}><iconify-icon icon="solar:archive-check-outline"></iconify-icon> Verifikasi</button>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                                    <ul class="dropdown-menu">
+                                        <li><button class="dropdown-item btn-verifikasi" data-id="${dt.id}" ${disabled}><iconify-icon icon="solar:archive-check-outline"></iconify-icon> Verifikasi</button></li>
+                                        <li><button class="dropdown-item btn-laporan" data-id="${dt.id}" ${disabled}><iconify-icon icon="solar:archive-check-outline"></iconify-icon> Daftar Dokumen</button></li>
+                                    </ul>
+                                </div>
+
                             </td>
                         </tr>`;
                 dataList.append(row);
@@ -430,8 +437,12 @@
             }
         });
 
+        $(document).on('click', '.btn-laporan', async function() {
+            const id = $(this).attr('data-id');
+            const url = `${base_url}/detail-laporan-penerima/${id}`;
+            window.location.replace(url);
+        });
 
-        //ganti data
         $(document).on('click', '.btn-verifikasi', async function() {
             sk_penerima_id = $(this).attr('data-id');
             $('#search-penerima').val('');

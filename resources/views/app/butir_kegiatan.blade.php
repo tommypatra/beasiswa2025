@@ -254,7 +254,7 @@
 
         async function loadMonitoring() {
             let search = $('#filter_monitoring').val();
-            let respon = await asyncFunction(`${base_url}/api/monitoring?limit=10&search=${search}`);
+            let respon = await asyncFunction(`${base_url}/api/monitoring?search=${search}`);
             const list = $('#list_monitoring').empty();
 
             if(respon.data.total>0)
@@ -304,7 +304,7 @@
             const dataList = $('#data-list');
             const pagination = $('#pagination');
             const search = $('#search-input').val();
-            const response = await asyncFunction(`${base_url}/api/butir-kegiatan?kegiatan_id=${kegiatan_id}&search=${search}&page=${page}&limit=2`);
+            const response = await asyncFunction(`${base_url}/api/butir-kegiatan?kegiatan_id=${kegiatan_id}&search=${search}&page=${page}`);
 
             const data=response.data.data;
             let no = (response.data.current_page - 1) * response.data.per_page + 1;
