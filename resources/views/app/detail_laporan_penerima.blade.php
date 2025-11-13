@@ -34,30 +34,91 @@
 
 <!-- MULAI MODAL -->
 <div class="modal fade modal" id="modal-form" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-xl">
         <form id="form">
-            <input type="hidden" name="id" id="id" >
+            <input type="hidden" id="id" name="id">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modal-label">Form</h5>
+                    <h5 class="modal-title" id="modal-label">Validasi Laporan Mahasiswa</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body ">
+
+                <div class="modal-body">
                     <div class="row">
-						<div class="col-lg-12 mb-3">
-                            <label class="form-label">Nama</label>
-                            <input name="nama" id="nama" type="text" class="form-control" required>
+                        <div class="col-lg-4 mt-2">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-start gap-3">
+                                        <img id="mv_foto" src="" alt="foto mahasiswa" src="{{ asset('images/user-avatar.png') }}"
+                                        class="rounded border" style="width:80px;height:80px;object-fit:cover">
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-0" id="mv_nama">Nama Mahasiswa</h6>
+                                            <div class="small text-muted" id="mv_nim">NIM: -</div>
+                                            <div class="mt-2">
+                                                <span class="badge text-bg-light border" id="mv_prodi">Program Studi</span>
+                                                <span class="badge text-bg-light border" id="mv_fakultas">Fakultas</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <ul class="list-unstyled small mb-0">
+                                        <li><strong>Email:</strong> <span id="mv_email">-</span></li>
+                                        <li class="mt-1"><strong>No. HP:</strong> <span id="mv_nohp">-</span></li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
-						<div class="col-lg-4 mb-3">
-                            <label class="form-label">Singkatan</label>
-                            <input name="singkatan" id="singkatan" type="text" class="form-control" required>
+
+                        <div class="col-lg-8 mt-2">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <h5>
+                                            <span id="mv_kegiatan">Kegiatan</span> /
+                                            <span id="mv_subkegiatan">Sub Kegiatan</span>
+                                        </h5>
+                                        <div id="kontrol-gambar" style="text-align:center; margin-top:10px; display:none;">
+                                            <button type="button" class="btn btn-sm btn-secondary" onclick="rotateImage('preview-img',-90)">⟲ Putar Kiri</button>
+                                            <button type="button" class="btn btn-sm btn-secondary" onclick="rotateImage('preview-img',90)">⟳ Putar Kanan</button>
+                                            <button type="button" class="btn btn-sm btn-secondary" onclick="zoomImage('preview-img',1.2)">🔍 Zoom In</button>
+                                            <button type="button" class="btn btn-sm btn-secondary" onclick="zoomImage('preview-img',0.8)">🔎 Zoom Out</button>
+                                        </div>                                        
+                                        <div id="dokumen-embed" 
+                                            style="margin-top:10px; height:500px; width:100%; border:1px solid #ccc; overflow:auto;">
+                                        </div>
+                                    </div>
+                                    <hr>
+
+                                    <div class="row g-2">
+                                        <div class="col-md-6">
+                                            <label for="verifikasi_hasil" class="form-label">Hasil Verifikasi (Skor)</label>
+                                            <select id="verifikasi_hasil" name="verifikasi_hasil" data-bobot="0" class="form-select" required>
+                                                <option value="" selected disabled>- pilih -</option>
+                                                <option value="3">Sangat Sesuai</option>
+                                                <option value="2">Sesuai</option>
+                                                <option value="1">Kurang Sesuai</option>
+                                                <option value="0">Tidak Sesuai</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="verifikasi_skor" class="form-label">Skor</label>
+                                            <input type="number" id="verifikasi_skor" name="verifikasi_skor" class="form-control" placeholder="" readonly required>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-3">
+                                        <label for="verifikasi_catatan" class="form-label">Catatan (opsional)</label>
+                                        <textarea id="verifikasi_catatan" name="verifikasi_catatan" class="form-control" rows="4" ></textarea>
+                                    </div>
+
+                                </div>
+                            </div>
+
                         </div>
-						<div class="col-lg-4 mb-3">
-                            <label class="form-label">Urut</label>
-                            <input name="urut" id="urut" type="number" class="form-control" required>
-                        </div>
+                        
                     </div>
-                </div>
+                </div> <!-- modal-body -->
+
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
                     <button type="button" class="btn btn-outline-primary " data-bs-dismiss="modal">Tutup</button>
@@ -73,6 +134,9 @@
 <script src="{{ asset('js/jquery-validation-1.19.5/dist/jquery.validate.min.js')}}"></script>
 <script src="{{ asset('js/crud.js') }}"></script>
 <script src="{{ asset('js/pagination.js') }}"></script>
+<script src="{{ asset('js/gambar.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js"></script>
 
 <script type="text/javascript">
     const endpoint = base_url+'/api/laporan';
@@ -91,9 +155,8 @@
 
             if (data.length > 0) {
                 $.each(data, function(index, dt) {
-                    const foto = dt.foto ? `${base_url}/${dt.foto}`: null;
-                    
-                    const img = `<img src="${foto || 'https://via.placeholder.com/64x64?text=IMG'}" class="rounded border" style="width:70px;height:70px;object-fit:cover" alt="foto">`;
+                    const foto = base_url+'/'+dt.foto;
+                    const img = `<img src="${foto}" class="rounded border" style="width:80px;height:80px;object-fit:cover" alt="foto">`;
                     const row=`
                     <div class="card shadow-sm table-responsive">
                         <div class="card-body">
@@ -157,15 +220,15 @@
 
                                     let tanda_baru = '';
                                     let is_baru = false;
-                                    let btn_verifikasi=`<a href="javascript:;" class="btn btn-sm btn-outline-primary ms-auto">Verifikasi</a>`;
+                                    let btn_verifikasi=`<a href="javascript:;" class="btn btn-sm btn-outline-primary ms-auto btn-verifikasi" data-laporan_id="${l.laporan_id}">Verifikasi</a>`;
                                     if(l.verifikasi_hasil == null){
                                         laporanBaru++;
                                         is_baru=true;
-                                        tanda_baru=`<span class="badge bg-danger position-absolute top-0 end-0 translate-middle p-1"">
-                                                        <iconify-icon icon="solar:check-read-outline" class=""></iconify-icon>
+                                        tanda_baru=`<span class="badge bg-danger position-absolute top-0 end-0 translate-middle p-1 tanda-baru">
+                                                        <iconify-icon icon="solar:danger-circle-bold" class=""></iconify-icon>
                                                     </span>`;
                                     }
-                                    btn_verifikasi=``;
+                                    // btn_verifikasi=``;
 
                                     laporan += `<div class="list-group-item d-flex align-items-center">
                                                     <span class="small text-muted">
@@ -195,7 +258,7 @@
                                             ${totalLaporan}
                                         </span>
                                         ${ laporanBaru > 0 
-                                            ? `<span class="badge bg-danger position-absolute top-0 end-0 translate-middle p-1" style="font-size:10px;">
+                                            ? `<span class="badge bg-danger position-absolute top-0 end-0 translate-middle p-1 jumlah-belum-verifikasi" style="font-size:10px;">
                                                     ${laporanBaru}
                                                 </span>`
                                             : '' 
@@ -241,6 +304,71 @@
             dataLoad();
         });
 
+        function loadFormVerifikasi(data){
+            // isi informasi student
+            const url = base_url+'/'+data.path;
+            const jenis = getFileType(url);
+            const foto = base_url+'/'+data.foto;
+
+            $('#mv_foto').attr('src', foto);
+            $('#mv_nama').text(data.nama);
+            $('#mv_nim').text('NIM: ' + data.nim);
+            $('#mv_prodi').text(data.program_studi);
+            $('#mv_fakultas').text(data.fakultas);
+            $('#mv_email').text(data.email);
+            $('#mv_nohp').text(data.no_hp);
+
+            $('#mv_kegiatan').text(data.kegiatan);
+            $('#mv_subkegiatan').text(data.sub_kegiatan);
+
+            rotation = 0;
+            scale = 1;
+
+            $('#dokumen-embed').html('<a href="javascript:;" class="refresh-dokumen" style="color:blue;">klik disini untuk melihat preview dokumen</a>');            
+            if (jenis=='pdf') {
+                $('#kontrol-gambar').hide();
+                openPdf(document.getElementById('dokumen-embed'), url);
+            }else{
+                $('#dokumen-embed').html(`
+                    <div style="text-align:center;">
+                        <img id="preview-img" src="${url}" 
+                            style="max-width:95%; display:block; margin:0 auto; transition: transform 0.3s;">
+                    </div>                    
+                `);
+                $('#kontrol-gambar').show();
+            }
+
+            $('#id').val(data.laporan_id);                  
+            $('#verifikasi_catatan').val(data.verifikasi_catatan);                  
+            $('#verifikasi_hasil').val(data.verifikasi_hasil);
+            $('#verifikasi_hasil').attr('data-bobot',data.sub_kegiatan_skor);
+            $('#verifikasi_skor').val(data.verifikasi_skor);
+
+        }
+
+        $('#verifikasi_hasil').on('change', function () {
+            let skor = parseInt($(this).val());
+            let bobot = parseFloat($(this).attr('data-bobot'));
+            let nilai = (skor / 3) * bobot;
+            $('#verifikasi_skor').val(nilai.toFixed(2));
+        });
+        
+        $(document).on('click', '.btn-verifikasi', function () {
+            const $btn = $(this);
+            const $item = $btn.closest('.list-group-item');
+            const $accordionItem = $btn.closest('.accordion-item');
+            const id = $btn.attr('data-laporan_id');
+
+
+            const url = `${base_url}/api/get-data-laporan-mahasiswa?limit=0&id=${id}`;
+            fetchData(url, function(response) {
+                loadFormVerifikasi(response.data[0]);
+            },true);
+            
+            showModalForm();
+
+        });
+
         //untuk show modal form
         function showModalForm() {
             var fModalForm = new bootstrap.Modal(document.getElementById('modal-form'), {
@@ -260,22 +388,39 @@
             showModalForm();    
         });
 
-        //validasi dan save, jika id ada maka PUT/edit jika tidak ada maka POST/simpan baru
         $("#form").validate({
             submitHandler: function(form) {
                 const id = $('#id').val();
-                const type = (id === '') ? 'POST' : 'PUT';
-                const url = (id === '') ? endpoint : endpoint + '/' + id;
-                saveData(url, type, $(form).serialize(), function(response) {
-                    //jika berhasil
+                const url = `${base_url}/api/verifikasi-laporan-mahasiswa/${id}`;
+                // console.log(url)
+                saveData(url, 'PUT', $(form).serialize(), function(response) {
                     appShowNotification(true,['berhasil dilakukan!']);
-                    if(type=='POST'){
-                        formReset();
-                    }
-                    dataLoad();
+                    updateDom(response.data.id);
                 });
             }
         });
+
+
+        function updateDom(laporanId) {
+            let $btn = $('.btn-verifikasi[data-laporan_id="' + laporanId + '"]');
+            if (!$btn.length) return;
+
+            let $row = $btn.closest('.list-group-item.d-flex');
+            $row.find('.tanda-baru').remove();
+
+            let $accordionItem = $btn.closest('.accordion-item');
+            let $counter = $accordionItem.find('.jumlah-belum-verifikasi').first();
+
+            if ($counter.length) {
+                let val = parseInt($counter.text().trim()) || 0;
+                let newVal = val - 1;
+                if (newVal > 0) {
+                    $counter.text(newVal);
+                } else {
+                    $counter.remove();
+                }
+            }
+        }
 
         //ganti data
         $(document).on('click', '.btn-ganti', function() {

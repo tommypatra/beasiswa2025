@@ -169,6 +169,17 @@ function showHideModal(el,status=true){
     }
 }
 
+function getFileType(fileUrl) {
+    let ext = fileUrl.split('.').pop().toLowerCase();
+
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+        return 'image';
+    } else if (ext === 'pdf') {
+        return 'pdf';
+    }
+    return 'image';
+}
+
 function showText(param=null,def=""){
     return (param)?param:def;
 }

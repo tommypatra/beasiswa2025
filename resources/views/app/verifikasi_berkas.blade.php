@@ -731,17 +731,6 @@
 
         }
 
-        function getFileType(fileUrl) {
-            let ext = fileUrl.split('.').pop().toLowerCase();
-
-            if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
-                return 'image';
-            } else if (ext === 'pdf') {
-                return 'pdf';
-            }
-            return 'image';
-        }
-
         function showSyarat(preview_file=true){
             resetFormSyarat();
             $('#validasi-final').hide();

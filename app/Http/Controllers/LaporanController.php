@@ -14,6 +14,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LaporanRequest;
 use App\Http\Resources\LaporanResource;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\UpdateVerifikasiRequest;
 use App\Http\Resources\LaporanMahasiswaResource;
 
 class LaporanController extends Controller
@@ -24,11 +25,18 @@ class LaporanController extends Controller
     public function index(Request $request)
     {
         $dataQuery = Laporan::with([
-            'penerima.user.mahasiswa',
+            'penerima.user.mahasiswa.programStudi.fakultas',
+            'penerima.user.identitas',
+            'penerima.skPenerima',
             'subKegiatan.kegiatan',
-            'skPenerima',
         ])
             ->orderBy('id', 'asc');
+
+        if ($request->filled('id')) {
+            $dataQuery->where(function ($query) use ($request) {
+                $query->where('id', $request->id);
+            });
+        }
 
         if ($request->filled('penerima_id')) {
             $dataQuery->where(function ($query) use ($request) {
@@ -44,11 +52,17 @@ class LaporanController extends Controller
 
         $default_limit = env('DEFAULT_LIMIT', 30);
         $limit = $request->filled('limit') ? $request->limit : $default_limit;
-        $data = $dataQuery->paginate($limit);
-        $resourceCollection = $data->getCollection()->map(function ($item) {
-            return new LaporanResource($item);
-        });
-        $data->setCollection($resourceCollection);
+
+        if ($limit == 0) {
+            $data = $dataQuery->get();
+            $data = LaporanResource::collection($data);
+        } else {
+            $data = $dataQuery->paginate($limit);
+            $resourceCollection = $data->getCollection()->map(function ($item) {
+                return new LaporanResource($item);
+            });
+            $data->setCollection($resourceCollection);
+        }
 
         $dataRespon = [
             'status' => true,
@@ -110,6 +124,12 @@ class LaporanController extends Controller
             ->orderBy(
                 User::select('name')->whereColumn('users.id', 'penerimas.user_id')
             );
+
+        if ($request->filled('penerima_id')) {
+            $penerimasQuery->where(function ($query) use ($request) {
+                $query->where('penerima_id', $request->penerima_id);
+            });
+        }
 
         $limit = (int) ($request->input('limit', env('DEFAULT_LIMIT', 30)));
 
@@ -277,6 +297,22 @@ class LaporanController extends Controller
         }
     }
 
+    /**
+     * Update the specified resource in storage.
+     */
+    public function updateVerifikasi(UpdateVerifikasiRequest $request, string $id)
+    {
+        try {
+            DB::beginTransaction();
+            $data = Laporan::where('id', $id)->firstOrFail();
+            $data->update($request->validated());
+            DB::commit();
+            return response()->json(['status' => true, 'message' => 'berhasil diperbarui', 'data' => $data], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat memperbarui : ' . $e->getMessage(), 'data' => null], 500);
+        }
+    }
 
     /**
      * Remove the specified resource from storage.

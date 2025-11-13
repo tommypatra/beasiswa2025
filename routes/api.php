@@ -198,6 +198,9 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::resource('verifikator-penerima', VerifikatorPenerimaController::class);
         Route::resource('verifikator-laporan', VerifikatorLaporanController::class);
 
+        Route::get('get-data-laporan-mahasiswa', [LaporanController::class, 'index']);
+        Route::put('verifikasi-laporan-mahasiswa/{id}', [LaporanController::class, 'updateVerifikasi']);
+
 
         Route::get('verifikasi-laporan/penerima/{sk_penerima_id}', [VerifikatorLaporanController::class, 'daftarPenerimaVerifikasi']);
         Route::get('verifikasi-laporan/daftar', [VerifikatorLaporanController::class, 'daftarSkVerifikasi']);
