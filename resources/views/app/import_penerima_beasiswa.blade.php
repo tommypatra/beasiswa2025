@@ -41,23 +41,23 @@
             <div class="col-md-6">
                 <div class="card shadow-sm border-0">
                     <div class="card-header bg-primary text-white fw-bold">
-                        Import dari File CSV
+                        Import dari File Excel
                     </div>
                     <div class="card-body">
-                        <form id="formCsv" enctype="multipart/form-data">
+                        <form id="formXls" enctype="multipart/form-data">
                             <div class="mb-3">
-                                <label for="csvFile" class="form-label">Upload File CSV</label>
-                                <input type="file" class="form-control" id="csvFile" name="csv_file" accept=".csv" required>
+                                <label for="xlsx_file" class="form-label">Upload File Excel</label>
+                                <input type="file" class="form-control" id="xlsx_file" name="xlsx_file" accept=".xlsx" required>
                             </div>
                             <div class="mb-2">
-                                <a href="{{ asset('sample/import_beasiswa.csv') }}" class="btn btn-link p-0" download>
+                                <a href="{{ asset('format/import_penerima_beasiswa.xlsx') }}" class="btn btn-link p-0" download>
                                     <iconify-icon icon="mdi:file-download-outline" class="me-1"></iconify-icon>
-                                    Unduh Contoh Format CSV
+                                    Unduh Contoh Format Excel
                                 </a>
                             </div>
                             <button type="submit" class="btn btn-primary w-100">
                                 <iconify-icon icon="mdi:upload-outline" class="me-1"></iconify-icon>
-                                Import CSV
+                                Import Excel
                             </button>
                         </form>
                     </div>
@@ -105,8 +105,7 @@
                                 <th style="width: 5%;"><input type="checkbox" id="cek-semua"></th>
                                 <th style="width: 5%;">No</th>
                                 <th>Nama</th>
-                                <th style="width: 150px;">NIM</th>
-                                <th>Program Studi</th>
+                                <th style="width: 200px;">NIM/ Program Studi</th>
                                 <th>Nomor Rekening</th>
                                 <th>Hasil Scan</th>
                                 <th style="width: 120px;">Status</th>
@@ -129,11 +128,13 @@
     <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
     <script src="{{ asset('js/sweetalert2/dist/sweetalert2.min.js')}}"></script>
     <script src="{{ asset('js/app.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <script>
     const g_limit=50;
     const sk_penerima_id="{{ $sk_penerima_id }}";
     var g_nomor;
+    var g_program_studi;
 
 	$(document).ready(function() {
         const csrf_token = $('meta[name="csrf-token"]').attr('content');
@@ -143,6 +144,7 @@
             // alert('run')
             $.ajax({
                 headers: {
+                    "Accept": "application/json",
                     'Authorization': 'Bearer ' + access_token
                 },
                 type: 'GET',
@@ -176,6 +178,7 @@
         async function initPage() {
             await loadSK();
             await loadBeasiswa();
+            await dataLoadProdi();
         }
 
         async function loadBeasiswa() {
@@ -253,7 +256,16 @@
             }
         }
 
-         function renderData(data,dataList){
+        async function dataLoadProdi() {
+            const url = `${base_url}/api/get-data-prodi?limit=0`;
+            const response = await execAsync(url,"get",access_token);
+            g_program_studi=null;
+            if(response.status){
+                g_program_studi=response.data;
+            }
+        }
+
+        function renderData(data,dataList){
             let no = 1;
             if(data.length>0){
                 $.each(data, function(index, dt) {
@@ -263,12 +275,16 @@
                     //     checkbox=``;
                     //     sudah_terdata=`Sudah terdata dalam SK ini`;
                     // } 
+                
+
                     const row = `<tr>
                                     <td>${checkbox}</td>
                                     <td>${g_nomor++}</td>
                                     <td>${dt.mahasiswa.nama}</td>
-                                    <td><input type="text" class="form-control nim" style="width:180px;" value="${dt.mahasiswa.nim}"></td>
-                                    <td>${dt.mahasiswa.program_studi}</td>
+                                    <td>
+                                        <input type="text" class="form-control nim" style="width:180px;" value="${dt.mahasiswa.nim}">
+                                        ${dt.mahasiswa.program_studi}
+                                    </td>
                                     <td></td>
                                     <td></td>
                                     <td>${sudah_terdata}</td>
@@ -304,11 +320,12 @@
                 const nim = $(row).find("input.nim").val().trim();
 
                 try {
-                    const response = await fetch(`${base_url}/api/cek-nim?sk_penerima_id=${sk_penerima_id}&nim=${nim}`);
+                    // const response = await fetch(`${base_url}/api/cek-nim?sk_penerima_id=${sk_penerima_id}&nim=${nim}`);
+                    const response = await fetch(`${base_url}/api/cek-nim?nim=${nim}`);
                     const result = await response.json();
 
                     $(row).find("input.cek-baris").attr("data-user_id","");
-                    $(row).find("input.cek-baris").attr("data-mahasiswa","");
+                    // $(row).find("input.cek-baris").attr("data-mahasiswa","");
                     $(row).find("input.cek-baris").attr("data-buku_rekening_id","");
                     $(row).find("input.cek-baris").attr("data-penerima_id");
 
@@ -329,16 +346,20 @@
 
 
                         $(row).find("td:eq(5)").text(`${rekening}`);
+                        $(row).find("td:eq(2)").text(`${dataWeb.name}`);
+                        $(row).find("td:eq(3)").html(`<input type="text" class="form-control nim" style="width:180px;" value="${dataWeb.nim}">
+                                                        <div>${dataWeb.program_studi}</div>`);
                         
+
                         if(cek_sk_penerima_id!=sk_penerima_id){
                             $(row).find("input.cek-baris").attr("data-user_id",dataWeb.user_id);
-                            $(row).find("td:eq(6)").text(`data valid nim ${dataWeb.nim} / ${dataWeb.name} / ${dataWeb.program_studi} dari ioss`);
+                            $(row).find("td:eq(5)").text(`data valid nim ${dataWeb.nim} / ${dataWeb.name} / ${dataWeb.program_studi} dari ioss`);
                             $(row).find("td:last").text("ready");
                         }else{
-                            $(row).find("td:eq(6)").text(`sudah terdata dalam SK`);
+                            $(row).find("td:eq(5)").text(`sudah terdata dalam SK`);
                             $(row).find("td:last").text(`idle`);
                             if ((!penerima.buku_rekening_id && buku_rekening) || (buku_rekening && buku_rekening.id != penerima.buku_rekening_id)) {
-                                $(row).find("td:eq(6)").text("perbaikan nomor rekening");
+                                $(row).find("td:eq(5)").text("perbaikan nomor rekening");
                                 $(row).find("td:last").text("ready");
                             } else {
                                 $(row).find("input.cek-baris").remove();
@@ -350,11 +371,13 @@
                         if(resultSIA.status){
                             const dataSIA=resultSIA.data;
                             $(row).find("input.cek-baris").attr("data-mahasiswa", JSON.stringify(dataSIA));
+                            $(row).find("td:eq(2)").text(`${dataSIA.nama}`);
+                            $(row).find("td:eq(4)").text(`${dataSIA.prodi}`);
                             $(row).find("td:eq(5)").text(`data baru nim ${dataSIA.nim} / ${dataSIA.nama} / ${dataSIA.prodi} dari SIA`);
                             $(row).find("td:last").text("ready");
                         }else{
-                            $(row).find("td:eq(5)").text(`data invalid`);
-                            $(row).find("td:last").text("error");
+                            $(row).find("td:eq(5)").text(`data baru dari Import Excle`);
+                            $(row).find("td:last").text("ready");
                         }                    
                     }
                 } catch (err) {
@@ -385,8 +408,10 @@
                 const status_data = $(row).find("td:last").text();
                 const user_id = $(row).find("input.cek-baris").attr("data-user_id");
                 const mahasiswa = $(row).find("input.cek-baris").attr("data-mahasiswa");
+                const mahasiswa_obj = $(row).find("input.cek-baris").data("mahasiswa");
                 const buku_rekening_id = $(row).find("input.cek-baris").attr("data-buku_rekening_id");
                 const penerima_id = $(row).find("input.cek-baris").attr("data-penerima_id");
+                const prodi_id = $(row).find("select.program_studi").val();
 
                 // console.log(status_data,user_id,mahasiswa);
                 if(status_data=='ready'){
@@ -397,7 +422,15 @@
                         }
                         $(row).find("td:last").text(simpan_ke_sk.message);
                     }else{
-                        $(row).find("td:last").text('simpan user ke db dan masukan user ke sk');
+                        const buat_user = await buatUser(mahasiswa_obj,prodi_id);
+                        if(buat_user.status){
+                            $(row).find("input.cek-baris").remove();
+                            $(row).find("td:last").text('simpan user ke db dan masukan user ke sk');
+                        }else{
+                            $(row).find("td:last").text('terjadi kesalah, perbaiki data dan ulangi lagi');
+                        }
+                        // $(row).find("td:last").text(simpan_ke_sk.message);
+
                     }
                 }
                 // update progress
@@ -422,6 +455,7 @@
                     method: method,
                     headers: {
                         "Content-Type": "application/json",
+                        "Accept": "application/json",
                         "Authorization": "Bearer " + access_token
                     },
                     body: JSON.stringify({user_id: user_id, buku_rekening_id:buku_rekening_id, sk_penerima_id:sk_penerima_id })
@@ -438,6 +472,148 @@
                 return ({status:false,message:"gagal tersimpan"});
             }
         }
+
+        async function buatUser(mahasiswa,prodi_id){
+            try {
+                let method = "POST";
+                let url = `${base_url}/api/buat-user-import-kelulusan/${sk_penerima_id}`;
+
+                let response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                        "Authorization": "Bearer " + access_token
+                    },
+                    body: JSON.stringify({
+                        name:mahasiswa.nama, 
+                        no_hp:mahasiswa.hp,
+                        nim:mahasiswa.nim,
+                        idprodi:mahasiswa.idprodi,
+                        prodi:mahasiswa.prodi,
+                        tanggal_lahir:mahasiswa.tgllahir,
+                        tempat_lahir:mahasiswa.tmplahir,
+                        fakultas:mahasiswa.fakultas,
+                        tahun_masuk:mahasiswa.thnmasuk,
+                        email:mahasiswa.email,
+                        jenis_kelamin:mahasiswa.kelamin,
+                        program_studi_id:prodi_id
+                    })
+                });
+                const result = await response.json();
+                if(result.status){
+                    return ({status:true,message:"berhasil tersimpan"})
+                }else{
+                    return ({status:false,message:"gagal tersimpan"});
+                }
+            } catch (err) {
+                return ({status:false,message:"gagal tersimpan"});
+            }
+        }
+
+        function loadProdiHtml(prodi,width){
+            let program_studi_html = `<select class="form-select program_studi" style="width:${width};">
+                                        <option value=""></option>`;
+            let prodi_terpilih=false;
+            $.each(g_program_studi, function(index, dpr) {
+                let selected="";
+                if(dpr.nama.toLowerCase().trim() === prodi.toLowerCase().trim()){
+                    selected="selected";
+                    prodi_terpilih=true;
+                }
+                program_studi_html +=`<option value="${dpr.id}" ${selected}>${dpr.nama}</option>`;
+            });
+            program_studi_html +=`</select>`;
+            if(!prodi_terpilih)
+                program_studi_html +=`<div>${prodi}</div>`;
+            return program_studi_html;
+        }
+
+        $('#formXls').on('submit', function (e) {
+            e.preventDefault(); // jangan kirim ke backend
+
+            const file = $('#xlsx_file')[0].files[0];
+            if (!file) {
+                alert("Silakan pilih file Excel terlebih dahulu!");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const data = new Uint8Array(e.target.result);
+
+                // Baca Excel
+                const workbook = XLSX.read(data, { type: 'array' });
+
+                // Ambil sheet pertama
+                const firstSheet = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheet];
+                const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                $('#data-list').empty(); // Clear table body dulu
+
+                rows.forEach((row, index) => {
+                    if (index === 0) return; // skip header
+
+                    const no   = (row[0] || '').toString().trim();
+                    const nama = (row[1] || '').toString().trim();
+                    const nim  = (row[2] || '').toString().trim();
+                    const program_studi  = (row[3] || '').toString().trim();
+
+                    // Abaikan baris yang tidak ada data
+                    if (!nama && !nim) return;
+                    
+                    const mahasiswa = {
+                        iddata: null,
+                        idbayar: null,
+                        email:null,
+                        nama: nama,
+                        nim: nim,
+                        idprodi: null,
+                        tgllahir: "{{ date('Y-m-d') }}",
+                        tmplahir: 'Kendari',
+                        kelamin: null,
+                        thnmasuk: null,
+                        status_awal: null,
+                        hp: null,
+                        prodi: program_studi,
+                        fakultas: null
+                    };
+                    // Encode JSON agar aman dalam HTML attribute
+                    const mahasiswaJson = $('<div>').text(JSON.stringify(mahasiswa)).html();
+
+                    const tr = $(`
+                        <tr>
+                            <td class="text-center">
+                                <input 
+                                    type="checkbox" 
+                                    class="cek-baris" 
+                                    data-user_id="" 
+                                    data-buku_rekening_id="" 
+                                    data-penerima_id=""
+                                >
+                            </td>
+                            <td class="text-center">${no}</td>
+                            <td>${nama}</td>
+                            <td>
+                                <input type="text" class="form-control nim" style="width:180px;" value="${nim}">
+                                ${loadProdiHtml(program_studi,'300px')}
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    `);
+
+                    tr.find('.cek-baris').attr('data-mahasiswa', mahasiswaJson);                    
+                    $('#data-list').append(tr);
+                });
+
+                alert("Data berhasil dimuat ke tabel!");
+            };
+
+            reader.readAsArrayBuffer(file);
+        });
 
     });
     </script>

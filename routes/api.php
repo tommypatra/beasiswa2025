@@ -82,6 +82,7 @@ use App\Http\Controllers\DokumentasiSurveiController;
 use App\Http\Controllers\VerifikatorLaporanController;
 use App\Http\Controllers\VerifikatorPenerimaController;
 use App\Http\Controllers\VerifikatorPendaftarController;
+use App\Models\ProgramStudi;
 
 Route::post('auth-cek', [AuthController::class, 'index']);
 Route::post('cek-data-akun-sia', [AuthController::class, 'cekDataAkunSia']);
@@ -115,6 +116,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     Route::get('get-data-beasiswa/{id}', [BeasiswaController::class, 'show']);
     Route::get('get-data-mahasiswa/{id}', [MahasiswaController::class, 'show']);
     Route::get('get-data-orang-tua/{id}', [OrangTuaController::class, 'dataOrangTua']);
+    Route::get('get-data-prodi', [ProgramStudiController::class, 'index']);
     Route::get('get-data-pendidikan-akhir/{id}', [PendidikanAkhirController::class, 'dataPendidikanAkhir']);
     Route::get('get-data-upload/{id}', [UploadSyaratController::class, 'dataUpload']);
     Route::get('get-data-raport/{id}', [NilaiRaportController::class, 'dataRaport']);
@@ -201,6 +203,8 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::get('get-data-laporan-mahasiswa', [LaporanController::class, 'index']);
         Route::put('verifikasi-laporan-mahasiswa/{id}', [LaporanController::class, 'updateVerifikasi']);
 
+
+        Route::post('buat-user-import-kelulusan/{sk_penerima_id}', [PenggunaController::class, 'buatUserImportKelulusan']);
 
         Route::get('verifikasi-laporan/penerima/{sk_penerima_id}', [VerifikatorLaporanController::class, 'daftarPenerimaVerifikasi']);
         Route::get('verifikasi-laporan/daftar', [VerifikatorLaporanController::class, 'daftarSkVerifikasi']);

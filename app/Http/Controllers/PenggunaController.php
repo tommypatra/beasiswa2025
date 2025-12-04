@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\UserRole;
+use App\Models\Identitas;
+use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\PenggunaRequest;
 use App\Http\Resources\PenggunaResource;
+use App\Http\Requests\BuatUserImportKelulusanRequest;
+use App\Models\Penerima;
 
 class PenggunaController extends Controller
 {
@@ -161,6 +165,58 @@ class PenggunaController extends Controller
                 'status' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function buatUserImportKelulusan(BuatUserImportKelulusanRequest $request, $sk_penerima_id)
+    {
+        if (!$sk_penerima_id)
+            return response()->json(['status' => false, 'message' => 'sk penerima tidak boleh kosong'], 500);
+        try {
+            DB::beginTransaction();
+            $data = $request->validated();
+            $data['kartu_mahasiswa'] = 'images/kartumhs.png';
+            $data['foto'] = 'images/user-avatar.png';
+
+            //default alamat
+            $data['alamat'] = 'jl. sultan qaimuddin no.17 baruga kendari';
+            $data['wilayah_desa_id'] = '72226';
+            $data['desa'] = 'Baruga';
+            $data['kecamatan'] = 'Baruga';
+            $data['kabupaten'] = 'KOTA KENDARI';
+            $data['provinsi'] = 'SULAWESI TENGGARA';
+
+            $data['foto'] = 'images/user-avatar.png';
+            if ($request->tahun_masuk) {
+                $data['tahun_masuk'] = substr($request->tahun_masuk, 0, 4);
+            } else {
+                $data['tahun_masuk'] = null;
+            }
+            $data['sk_penerima_id'] = $sk_penerima_id;
+            $data['password'] = Hash::make($request->nim);
+            if (!$request->email)
+                $data['email'] = $request->nim . '@iainkendari.ac.id';
+
+            $akun = User::create($data);
+            $data['user_id'] = $akun->id;
+
+            $userRole = UserRole::create(['user_id' => $akun->id, 'role_id' => 6]);
+            $identitas = Identitas::create($data);
+            $mahasiswa = Mahasiswa::create($data);
+            $penerima = Penerima::create($data);
+            $respon = [
+                'user' => $akun,
+                'user_role' => $userRole,
+                'identitas' => $identitas,
+                'mahasiswa' => $mahasiswa,
+                'penerima' => $penerima,
+            ];
+
+            DB::commit();
+            return response()->json(['status' => true, 'message' => 'proses berhasil dilakukan', 'data' => $respon], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat membuat data baru: ' . $e->getMessage()], 500);
         }
     }
 }
