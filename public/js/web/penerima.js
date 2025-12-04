@@ -148,6 +148,7 @@ $(document).ready(function() {
         const id = $(this).attr('data-id');
         const perihal = $(this).attr('data-perihal');
         sk_penerima_id=id;
+        page_penerima=1;
         $('#modal-penerima .judul-modal').text(perihal);
         showModalFormPenerima();
     });
