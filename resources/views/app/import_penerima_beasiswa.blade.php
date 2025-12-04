@@ -350,7 +350,6 @@
                         $(row).find("td:eq(3)").html(`<input type="text" class="form-control nim" style="width:180px;" value="${dataWeb.nim}">
                                                         <div>${dataWeb.program_studi}</div>`);
                         
-
                         if(cek_sk_penerima_id!=sk_penerima_id){
                             $(row).find("input.cek-baris").attr("data-user_id",dataWeb.user_id);
                             $(row).find("td:eq(5)").text(`data valid nim ${dataWeb.nim} / ${dataWeb.name} / ${dataWeb.program_studi} dari ioss`);
@@ -372,7 +371,11 @@
                             const dataSIA=resultSIA.data;
                             $(row).find("input.cek-baris").attr("data-mahasiswa", JSON.stringify(dataSIA));
                             $(row).find("td:eq(2)").text(`${dataSIA.nama}`);
-                            $(row).find("td:eq(4)").text(`${dataSIA.prodi}`);
+                            $(row).find("td:eq(3)").html(`
+                                <input type="text" class="form-control nim" style="width:180px;" value="${nim}">
+                                ${loadProdiHtml(dataSIA.prodi,'300px')}
+                            `);
+                            // $(row).find("td:eq(4)").text(`${dataSIA.prodi}`);
                             $(row).find("td:eq(5)").text(`data baru nim ${dataSIA.nim} / ${dataSIA.nama} / ${dataSIA.prodi} dari SIA`);
                             $(row).find("td:last").text("ready");
                         }else{
