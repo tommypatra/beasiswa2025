@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Pegawai;
 use App\Models\UserRole;
 use App\Models\Identitas;
 use App\Models\Mahasiswa;
@@ -152,9 +153,9 @@ class AuthController extends Controller
         ], 200);
     }
 
-    function nextLogin($email)
+    function nextLogin($user_id)
     {
-        $user = User::with('identitas')->where('email', $email)->first();
+        $user = User::with('identitas')->where('id', $user_id)->first();
 
         if (!$user) {
             return response()->json([
@@ -196,19 +197,35 @@ class AuthController extends Controller
         try {
             DB::beginTransaction();
 
-            $email = $request->email;
+            $tmp_email = ($request->nim) ? $request->nim : $request->nip;
+
+            $email = ($request->email != '') ? $request->email : $tmp_email . '@iainkendari.ac.id';
+            // $nim = $request->nim . '@iainkendari.ac.id';
             if (!$email) {
                 throw new \Exception("Gagal, Email pada akun anda di SIA wajib terisi");
             }
 
-            $user = User::with('identitas')->where('email', $email)->first();
+            if ($request->grup == 'mahasiswa')
+                $user = User::with(['identitas', 'mahasiswa'])
+                    ->whereHas('mahasiswa', function ($q) use ($request) {
+                        $q->where('nim', $request->nim);
+                    })
+                    ->first();
+            else {
+                $user = User::with(['identitas', 'pegawai'])
+                    ->whereHas('pegawai', function ($q) use ($request) {
+                        $q->where('nip', $request->nip);
+                    })
+                    ->first();
+            }
 
+            // dd($user->id);
             if (!$user) {
                 // 1. Buat User
                 $user = User::create([
                     'name'     => $request->nama,
                     'email'    => $email,
-                    'password' => bcrypt('iainkendari'),
+                    'password' => bcrypt('12345678'),
                 ]);
 
                 // 2. Buat Identitas
@@ -257,6 +274,19 @@ class AuthController extends Controller
 
                     // 4. Pegawai
                 } elseif ($request->grup == 'pegawai') {
+
+                    try {
+                        Pegawai::create([
+                            'user_id'          => $user->id,
+                            'nip'              => $request->nip ?? null,
+                        ]);
+                    } catch (\Illuminate\Database\QueryException $e) {
+                        if ($e->getCode() == 23000) {
+                            throw new \Exception("NIP {$request->nip} sudah terdaftar. Silakan hubungi admin untuk membantu mereset akun email anda.");
+                        }
+                        throw $e;
+                    }
+
                     if ($request->sebagai == 'dosen')
                         foreach ([5] as $roleId) {
                             UserRole::create([
@@ -277,7 +307,7 @@ class AuthController extends Controller
             // DB::rollBack();
 
             // 5. Login setelah semua data aman
-            return $this->nextLogin($email);
+            return $this->nextLogin($user->id);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
