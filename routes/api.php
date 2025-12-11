@@ -300,6 +300,8 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::get('hapus-peserta-ujian/{beasiswa_id}', [PesertaUjianController::class, 'hapusPesertaUjian']);
 
         Route::get('generate-jadwal-ujian/{id}', [JadwalUjianController::class, 'generateJadwal']);
+        //simpan jadwal ujian
+        Route::post('simpan-peserta-ujian', [JadwalUjianController::class, 'simpanPesertaUjian']);
     });
 
     Route::middleware(['cek.akses:mahasiswa'])->group(function () {

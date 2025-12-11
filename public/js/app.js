@@ -343,13 +343,27 @@ async function execAsync(vapi_url, vmethod = "GET", vtoken = null, vbody = null)
                 options.body = JSON.stringify(vbody);
             }
         }
+
         const response = await fetch(vapi_url, options);
+
+        // tetap ambil JSON dari server, walau status bukan 200-299
+        const json = await response.json().catch(() => null);
+
+        // kalau server kirim status 400/500, response.ok = false
         if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+            console.warn('API Warning:', json || `HTTP error! Status ${response.status}`);
+            return json; // <-- tetap return JSON ke pemanggil
         }
-        return await response.json();
+
+        return json;
+
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Network/API Error:', error);
+        return {
+            status: false,
+            message: "Terjadi kesalahan pada jaringan atau server",
+            data: null
+        };
     }
 }
 

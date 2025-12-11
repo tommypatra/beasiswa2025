@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\SesiUjian;
 use App\Models\JadwalUjian;
+use App\Models\PesertaUjian;
 use App\Models\RuanganUjian;
 use Illuminate\Http\Request;
 use App\Models\PengaturanUjian;
@@ -19,7 +20,9 @@ class JadwalUjianController extends Controller
      */
     public function index(Request $request)
     {
-        $dataQuery = JadwalUjian::with(['beasiswa', 'sesiUjian', 'ruanganUjian.ruangan'])->orderBy('sesi', 'asc')->orderBy('id', 'asc');
+        $dataQuery = JadwalUjian::with(['beasiswa', 'sesiUjian', 'ruanganUjian.ruangan'])
+            ->withCount('pesertaUjian')
+            ->orderBy('sesi', 'asc')->orderBy('id', 'asc');
 
         if ($request->filled('beasiswa_id')) {
             $dataQuery->where('beasiswa_id', $request->beasiswa_id);
@@ -185,5 +188,101 @@ class JadwalUjianController extends Controller
             DB::rollBack();
             return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat membuat data baru: ' . $e->getMessage()], 500);
         }
+    }
+
+    public function tambahJadwalUjian($beasiswa_id, $pendaftar_id)
+    {
+        try {
+            // 1. Cek apakah peserta sudah punya jadwal ujian untuk beasiswa ini
+            $sudahAda = PesertaUjian::where('pendaftar_id', $pendaftar_id)
+                ->whereHas('jadwalUjian', function ($q) use ($beasiswa_id) {
+                    $q->where('beasiswa_id', $beasiswa_id);
+                })
+                ->exists();
+
+            if ($sudahAda) {
+                return [
+                    'status'  => false,
+                    'code'    => 400,
+                    'message' => 'Peserta ini sudah memiliki jadwal ujian untuk beasiswa tersebut',
+                    'data'    => null,
+                ];
+            }
+
+            DB::beginTransaction();
+
+            // 2. Ambil semua jadwal_ujian di beasiswa ini, urutkan berdasarkan id jadwal
+            $jadwals = JadwalUjian::with('ruanganUjian')
+                ->where('beasiswa_id', $beasiswa_id)
+                ->orderBy('id')
+                ->lockForUpdate()
+                ->get();
+
+            if ($jadwals->isEmpty()) {
+                DB::rollBack();
+                return [
+                    'status'  => false,
+                    'code'    => 400,
+                    'message' => 'Jadwal ujian belum digenerate pada seleksi ini',
+                    'data'    => null,
+                ];
+            }
+
+            // 3. Loop dari jadwal pertama, cari yang masih ada slot
+            foreach ($jadwals as $jadwal) {
+                $ruang = $jadwal->ruanganUjian;
+                if (! $ruang) {
+                    continue;
+                }
+                $kapasitas = (int) $ruang->jumlah_peserta;
+
+                // hitung berapa peserta yang sudah terdaftar di jadwal ini
+                $terisi = PesertaUjian::where('jadwal_ujian_id', $jadwal->id)->count();
+
+                if ($terisi < $kapasitas) {
+                    $pesertaUjian = PesertaUjian::create([
+                        'pendaftar_id'    => $pendaftar_id,
+                        'jadwal_ujian_id' => $jadwal->id,
+                    ]);
+
+                    DB::commit();
+
+                    return [
+                        'status'  => true,
+                        'code'    => 201,
+                        'message' => 'Peserta berhasil ditempatkan ke jadwal ujian.',
+                        'data'    => $pesertaUjian,
+                    ];
+                }
+            }
+
+            // 4. Kalau semua jadwal penuh
+            DB::rollBack();
+
+            return [
+                'status'  => false,
+                'message' => 'Semua jadwal ujian untuk beasiswa ini sudah penuh.',
+                'code'    => 400,
+                'data'    => null,
+            ];
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return [
+                'status'  => false,
+                'code'    => 500,
+                'message' => 'Gagal menambah peserta: ' . $e->getMessage(),
+                'data'    => null,
+            ];
+        }
+    }
+
+
+    public function simpanPesertaUjian(Request $request)
+    {
+        $data = $this->tambahJadwalUjian($request->beasiswa_id, $request->pendaftar_id);
+        $code = $data['code'];
+        unset($data['code']);
+        return response()->json($data, $code);
     }
 }

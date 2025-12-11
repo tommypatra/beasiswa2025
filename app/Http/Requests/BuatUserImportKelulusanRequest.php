@@ -45,10 +45,7 @@ class BuatUserImportKelulusanRequest extends FormRequest
                 'unique:mahasiswas,nim'
             ],
 
-            'no_hp' => [
-                'nullable',
-                'regex:/^08[0-9]{8,13}$/'
-            ],
+            'no_hp'   => 'nullable|string|max:30',
             'prodi'         => 'nullable|string|max:150',
             'tahun_masuk'   => 'nullable|string|max:5',
             'tanggal_lahir' => [

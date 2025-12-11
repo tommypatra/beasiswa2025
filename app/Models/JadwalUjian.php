@@ -22,4 +22,9 @@ class JadwalUjian extends Model
     {
         return $this->belongsTo(Beasiswa::class);
     }
+
+    public function pesertaUjian()
+    {
+        return $this->hasOne(PesertaUjian::class);
+    }
 }

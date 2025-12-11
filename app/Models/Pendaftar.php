@@ -62,4 +62,9 @@ class Pendaftar extends Model
     {
         return $this->hasOne(SurveiPeserta::class);
     }
+
+    public function pesertaUjian()
+    {
+        return $this->hasOne(PesertaUjian::class);
+    }
 }

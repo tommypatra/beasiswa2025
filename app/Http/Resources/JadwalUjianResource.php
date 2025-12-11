@@ -23,6 +23,7 @@ class JadwalUjianResource extends JsonResource
         return [
             'jadwal_ujian_id' => $this->id,
             'beasiswa_id' => $this->beasiswa_id,
+            'peserta_ujian_count' => $this->peserta_ujian_count,
             'ruangan_ujian_id' => $this->ruangan_ujian_id,
             'sesi' => $this->sesi,
             'tanggal' => $this->tanggal,

@@ -216,7 +216,7 @@
                             <td>Sesi ${dt.sesi}</td>
                             <td>${dt.jam_mulai} sd ${dt.jam_selesai}</td>
                             <td>${dt.ruangan}/ ${dt.gedung}</td>
-                            <td>0</td>
+                            <td>${dt.peserta_ujian_count}</td>
                             <td>
                                 <div class="dropdown">
                                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
@@ -245,6 +245,10 @@
             }
         });
 
+        $('#btn-generate-peserta-tab4').click(async function(){
+            await simpanPesertaUjian();
+        });
+
         $('#btn-hapus-jadwal-tab4').click(async function () {
             if (confirm('Apakah Anda yakin ingin menghapus semua jadwal?')) {
                 const konfirm = prompt('Ketik "hapus" untuk mengonfirmasi penghapusan:');
@@ -268,12 +272,32 @@
             }
         });
 
+        $('#btn-refresh').click(function(){
+            loadDataTab4();
+        });
+
         async function generateJadwal() {
             let url = `${base_url}/api/generate-jadwal-ujian/${beasiswa_id}`;
             const response = await execAsync(`${url}`, 'GET', token);
             if(response.status){
                 appShowNotification(true,['berhasil dilakukan!']);
                 loadDataTab4();
+            }
+        }
+
+        async function simpanPesertaUjian(){
+            const url = `${base_url}/api/simpan-peserta-ujian`;
+            const body = {
+                beasiswa_id: beasiswa_id,
+                pendaftar_id: 5
+            };   
+
+            const response = await execAsync(url, 'POST', token, body);
+            if (response && response.status) {
+                appShowNotification(true, ['berhasil dilakukan!']);
+                loadDataTab4();
+            }else{
+                appShowNotification(false, [response?.message || 'Gagal dilakukan']);
             }
         }
 
