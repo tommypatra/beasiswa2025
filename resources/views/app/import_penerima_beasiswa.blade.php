@@ -321,7 +321,7 @@
 
                 try {
                     // const response = await fetch(`${base_url}/api/cek-nim?sk_penerima_id=${sk_penerima_id}&nim=${nim}`);
-                    const response = await fetch(`${base_url}/api/cek-nim?nim=${nim}`);
+                    const response = await fetch(`${base_url}/api/cek-nim?nim=${nim}&sk_penerima_id=${sk_penerima_id}`);
                     const result = await response.json();
 
                     $(row).find("input.cek-baris").attr("data-user_id","");

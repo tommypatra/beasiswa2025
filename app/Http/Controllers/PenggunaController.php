@@ -193,14 +193,14 @@ class PenggunaController extends Controller
                 $data['tahun_masuk'] = null;
             }
             $data['sk_penerima_id'] = $sk_penerima_id;
-            $data['password'] = Hash::make($request->nim);
+            $data['password'] = Hash::make('1235678');
             if (!$request->email)
                 $data['email'] = $request->nim . '@iainkendari.ac.id';
 
             $akun = User::create($data);
             $data['user_id'] = $akun->id;
 
-            $userRole = UserRole::create(['user_id' => $akun->id, 'role_id' => 6]);
+            $userRole = UserRole::create(['user_id' => $akun->id, 'role_id' => 2]);
             $identitas = Identitas::create($data);
             $mahasiswa = Mahasiswa::create($data);
             $penerima = Penerima::create($data);
