@@ -24,10 +24,8 @@ class BuatUserImportKelulusanRequest extends FormRequest
         return [
             'email' => [
                 'nullable',
-                'email:rfc,dns',
                 'max:150'
             ],
-
             'fakultas'      => 'nullable|string|max:150',
             'idprodi'       => 'nullable|string|max:30',
             'program_studi_id'  => 'required|numeric',
