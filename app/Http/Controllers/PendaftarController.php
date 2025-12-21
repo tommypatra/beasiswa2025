@@ -206,6 +206,48 @@ class PendaftarController extends Controller
         return response()->json($dataRespon);
     }
 
+    public function cariDataPendaftar(Request $request)
+    {
+
+        $dataQuery = Pendaftar::with([
+            'mahasiswa.user.identitas',
+            'mahasiswa.programStudi.fakultas',
+            'pesertaUjian'
+        ])->orderBy('id', 'asc');
+
+        if ($request->filled('pendaftar_id')) {
+            $dataQuery->where('pendaftar_id', $request->pendaftar_id);
+        }
+
+        if ($request->filled('search')) {
+            $dataQuery->where(function ($query) use ($request) {
+                $query->where('bapak_nama', 'like', '%' . $request->search . '%')
+                    ->orWhere('ibu_nama', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $default_limit = env('DEFAULT_LIMIT', 30);
+        $limit = $request->filled('limit') ? $request->limit : $default_limit;
+
+        if ($limit == 0) {
+            $data = $dataQuery->get();
+            $data = PesertaUjianResource::collection($data);
+        } else {
+            $data = $dataQuery->paginate($limit);
+            $resourceCollection = $data->getCollection()->map(function ($item) {
+                return new PesertaUjianResource($item);
+            });
+            $data->setCollection($resourceCollection);
+        }
+
+        $dataRespon = [
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ];
+        return response()->json($dataRespon);
+    }
+
     public function index(Request $request)
     {
         $dataQuery = Beasiswa::with(['jenisBeasiswa', 'syarat'])

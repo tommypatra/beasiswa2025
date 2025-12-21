@@ -110,6 +110,8 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     Route::get('data-jenis-beasiswa', [JenisBeasiswaController::class, 'index']);
     Route::get('data-beasiswa', [BeasiswaController::class, 'index']);
     Route::get('cari-mahasiswa', [MahasiswaController::class, 'index']);
+    Route::get('cari-pendaftar', [PendaftarController::class, 'cariDataPendaftar']);
+    Route::get('cari-peserta', [PesertaUjianController::class, 'index']);
 
     Route::get('daftar-pendaftar-beasiswa/{id}', [PendaftarController::class, 'daftarPendaftar']);
     Route::get('get-data-pendaftar/{id}', [PendaftarController::class, 'getData']);
@@ -226,6 +228,8 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::post('proses-kelulusan', [KelulusanController::class, 'prosesKelulusan']);
         Route::delete('hapus-kelulusan/{beasiswa_id}', [KelulusanController::class, 'hapusKelulusan']);
 
+        Route::get('cari-peserta-verifikasi', [VerifikasiBerkasController::class, 'pesertaVerifikasi']);
+
 
         // untuk peserta wawancara
         Route::post('simpan-peserta-wawancara', [PesertaWawancaraController::class, 'store']);
@@ -297,6 +301,8 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         //generate jadwal ujian CAT
         Route::resource('jadwal-ujian', JadwalUjianController::class);
         Route::get('hapus-jadwal-ujian/{beasiswa_id}', [JadwalUjianController::class, 'hapusJadwalUjian']);
+
+        Route::resource('peserta-ujian', PesertaUjianController::class);
         Route::get('hapus-peserta-ujian/{beasiswa_id}', [PesertaUjianController::class, 'hapusPesertaUjian']);
 
         Route::get('generate-jadwal-ujian/{id}', [JadwalUjianController::class, 'generateJadwal']);

@@ -66,7 +66,7 @@ class VerifikasiBerkasController extends Controller
 
         $dataQuery = VerifikatorPendaftar::with([
             'verifikator',
-            'pendaftar.mahasiswa.programStudi',
+            'pendaftar.mahasiswa.programStudi.fakultas',
             'pendaftar.mahasiswa.user.identitas'
         ])
             ->whereHas('verifikator', function ($q) use ($request) {

@@ -110,6 +110,98 @@
 </div>
 <!-- AKHIR MODAL -->
 
+<!-- MULAI MODAL -->
+<div class="modal fade modal-xl" id="modal-daftar-peserta-tab4" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Form <span class="judul-modal"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body ">
+
+
+                <div class="accordion mb-2" id="accordionFormPenerima">               
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold fs-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapseForm" aria-expanded="false" aria-controls="collapseForm">
+                                Tambah Peserta Ujian
+                            </button>
+                        </h2>
+                        <div id="collapseForm" class="accordion-collapse collapse" data-bs-parent="#accordionFormPenerima">
+                            <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-lg-12 mb-3">
+                                            <input name="cari_peserta" id="cari_peserta" type="text" class="form-control" placeholder="cari nim nama mahasiswa ...">
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">
+                    <h5 class="card-title fw-semibold">Daftar</h5>
+                    <div class="d-flex gap-2">
+                        <input type="text" class="form-control" id="search-input-peserta-tab4" placeholder="Cari..." style="max-width: 200px;" >
+                        <button class="btn btn-secondary" id="btn-cari-peserta-tab4">
+                            <i class="ti ti-search"></i>
+                        </button>
+                        <button class="btn btn-success" id="btn-refresh-peserta-tab4" >
+                            <i class="ti ti-reload"></i>
+                        </button>
+
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <iconify-icon icon="solar:settings-linear" class="fs-5"></iconify-icon>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="#" id="btn-cetak-peserta-tab4">
+                                        <iconify-icon icon="solar:printer-linear" class="me-2 fs-4"></iconify-icon> Cetak Peserta
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th width="5%">No</th>
+                                <th width="35%">Nama/Nim</th>
+                                <th width="15%">Fakultas</th>
+                                <th width="15%">Program Studi</th>
+                                <th width="20%">Keterangan</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-list-peserta">
+                            <tr>
+                                <td colspan="6">data tidak ditemukan</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Pagination -->
+                <nav aria-label="Page navigation" class="nav-peserta">
+                    <ul class="pagination justify-content-center" id="pagination-peserta"></ul>
+                </nav>                            
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary " data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- AKHIR MODAL -->
+
 <!-- Pagination -->
 <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center" id="pagination-tab4"></ul>
@@ -119,6 +211,7 @@
 <script type="text/javascript">
     const endpoint_tab4 = base_url+'/api/jadwal-ujian'
     var page_tab4=1;
+    var jadwal_ujian_id;
 
     function loadDataTab4() {
         const search_tab4 = $('#search-input-tab4').val();
@@ -128,43 +221,6 @@
             renderDataTab4(response);
         },true);
     }
-
-    function renderDataTab4(response) {
-        const dataList = $('#data-list-tab4');
-        const pagination = $('#pagination-tab4');
-        const data=response.data.data;
-        let no = (response.data.current_page - 1) * response.data.per_page + 1;
-        dataList.empty();
-        pagination.empty();
-        if (data.length > 0) {
-            $.each(data, function(index, dt) {
-                const row = `<tr>
-                            <td>${no++}</td>
-                            <td>${dt.tanggal}</td>
-                            <td>Sesi ${dt.sesi}</td>
-                            <td>${dt.jam_mulai} sd ${dt.jam_selesai}</td>
-                            <td>${dt.ruangan}/ ${dt.gedung}</td>
-                            <td>0</td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item btn-ganti-tab4" data-id="${dt.jadwal_ujian_id}" href="javascript:;"><i class="far fa-edit"></i> Ganti</a></li>
-                                        <li><a class="dropdown-item btn-hapus-tab4" data-id="${dt.jadwal_ujian_id}" href="javascript:;"><i class="fas fa-trash-alt"></i> Hapus</a></li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>`;
-                dataList.append(row);
-            });
-            renderPagination(response.data, pagination);
-        }else{
-            const row = `<tr>
-                            <td colspan="7">data tidak ditemukan</td>
-                        </tr>`;
-            dataList.append(row);                
-        }
-    }    
 
     // source bisa  URL (otomatis fetch) atau langsung kirim object response
     async function optionSelect(element, source, valueKey, labelCallback) {
@@ -221,6 +277,7 @@
                                 <div class="dropdown">
                                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
                                     <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item btn-daftar-peserta-tab4" data-id="${dt.jadwal_ujian_id}" href="javascript:;"><i class="far fa-edit"></i> Daftar Peserta</a></li>
                                         <li><a class="dropdown-item btn-ganti-tab4" data-id="${dt.jadwal_ujian_id}" href="javascript:;"><i class="far fa-edit"></i> Ganti</a></li>
                                         <li><a class="dropdown-item btn-hapus-tab4" data-id="${dt.jadwal_ujian_id}" href="javascript:;"><i class="fas fa-trash-alt"></i> Hapus</a></li>
                                     </ul>
@@ -328,7 +385,15 @@
         $(document).on('click', '#pagination-tab4 .page-link', function() {
             page_tab4 = $(this).data('page');
             loadDataTab4();
-        });        
+        }); 
+                
+        $('#btn-cari-peserta-tab4').click(function(){
+            loadDaftarPeserta();
+        })
+
+        $('#btn-refresh-peserta-tab4').click(function(){
+            loadDaftarPeserta();
+        })
 
 
         //hapus data
@@ -338,6 +403,73 @@
                 appShowNotification(true,['berhasil dilakukan!']);
                 loadDataTab4();
             });
+        });
+        
+        async function loadDaftarPeserta() {
+            const search = $('#search-input-peserta-tab4').val();
+            const response = await asyncFunction(`${base_url}/api/peserta-ujian?jadwal_ujian_id=${jadwal_ujian_id}&search=${search}`);
+            renderDataPeserta(response);
+        }
+
+        function renderDataPeserta(response) {
+            const dataList = $('#data-list-peserta');
+            const pagination = $('#pagination-peserta');
+            const data=response.data.data;
+            let no = (response.data.current_page - 1) * response.data.per_page + 1;
+            dataList.empty();
+            pagination.empty();
+            if (data.length > 0) {
+                $.each(data, function(index, dt) {
+
+                    // const kirim_wa = getWhatsAppLink(dt.is_mobile_dev, dt.no_hp, `_Bismillah_, ${dt.name.toLowerCase()}`);
+
+                    const row = `<tr>
+                                <td>${no++}</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3 p-2">
+                                        <img src="${base_url}/${dt.foto}" style="width: 70px; height: auto; border-radius: 2px;">
+                                        <div>
+                                            <div class="fw-bold">${dt.name}/ ${dt.nim}</div>
+                                            <div>${dt.email}</div>
+                                            <div>${dt.no_hp}</div>
+                                            <div style="font-size:12px;font-style:italic;">Kota/Kab. ${dt.kabupaten}, Prov. ${dt.provinsi}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>${dt.fakultas}</td>
+                                <td>${dt.program_studi}</td>
+                                <td></td>
+                                <td>
+                                    <button class="btn btn-danger btn-hapus-penerima-tab4" data-id="${dt.peserta_ujian_id}" type="button"><iconify-icon icon="solar:trash-bin-2-outline"></iconify-icon></button>
+                                </td>
+                            </tr>`;
+                    dataList.append(row);
+                });
+                renderPagination(response.data, pagination);
+            }else{
+                const row = `<tr>
+                                <td colspan="7">data tidak ditemukan</td>
+                            </tr>`;
+                dataList.append(row);                
+            }
+        }    
+
+
+        $(document).on('click', '.btn-daftar-peserta-tab4', async function() {
+            jadwal_ujian_id = $(this).data('id');
+            const url = `${base_url}/api/peserta-ujian?jadwal_ujian_id=${jadwal_ujian_id}`;
+
+            $('#collapseForm').collapse('hide');
+            $('#cari_peserta').val('');
+            
+            const fModalForm = new bootstrap.Modal(document.getElementById('modal-daftar-peserta-tab4'), {
+                keyboard: false
+            });
+            fModalForm.show();
+
+
+            await loadDaftarPeserta(); 
+
         });
 
         $(document).on('click', '.btn-ganti-tab4', function() {
@@ -351,6 +483,17 @@
                 showModalForm();
             });
         });
+
+        $(document).on('click', '.btn-hapus-penerima-tab4', function() {
+            const id = $(this).data('id');
+            deleteData(`${base_url}/api/peserta-ujian`, id, function() {
+                appShowNotification(true,['berhasil dilakukan!']);
+                loadDaftarPeserta();
+                loadDataTab4();
+            });
+
+        });
+        
         
         function formReset(){
             $('#form-tab4').trigger('reset');
@@ -385,6 +528,72 @@
                 });
             }
         });
+
+        $("#cari_peserta").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: `${base_url}/api/cari-peserta-verifikasi?verifikasi=ms&beasiswa_id=${beasiswa_id}&limit=5`,
+                    dataType: "json",
+                    data: {
+                        search: request.term,
+                    },
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                    success: function(res) {
+                        response($.map(res.data.data, function(item) {
+                            return {
+                                label: item.user.name, // fallback
+                                value: item.user.name, // yang muncul di input setelah dipilih
+                                data: {
+                                    name: item.user.name,
+                                    nim: item.mahasiswa.nim,
+                                    prodi: item.program_studi.nama,
+                                    fakultas: item.fakultas.nama,
+                                    foto_url: `${base_url}/${item.foto}`,
+                                    user_id: item.user.id,
+                                    pendaftar_id: item.pendaftar.id,
+                                }
+                            };
+                        }));
+                        
+                    }
+                });
+            },
+            minLength: 3,
+            appendTo: "#modal-daftar-peserta-tab4",
+            select: function(event, ui) {
+                const mhs = ui.item.data;   
+                // console.log(mhs);
+
+                if (confirm(`Tambah mahasiswa atas nama ${mhs.name} NIM: ${mhs.nim} sebagai peserta ujian diruangan ini?`)) {
+                    const dataPost = {
+                        jadwal_ujian_id: jadwal_ujian_id,
+                        pendaftar_id: mhs.pendaftar_id,
+                    };
+                    saveData(base_url + '/api/peserta-ujian', 'POST', $.param(dataPost), function(response) {
+                        appShowNotification(true, ['berhasil dilakukan!']);
+                        loadDaftarPeserta();
+                        loadDataTab4();
+                    });
+                }
+            }
+        }).autocomplete("instance")._renderItem = function(ul, item) {
+            const m = item.data;
+            return $("<li>")
+                .append(`
+                    <div class="d-flex align-items-center gap-3 p-2">
+                        <img src="${m.foto_url}" style="width: 50px; height: auto; border-radius: 4px;">
+                        <div>
+                            <div class="fw-bold">${m.name}</div>
+                            <div class="text-muted">NIM: ${m.nim}</div>
+                            <div class="text-muted">${m.prodi}</div>
+                            <div class="text-muted">${m.fakultas}</div>
+                        </div>
+                    </div>
+                `)
+                .appendTo(ul);
+        };
 
 
     });

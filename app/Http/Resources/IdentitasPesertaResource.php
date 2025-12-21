@@ -14,6 +14,11 @@ class IdentitasPesertaResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $pendaftar = $this->pendaftar;
+        $mahasiswa = $pendaftar->mahasiswa;
+        $user = $mahasiswa->user;
+        $program_studi = $mahasiswa->programStudi;
+        $fakultas = $program_studi->fakultas;
         return [
             'id' => $this->id,
             'total_skor' => $this->total_skor,
@@ -21,28 +26,32 @@ class IdentitasPesertaResource extends JsonResource
             'catatan' => $this->catatan,
             'verifikator' => $this->verifikator,
             'pendaftar' => [
-                'id' => $this->pendaftar->id,
-                'no_pendaftaran' => $this->pendaftar->no_pendaftaran,
-                'is_batal' => $this->pendaftar->is_batal,
-                'is_finalisasi' => $this->pendaftar->is_finalisasi,
-                'url_id' => $this->pendaftar->url_id,
+                'id' => $pendaftar->id,
+                'no_pendaftaran' => $pendaftar->no_pendaftaran,
+                'is_batal' => $pendaftar->is_batal,
+                'is_finalisasi' => $pendaftar->is_finalisasi,
+                'url_id' => $pendaftar->url_id,
             ],
             'mahasiswa' => [
-                'id' => $this->pendaftar->mahasiswa->id,
-                'nim' => $this->pendaftar->mahasiswa->nim,
-                'tahun_masuk' => $this->pendaftar->mahasiswa->tahun_masuk,
+                'id' => $mahasiswa->id,
+                'nim' => $mahasiswa->nim,
+                'tahun_masuk' => $mahasiswa->tahun_masuk,
             ],
             'program_studi' => [
-                'id' => $this->pendaftar->mahasiswa->programStudi->id,
-                'nama' => $this->pendaftar->mahasiswa->programStudi->nama,
-                'singkatan' => $this->pendaftar->mahasiswa->programStudi->singkatan,
+                'id' => $program_studi->id,
+                'nama' => $program_studi->nama,
+                'singkatan' => $program_studi->singkatan,
+            ],
+            'fakultas' => [
+                'id' => $fakultas->id,
+                'nama' => $fakultas->nama,
             ],
             'user' => [
-                'id' => $this->pendaftar->mahasiswa->user->id,
-                'name' => $this->pendaftar->mahasiswa->user->name,
-                'email' => $this->pendaftar->mahasiswa->user->email,
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
             ],
-            'foto' => $this->pendaftar->mahasiswa->user->identitas->foto ?? null,
+            'foto' => $user->identitas->foto ?? null,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
