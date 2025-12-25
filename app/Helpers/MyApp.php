@@ -13,6 +13,7 @@ use App\Models\WilayahDesa;
 use Illuminate\Support\Str;
 use App\Models\AdminSeleksi;
 use App\Models\PesertaUjian;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -36,28 +37,29 @@ if (!function_exists('daftarAkses')) {
 }
 
 if (!function_exists('upload')) {
-    function upload($file, $folder)
+    function upload(?UploadedFile $file, string $folder): ?string
     {
         if (!$file) {
             return null;
         }
 
-        $ext = $file->getClientOriginalExtension();
-        $userId = auth()->check() ? auth()->id() : 'guest';
-        $namaFile = $userId . '_' . time() . '_' . uniqid() . '.' . $ext;
+        try {
+            $ext = $file->getClientOriginalExtension();
+            $userId = auth()->check() ? auth()->id() : 'guest';
 
-        $path_dokumen = $folder . '/' . date('Y');
-        if (!Storage::disk('public')->exists($path_dokumen)) {
-            Storage::disk('public')->makeDirectory($path_dokumen);
+            $namaFile = $userId . '_' . time() . '_' . uniqid() . '.' . $ext;
+            $path_dokumen = $folder . '/' . date('Y');
+
+            if (!Storage::disk('public')->exists($path_dokumen)) {
+                Storage::disk('public')->makeDirectory($path_dokumen);
+            }
+
+            $path = $file->storeAs($path_dokumen, $namaFile, 'public');
+
+            return $path && Storage::disk('public')->exists($path) ? 'storage/' . $path : null;
+        } catch (\Throwable $e) {
+            return null;
         }
-
-        $path = $file->storeAs($path_dokumen, $namaFile, 'public');
-
-        if (Storage::disk('public')->exists($path)) {
-            return 'storage/' . $path;
-        }
-
-        return null;
     }
 }
 

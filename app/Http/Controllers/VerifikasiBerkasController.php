@@ -70,10 +70,12 @@ class VerifikasiBerkasController extends Controller
             'pendaftar.mahasiswa.user.identitas'
         ])
             ->whereHas('verifikator', function ($q) use ($request) {
-                $q->where('user_id', auth()->user()->id)
+                $q->where('user_id', auth()->id())
                     ->where('beasiswa_id', $request->beasiswa_id);
+            })
+            ->whereHas('pendaftar', function ($q) use ($request) {
+                $q->where('beasiswa_id', $request->beasiswa_id);
             });
-
         // tambahkan kondisi pencarian sebelum paginate
         if ($request->filled('search')) {
             $search = $request->search;

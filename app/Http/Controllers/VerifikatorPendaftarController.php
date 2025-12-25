@@ -22,16 +22,15 @@ class VerifikatorPendaftarController extends Controller
      */
     public function index(Request $request, string $beasiswa_id)
     {
-        $dataQuery = Pendaftar::with(['verifikatorPendaftar', 'mahasiswa.user.identitas', 'mahasiswa.programStudi.fakultas'])->orderBy('beasiswa_id', 'asc')->orderBy('id', 'asc');
+        $dataQuery = Pendaftar::with(['verifikatorPendaftar', 'mahasiswa.user.identitas', 'mahasiswa.programStudi.fakultas'])
+            ->orderBy('beasiswa_id', 'asc')->orderBy('id', 'asc')
+            ->where('beasiswa_id', $beasiswa_id);
 
         if ($request->filled('verifikator')) {
             if ($request->verifikator)
                 $dataQuery->whereHas('verifikatorPendaftar');
             else
                 $dataQuery->whereDoesntHave('verifikatorPendaftar');
-        }
-        if ($request->filled('beasiswa_id')) {
-            $dataQuery->where('beasiswa_id', $request->beasiswa_id);
         }
 
         if ($request->filled('search')) {
@@ -211,6 +210,11 @@ class VerifikatorPendaftarController extends Controller
             $data_respon['verifikator'] = $data;
             $data_respon['pewawancara'] = null;
             if ($data->hasil == 1) {
+                // dd($beasiswa->beasiswa);
+                if ($beasiswa->beasiswa->ada_ujian_cbt == 1) {
+                    $data_respon['peserta_ujian_cbt'] = tambahJadwalUjian($beasiswa->beasiswa->id, $data->pendaftar_id);
+                }
+
                 if ($beasiswa->beasiswa->ada_wawancara == 1) {
                     $peserta_wawancara = PesertaWawancara::where('pendaftar_id', $data->pendaftar_id)->first();
 

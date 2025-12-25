@@ -305,7 +305,7 @@
 
         function dataLoad() {
             var search = $('#search-input').val();
-            var url = `${base_url}/api/daftar-pelaksana-beasiswa?page=${page}&search=${search}`;
+            var url = `${base_url}/api/daftar-pelaksana-beasiswa?page=${page}&akun_saya=1&&search=${search}`;
 
             fetchData(url, function(response) {
                 renderData(response);

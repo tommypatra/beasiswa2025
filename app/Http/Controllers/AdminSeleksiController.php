@@ -37,9 +37,11 @@ class AdminSeleksiController extends Controller
             });
         }
 
-        // if (!izinkanAkses('admin')) {
-        //     $dataQuery->where('user_id', auth()->user()->id);
-        // }
+        $akun_saya = $request->filled('akun_saya') ? $request->akun_saya : null;
+
+        if ($akun_saya) {
+            $dataQuery->where('user_id', auth()->user()->id);
+        }
 
         $default_limit = env('DEFAULT_LIMIT', 30);
         $limit = $request->filled('limit') ? $request->limit : $default_limit;
