@@ -143,4 +143,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Penerima::class);
     }
+
+    public function adminSeleksi()
+    {
+        return $this->hasOne(AdminSeleksi::class);
+    }
 }

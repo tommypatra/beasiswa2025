@@ -11,6 +11,7 @@ use App\Models\JadwalUjian;
 use App\Models\NilaiRaport;
 use App\Models\Pewawancara;
 use App\Models\Verifikator;
+use App\Models\ProgramStudi;
 use Illuminate\Http\Request;
 use App\Models\JenisBeasiswa;
 use App\Models\SoalWawancara;
@@ -42,13 +43,13 @@ use App\Http\Controllers\SurveyorController;
 use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\IdentitasController;
 use App\Http\Controllers\KelulusanController;
-use App\Http\Controllers\MahasiswaController;
 // use App\Http\Controllers\PekerjaanController;
+use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\PendaftarController;
 use App\Http\Controllers\SesiUjianController;
 use App\Http\Controllers\SumberAirController;
-use App\Http\Controllers\MonitoringController;
 // use App\Http\Controllers\PendapatanController;
+use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\PendidikanController;
 use App\Http\Controllers\SkPenerimaController;
 use App\Http\Controllers\JadwalUjianController;
@@ -60,6 +61,7 @@ use App\Http\Controllers\SurveiNilaiController;
 use App\Http\Controllers\VerifikatorController;
 use App\Http\Controllers\WilayahDesaController;
 use App\Http\Middleware\JwtAuthenticateRefresh;
+use App\Http\Controllers\AdminSeleksiController;
 use App\Http\Controllers\BukuRekeningController;
 use App\Http\Controllers\PesertaUjianController;
 use App\Http\Controllers\ProgramStudiController;
@@ -82,7 +84,6 @@ use App\Http\Controllers\DokumentasiSurveiController;
 use App\Http\Controllers\VerifikatorLaporanController;
 use App\Http\Controllers\VerifikatorPenerimaController;
 use App\Http\Controllers\VerifikatorPendaftarController;
-use App\Models\ProgramStudi;
 
 Route::post('auth-cek', [AuthController::class, 'index']);
 Route::post('cek-data-akun-sia', [AuthController::class, 'cekDataAkunSia']);
@@ -113,9 +114,11 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     Route::get('cari-pendaftar', [PendaftarController::class, 'cariDataPendaftar']);
     Route::get('cari-peserta', [PesertaUjianController::class, 'index']);
 
-    Route::get('daftar-pendaftar-beasiswa/{id}', [PendaftarController::class, 'daftarPendaftar']);
+    // Route::get('daftar-pendaftar-beasiswa/{id}', [PendaftarController::class, 'daftarPendaftar']);
+
+    Route::get('get-data-pengguna', [PenggunaController::class, 'index']);
+    Route::get('get-data-ruangan', [RuanganController::class, 'index']);
     Route::get('get-data-pendaftar/{id}', [PendaftarController::class, 'getData']);
-    Route::get('get-data-beasiswa/{id}', [BeasiswaController::class, 'show']);
     Route::get('get-data-mahasiswa/{id}', [MahasiswaController::class, 'show']);
     Route::get('get-data-orang-tua/{id}', [OrangTuaController::class, 'dataOrangTua']);
     Route::get('get-data-prodi', [ProgramStudiController::class, 'index']);
@@ -129,16 +132,6 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     Route::get('get-data-sk-beasiswa/{id}', [SkPenerimaController::class, 'skPenerimaMahasiswa']);
     Route::get('get-data-peserta-wawancara', [PesertaWawancaraController::class, 'index']);
     Route::get('get-data-dokumen-upload/{id}/', [UploadSyaratController::class, 'dataDokumenUpload']);
-
-    Route::get('get-rekap-kabupaten/{beasiswa_id}/', [PendaftarController::class, 'rekapKabupaten']);
-
-    // Route::get('data-pekerjaan', [PekerjaanController::class, 'index']);
-    // Route::get('data-pendapatan', [PendapatanController::class, 'index']);
-    // Route::get('data-sumber-biaya', [SumberBiayaController::class, 'index']);
-    // Route::get('data-pendidikan', [PendidikanController::class, 'index']);
-    // Route::get('data-sumber-air', [SumberAirController::class, 'index']);
-    // Route::get('data-sumber-listrik', [SumberListrikController::class, 'index']);
-    // Route::get('data-mck', [MckController::class, 'index']);
 
     Route::resource('identitas', IdentitasController::class);
 
@@ -174,7 +167,10 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     Route::get('pewawancara', [PesertaWawancaraController::class, 'pewawancara']);
     Route::get('peserta-verifikasi/{beasiswa_id}/{hasil}', [VerifikatorController::class, 'getPesertaVerifikasi']);
 
-    Route::middleware(['cek.akses:admin,pewawancara'])->group(function () {
+    Route::middleware([
+        'cek.akses:admin,pewawancara,pengelola',
+        'admin.seleksi'
+    ])->group(function () {
         Route::get('cetak-absen-wawancara/{beasiswa_id}', [PewawancaraController::class, 'cetakAbsenWawancara']);
         Route::get('cetak-wawancara/{beasiswa_id}', [PewawancaraController::class, 'cetakWawancara']);
     });
@@ -197,6 +193,17 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     });
 
     Route::middleware(['cek.akses:pengelola'])->group(function () {
+
+        // karena hanya batasi index, show, update 
+        Route::middleware(['admin.seleksi'])->group(function () {
+            Route::resource('seleksi-beasiswa', BeasiswaController::class)->only(['index', 'show', 'update'])
+                ->parameters([
+                    'seleksi-beasiswa' => 'beasiswa_id'
+                ]);
+        });
+
+        Route::get('daftar-pelaksana-beasiswa/{beasiswa_id?}', [AdminSeleksiController::class, 'index']);
+
         Route::resource('sk-penerima', SkPenerimaController::class);
         Route::resource('penerima', PenerimaController::class);
         Route::resource('verifikator-penerima', VerifikatorPenerimaController::class);
@@ -218,38 +225,79 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::get('sinkron-rekening/{sk_penerima_id}', [BukuRekeningController::class, 'sinkronRekening']);
     });
 
-    Route::middleware(['cek.akses:admin'])->group(function () {
-        Route::resource('ruangan', RuanganController::class);
-        Route::resource('pengaturan-ujian', PengaturanUjianController::class);
-        Route::resource('ruangan-ujian', RuanganUjianController::class);
-        Route::resource('sesi-ujian', SesiUjianController::class);
-        // Route::resource('pekerjaan', PekerjaanController::class);
-        Route::resource('kelulusan', KelulusanController::class);
-        Route::post('proses-kelulusan', [KelulusanController::class, 'prosesKelulusan']);
-        Route::delete('hapus-kelulusan/{beasiswa_id}', [KelulusanController::class, 'hapusKelulusan']);
+    Route::middleware([
+        'cek.akses:admin,pengelola',
+        'admin.seleksi'
+    ])->group(function () {
+        Route::get('get-data-beasiswa/{beasiswa_id}', [BeasiswaController::class, 'show']);
+        Route::get('get-rekap-kabupaten/{beasiswa_id}/', [PendaftarController::class, 'rekapKabupaten']);
+        Route::get('daftar-pendaftar-beasiswa/{beasiswa_id}', [PendaftarController::class, 'daftarPendaftar']);
+        Route::resource('beasiswa/{beasiswa_id}/syarat', SyaratController::class);
+        Route::resource('beasiswa/{beasiswa_id}/verifikator', VerifikatorController::class);
+        //untuk verifikator
+        Route::resource('beasiswa/{beasiswa_id}/verifikator-pendaftar', VerifikatorPendaftarController::class);
+        Route::resource('beasiswa/{beasiswa_id}/surveyor', SurveyorController::class);
+        Route::resource('beasiswa/{beasiswa_id}/surveyor-peserta', SurveiPesertaController::class);
 
-        Route::get('cari-peserta-verifikasi', [VerifikasiBerkasController::class, 'pesertaVerifikasi']);
+        //untuk surveyor
+        Route::get('batalkan-finalisasi-surveyor/{beasiswa_id}/{id}', [SurveyorController::class, 'batalkanFinalisasiSurveyor']);
 
+        //untuk pewawancara
+        Route::resource('beasiswa/{beasiswa_id}/pewawancara', PewawancaraController::class);
+        Route::get('daftar-pewawancara/{beasiswa_id}', [PewawancaraController::class, 'dataPewawancara']);
+        Route::get('peserta-ujian-wawancara/{beasiswa_id}', [PesertaWawancaraController::class, 'daftarPesertaWawancara']);
 
         // untuk peserta wawancara
-        Route::post('simpan-peserta-wawancara', [PesertaWawancaraController::class, 'store']);
-        Route::put('simpan-peserta-wawancara/{id}', [PesertaWawancaraController::class, 'update']);
-        Route::delete('hapus-peserta-wawancara/{id}', [PesertaWawancaraController::class, 'destroy']);
+        Route::post('beasiswa/{beasiswa_id}/simpan-peserta-wawancara', [PesertaWawancaraController::class, 'store']);
+        Route::put('beasiswa/{beasiswa_id}/simpan-peserta-wawancara/{id}', [PesertaWawancaraController::class, 'update']);
+        Route::delete('beasiswa/{beasiswa_id}/hapus-peserta-wawancara/{id}', [PesertaWawancaraController::class, 'destroy']);
 
-        Route::delete('syarat-hapus-contoh/{beasiswa_id}', [SyaratController::class, 'hapusContoh']);
+        Route::get('tandai-pendaftar/{beasiswa_id}/{id}', [PesertaWawancaraController::class, 'tandaiPendaftar']);
+        Route::get('tukar-peserta-wawancara/{beasiswa_id}/{id_asal}/{id_tujuan}', [PesertaWawancaraController::class, 'tukarPesertaWawancara']);
 
-        Route::get('generate-nilai-akhir-wawancara/{id}', [WawancaraNilaiController::class, 'generateNilaiAkhir']);
+        //soal wawancara
+        Route::resource('beasiswa/{beasiswa_id}/soal-wawancara', SoalWawancaraController::class);
+        Route::put('ganti-nomor-soal-wawancara/{beasiswa_id}/{id}', [SoalWawancaraController::class, 'gantiNomorSoalWawancara']);
 
+        //kelulusan
+        Route::resource('beasiswa/{beasiswa_id}/kelulusan', KelulusanController::class);
+        Route::post('proses-kelulusan/{beasiswa_id}', [KelulusanController::class, 'prosesKelulusan']);
+        Route::delete('hapus-kelulusan/{beasiswa_id}', [KelulusanController::class, 'hapusKelulusan']);
 
-        Route::get('batalkan-finalisasi/{id}', [PendaftarController::class, 'batalkanFinalisasi']);
+        //admin seleksi
+        Route::resource('beasiswa/{beasiswa_id}/admin-seleksi', AdminSeleksiController::class);
+
+        //CAT
+        Route::resource('beasiswa/{beasiswa_id}/pengaturan-ujian', PengaturanUjianController::class);
+        Route::resource('beasiswa/{beasiswa_id}/ruangan-ujian', RuanganUjianController::class);
+        Route::resource('beasiswa/{beasiswa_id}/sesi-ujian', SesiUjianController::class);
+
+        //generate jadwal ujian CAT
+        Route::resource('beasiswa/{beasiswa_id}/jadwal-ujian', JadwalUjianController::class);
+        Route::get('hapus-jadwal-ujian/{beasiswa_id}', [JadwalUjianController::class, 'hapusJadwalUjian']);
+
+        Route::resource('beasiswa/{beasiswa_id}/peserta-ujian', PesertaUjianController::class);
+        Route::get('hapus-peserta-ujian/{beasiswa_id}', [PesertaUjianController::class, 'hapusPesertaUjian']);
+
+        Route::get('generate-jadwal-ujian/{beasiswa_id}', [JadwalUjianController::class, 'generateJadwal']);
+        //simpan jadwal ujian
+        Route::post('simpan-peserta-ujian/{beasiswa_id}', [JadwalUjianController::class, 'simpanPesertaUjian']);
+        Route::get('cari-peserta-ujian/{beasiswa_id}', [JadwalUjianController::class, 'cariPesertaUjian']);
+
+        //cetak admin
+        Route::get('cetak-absen-ujian/{beasiswa_id}', [JadwalUjianController::class, 'cetakAbsenUjian']);
+
+        //fungsi global admin seleksi
+        Route::delete('syarat-hapus-contoh/{beasiswa_id}/{id}', [SyaratController::class, 'hapusContoh']);
+        Route::get('generate-nilai-akhir-wawancara/{beasiswa_id}', [WawancaraNilaiController::class, 'generateNilaiAkhir']);
+        Route::get('batalkan-finalisasi/{beasiswa_id}/{id}', [PendaftarController::class, 'batalkanFinalisasi']);
+    });
+
+    Route::middleware(['cek.akses:admin'])->group(function () {
+        Route::resource('ruangan', RuanganController::class);
+        Route::get('cari-peserta-verifikasi', [VerifikasiBerkasController::class, 'pesertaVerifikasi']);
 
         Route::resource('monitoring', MonitoringController::class);
-        // Route::resource('pendapatan', PendapatanController::class);
-        // Route::resource('pendidikan', PendidikanController::class);
-        // Route::resource('sumber-biaya', SumberBiayaController::class);
-        // Route::resource('sumber-air', SumberAirController::class);
-        // Route::resource('sumber-listrik', SumberListrikController::class);
-        // Route::resource('mck', MckController::class);
         Route::resource('referensi-pilihan', ReferensiPilihanController::class);
         Route::resource('predikat', PredikatController::class);
         Route::resource('kegiatan', KegiatanController::class);
@@ -261,53 +309,10 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::resource('pengguna', PenggunaController::class);
         Route::resource('jenis-beasiswa', JenisBeasiswaController::class);
         Route::resource('beasiswa', BeasiswaController::class);
-        Route::resource('syarat', SyaratController::class);
-        Route::resource('soal-wawancara', SoalWawancaraController::class);
-        Route::put('ganti-nomor-soal-wawancara/{id}', [SoalWawancaraController::class, 'gantiNomorSoalWawancara']);
 
-        //untuk verifikator
-        Route::get('verifikator/{beasiswa_id}', [VerifikatorController::class, 'index']);
-        Route::get('verifikator/show/{id}', [VerifikatorController::class, 'show']);
-        Route::post('verifikator', [VerifikatorController::class, 'store']);
-        Route::delete('verifikator/{id}', [VerifikatorController::class, 'destroy']);
-        Route::put('verifikator/{id}', [VerifikatorController::class, 'update']);
-        Route::resource('verifikator-pendaftar', VerifikatorPendaftarController::class);
-
-        //untuk surveyor
-        Route::get('surveyor/{beasiswa_id}', [SurveyorController::class, 'index']);
-        Route::get('surveyor/show/{id}', [SurveyorController::class, 'show']);
-        Route::post('surveyor', [SurveyorController::class, 'store']);
-        Route::delete('surveyor/{id}', [SurveyorController::class, 'destroy']);
-        Route::put('surveyor/{id}', [SurveyorController::class, 'update']);
-        Route::resource('surveyor-peserta', SurveiPesertaController::class);
-        Route::get('batalkan-finalisasi-surveyor/{id}', [SurveyorController::class, 'batalkanFinalisasiSurveyor']);
-
-        //untuk pewawancara
-        Route::get('daftar-pewawancara/{beasiswa_id}', [PewawancaraController::class, 'dataPewawancara']);
-        Route::get('pewawancara/{beasiswa_id}', [PewawancaraController::class, 'index']);
-        Route::get('pewawancara/show/{id}', [PewawancaraController::class, 'show']);
-        Route::post('pewawancara', [PewawancaraController::class, 'store']);
-        Route::delete('pewawancara/{id}', [PewawancaraController::class, 'destroy']);
-        Route::put('pewawancara/{id}', [PewawancaraController::class, 'update']);
-        Route::get('peserta-ujian-wawancara', [PesertaWawancaraController::class, 'daftarPesertaWawancara']);
-
-
-        Route::get('tandai-pendaftar/{id}', [PesertaWawancaraController::class, 'tandaiPendaftar']);
-        Route::get('tukar-peserta-wawancara/{id_asal}/{id_tujuan}', [PesertaWawancaraController::class, 'tukarPesertaWawancara']);
-
-        Route::resource('admin-peserta-wawancara', PesertaWawancaraController::class);
+        // siapa yg pakai admin-peserta-wawancara
+        // Route::resource('admin-peserta-wawancara', PesertaWawancaraController::class);
         Route::delete('hapus-contoh-format-laporan/{id}', [SubKegiatanController::class, 'hapusContohFormatLaporan']);
-
-        //generate jadwal ujian CAT
-        Route::resource('jadwal-ujian', JadwalUjianController::class);
-        Route::get('hapus-jadwal-ujian/{beasiswa_id}', [JadwalUjianController::class, 'hapusJadwalUjian']);
-
-        Route::resource('peserta-ujian', PesertaUjianController::class);
-        Route::get('hapus-peserta-ujian/{beasiswa_id}', [PesertaUjianController::class, 'hapusPesertaUjian']);
-
-        Route::get('generate-jadwal-ujian/{id}', [JadwalUjianController::class, 'generateJadwal']);
-        //simpan jadwal ujian
-        Route::post('simpan-peserta-ujian', [JadwalUjianController::class, 'simpanPesertaUjian']);
     });
 
     Route::middleware(['cek.akses:mahasiswa'])->group(function () {

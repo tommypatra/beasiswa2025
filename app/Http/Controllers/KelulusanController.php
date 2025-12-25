@@ -25,7 +25,7 @@ use App\Http\Requests\SimpanValidasiSyaratRequest;
 
 class KelulusanController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, string $beasiswa_id)
     {
         $dataQuery = Kelulusan::with([
             'pendaftar.surveiPeserta',
@@ -68,15 +68,12 @@ class KelulusanController extends Controller
             $dataQuery->orderBy('nilai_wawancara', 'desc');
         }
 
-        if ($request->filled('beasiswa_id')) {
-            $beasiswa_id = $request->beasiswa_id;
 
-            $dataQuery->where(function ($query) use ($beasiswa_id) {
-                $query->whereHas('pendaftar', function ($q) use ($beasiswa_id) {
-                    $q->where('beasiswa_id', $beasiswa_id);
-                });
+        $dataQuery->where(function ($query) use ($beasiswa_id) {
+            $query->whereHas('pendaftar', function ($q) use ($beasiswa_id) {
+                $q->where('beasiswa_id', $beasiswa_id);
             });
-        }
+        });
 
 
         if ($request->filled('search')) {
@@ -112,7 +109,7 @@ class KelulusanController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(KelulusanRequest $request)
+    public function store(KelulusanRequest $request, string $beasiswa_id)
     {
         try {
             DB::beginTransaction();
@@ -177,7 +174,7 @@ class KelulusanController extends Controller
         return response()->json($dataRespon);
     }
 
-    public function prosesKelulusan(Request $request)
+    public function prosesKelulusan(Request $request, string $beasiswa_id)
     {
         $request->validate([
             'beasiswa_id' => 'required|exists:beasiswas,id',
@@ -290,7 +287,7 @@ class KelulusanController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $beasiswa_id, string $id)
     {
         try {
             $dataQuery = Kelulusan::with(['pendaftar.mahasiswa.user.identitas', 'pendaftar.beasiswa'])->where('id', $id)->firstOrFail();
@@ -311,7 +308,7 @@ class KelulusanController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();
@@ -328,7 +325,7 @@ class KelulusanController extends Controller
         }
     }
 
-    public function hapusKelulusan($beasiswa_id)
+    public function hapusKelulusan(string $beasiswa_id)
     {
         try {
             DB::beginTransaction();
@@ -351,7 +348,7 @@ class KelulusanController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();

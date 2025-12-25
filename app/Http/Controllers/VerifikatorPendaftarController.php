@@ -20,7 +20,7 @@ class VerifikatorPendaftarController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request, string $beasiswa_id)
     {
         $dataQuery = Pendaftar::with(['verifikatorPendaftar', 'mahasiswa.user.identitas', 'mahasiswa.programStudi.fakultas'])->orderBy('beasiswa_id', 'asc')->orderBy('id', 'asc');
 
@@ -122,7 +122,7 @@ class VerifikatorPendaftarController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(VerifikatorPendaftarRequest $request)
+    public function store(VerifikatorPendaftarRequest $request, string $beasiswa_id)
     {
         try {
             DB::beginTransaction();
@@ -156,7 +156,7 @@ class VerifikatorPendaftarController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id, string $beasiswa_id)
     {
         try {
             $dataQuery = VerifikatorPendaftar::with(['beasiswa', 'user.identitas'])->where('id', $id)->firstOrFail();
@@ -242,7 +242,7 @@ class VerifikatorPendaftarController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(VerifikatorPendaftarRequest $request, string $id)
+    public function update(VerifikatorPendaftarRequest $request, string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();
@@ -260,7 +260,7 @@ class VerifikatorPendaftarController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();

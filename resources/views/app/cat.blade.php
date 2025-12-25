@@ -77,6 +77,11 @@
 <script type="text/javascript">
     const beasiswa_id = "{{ $beasiswa_id }}";
     const tgl_hari_ini = "{{ date('Y-m-d') }}";
+    const endpoint_tab1=`${base_url}/api/beasiswa/${beasiswa_id}/pengaturan-ujian`;
+    const endpoint_tab2=`${base_url}/api/beasiswa/${beasiswa_id}/ruangan-ujian`;
+    const endpoint_tab3=`${base_url}/api/beasiswa/${beasiswa_id}/sesi-ujian`;
+    const endpoint_tab4=`${base_url}/api/beasiswa/${beasiswa_id}/jadwal-ujian`;
+
 
     $(document).ready(function() {
         initPage();
@@ -99,7 +104,7 @@
 
 
         async function loadDataRuangan() {
-            let url = `${base_url}/api/ruangan?limit=0`;
+            let url = `${base_url}/api/get-data-ruangan?limit=0`;
             const response = await execAsync(`${url}`, 'GET', token);
             if (response.status && response.data) {
                 let $select = $('#ruangan_id');
@@ -125,10 +130,10 @@
                     break;
                 case "#tab-jadwal":
                     loadDataTab4();
-                    optionSelect('#sesi_ujian_id-tab4', `${base_url}/api/sesi-ujian?beasiswa_id=${beasiswa_id}&limit=0`, `id`, 
+                    optionSelect('#sesi_ujian_id-tab4', `${base_url}/api/beasiswa/${beasiswa_id}/sesi-ujian?limit=0`, `id`, 
                         (item) => `Sesi ${item.sesi} - ${item.jam_mulai} s.d ${item.jam_selesai}`
                     );
-                    optionSelect('#ruangan_ujian_id-tab4', `${base_url}/api/ruangan-ujian?beasiswa_id=${beasiswa_id}&limit=0`, `id`, 
+                    optionSelect('#ruangan_ujian_id-tab4', `${base_url}/api/beasiswa/${beasiswa_id}/ruangan-ujian?beasiswa_id=${beasiswa_id}&limit=0`, `id`, 
                         (item) => `${item.ruangan} / ${item.gedung}`
                     );
                     break;

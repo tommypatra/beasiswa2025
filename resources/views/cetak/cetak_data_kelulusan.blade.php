@@ -303,7 +303,7 @@
             const dataList = $('#data-list');
             dataList.empty();
             while (hasNext) {
-                let url = `${base_url}/api/kelulusan?beasiswa_id=${beasiswa_id}&filter[status_lulus]=${status_lulus}&limit=${g_limit}&page=${page}`;
+                let url = `${base_url}/api/beasiswa/${beasiswa_id}/kelulusan?filter[status_lulus]=${status_lulus}&limit=${g_limit}&page=${page}`;
                 try {
                     const response = await fetch(url, {
                         method: 'GET',

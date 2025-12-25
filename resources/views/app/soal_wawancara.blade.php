@@ -109,12 +109,12 @@
 
 <script type="text/javascript">
     const beasiswa_id = '{{ $beasiswa_id }}';
-    const endpoint = base_url+'/api/soal-wawancara';
+    const endpoint = `${base_url}/api/beasiswa/${beasiswa_id}/soal-wawancara`;
     var page = 1;
     $(document).ready(function() {
         initPage();
         dataLoad();
-        loadDataSelect('#beasiswa_id', `beasiswa?tahun={{ date("Y") }}`);
+        loadDataSelect('#beasiswa_id', `data-beasiswa?beasiswa_id=${beasiswa_id}`);
 
         async function initPage() {
             await loadDataBeasiswa();

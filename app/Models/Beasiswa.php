@@ -121,4 +121,9 @@ class Beasiswa extends Model
             $q->where('hasil', 1);
         });
     }
+
+    public function adminSeleksi()
+    {
+        return $this->hasOne(AdminSeleksi::class);
+    }
 }

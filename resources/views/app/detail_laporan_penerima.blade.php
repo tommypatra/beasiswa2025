@@ -149,7 +149,7 @@
             const dataList = $('#detail-laporan');
             const pagination = $('#pagination');
             const data=response.data;
-            let no = (response.current_page - 1) * response.per_page + 1;
+            let no = (data.current_page - 1) * data.per_page + 1;
             dataList.empty();
             pagination.empty();
 

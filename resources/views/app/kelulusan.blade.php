@@ -178,8 +178,8 @@
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
 
 <script type="text/javascript">
-    const endpoint = base_url+'/api/kelulusan';
     const beasiswa_id="{{ $beasiswa_id }}";
+    const endpoint = `${base_url}/api/beasiswa/${beasiswa_id}/kelulusan`;
     const today = new Date().setHours(0,0,0,0);
     var page = 1;
     var pewawancara;
@@ -328,7 +328,7 @@
             const sort5 = $('#sort5').val();
             const sort6 = $('#sort6').val();
 
-            var url = `${base_url}/api/kelulusan?page=${page}&beasiswa_id=${beasiswa_id}&search=${search}`;
+            var url = `${endpoint}?page=${page}&search=${search}`;
             
             // loop semua filter
             $(".filter-item").each(function () {
@@ -410,7 +410,7 @@
             for (let i = 0; i < pendaftarIds.length; i++) {
                 const pendaftarId = pendaftarIds[i];
                 try {
-                    const url = `${base_url}/api/proses-kelulusan`;
+                    const url = `${base_url}/api/proses-kelulusan/${beasiswa_id}`;
                     const dataPost = {
                         beasiswa: data_init.beasiswa,
                         beasiswa_id:beasiswa_id,

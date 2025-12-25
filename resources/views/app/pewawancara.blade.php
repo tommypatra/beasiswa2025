@@ -266,9 +266,9 @@ td, th {
 <script src="{{ asset('js/pagination.js') }}"></script>
 
 <script type="text/javascript">
-    const endpoint = base_url+'/api/pewawancara';
     const today = new Date().setHours(0,0,0,0);
-    var id = "{{ $beasiswa_id }}";
+    const id = "{{ $beasiswa_id }}";
+    const endpoint = `${base_url}/api/beasiswa/${id}/pewawancara`;
     var page = 1;
     var page_pembagian = 1;
     $(document).ready(function() {
@@ -318,7 +318,7 @@ td, th {
 
         async function getPesertaWawancara(){
             const pewawancara_id = $('#data-pewawancara').val();
-            const url = `${base_url}/api/peserta-ujian-wawancara?pewawancara_id=${pewawancara_id}&limit=0`;
+            const url = `${base_url}/api/peserta-ujian-wawancara/${id}?pewawancara_id=${pewawancara_id}&limit=0`;
             const response = await execAsync(url, 'GET', token);
             const peserta_wawancara_id_asal = $('#peserta_wawancara_id_asal').val();
             const peserta_nim_asal = $('#peserta_nim_asal').val();
@@ -517,7 +517,7 @@ td, th {
 
         async function dataLoad() {
             var search = $('#search-input').val();
-            var url = `${endpoint}/${id}?page=${page}&search=${search}&limit=${vLimit}`;
+            var url = `${endpoint}?page=${page}&search=${search}&limit=${vLimit}`;
 
             fetchData(url, function(response) {
                 renderData(response);
@@ -527,7 +527,7 @@ td, th {
         $("#nama").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: base_url+"/api/pengguna",
+                    url: base_url+"/api/get-data-pengguna",
                     type: "GET",
                     dataType: "json",
                     data: {
@@ -610,12 +610,12 @@ td, th {
         }); 
 
         $(document).on('click', '.tandai-peserta-wawancara', async function() {
-            const id = $(this).attr('data-pendaftar_id');
+            const tmp_id = $(this).attr('data-pendaftar_id');
             const nim = $(this).attr('data-nim');
             const nama = $(this).attr('data-nama');
 
             if(confirm('beri tanda pada mahasiswa atas nama '+nama+'?')){
-                const url = `${base_url}/api/tandai-pendaftar/${id}`;
+                const url = `${base_url}/api/tandai-pendaftar/${id}/${tmp_id}`;
                 const response = await execAsync(url, 'GET', token);
                 if(response.status){
                     appShowNotification(true,['berhasil dilakukan!']);
@@ -645,8 +645,8 @@ td, th {
         }); 
 
         $(document).on('click', '.hapus-peserta-wawancara', function() {
-            const id = $(this).data('id');
-            deleteData(`${base_url}/api/hapus-peserta-wawancara`, id, function() {
+            const tmp_id = $(this).data('id');
+            deleteData(`${base_url}/api/beasiswa/${id}/hapus-peserta-wawancara`, tmp_id, function() {
                 appShowNotification(true,['berhasil dilakukan!']);
                 dataLoad();
             });
@@ -735,7 +735,7 @@ td, th {
             const peserta_wawancara_id_asal = $('#peserta_wawancara_id_asal').val();
             const pendaftar_id_tujuan = $('.pendaftar_id_tujuan').val();
             if(peserta_wawancara_id_asal && peserta_wawancara_id_tujuan){
-                const url = `${base_url}/api/tukar-peserta-wawancara/${peserta_wawancara_id_asal}/${peserta_wawancara_id_tujuan}`;
+                const url = `${base_url}/api/tukar-peserta-wawancara/${id}/${peserta_wawancara_id_asal}/${peserta_wawancara_id_tujuan}`;
                 const response = await execAsync(url, 'GET', token);
                 if(response.status){
                     appShowNotification(true,['berhasil dilakukan!']);
@@ -752,7 +752,7 @@ td, th {
         $("#pembagian").validate({
             submitHandler: function(form) {
                 const type = 'POST'
-                const url = `${base_url}/api/simpan-peserta-wawancara`;
+                const url = `${base_url}/api/beasiswa/${id}/simpan-peserta-wawancara`;
 
                 saveData(url, type, $(form).serialize(), function(response) {
                     appShowNotification(true,['berhasil dilakukan!']);

@@ -19,13 +19,18 @@
                     </a>
                 </li>
                 <li>
+                    <a class="dropdown-item" href="#" id="btn-cetak-absen-tab4">
+                        <i class="ti ti-printer"></i> Cetak Absen Peserta
+                    </a>
+                </li>
+                <li>
                     <a href="javascript:;" class="dropdown-item" id="btn-generate-tab4">
                         <i class="ti ti-calendar"></i> Generate Jadwal
                     </a>
                 </li>
                 <li>
                     <a href="javascript:;" class="dropdown-item" id="btn-generate-peserta-tab4">
-                        <i class="ti ti-calendar"></i> Generate Peserta Ujian
+                        <i class="ti ti-user"></i> Generate Peserta Ujian
                     </a>
                 </li>
                 <li>
@@ -209,13 +214,13 @@
 
 @push('scriptJs')
 <script type="text/javascript">
-    const endpoint_tab4 = base_url+'/api/jadwal-ujian'
     var page_tab4=1;
     var jadwal_ujian_id;
+    var data_peserta_generate=null;
 
     function loadDataTab4() {
         const search_tab4 = $('#search-input-tab4').val();
-        const url = `${endpoint_tab4}?beasiswa_id=${beasiswa_id}&page=${page_tab4}&search=${search_tab4}`;
+        const url = `${endpoint_tab4}?page=${page_tab4}&search=${search_tab4}`;
 
         fetchData(url, function(response) {
             renderDataTab4(response);
@@ -303,7 +308,9 @@
         });
 
         $('#btn-generate-peserta-tab4').click(async function(){
-            await simpanPesertaUjian();
+            if(confirm('apakah anda yakin generate peserta sesuai jadwal tersedia?')){
+                await generatePesertaUjian();
+            }
         });
 
         $('#btn-hapus-jadwal-tab4').click(async function () {
@@ -342,27 +349,77 @@
             }
         }
 
-        async function simpanPesertaUjian(){
-            const url = `${base_url}/api/simpan-peserta-ujian`;
-            const body = {
-                beasiswa_id: beasiswa_id,
-                pendaftar_id: 5
-            };   
+        function setProgress(percent) {
+            $('.loading-percent').text(percent + '%');
+        }
 
-            const response = await execAsync(url, 'POST', token, body);
-            if (response && response.status) {
-                appShowNotification(true, ['berhasil dilakukan!']);
+        async function generatePesertaUjian() {
+            try {
+                $(".loading-progress").fadeIn(200);
+                isBatchProcess = true;
+                jumlah_error = 0;
+                jumlah_sukses = 0;
+                const res = await execAsync(
+                    `${base_url}/api/cari-peserta-ujian/${beasiswa_id}`,
+                    'GET',
+                    token
+                );
+
+                if (!res?.status || !res.data.length) {
+                    throw new Error(res?.message || 'Data kosong');
+                }
+
+                const total = res.data.length;
+                let done = 0;
+
+                setProgress(0);
+                for (const item of res.data) {
+                    const res_ujian = await execAsync(`${base_url}/api/simpan-peserta-ujian/${beasiswa_id}`,'POST',token,
+                                        {
+                                            beasiswa_id: item.beasiswa_id,
+                                            pendaftar_id: item.pendaftar_id
+                                        }
+                                    );
+                    if(res_ujian.status)
+                        jumlah_sukses++
+                    else
+                        jumlah_error++;
+                    done++;
+                    setProgress(Math.round((done / total) * 100));
+                }
+                setProgress(100);
                 loadDataTab4();
-            }else{
-                appShowNotification(false, [response?.message || 'Gagal dilakukan']);
+                let pesan=`Generate ${jumlah_sukses} peserta ujian selesai`;
+                let sukses = true;
+                if(jumlah_error>0){
+                    sukses = false;
+                    pesan=`Terdapat sejumlah ${jumlah_error} peserta yang tidak bisa di generate`;
+                }
+                appShowNotification(sukses, [pesan]);
+            } catch (err) {
+                console.error(err);
+                appShowNotification(false, [err.message || 'Terjadi kesalahan']);
+            } finally {
+                isBatchProcess = false;
+                $(".loading-progress").fadeOut(300);
+                $('.loading-percent').text('');
             }
         }
 
         async function hapusJadwal() {
             let url = `${base_url}/api/hapus-jadwal-ujian/${beasiswa_id}`;
             const response = await execAsync(`${url}`, 'GET', token);
-            appShowNotification(true,['berhasil dilakukan!']);
-            loadDataTab4();
+
+            if (!response) {
+                appShowNotification(true, ['Berhasil dilakukan!']);
+                loadDataTab4();
+                return;
+            }
+
+            if(!response.status){
+                appShowNotification(false,['terjadi kesalahan saat hapus jadwal']);
+                return;
+            }
         }
 
         async function hapusPeserta() {
@@ -371,7 +428,17 @@
             appShowNotification(true,['berhasil dilakukan!']);
             loadDataTab4();
         }
-        
+    
+        $('#btn-cetak-absen-tab4').click(function(){
+            const url = `${base_url}/cetak-absen-ujian/${beasiswa_id}`;
+            window.open(url, '_blank');
+        });
+
+        $('#btn-cetak-peserta-tab4').click(function(){
+            const url = `${base_url}/cetak-absen-ujian/${beasiswa_id}/${jadwal_ujian_id}`;
+            window.open(url, '_blank');
+        });
+
         $('#btn-tambah-tab4').click(function(){
             showModalForm();
         });
@@ -407,7 +474,7 @@
         
         async function loadDaftarPeserta() {
             const search = $('#search-input-peserta-tab4').val();
-            const response = await asyncFunction(`${base_url}/api/peserta-ujian?jadwal_ujian_id=${jadwal_ujian_id}&search=${search}`);
+            const response = await asyncFunction(`${base_url}/api/beasiswa/${beasiswa_id}/peserta-ujian?jadwal_ujian_id=${jadwal_ujian_id}&search=${search}`);
             renderDataPeserta(response);
         }
 
@@ -457,7 +524,7 @@
 
         $(document).on('click', '.btn-daftar-peserta-tab4', async function() {
             jadwal_ujian_id = $(this).data('id');
-            const url = `${base_url}/api/peserta-ujian?jadwal_ujian_id=${jadwal_ujian_id}`;
+            const url = `${base_url}/api/beasiswa/${beasiswa_id}/peserta-ujian?jadwal_ujian_id=${jadwal_ujian_id}`;
 
             $('#collapseForm').collapse('hide');
             $('#cari_peserta').val('');
@@ -486,7 +553,7 @@
 
         $(document).on('click', '.btn-hapus-penerima-tab4', function() {
             const id = $(this).data('id');
-            deleteData(`${base_url}/api/peserta-ujian`, id, function() {
+            deleteData(`${base_url}/api/beasiswa/${beasiswa_id}/peserta-ujian`, id, function() {
                 appShowNotification(true,['berhasil dilakukan!']);
                 loadDaftarPeserta();
                 loadDataTab4();
@@ -532,27 +599,28 @@
         $("#cari_peserta").autocomplete({
             source: function(request, response) {
                 $.ajax({
-                    url: `${base_url}/api/cari-peserta-verifikasi?verifikasi=ms&beasiswa_id=${beasiswa_id}&limit=5`,
+                    url: `${base_url}/api/cari-peserta-ujian/${beasiswa_id}`,
                     dataType: "json",
                     data: {
                         search: request.term,
+                        limit: 5,
                     },
                     headers: {
                         Authorization: `Bearer ${token}`
                     },
                     success: function(res) {
-                        response($.map(res.data.data, function(item) {
+                        response($.map(res.data, function(item) {
                             return {
-                                label: item.user.name, // fallback
-                                value: item.user.name, // yang muncul di input setelah dipilih
+                                label: item.name, // fallback
+                                value: item.name, // yang muncul di input setelah dipilih
                                 data: {
-                                    name: item.user.name,
-                                    nim: item.mahasiswa.nim,
-                                    prodi: item.program_studi.nama,
-                                    fakultas: item.fakultas.nama,
+                                    name: item.name,
+                                    nim: item.nim,
+                                    prodi: item.program_studi,
+                                    fakultas: item.fakultas,
                                     foto_url: `${base_url}/${item.foto}`,
-                                    user_id: item.user.id,
-                                    pendaftar_id: item.pendaftar.id,
+                                    user_id: item.user_id,
+                                    pendaftar_id: item.pendaftar_id,
                                 }
                             };
                         }));
@@ -571,7 +639,7 @@
                         jadwal_ujian_id: jadwal_ujian_id,
                         pendaftar_id: mhs.pendaftar_id,
                     };
-                    saveData(base_url + '/api/peserta-ujian', 'POST', $.param(dataPost), function(response) {
+                    saveData(`${base_url}/api/beasiswa/${beasiswa_id}/peserta-ujian`, 'POST', $.param(dataPost), function(response) {
                         appShowNotification(true, ['berhasil dilakukan!']);
                         loadDaftarPeserta();
                         loadDataTab4();

@@ -14,7 +14,7 @@ class PengaturanUjianController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request, string $beasiswa_id)
     {
         $dataQuery = PengaturanUjian::with(['beasiswa'])->orderBy('id', 'asc');
 
@@ -48,7 +48,7 @@ class PengaturanUjianController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(PengaturanUjianRequest $request)
+    public function store(PengaturanUjianRequest $request, string $beasiswa_id)
     {
         try {
             DB::beginTransaction();
@@ -64,7 +64,7 @@ class PengaturanUjianController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $beasiswa_id, string $id)
     {
         try {
             $dataQuery = PengaturanUjian::where('id', $id)->firstOrFail();
@@ -85,7 +85,7 @@ class PengaturanUjianController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(PengaturanUjianRequest $request, string $id)
+    public function update(PengaturanUjianRequest $request, string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();
@@ -102,7 +102,7 @@ class PengaturanUjianController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();

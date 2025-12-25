@@ -6,10 +6,13 @@ use App\Models\Beasiswa;
 use App\Models\UserRole;
 use App\Models\Mahasiswa;
 use App\Models\Pendaftar;
+use App\Models\JadwalUjian;
 use App\Models\Pewawancara;
 use App\Models\Verifikator;
 use App\Models\WilayahDesa;
 use Illuminate\Support\Str;
+use App\Models\AdminSeleksi;
+use App\Models\PesertaUjian;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -414,6 +417,19 @@ if (!function_exists('dekrip')) {
     }
 }
 
+if (!function_exists('adminSeleksi')) {
+    function adminSeleksi($beasiswa_id = null)
+    {
+        $user = auth()->user();
+        $isAdminSeleksi = AdminSeleksi::where([
+            'user_id' => $user->id,
+            'beasiswa_id' => $beasiswa_id
+        ])->exists();
+
+        return ($isAdminSeleksi) ? true : false;
+    }
+}
+
 if (!function_exists('izinkanAkses')) {
     function izinkanAkses($grup = "global")
     {
@@ -519,5 +535,87 @@ if (!function_exists('linkwa')) {
             }
         }
         return $retval;
+    }
+}
+
+if (!function_exists('tambahJadwalUjian')) {
+    function tambahJadwalUjian($beasiswa_id, $pendaftar_id)
+    {
+        DB::beginTransaction();
+
+        try {
+            // 1. Lock peserta agar tidak dobel assign
+            $sudahAda = PesertaUjian::where('pendaftar_id', $pendaftar_id)
+                ->whereHas(
+                    'jadwalUjian',
+                    fn($q) =>
+                    $q->where('beasiswa_id', $beasiswa_id)
+                )
+                ->lockForUpdate()
+                ->exists();
+            if ($sudahAda) {
+                DB::rollBack();
+                return [
+                    'status'  => false,
+                    'code'    => 400,
+                    'message' => 'Peserta ini sudah memiliki jadwal ujian untuk beasiswa tersebut',
+                    'data'    => null,
+                ];
+            }
+            // 2. Ambil jadwal + hitung peserta langsung
+            $jadwals = JadwalUjian::with([
+                'ruanganUjian:id,jumlah_peserta'
+            ])
+                ->withCount('pesertaUjian')
+                ->where('beasiswa_id', $beasiswa_id)
+                ->orderBy('id')
+                ->lockForUpdate()
+                ->get();
+
+            if ($jadwals->isEmpty()) {
+                DB::rollBack();
+                return [
+                    'status'  => false,
+                    'code'    => 400,
+                    'message' => 'Jadwal ujian belum digenerate pada seleksi ini',
+                    'data'    => null,
+                ];
+            }
+            // 3. Cari jadwal yang masih ada slot
+            foreach ($jadwals as $jadwal) {
+                $ruang = $jadwal->ruanganUjian;
+                if (! $ruang) {
+                    continue;
+                }
+                if ($jadwal->peserta_ujian_count < (int) $ruang->jumlah_peserta) {
+                    $pesertaUjian = PesertaUjian::create([
+                        'pendaftar_id'    => $pendaftar_id,
+                        'jadwal_ujian_id' => $jadwal->id,
+                    ]);
+                    DB::commit();
+                    return [
+                        'status'  => true,
+                        'code'    => 201,
+                        'message' => 'Peserta berhasil ditempatkan ke jadwal ujian.',
+                        'data'    => $pesertaUjian,
+                    ];
+                }
+            }
+            DB::rollBack();
+            return [
+                'status'  => false,
+                'code'    => 400,
+                'message' => 'Semua jadwal ujian untuk beasiswa ini sudah penuh.',
+                'data'    => null,
+            ];
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return [
+                'status'  => false,
+                'code'    => 500,
+                'message' => 'Gagal menambah peserta: ' . $e->getMessage(),
+                'data'    => null,
+            ];
+        }
     }
 }

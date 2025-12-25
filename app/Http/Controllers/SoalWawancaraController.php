@@ -15,7 +15,7 @@ class SoalWawancaraController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request, string $beasiswa_id)
     {
         $dataQuery = SoalWawancara::with(['beasiswa'])->orderBy('beasiswa_id', 'asc')->orderBy('nomor', 'asc');
 
@@ -46,7 +46,7 @@ class SoalWawancaraController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SoalWawancaraRequest $request)
+    public function store(SoalWawancaraRequest $request, string $beasiswa_id)
     {
         try {
             DB::beginTransaction();
@@ -64,7 +64,7 @@ class SoalWawancaraController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $beasiswa_id, string $id)
     {
         try {
             $dataQuery = SoalWawancara::with(['beasiswa'])->where('id', $id)->firstOrFail();
@@ -85,7 +85,7 @@ class SoalWawancaraController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SoalWawancaraRequest $request, string $id)
+    public function update(SoalWawancaraRequest $request, string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();
@@ -99,7 +99,7 @@ class SoalWawancaraController extends Controller
         }
     }
 
-    public function gantiNomorSoalWawancara(NomorSoalWawancaraRequest $request, string $id)
+    public function gantiNomorSoalWawancara(NomorSoalWawancaraRequest $request, string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();
@@ -116,7 +116,7 @@ class SoalWawancaraController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();

@@ -11,6 +11,7 @@
         ['color'=>'primary','label'=>'Pewawancara','icon'=>'solar:user-speak-rounded-outline','url'=>'pewawancara'],
         ['color'=>'primary','label'=>'Soal Wawancara','icon'=>'solar:notebook-minimalistic-outline','url'=>'soal-wawancara'],
         ['color'=>'primary','label'=>'Kelulusan','icon'=>'solar:notebook-linear','url'=>'kelulusan'],
+        ['color'=>'primary','label'=>'Admin Seleksi','icon'=>'solar:shield-user-outline','url'=>'admin-seleksi'],
       ];
       ?>
       <div class="card w-100">

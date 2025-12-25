@@ -186,7 +186,7 @@ td, th {
 
 <script type="text/javascript">
     const endpoint = base_url+'/api/surveyor';
-    var id = "{{ $beasiswa_id }}";
+    const id = "{{ $beasiswa_id }}";
     var page = 1;
     $(document).ready(function() {
         initPage();
@@ -352,13 +352,13 @@ td, th {
         $(document).on('click', '.btn-batalkan-finalisasi', async function() {
             let pendaftar_id = $(this).attr('data-pendaftar_id');
             let nama = $(this).attr('data-nama');
-            let url = `${base_url}/api/batalkan-finalisasi/${pendaftar_id}`;
+            let url = `${base_url}/api/batalkan-finalisasi/${id}/${pendaftar_id}`;
 
             if (confirm(`Yakin batalkan finalisasi atas nama ${nama} ?`)) {
                 // prompt untuk konfirmasi terakhir
                 let input = prompt(`Ketik "BATAL" untuk membatalkan finalisasi pendaftaran atas nama ${nama}:`);
 
-                if (input === 'BATAL') {
+                if (input.trim().toUpperCase() === 'BATAL') {
                     const response = await execAsync(url, 'GET', token);
                     dataLoad();
                 } else {

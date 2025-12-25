@@ -1,7 +1,7 @@
 @extends('template')
 
 @section('scriptHead')
-<title>Verfikator Dokumen Pendaftaran</title>
+<title>Admin Seleksi</title>
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
 <link href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" rel="stylesheet">
 <style>
@@ -60,7 +60,7 @@ td, th {
 
 @section('container')
 <div class="d-flex align-items-center mb-2">
-    <iconify-icon icon="solar:user-check-linear" class="fs-9"></iconify-icon> <h2 class="mb-0 ms-2">Verifikator</h2>
+    <iconify-icon icon="solar:shield-user-outline" class="fs-9"></iconify-icon> <h2 class="mb-0 ms-2">Admin Seleksi</h2>
 </div>
 <div id="label-beasiswa" class="mb-2"></div>
 
@@ -69,7 +69,7 @@ td, th {
         <div class="card">
             <div class="card-body">
                 <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">
-                    <h5 class="card-title fw-semibold">Verfikator Dokumen Pendaftaran</h5>
+                    <h5 class="card-title fw-semibold">Admin Seleksi</h5>
                     <div class="d-flex gap-2">
                         <input type="text" class="form-control" id="search-input" placeholder="Cari..." style="max-width: 200px;">
                         <button class="btn btn-secondary" id="btn-cari-data">
@@ -78,9 +78,9 @@ td, th {
                         <button class="btn btn-primary" id="btn-tambah">
                             <i class="ti ti-plus"></i>
                         </button>
-                        {{-- <button class="btn btn-secondary" id="btn-filter">
-                            <i class="ti ti-filter"></i>
-                        </button> --}}
+                        <button class="btn btn-success" id="btn-refresh">
+                            <i class="ti ti-reload"></i>
+                        </button>
                     </div>
                 </div>
                 
@@ -90,8 +90,7 @@ td, th {
                             <tr>
                                 <th width="5%"></th>
                                 <th width="5%">No</th>
-                                <th width="35%">Nama Verifikator</th>
-                                <th width="35%">Daftar Peserta (Nama/ Nim/ Program Studi)</th>
+                                <th width="85%">Nama Admin Seleksi</th>
                                 <th width="5%">Aksi</th>
                             </tr>
                         </thead>
@@ -127,7 +126,7 @@ td, th {
                 <div class="modal-body">
                     <div class="row">
 						<div class="col-sm-12 mb-3">
-                            <label class="form-label">Verifikator</label>
+                            <label class="form-label">Admin Seleksi</label>
                             <input name="nama" id="nama" type="text" class="form-control" required>
                         </div>
                     </div>
@@ -144,9 +143,9 @@ td, th {
 
 <!-- MULAI MODAL -->
 <div class="modal fade modal" id="modal-pembagian" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-xl">
         <form id="pembagian">
-            <input type="hidden" name="verifikator_id" id="verifikator_id" >
+            <input type="hidden" name="surveyor_id" id="surveyor_id" >
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modal-label">Pembagian Peserta</h5>
@@ -159,8 +158,8 @@ td, th {
                             <input id="jumlah" type="number" class="form-control" value="10">
                         </div>
                         <div class="col-sm-3 mb-3">
-                            <label class="form-label">Prodi</label>
-                            <select id="program_studi_id" class="form-control"></select>
+                            <label class="form-label">Filter Wilayah</label>
+                            <input id="filter_wilayah" type="text" class="form-control">
                         </div>
                         <div class="col-sm-4 mb-3">
                             <label class="form-label">Cari</label>
@@ -170,15 +169,26 @@ td, th {
                             <button type="button" class="btn btn-primary" id="btn-cari">Cari Data</button>
                         </div>
                     </div>
-                    <table>
-                        <thead>
-                        <tr>
-                            <td><input type="checkbox" id="pilihsemua" ></td>
-                            <td>Data Mahasiswa</td>
-                        </tr>
-                        </thead>
-                        <tbody id="daftar-peserta"></tbody>
-                    </table>                    
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                            <tr>
+                                <td><input type="checkbox" id="pilihsemua" ></td>
+                                <td width="40%">Data Mahasiswa</td>
+                                <td>Alamat/ HP</td>
+                                <td>Kelurahan/ Desa/ Kecamatan</td>
+                                <td>Kabupaten/ Provinsi</td>
+                            </tr>
+                            </thead>
+                            <tbody id="daftar-pembagian"></tbody>
+                        </table>  
+
+                        <!-- Pagination -->
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center" id="pagination-pembagian"></ul>
+                        </nav>
+
+                    </div>                  
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
@@ -204,14 +214,15 @@ td, th {
 
 <script type="text/javascript">
     const id = "{{ $beasiswa_id }}";
-    const endpoint = `${base_url}/api/beasiswa/${id}/verifikator`;
+    const endpoint = `${base_url}/api/beasiswa/${id}/admin-seleksi`;
     var page = 1;
+    var page_pembagian = 1;
     $(document).ready(function() {
         initPage();
         async function initPage() {
             await loadDataBeasiswa();
             await dataLoad();
-            await loadDataSelect('#program_studi_id', `data-program-studi`);
+            // await loadDataSelect('#program_studi_id', `data-program-studi`);
         }
 
         async function loadDataBeasiswa() {
@@ -229,39 +240,20 @@ td, th {
             let no = (response.data.current_page - 1) * response.data.per_page + 1;
             dataList.empty();
             pagination.empty();
-            if (data.length > 0) {
-                $.each(data, function(index, dt) {
-                    let peserta="";
-                    if(dt.verifikator_pendaftar.length>0){
-                        peserta=`<ul class="peserta-verifikasi">`;
-                        $.each(dt.verifikator_pendaftar, function(index, item) {
-                            let mahasiswa = item.pendaftar.mahasiswa;
-                            peserta += `<li>
-                                            <div class="nama">
-                                                ${mahasiswa.user.name}
-                                                <a href="javascript:;" class="hapus-verifikator-pendaftar" data-id="${item.id}">
-                                                    <iconify-icon icon="solar:trash-bin-minimalistic-outline" class=""></iconify-icon>
-                                                </a>
-                                            </div>
-                                            <div class="nim">${mahasiswa.nim}</div>
-                                        </li>`;
-                        });
-                        peserta+=`</ul>`;
 
-                    }
+            if (data.length > 0) {
+                $.each(data, function(index, dt) {                    
                     const row = `<tr>
                                     <td><input type="checkbox" name="cek_verifikator[]" value="${dt.id}"></td>
                                     <td>${no++}</td>
                                     <td>
-                                        ${dt.user.name}
-                                        <div style="font-size:italic;">${dt.user.email}</div>
+                                        ${dt.name}
+                                        <div style="font-size:italic;">${dt.email}</div>
                                     </td>
-                                    <td>${peserta}</td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
                                             <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item btn-tambah-peserta" data-jumlah_peserta="0" data-id="${dt.id}" href="javascript:;"><i class="far fa-edit"></i> Tambah Peserta</a></li>
                                                 <li><a class="dropdown-item btn-ganti" data-id="${dt.id}" href="javascript:;"><i class="far fa-edit"></i> Ganti</a></li>
                                                 <li><a class="dropdown-item btn-hapus" data-id="${dt.id}" href="javascript:;"><i class="fas fa-trash-alt"></i> Hapus</a></li>
                                             </ul>
@@ -273,7 +265,7 @@ td, th {
                 renderPagination(response.data, pagination);
             }else{
                 const row = `<tr>
-                                <td colspan="5">data tidak ditemukan</td>
+                                <td colspan="4">data tidak ditemukan</td>
                             </tr>`;
                 dataList.append(row);                
             }
@@ -282,47 +274,58 @@ td, th {
         async function loadDataPeserta() {
             const limit = $('#jumlah').val();
             const cari = $('#cari').val();
-            const program_studi_id = $('#program_studi_id').val();
-            var url = `${base_url}/api/beasiswa/${id}/verifikator-pendaftar?search=${cari}&prodi=${program_studi_id}&verifikator=0&limit=${limit}`;
-            try {
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`, 
-                        'Content-Type': 'application/json'
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const result = await response.json();
-                const daftar_peserta = $('#daftar-peserta');
-
-                daftar_peserta.empty();
-                if(result.data.data.length>0){
-                    $.each(result.data.data, function(index, dt) {
-                        const row = `<tr>
-                                        <td>
-                                            <input type="checkbox" class="pilih" name="pendaftar_id[]" value="${dt.id}">                                    
-                                        </td>
-                                        <td>
-                                            <div class="pendaftar-row">
-                                                <img class="foto" src="${base_url}/${dt.mahasiswa.user.identitas.foto}" alt="Foto Pendaftar">
-                                                <div class="pendaftar-info">
-                                                    <span class="nama">${dt.mahasiswa.user.name}</span>
-                                                    <span class="nim">${dt.mahasiswa.nim}</span>
-                                                    <span class="prodi">${dt.mahasiswa.program_studi.nama}</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>`;
-                        daftar_peserta.append(row);
-                    });                    
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
+            const filter_wilayah = $('#filter_wilayah').val();
+            const url = `${base_url}/api/surveyor-peserta?filter_wilayah=${filter_wilayah}&search=${cari}&verifikator=0&beasiswa_id=${id}&limit=${limit}`;
+            const response = await execAsync(`${url}`, 'GET', token);
+            renderPilihPeserta(response);
         }
+
+        function renderPilihPeserta(response) {
+            const dataList = $('#daftar-pembagian');
+            const pagination = $('#pagination-pembagian');
+            const data=response.data.data;
+            let no = (response.data.current_page - 1) * response.data.per_page + 1;
+            dataList.empty();
+            pagination.empty();
+            if (data.length > 0) {
+                $.each(data, function(index, dt) {
+                    const identitas=dt.mahasiswa.user.identitas;
+                    const row = `<tr>
+                                    <td>
+                                        <input type="checkbox" class="pilih" name="pendaftar_id[]" value="${dt.id}">                                    
+                                    </td>
+                                    <td>
+                                        <div class="pendaftar-row">
+                                            <img class="foto" src="${base_url}/${identitas.foto}" alt="Foto Pendaftar">
+                                            <div class="pendaftar-info">
+                                                <span class="nama">${dt.mahasiswa.user.name}</span>
+                                                <span class="nim">${dt.mahasiswa.nim}</span>
+                                                <span class="prodi">${dt.mahasiswa.program_studi.nama}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        ${identitas.alamat} No. HP ${identitas.no_hp}
+                                    </td>
+                                    <td>
+                                        ${identitas.desa} / 
+                                        ${identitas.kecamatan}
+                                    </td>
+                                    <td>
+                                        ${identitas.kabupaten} /
+                                        ${identitas.provinsi}
+                                    </td>
+                                </tr>`;
+                    dataList.append(row);
+                });
+                renderPagination(response.data, pagination);
+            }else{
+                const row = `<tr>
+                                <td colspan="3">data tidak ditemukan</td>
+                            </tr>`;
+                dataList.append(row);                
+            }
+        }    
 
         async function dataLoad() {
             var search = $('#search-input').val();
@@ -340,7 +343,7 @@ td, th {
                     type: "GET",
                     dataType: "json",
                     data: {
-                        role: "verifikator",
+                        role: "pengelola",
                         search: request.term
                     },
                     success: function (respon) {
@@ -360,37 +363,49 @@ td, th {
             select: function (event, ui) {
                 $(this).val(ui.item.value); 
                 $("#user_id").val(ui.item.user_id);
-                // alert(user_id)
                 return false;
             }
         });        
 
         // Handle page change
-        $(document).on('click', '.page-link', function() {
+        $(document).on('click', '#pagination .page-link', function() {
             page = $(this).data('page');
             dataLoad();
         });
 
-        $(document).on('click', '.hapus-verifikator-pendaftar', function() {
-            const tmp_id = $(this).data('id');
-            deleteData(`${base_url}/api/beasiswa/${id}/verifikator-pendaftar`, tmp_id, function() {
+
+        // Handle page change
+        $(document).on('click', '#pagination-pembagian .page-link', function() {
+            page_pembagian = $(this).data('page');
+            loadDataPeserta();
+        });
+
+        
+        $(document).on('click', '.batalkan-finalisasi-surveyor', async function() {
+            const id = $(this).data('id');
+            if(confirm('yakin batalkan finalisasi surveyor?')){
+                const url = `${base_url}/api/batalkan-finalisasi-surveyor/${id}`;
+                const response = await execAsync(`${url}`, 'GET', token);
+                if(response.status)
+                    appShowNotification(true,['berhasil dilakukan!']);
+            }
+        }); 
+
+        $(document).on('click', '.hapus-surveyor-peserta', function() {
+            const id = $(this).data('id');
+            deleteData(`${base_url}/api/surveyor-peserta`, id, function() {
                 appShowNotification(true,['berhasil dilakukan!']);
                 dataLoad();
             });
         }); 
 
-
-        $(document).on('click', '#btn-cari', function() {
+        $('#program_studi_id').change(function(){
             loadDataPeserta();
-        });
+        })
 
-        // $('#program_studi_id').change(function(){
-        //     loadDataPeserta();
-        // })
-
-        // $('#jumlah').blur(function(){
-        //     loadDataPeserta();
-        // })
+        $('#jumlah').blur(function(){
+            loadDataPeserta();
+        })
 
         // $('#cari').on('keyup', function() {
         //     let keyword = $(this).val().trim();
@@ -401,9 +416,19 @@ td, th {
         //     }
         // });
 
-        // Handle page change
-        $('#btn-cari-data').click(function() {
+
+        $(document).on('click', '#btn-cari-data', function() {
             page=1;
+            dataLoad();
+        });
+
+
+        $(document).on('click', '#btn-cari', function() {
+            loadDataPeserta();
+        });
+
+        // Handle page change
+        $('#btn-refresh').click(function() {
             dataLoad();
         });
 
@@ -455,7 +480,7 @@ td, th {
         $("#pembagian").validate({
             submitHandler: function(form) {
                 const type = 'POST'
-                const url = `${base_url}/api/beasiswa/${id}/verifikator-pendaftar`;
+                const url = `${base_url}/api/surveyor-peserta`;
                 saveData(url, type, $(form).serialize(), function(response) {
                     appShowNotification(true,['berhasil dilakukan!']);
                     loadDataPeserta();
@@ -466,7 +491,7 @@ td, th {
 
 
         $(document).on('click','.btn-tambah-peserta',function(){
-            $('#verifikator_id').val($(this).data('id'));
+            $('#surveyor_id').val($(this).data('id'));
             loadDataPeserta();
             showModal('modal-pembagian');
         })
@@ -479,7 +504,7 @@ td, th {
                 $('#id').val(response.data.id);                
                 $('#user_id').val(response.data.user_id);                
                 $('#beasiswa_id').val(response.data.beasiswa_id);                
-                $('#nama').val(response.data.user.name);                
+                $('#nama').val(response.data.name);                
                 showModal('modal-form');
             });
         });

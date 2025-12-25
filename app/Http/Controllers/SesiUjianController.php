@@ -14,9 +14,8 @@ class SesiUjianController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request, string $beasiswa_id)
     {
-        $beasiswa_id = $request->filled('beasiswa_id') ? $request->beasiswa_id : null;
 
         $dataQuery = SesiUjian::with(['beasiswa'])->orderBy('sesi', 'asc')
             ->where('beasiswa_id', $beasiswa_id);
@@ -46,7 +45,7 @@ class SesiUjianController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SesiUjianRequest $request)
+    public function store(SesiUjianRequest $request, string $beasiswa_id)
     {
         try {
             DB::beginTransaction();
@@ -62,7 +61,7 @@ class SesiUjianController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $beasiswa_id, string $id)
     {
         try {
             $dataQuery = SesiUjian::where('id', $id)->firstOrFail();
@@ -83,7 +82,7 @@ class SesiUjianController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SesiUjianRequest $request, string $id)
+    public function update(SesiUjianRequest $request, string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();
@@ -100,7 +99,7 @@ class SesiUjianController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();

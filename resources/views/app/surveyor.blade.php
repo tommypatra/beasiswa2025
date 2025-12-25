@@ -214,8 +214,8 @@ td, th {
 <script src="{{ asset('js/pagination.js') }}"></script>
 
 <script type="text/javascript">
-    const endpoint = base_url+'/api/surveyor';
-    var id = "{{ $beasiswa_id }}";
+    const id = "{{ $beasiswa_id }}";
+    const endpoint = `${base_url}/api/beasiswa/${id}/surveyor`;
     var page = 1;
     var page_pembagian = 1;
     $(document).ready(function() {
@@ -298,7 +298,7 @@ td, th {
             const limit = $('#jumlah').val();
             const cari = $('#cari').val();
             const filter_wilayah = $('#filter_wilayah').val();
-            const url = `${base_url}/api/surveyor-peserta?filter_wilayah=${filter_wilayah}&search=${cari}&verifikator=0&beasiswa_id=${id}&limit=${limit}`;
+            const url = `${base_url}/api/beasiswa/${id}/surveyor-peserta?filter_wilayah=${filter_wilayah}&search=${cari}&verifikator=0&limit=${limit}`;
             const response = await execAsync(`${url}`, 'GET', token);
             renderPilihPeserta(response);
         }
@@ -352,7 +352,7 @@ td, th {
 
         async function dataLoad() {
             var search = $('#search-input').val();
-            var url = `${endpoint}/${id}?page=${page}&search=${search}&limit=${vLimit}`;
+            var url = `${endpoint}?page=${page}&search=${search}&limit=${vLimit}`;
 
             fetchData(url, function(response) {
                 renderData(response);
@@ -362,7 +362,7 @@ td, th {
         $("#nama").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: base_url+"/api/pengguna",
+                    url: base_url+"/api/get-data-pengguna",
                     type: "GET",
                     dataType: "json",
                     data: {
@@ -405,9 +405,9 @@ td, th {
 
         
         $(document).on('click', '.batalkan-finalisasi-surveyor', async function() {
-            const id = $(this).data('id');
+            const tmp_id = $(this).data('id');
             if(confirm('yakin batalkan finalisasi surveyor?')){
-                const url = `${base_url}/api/batalkan-finalisasi-surveyor/${id}`;
+                const url = `${base_url}/api/batalkan-finalisasi-surveyor/${id}/${tmp_id}`;
                 const response = await execAsync(`${url}`, 'GET', token);
                 if(response.status)
                     appShowNotification(true,['berhasil dilakukan!']);
@@ -415,8 +415,8 @@ td, th {
         }); 
 
         $(document).on('click', '.hapus-surveyor-peserta', function() {
-            const id = $(this).data('id');
-            deleteData(`${base_url}/api/surveyor-peserta`, id, function() {
+            const tmp_id = $(this).data('id');
+            deleteData(`${base_url}/api/beasiswa/${id}/surveyor-peserta`, tmp_id, function() {
                 appShowNotification(true,['berhasil dilakukan!']);
                 dataLoad();
             });
@@ -503,7 +503,7 @@ td, th {
         $("#pembagian").validate({
             submitHandler: function(form) {
                 const type = 'POST'
-                const url = `${base_url}/api/surveyor-peserta`;
+                const url = `${base_url}/api/beasiswa/${id}/surveyor-peserta`;
                 saveData(url, type, $(form).serialize(), function(response) {
                     appShowNotification(true,['berhasil dilakukan!']);
                     loadDataPeserta();

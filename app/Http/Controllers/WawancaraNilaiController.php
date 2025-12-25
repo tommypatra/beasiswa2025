@@ -209,14 +209,14 @@ class WawancaraNilaiController extends Controller
         }
     }
 
-    public function generateNilaiAkhir($beasiswaId)
+    public function generateNilaiAkhir($beasiswa_id)
     {
         try {
             DB::beginTransaction();
 
             // Ambil semua peserta wawancara (sudah termasuk pewawancara_id)
-            $pesertaList = PesertaWawancara::whereHas('pendaftar', function ($q) use ($beasiswaId) {
-                $q->where('beasiswa_id', $beasiswaId);
+            $pesertaList = PesertaWawancara::whereHas('pendaftar', function ($q) use ($beasiswa_id) {
+                $q->where('beasiswa_id', $beasiswa_id);
             })->with('pendaftar')->get();
 
             foreach ($pesertaList as $peserta) {

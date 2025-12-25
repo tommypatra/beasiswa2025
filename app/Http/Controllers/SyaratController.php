@@ -15,7 +15,7 @@ class SyaratController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request, string $beasiswa_id)
     {
         $dataQuery = Syarat::with(['beasiswa'])
             ->orderBy('beasiswa_id', 'desc')
@@ -34,8 +34,8 @@ class SyaratController extends Controller
             });
         }
 
-        if ($request->filled('beasiswa_id')) {
-            $dataQuery->where('beasiswa_id', $request->beasiswa_id);
+        if ($beasiswa_id) {
+            $dataQuery->where('beasiswa_id', $beasiswa_id);
         }
 
         $default_limit = env('DEFAULT_LIMIT', 30);
@@ -57,7 +57,7 @@ class SyaratController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SyaratRequest $request)
+    public function store(SyaratRequest $request, string $beasiswa_id)
     {
         try {
             DB::beginTransaction();
@@ -77,10 +77,10 @@ class SyaratController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $beasiswa_id, string $id)
     {
         try {
-            $dataQuery = Syarat::where('id', $id)->firstOrFail();
+            $dataQuery = Syarat::where('id', $id)->where('beasiswa_id', $beasiswa_id)->firstOrFail();
             return response()->json([
                 'status' => true,
                 'message' => 'Data ditemukan',
@@ -98,7 +98,7 @@ class SyaratController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SyaratRequest $request, string $id)
+    public function update(SyaratRequest $request, string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();
@@ -121,7 +121,7 @@ class SyaratController extends Controller
         }
     }
 
-    public function hapusContoh(string $id)
+    public function hapusContoh(string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();
@@ -143,7 +143,7 @@ class SyaratController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();

@@ -19,7 +19,7 @@ class SurveiPesertaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request, string $beasiswa_id)
     {
         $dataQuery = Pendaftar::with([
             'surveiPeserta',
@@ -51,9 +51,7 @@ class SurveiPesertaController extends Controller
             else
                 $dataQuery->whereDoesntHave('surveiPeserta');
         }
-        if ($request->filled('beasiswa_id')) {
-            $dataQuery->where('beasiswa_id', $request->beasiswa_id);
-        }
+        $dataQuery->where('beasiswa_id', $beasiswa_id);
 
         if ($request->filled('search')) {
             $dataQuery->where(function ($query) use ($request) {
@@ -143,7 +141,7 @@ class SurveiPesertaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SurveiPesertaRequest $request)
+    public function store(SurveiPesertaRequest $request, string $beasiswa_id)
     {
         try {
             DB::beginTransaction();
@@ -177,7 +175,7 @@ class SurveiPesertaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $beasiswa_id, string $id)
     {
         try {
             $dataQuery = SurveiPeserta::with(['beasiswa', 'user.identitas'])->where('id', $id)->firstOrFail();
@@ -236,7 +234,7 @@ class SurveiPesertaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SurveiPesertaRequest $request, string $id)
+    public function update(SurveiPesertaRequest $request, string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();
@@ -254,7 +252,7 @@ class SurveiPesertaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pendaftar;
 use App\Models\SesiUjian;
 use App\Models\JadwalUjian;
 use App\Models\PesertaUjian;
@@ -12,21 +13,20 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\JadwalUjianRequest;
 use App\Http\Resources\JadwalUjianResource;
+use App\Http\Resources\CetakPesertaUjianResource;
+use App\Http\Resources\PesertaUjianBeasiswaResource;
 
 class JadwalUjianController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request, string $beasiswa_id)
     {
         $dataQuery = JadwalUjian::with(['beasiswa', 'sesiUjian', 'ruanganUjian.ruangan'])
             ->withCount('pesertaUjian')
-            ->orderBy('sesi', 'asc')->orderBy('id', 'asc');
-
-        if ($request->filled('beasiswa_id')) {
-            $dataQuery->where('beasiswa_id', $request->beasiswa_id);
-        }
+            ->orderBy('sesi', 'asc')->orderBy('id', 'asc')
+            ->where('beasiswa_id', $request->beasiswa_id);
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -38,7 +38,6 @@ class JadwalUjianController extends Controller
                 });
             });
         }
-
 
         $default_limit = env('DEFAULT_LIMIT', 30);
         $limit = $request->filled('limit') ? $request->limit : $default_limit;
@@ -62,7 +61,7 @@ class JadwalUjianController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(JadwalUjianRequest $request)
+    public function store(JadwalUjianRequest $request, string $beasiswa_id)
     {
         try {
             DB::beginTransaction();
@@ -78,7 +77,7 @@ class JadwalUjianController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $beasiswa_id, string $id)
     {
         try {
             $dataQuery = JadwalUjian::where('id', $id)->firstOrFail();
@@ -99,7 +98,7 @@ class JadwalUjianController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(JadwalUjianRequest $request, string $id)
+    public function update(JadwalUjianRequest $request, string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();
@@ -118,7 +117,7 @@ class JadwalUjianController extends Controller
      */
 
 
-    public function destroy(string $id)
+    public function destroy(string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();
@@ -133,11 +132,11 @@ class JadwalUjianController extends Controller
         }
     }
 
-    public function hapusJadwalUjian(string $id)
+    public function hapusJadwalUjian(string $beasiswa_id)
     {
         try {
             DB::beginTransaction();
-            JadwalUjian::where('beasiswa_id', $id)->delete();
+            JadwalUjian::where('beasiswa_id', $beasiswa_id)->delete();
             DB::commit();
             return response()->json(null, 204);
             // return response()->json(['status' => true, 'message' => 'hapus data berhasil dilakukan'], 200);
@@ -147,7 +146,7 @@ class JadwalUjianController extends Controller
         }
     }
 
-    public function generateJadwal($beasiswa_id)
+    public function generateJadwal(string $beasiswa_id)
     {
         try {
             DB::beginTransaction();
@@ -190,99 +189,101 @@ class JadwalUjianController extends Controller
         }
     }
 
-    public function tambahJadwalUjian($beasiswa_id, $pendaftar_id)
+    public function cariPesertaUjian(Request $request, string $beasiswa_id)
     {
-        try {
-            // 1. Cek apakah peserta sudah punya jadwal ujian untuk beasiswa ini
-            $sudahAda = PesertaUjian::where('pendaftar_id', $pendaftar_id)
-                ->whereHas('jadwalUjian', function ($q) use ($beasiswa_id) {
-                    $q->where('beasiswa_id', $beasiswa_id);
-                })
-                ->exists();
+        $data = Pendaftar::query()
+            ->with([
+                'pesertaUjian',
+                'verifikatorPendaftar',
+                'mahasiswa.user.identitas',
+                'mahasiswa.programStudi.fakultas'
+            ])
+            ->where('beasiswa_id', $beasiswa_id)
+            ->whereDoesntHave('pesertaUjian') // belum jadi peserta ujian
+            ->whereHas(
+                'verifikatorPendaftar',
+                fn($q) =>
+                $q->where('hasil', 1) // hanya yang lulus
+            )
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $search = $request->search;
+                $q->whereHas(
+                    'mahasiswa.user',
+                    fn($u) =>
+                    $u->where('name', 'like', "%{$search}%")
+                );
+            })
+            ->orderBy('no_pendaftaran', 'asc')
+            ->get();
 
-            if ($sudahAda) {
-                return [
-                    'status'  => false,
-                    'code'    => 400,
-                    'message' => 'Peserta ini sudah memiliki jadwal ujian untuk beasiswa tersebut',
-                    'data'    => null,
-                ];
-            }
+        $message = $data->isEmpty()
+            ? 'Tidak ada peserta yang memenuhi kriteria'
+            : 'Pengambilan data berhasil';
 
-            DB::beginTransaction();
-
-            // 2. Ambil semua jadwal_ujian di beasiswa ini, urutkan berdasarkan id jadwal
-            $jadwals = JadwalUjian::with('ruanganUjian')
-                ->where('beasiswa_id', $beasiswa_id)
-                ->orderBy('id')
-                ->lockForUpdate()
-                ->get();
-
-            if ($jadwals->isEmpty()) {
-                DB::rollBack();
-                return [
-                    'status'  => false,
-                    'code'    => 400,
-                    'message' => 'Jadwal ujian belum digenerate pada seleksi ini',
-                    'data'    => null,
-                ];
-            }
-
-            // 3. Loop dari jadwal pertama, cari yang masih ada slot
-            foreach ($jadwals as $jadwal) {
-                $ruang = $jadwal->ruanganUjian;
-                if (! $ruang) {
-                    continue;
-                }
-                $kapasitas = (int) $ruang->jumlah_peserta;
-
-                // hitung berapa peserta yang sudah terdaftar di jadwal ini
-                $terisi = PesertaUjian::where('jadwal_ujian_id', $jadwal->id)->count();
-
-                if ($terisi < $kapasitas) {
-                    $pesertaUjian = PesertaUjian::create([
-                        'pendaftar_id'    => $pendaftar_id,
-                        'jadwal_ujian_id' => $jadwal->id,
-                    ]);
-
-                    DB::commit();
-
-                    return [
-                        'status'  => true,
-                        'code'    => 201,
-                        'message' => 'Peserta berhasil ditempatkan ke jadwal ujian.',
-                        'data'    => $pesertaUjian,
-                    ];
-                }
-            }
-
-            // 4. Kalau semua jadwal penuh
-            DB::rollBack();
-
-            return [
-                'status'  => false,
-                'message' => 'Semua jadwal ujian untuk beasiswa ini sudah penuh.',
-                'code'    => 400,
-                'data'    => null,
-            ];
-        } catch (\Throwable $e) {
-            DB::rollBack();
-
-            return [
-                'status'  => false,
-                'code'    => 500,
-                'message' => 'Gagal menambah peserta: ' . $e->getMessage(),
-                'data'    => null,
-            ];
-        }
+        return response()->json([
+            'status'  => true,
+            'message' => $message,
+            'data'    => PesertaUjianBeasiswaResource::collection($data),
+        ]);
     }
 
-
-    public function simpanPesertaUjian(Request $request)
+    public function simpanPesertaUjian(Request $request, string $beasiswa_id)
     {
-        $data = $this->tambahJadwalUjian($request->beasiswa_id, $request->pendaftar_id);
+        $data = tambahJadwalUjian($beasiswa_id, $request->pendaftar_id);
         $code = $data['code'];
         unset($data['code']);
         return response()->json($data, $code);
+    }
+
+    public function cetakAbsenUjian(Request $request, string $beasiswa_id)
+    {
+
+        $dataQuery = PesertaUjian::with(['pendaftar.beasiswa', 'jadwalUjian.ruanganUjian.ruangan', 'jadwalUjian.sesiUjian', 'pendaftar.mahasiswa.user.identitas', 'pendaftar.mahasiswa.programStudi.fakultas'])
+            ->whereHas('pendaftar', function ($q) use ($request) {
+                $q->where('beasiswa_id', $request->beasiswa_id);
+            })
+            ->where(function ($query) use ($request) {
+                $query->WhereHas('pendaftar.beasiswa', function ($q) use ($request) {
+                    $q->where('is_aktif', 1);
+                });
+            });
+
+        // if (izinkanAkses('admin')) {
+        //     if ($request->filled('pewawancara_id')) {
+        //         $dataQuery->where('pewawancara_id', $request->pewawancara_id);
+        //     }
+        // } else {
+        //     $dataQuery->where(function ($query) {
+        //         $query->whereHas('pewawancara', function ($q) {
+        //             $q->where('user_id', auth()->id());
+        //         });
+        //     })->where('pewawancara_id', $request->pewawancara_id);
+        // }
+        if ($request->filled('jadwal_ujian_id')) {
+            $dataQuery->where('jadwal_ujian_id', $request->jadwal_ujian_id);
+        }
+
+        if ($request->sort == 1) {
+            $dataQuery->orderBy('jadwal_ujian_id', 'asc')
+                ->orderBy('id', 'asc');
+        } else {
+            $dataQuery->orderBy('jadwal_ujian_id', 'asc')
+                ->orderBy('id', 'asc');
+        }
+        $default_limit = env('DEFAULT_LIMIT', 30);
+        $limit = $request->filled('limit') ? $request->limit : $default_limit;
+        $data = $dataQuery->paginate($limit);
+
+        $resourceCollection = $data->getCollection()->map(function ($item) {
+            return new CetakPesertaUjianResource($item);
+        });
+        $data->setCollection($resourceCollection);
+
+        $dataRespon = [
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ];
+        return response()->json($dataRespon);
     }
 }

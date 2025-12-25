@@ -391,7 +391,7 @@ class PendaftarController extends Controller
     }
 
 
-    public function batalkanFinalisasi(string $id)
+    public function batalkanFinalisasi(string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();

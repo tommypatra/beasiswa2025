@@ -36,7 +36,7 @@ class PesertaWawancaraController extends Controller
     }
 
 
-    public function daftarPesertaWawancara(Request $request)
+    public function daftarPesertaWawancara(Request $request, string $beasiswa_id)
     {
         $dataQuery = PesertaWawancara::with([
             'pewawancara.user',
@@ -222,8 +222,8 @@ class PesertaWawancaraController extends Controller
             elseif ($request->pewawancara == 0)
                 $dataQuery->whereDoesntHave('PesertaWawancara');
         }
-
-        $dataQuery->where('beasiswa_id', $request->beasiswa_id);
+        $beasiswa_id = $request->beasiswa_id;
+        $dataQuery->where('beasiswa_id', $beasiswa_id);
 
         if ($request->filled('search'))
             $dataQuery->where(function ($query) use ($request) {
@@ -240,7 +240,10 @@ class PesertaWawancaraController extends Controller
         //     });
 
 
-        if ($request->filled('is_admin') && izinkanAkses('admin')) {
+        if (
+            $request->filled('is_admin') &&
+            (izinkanAkses('admin') || adminSeleksi($beasiswa_id))
+        ) {
             //
         } else {
             $dataQuery->where(function ($query) {
@@ -283,7 +286,7 @@ class PesertaWawancaraController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(PesertaWawancaraRequest $request)
+    public function store(PesertaWawancaraRequest $request, string $beasiswa_id)
     {
         try {
             DB::beginTransaction();
@@ -338,7 +341,7 @@ class PesertaWawancaraController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();
@@ -355,7 +358,7 @@ class PesertaWawancaraController extends Controller
         }
     }
 
-    public function tandaiPendaftar($id)
+    public function tandaiPendaftar(string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();
@@ -379,7 +382,7 @@ class PesertaWawancaraController extends Controller
         }
     }
 
-    public function tukarPesertaWawancara(string $peserta_wawancara_id_asal, string $peserta_wawancara_id_tujuan)
+    public function tukarPesertaWawancara(string $beasiswa_id, string $peserta_wawancara_id_asal, string $peserta_wawancara_id_tujuan)
     {
         try {
             DB::beginTransaction();
@@ -439,7 +442,7 @@ class PesertaWawancaraController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();

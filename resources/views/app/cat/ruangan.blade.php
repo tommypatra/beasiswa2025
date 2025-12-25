@@ -49,7 +49,8 @@
 
     function loadDataTab2(){
         // const search_tab2 = $('#search-input-tab2').val();
-        const url = `${base_url}/api/ruangan-ujian?beasiswa_id=${beasiswa_id}&page=${page_tab2}`;
+        // const url = `${endpoint_tab2}?page=${page_tab2}&search=${search_tab2}`;
+        const url = `${endpoint_tab2}?page=${page_tab2}`;
 
         fetchData(url, function(response) {
             renderDataTab2(response);
@@ -94,9 +95,6 @@
     }    
 
     $(document).ready(function() {
-        const endpoint=`${base_url}/api/ruangan-ujian`;
-
-
         // tambahkan event change
         $('#ruangan_id').on("change", function () {
             let kapasitas = $(this).find(":selected").data("kapasitas");
@@ -127,7 +125,7 @@
             submitHandler: function(form) {
                 const id = $('#ruangan_ujian_id').val();
                 const type = (id === '') ? 'POST' : 'PUT';
-                const url = (id === '') ? endpoint : endpoint + '/' + id;
+                const url = (id === '') ? endpoint_tab2 : endpoint_tab2 + '/' + id;
                 const dataForm = $(form).serialize() + '&beasiswa_id=' + beasiswa_id;
 
                 saveData(url, type, dataForm, function(response) {
@@ -161,7 +159,7 @@
         //ganti data
         $(document).on('click', '.btn-ganti-tab2', function() {
             const id = $(this).data('id');
-            showDataById(endpoint, id, function(response) {
+            showDataById(endpoint_tab2, id, function(response) {
                 $('#form-ruangan #ruangan_ujian_id').val(response.data.id);
                 $('#ruangan_id').val(response.data.ruangan_id);
                 $('#urut').val(response.data.urut);
@@ -172,7 +170,7 @@
         //hapus data
         $(document).on('click', '.btn-hapus-tab2', function() {
             const id = $(this).data('id');
-            deleteData(endpoint, id, function() {
+            deleteData(endpoint_tab2, id, function() {
                 appShowNotification(true,['berhasil dilakukan!']);
                 loadDataTab2();
             });

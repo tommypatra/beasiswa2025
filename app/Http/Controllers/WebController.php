@@ -49,6 +49,12 @@ class WebController extends Controller
         return view('cetak.cetak_absen_wawancara', ['beasiswa_id' => $id, 'pewawancara_id' => $pewawancara_id]);
     }
 
+    public function cetakAbsenUjian($id, $jadwal_ujian_id = null)
+    {
+        return view('cetak.cetak_absen_ujian', ['beasiswa_id' => $id, 'jadwal_ujian_id' => $jadwal_ujian_id]);
+    }
+
+
     public function cetakDataPendaftar($id)
     {
         return view('cetak.cetak_data_pendaftar', ['beasiswa_id' => $id]);
@@ -100,6 +106,11 @@ class WebController extends Controller
     public function kelulusan($id)
     {
         return view('app.kelulusan', ['beasiswa_id' => $id]);
+    }
+
+    public function adminSeleksi($id)
+    {
+        return view('app.admin_seleksi', ['beasiswa_id' => $id]);
     }
 
     public function cat($id)
@@ -275,6 +286,11 @@ class WebController extends Controller
     public function cetakKartuPendaftaran($url_id)
     {
         return view('cetak.cetak_kartu_pendaftaran', ['url_id' => $url_id]);
+    }
+
+    public function seleksiBeasiswa()
+    {
+        return view('app.seleksi_beasiswa');
     }
 
     public function verifikator($id)

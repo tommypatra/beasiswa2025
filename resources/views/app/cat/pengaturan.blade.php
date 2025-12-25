@@ -22,11 +22,9 @@
 
 @push('scriptJs')
 <script type="text/javascript">
-
     function loadDataTab1() {
-        url=`${base_url}/api/pengaturan-ujian?beasiswa_id=${beasiswa_id}`;
         formResetPengaturan();
-        fetchData(url, function(response) {
+        fetchData(endpoint_tab1, function(response) {
             const data=response.data.data;
             if(data.length>0){
                 $('#pengaturan_id').val(data[0].id);
@@ -45,7 +43,6 @@
     }
 
     $(document).ready(function() {
-        const endpoint=`${base_url}/api/pengaturan-ujian`;
         loadDataTab1();
 
         $('#cetak_kartu_ujian').summernote({
@@ -72,7 +69,7 @@
             submitHandler: function(form) {
                 const id = $('#pengaturan_id').val();
                 const type = (id === '') ? 'POST' : 'PUT';
-                const url = (id === '') ? endpoint : endpoint + '/' + id;
+                const url = (id === '') ? endpoint_tab1 : endpoint_tab1 + '/' + id;
                 const dataForm = $(form).serialize() + '&beasiswa_id=' + beasiswa_id;
 
                 saveData(url, type, dataForm, function(response) {

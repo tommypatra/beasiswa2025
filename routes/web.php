@@ -52,8 +52,12 @@ Route::get('/daftar-baru/{kategori}', [WebController::class, 'daftarBaru'])->nam
 Route::get('/verifikator/{beasiswa_id}', [WebController::class, 'verifikator'])->name('verifikator');
 Route::get('/verifikasi-berkas', [WebController::class, 'verifikasiBerkas'])->name('verifikasi-berkas');
 
+Route::get('/seleksi-beasiswa', [WebController::class, 'seleksiBeasiswa'])->name('seleksi-beasiswa');
+
 
 Route::get('/kelulusan/{beasiswa_id}', [WebController::class, 'kelulusan'])->name('kelulusan');
+Route::get('/admin-seleksi/{beasiswa_id}', [WebController::class, 'adminSeleksi'])->name('admin-seleksi');
+
 Route::get('/surveyor/{beasiswa_id}', [WebController::class, 'surveyor'])->name('surveyor');
 Route::get('/sk-penerima', [WebController::class, 'skPenerima'])->name('sk-penerima');
 Route::get('/sk-penerima-mahasiswa', [WebController::class, 'skPenerimaMahasiswa'])->name('sk-penerima-mahasiswa');
@@ -76,8 +80,10 @@ Route::get('/laporan-penerima-beasiswa/{sk_penerima_id}', [WebController::class,
 
 //untuk cetak
 Route::get('/cetak-kartu-pendaftaran/{url_id}', [WebController::class, 'cetakKartuPendaftaran'])->name('cetak-kartu-pendaftaran');
-Route::get('/cetak-peserta-wawancara/{beasiswa_id}/{pewawancara_id?}', [WebController::class, 'cetakPesertaWawancara'])->name('cetak-absen-wawancara');
+Route::get('/cetak-peserta-wawancara/{beasiswa_id}/{pewawancara_id?}', [WebController::class, 'cetakPesertaWawancara'])->name('cetak-peserta-wawancara');
 Route::get('/cetak-absen-wawancara/{beasiswa_id}/{pewawancara_id?}', [WebController::class, 'cetakAbsenWawancara'])->name('cetak-absen-wawancara');
+Route::get('/cetak-absen-ujian/{beasiswa_id}/{jadwal_ujian_id?}', [WebController::class, 'cetakAbsenUjian'])->name('cetak-absen-ujian');
+
 Route::get('/cetak-data-pendaftar/{beasiswa_id}', [WebController::class, 'cetakDataPendaftar'])->name('cetak-data-pendaftar');
 Route::get('/cetak-data-kelulusan/{beasiswa_id}', [WebController::class, 'cetakDataKelulusan'])->name('cetak-data-kelulusan');
 Route::get('/cetak-hasil-wawancara/{beasiswa_id}/{pewawancara_id?}/{pendaftar_id?}', [WebController::class, 'cetakHasilWawancara'])->name('cetak-hasil-wawancara');

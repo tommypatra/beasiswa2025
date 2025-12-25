@@ -17,7 +17,7 @@ class SurveyorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request, $beasiswa_id)
+    public function index(Request $request, string $beasiswa_id)
     {
 
         $dataQuery = Surveyor::with(['beasiswa', 'user', 'surveiPeserta.pendaftar.mahasiswa.user'])->where('beasiswa_id', $request->beasiswa_id)->orderBy('beasiswa_id', 'asc')->orderBy('user_id', 'asc');
@@ -60,7 +60,7 @@ class SurveyorController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SurveyorRequest $request)
+    public function store(SurveyorRequest $request, string $beasiswa_id)
     {
         try {
             DB::beginTransaction();
@@ -77,7 +77,7 @@ class SurveyorController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $beasiswa_id, string $id)
     {
         try {
             $dataQuery = Surveyor::with(['beasiswa', 'user.identitas'])->where('id', $id)->firstOrFail();
@@ -95,7 +95,7 @@ class SurveyorController extends Controller
         }
     }
 
-    public function batalkanFinalisasiSurveyor(string $id)
+    public function batalkanFinalisasiSurveyor(string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();
@@ -114,7 +114,7 @@ class SurveyorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SurveyorRequest $request, string $id)
+    public function update(SurveyorRequest $request, string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();
@@ -132,7 +132,7 @@ class SurveyorController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();

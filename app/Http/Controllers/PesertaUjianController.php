@@ -11,7 +11,7 @@ use App\Http\Resources\PesertaUjianResource;
 class PesertaUjianController extends Controller
 {
 
-    public function index(Request $request)
+    public function index(Request $request, string $beasiswa_id)
     {
         $dataQuery = PesertaUjian::with([
             'pendaftar.mahasiswa.user.identitas',
@@ -57,7 +57,7 @@ class PesertaUjianController extends Controller
         return response()->json($dataRespon);
     }
 
-    public function destroy(string $id)
+    public function destroy(string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();
@@ -72,7 +72,7 @@ class PesertaUjianController extends Controller
         }
     }
 
-    public function store(PesertaUjianRequest $request)
+    public function store(PesertaUjianRequest $request, string $beasiswa_id)
     {
         try {
             DB::beginTransaction();
@@ -94,11 +94,13 @@ class PesertaUjianController extends Controller
         }
     }
 
-    public function hapusPesertaUjian(string $id)
+    public function hapusPesertaUjian(string $beasiswa_id)
     {
         try {
             DB::beginTransaction();
-            PesertaUjian::where('beasiswa_id', $id)->delete();
+            PesertaUjian::whereHas('pendaftar', function ($q) use ($beasiswa_id) {
+                $q->where('beasiswa_id', $beasiswa_id);
+            })->delete();
             DB::commit();
             return response()->json(null, 204);
             // return response()->json(['status' => true, 'message' => 'hapus data berhasil dilakukan'], 200);

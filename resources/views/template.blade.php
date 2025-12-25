@@ -48,7 +48,7 @@
 
 <body>
   <!--  Body Wrapper -->
-  <div class="loading-progress">Loading <img src="{{ url('images/loading-2.gif') }}"></div>
+  <div class="loading-progress">Loading <span class="loading-percent"></span> <img src="{{ url('images/loading-2.gif') }}"></div>
 
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
     data-sidebar-position="fixed" data-header-position="fixed">
@@ -234,6 +234,7 @@
   <script src="{{ asset('js/app.js?v=25') }}"></script>
   <script>
     const token = localStorage.getItem('access_token');
+    let isBatchProcess = false;
     function forceLogout(){
         localStorage.clear();
         window.location.replace(`${base_url}/login`);
@@ -311,18 +312,26 @@
       });
 
       $(document)
-          .ajaxStart(function () {
-              $(".loading-progress").fadeIn(200);
-              $('button[type="submit"], input[type="submit"]').prop('disabled', true);
-          })
-          .ajaxStop(function () {
-              $(".loading-progress").fadeOut(200);
-              $('button[type="submit"], input[type="submit"]').prop('disabled', false);
-          })
-          .ajaxError(function () {
-              $(".loading-progress").fadeOut(200);
-              $('button[type="submit"], input[type="submit"]').prop('disabled', false);
-          });
+        .ajaxStart(function () {
+            if (!isBatchProcess) {
+                $(".loading-progress").fadeIn(200);
+                $('button[type="submit"], input[type="submit"]').prop('disabled', true);
+            }
+        })
+        .ajaxStop(function () {
+            if (!isBatchProcess) {
+                $(".loading-progress").fadeOut(200);
+                $('button[type="submit"], input[type="submit"]').prop('disabled', false);
+            }
+            $('.loading-percent').text('');
+        })
+        .ajaxError(function () {
+            $(".loading-progress").fadeOut(200);
+            $('button[type="submit"], input[type="submit"]').prop('disabled', false);
+            isBatchProcess = false;
+            $('.loading-percent').text('');
+        });
+
 
     });
   </script>

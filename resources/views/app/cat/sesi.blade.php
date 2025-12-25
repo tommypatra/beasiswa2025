@@ -47,8 +47,9 @@
     var page_tab3=1;
 
     function loadDataTab3(){
-        const search_tab2 = $('#search-input-tab2').val();
-        const url = `${base_url}/api/sesi-ujian?beasiswa_id=${beasiswa_id}&page=${page_tab3}&search=${search_tab2}`;
+        // const search_tab3 = $('#search-input-tab3').val();
+        // const url = `${endpoint_tab3}?page=${page_tab3}&search=${search_tab3}`;
+        const url = `${endpoint_tab3}?page=${page_tab3}`;
 
         fetchData(url, function(response) {
             renderDataTab3(response);
@@ -91,7 +92,6 @@
     }    
 
     $(document).ready(function() {
-        const endpoint=`${base_url}/api/sesi-ujian`;
 
 
         // Panggil untuk semua input jam
@@ -102,7 +102,7 @@
             submitHandler: function(form) {
                 const id = $('#sesi_ujian_id').val();
                 const type = (id === '') ? 'POST' : 'PUT';
-                const url = (id === '') ? endpoint : endpoint + '/' + id;
+                const url = (id === '') ? endpoint_tab3 : endpoint_tab3 + '/' + id;
                 const dataForm = $(form).serialize() + '&beasiswa_id=' + beasiswa_id;
 
                 saveData(url, type, dataForm, function(response) {
@@ -136,7 +136,7 @@
         //ganti data
         $(document).on('click', '.btn-ganti-tab3', function() {
             const id = $(this).data('id');
-            showDataById(endpoint, id, function(response) {
+            showDataById(endpoint_tab3, id, function(response) {
                 $('#form-sesi #sesi_ujian_id').val(response.data.id);
                 $('#sesi').val(response.data.sesi);
                 $('#jam_mulai').val(response.data.jam_mulai);
@@ -147,7 +147,7 @@
         //hapus data
         $(document).on('click', '.btn-hapus-tab3', function() {
             const id = $(this).data('id');
-            deleteData(endpoint, id, function() {
+            deleteData(endpoint_tab3, id, function() {
                 appShowNotification(true,['berhasil dilakukan!']);
                 loadDataTab3();
             });

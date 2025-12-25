@@ -93,7 +93,7 @@ class VerifikatorController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(VerifikatorRequest $request)
+    public function store(VerifikatorRequest $request, string $beasiswa_id)
     {
         try {
             DB::beginTransaction();
@@ -110,7 +110,7 @@ class VerifikatorController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $beasiswa_id, string $id)
     {
         try {
             $dataQuery = Verifikator::with(['beasiswa', 'user.identitas'])->where('id', $id)->firstOrFail();
@@ -131,7 +131,7 @@ class VerifikatorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(VerifikatorRequest $request, string $id)
+    public function update(VerifikatorRequest $request, string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();
@@ -149,7 +149,7 @@ class VerifikatorController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();

@@ -17,7 +17,7 @@ class PewawancaraController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function dataPewawancara($beasiswa_id)
+    public function dataPewawancara(string $beasiswa_id)
     {
         $dataQuery = Pewawancara::with(['user'])->where('beasiswa_id', $beasiswa_id)->orderBy('beasiswa_id', 'asc')->orderBy('user_id', 'asc');
         $data = $dataQuery->get();
@@ -30,7 +30,7 @@ class PewawancaraController extends Controller
     }
 
 
-    public function index(Request $request, $beasiswa_id)
+    public function index(Request $request, string $beasiswa_id)
     {
 
         $dataQuery = Pewawancara::with(['beasiswa', 'user', 'pesertaWawancara.pendaftar.mahasiswa.programStudi', 'pesertaWawancara.pendaftar.mahasiswa.user'])->where('beasiswa_id', $beasiswa_id)->orderBy('beasiswa_id', 'asc')->orderBy('user_id', 'asc');
@@ -87,7 +87,7 @@ class PewawancaraController extends Controller
         return response()->json($dataRespon);
     }
 
-    public function cetakAbsenWawancara(Request $request, $beasiswa_id)
+    public function cetakAbsenWawancara(Request $request, string $beasiswa_id)
     {
 
         $dataQuery = PesertaWawancara::with(['pendaftar.beasiswa', 'pewawancara.user', 'pendaftar.mahasiswa.user.identitas', 'pendaftar.mahasiswa.programStudi.fakultas'])
@@ -100,7 +100,7 @@ class PewawancaraController extends Controller
                 });
             });
 
-        if (izinkanAkses('admin')) {
+        if (izinkanAkses('admin') || adminSeleksi($beasiswa_id)) {
             if ($request->filled('pewawancara_id')) {
                 $dataQuery->where('pewawancara_id', $request->pewawancara_id);
             }
@@ -137,7 +137,7 @@ class PewawancaraController extends Controller
     }
 
 
-    public function cetakWawancara(Request $request, $beasiswa_id)
+    public function cetakWawancara(Request $request, string $beasiswa_id)
     {
 
         $dataQuery = PesertaWawancara::with(['pendaftar.beasiswa', 'pewawancara.user', 'wawancaraNilai', 'pendaftar.mahasiswa.user.identitas', 'pendaftar.mahasiswa.programStudi.fakultas'])
@@ -155,7 +155,7 @@ class PewawancaraController extends Controller
                 $dataQuery->where('pendaftar_id', $request->pendaftar_id);
         }
 
-        if (izinkanAkses('admin')) {
+        if (izinkanAkses('admin') || adminSeleksi($beasiswa_id)) {
             if ($request->filled('pewawancara_id')) {
                 $dataQuery->where('pewawancara_id', $request->pewawancara_id);
             }
@@ -196,7 +196,7 @@ class PewawancaraController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(PewawancaraRequest $request)
+    public function store(PewawancaraRequest $request, string $beasiswa_id)
     {
         try {
             DB::beginTransaction();
@@ -213,7 +213,7 @@ class PewawancaraController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $beasiswa_id, string $id)
     {
         try {
             $dataQuery = Pewawancara::with(['beasiswa', 'user.identitas'])->where('id', $id)->firstOrFail();
@@ -234,7 +234,7 @@ class PewawancaraController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(PewawancaraRequest $request, string $id)
+    public function update(PewawancaraRequest $request, string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();
@@ -252,7 +252,7 @@ class PewawancaraController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $beasiswa_id, string $id)
     {
         try {
             DB::beginTransaction();

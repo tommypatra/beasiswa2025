@@ -167,7 +167,7 @@
 
 <script type="text/javascript">
     const beasiswa_id = '{{ $beasiswa_id }}';
-    const endpoint = base_url+'/api/syarat';
+    const endpoint = `${base_url}/api/beasiswa/${beasiswa_id}/syarat`;
     const tahun = "{{ date('Y') }}";
     var page = 1;
     
@@ -179,7 +179,8 @@
         dataLoad();
 
         async function initPage() {
-            await loadDataSelect('#beasiswa_id', `data-beasiswa?show_all=1&tahun=${tahun}&limit=100`);
+            await loadDataSelect('#beasiswa_id', `data-beasiswa?beasiswa_id=${beasiswa_id}`);
+
             await loadDataBeasiswa();
         }
 
@@ -238,7 +239,7 @@
 
         function dataLoad() {
             var search = $('#search-input').val();
-            var url = endpoint + '?beasiswa_id='+beasiswa_id+'&page=' + page + '&search=' + search + '&limit=' + vLimit;
+            var url = endpoint + '?page=' + page + '&search=' + search + '&limit=' + vLimit;
 
             fetchData(url, function(response) {
                 renderData(response);
@@ -313,7 +314,7 @@
         //hapus contoh
         $(document).on('click', '.hapus-contoh', async function() {
             const id = $(this).data('id');
-            const url = `${base_url}/api/syarat-hapus-contoh`;
+            const url = `${base_url}/api/syarat-hapus-contoh/${beasiswa_id}`;
             deleteData(url, id, function() {
                 appShowNotification(true,['berhasil dilakukan!']);
                 dataLoad();
