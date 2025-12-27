@@ -29,6 +29,7 @@ class PesertaUjianResource extends JsonResource
             'peserta_ujian_id' => $this->id,
             'pendaftar_id' => $this->pendaftar_id,
             'beasiswa_id' => $beasiswa->id,
+            'url_id' => $pendaftar->url_id,
             'beasiswa' => [
                 'nama' => $beasiswa->nama,
                 'tahun' => $beasiswa->tahun,
@@ -58,6 +59,8 @@ class PesertaUjianResource extends JsonResource
             'jenis_kelamin' => $identitas->jenis_kelamin,
             'desa' => $identitas->desa,
             'kecamatan' => $identitas->kecamatan,
+            'tempat_lahir' => $identitas->tempat_lahir,
+            'tanggal_lahir' => $identitas->tanggal_lahir,
             'kabupaten' => $identitas->kabupaten,
             'provinsi' => $identitas->provinsi,
             'no_hp' => $identitas->no_hp,
@@ -73,6 +76,7 @@ class PesertaUjianResource extends JsonResource
             'fakultas_singkatan' => $mahasiswa->programStudi->fakultas->singkatan,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'waktu_daftar' => $pendaftar->created_at,
         ];
     }
 }

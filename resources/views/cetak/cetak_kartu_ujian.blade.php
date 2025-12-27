@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kartu Tanda Pendaftaran Beasiswa IAIN Kendari</title>
+    <title>Kartu Kartu Ujian IOSS IAIN Kendari</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="shortcut icon" type="image/png" href="{{ asset('images/logo.png') }}" />
     <style>
@@ -146,6 +146,7 @@
     <script>
         const base_url="{{ url('/') }}";
         const url_id="{{ $url_id }}";
+        const beasiswa_id="{{ $beasiswa_id }}";
     </script>
 </head>
 <body>
@@ -153,7 +154,7 @@
     <div class="card">
         <div class="header">
             <img src="{{ asset('images/logo.png') }}" alt="SNPMB Logo">
-            <h1>KARTU PESERTA BEASISWA TAHUN <span class="tahun"></span></h1>
+            <h1>KARTU KARTU UJIAN TAHUN <span class="tahun"></span></h1>
             <h4 style="margin-top:1px;" class="nama-beasiswa"></h4>
             <hr>
             <div class="row">
@@ -202,11 +203,8 @@
                 <thead>
                     <tr>
                         <th width="5%">No</th>
-                        <th width="45%">Syarat</th>
-                        <th width="10%">Ceklist Upload</th>
-                        <th width="10%">Ceklist Fisik</th>
-                        <th width="10%">Status</th>
-                        <th width="20%">Keterangan</th>
+                        <th width="55%">Materi Ujian</th>
+                        <th width="40%">Keterangan</th>
                     </tr>
                 </thead>
                 <tbody id="data-list">
@@ -218,64 +216,21 @@
 
         </div>
 
-        <p>
-            <div>Status Akhir : ......................................................</div>
-        </p>
-        
+       
         <div class="footer">
             <div id="qrcode_label1"></div>
-            <div id="ttd1">
-                <p>Kendari, ........ / ........... / {{ date('Y') }}</p>
-                Verifikator
-                <p style="margin-top:75px;">__________________________</p>    
-            </div>           
+            <div id="ttd1"></div>           
             <div id="ttd2">
                 <p>Kendari, <span class="tanggal"></span></p>
-                Pemohon
+                Peserta Ujian,
                 <p style="margin-top:75px;" class="nama-lengkap">.....</p>    
             </div>           
         </div>
         <div id="inisial" style="font-size:12px;font-style:italic;"></div>
-
-        <hr>
-        <h2>Tanda Terima Dokumen</h2>
-        <h4 style="margin-top:1px;" class="nama-beasiswa"></h4>
-
-        <div class="data-peserta">                
-            <table>
-                <tr>
-                    <th width="40%">Nomor Peserta</th>
-                    <td width="1%">:</td>
-                    <td class="nomor-peserta"></td>
-                </tr>
-                <tr>
-                    <th>Nama Lengkap</th>
-                    <td>:</td>
-                    <td class="nama-lengkap"></td>
-                </tr>
-                <tr>
-                    <th>NIM</th>
-                    <td>:</td>
-                    <td class="nim"></td>
-                </tr>
-                <tr>
-                    <th>Fakultas/ Program Studi</th>
-                    <td>:</td>
-                    <td class="program-studi"></td>
-                </tr>
-            </table>
-
-            <div class="footer">
-                <div id="qrcode_label2"></div>
-                <div id="ttd1">
-                    <p>Diterima oleh</p>
-                    <p>Kendari, ........ / ........... / {{ date('Y') }}</p>
-                    <p style="margin-top:75px;">__________________________</p>    
-                </div>           
-            </div>
-    
-        </div>
     </div>
+
+    <div class="card" id="info-cetak-kartu-ujian" style="display:none;"></div>
+
     <script src="{{ asset('template/materialm/assets/libs/jquery/dist/jquery.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script script src="{{ asset('js/app.js?v=25') }}"></script>
@@ -286,7 +241,6 @@
         const access_token = localStorage.getItem('access_token');
 
         if(access_token){
-            // alert('run')
             $.ajax({
                 headers: {
                     'Authorization': 'Bearer ' + access_token
@@ -317,10 +271,12 @@
 
         async function initPage() {
             await dataLoad();
+            await dataUjian();
+            await dataInfoKartu();
         }
 
         async function dataLoad() {
-            var url = `${base_url}/api/cetak-kartu-pendaftaran/${url_id}`;
+            var url = `${base_url}/api/get-data-peserta-ujian/${beasiswa_id}?url_id=${url_id}`;
             try {
                 const response = await fetch(url, {
                     method: 'GET',
@@ -333,84 +289,97 @@
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 const result = await response.json();
-                renderData(result.data);
+                renderData(result.data.data[0]);
             } catch (error) {
                 // window.location.replace(`${base_url}/pendaftar`);
             }
         }
 
         function renderData(data){
-            if (data.pendaftar.is_finalisasi) {
-                let pendaftar = data.pendaftar;
-                let beasiswa = data.beasiswa;
-                let syarat = beasiswa.syarat;
+            let foto_src=base_url+'/'+data.foto;
+            let tanggal_update = formatTanggal(data.waktu_daftar.split('T')[0]);
+            $('.user-foto').attr('src',foto_src);
+            $('.tahun').text(data.tahun);
+            $('.tanggal').text(tanggal_update);
+            $('.nama-beasiswa').text(data.beasiswa.nama);
+            $('.nomor-peserta').text(data.no_pendaftaran);
+            $('.nama-lengkap').text(data.name);
+            $('.tempat-tanggal-lahir').text(data.tempat_lahir+'/ '+formatTanggal(data.tanggal_lahir));
+            $('.password').text(data.tanggal_lahir);
+            $('.nim').text(data.nim);
+            $('.program-studi').text(`${data.fakultas}/ ${data.program_studi}`);
 
-                let foto_src=base_url+'/'+pendaftar.foto;
+            let alamat = data.alamat; 
+            if(data.desa){
+                alamat +=` ${data.desa} / ${data.kecamatan} / ${data.kabupaten} / ${data.provinsi}`;
+            }
+            $('.alamat').text(alamat);
 
-                // console.log(pendaftar);
-                let tanggal_update = formatTanggal(pendaftar.updated_at.split('T')[0]);
+        }
 
-
-                $('.user-foto').attr('src',foto_src);
-                $('.tahun').text(beasiswa.tahun);
-                $('.tanggal').text(tanggal_update);
-                $('.nama-beasiswa').text(beasiswa.nama);
-                $('.nomor-peserta').text(pendaftar.no_pendaftaran);
-                $('.nama-lengkap').text(pendaftar.nama);
-                $('.tempat-tanggal-lahir').text(pendaftar.tempat_lahir+'/ '+formatTanggal(pendaftar.tanggal_lahir));
-                $('.nim').text(pendaftar.nim);
-                $('.program-studi').text(`${pendaftar.fakultas}/ ${pendaftar.prodi}`);
-
-                let alamat = pendaftar.alamat; 
-                if(pendaftar.desa){
-                    alamat +=` ${pendaftar.desa} / ${pendaftar.kecamatan} / ${pendaftar.kabupaten} / ${pendaftar.provinsi}`;
+        async function dataUjian() {
+            var url = `${base_url}/api/get-data-materi-ujian/${beasiswa_id}`;
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${access_token}`, 
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
                 }
-                $('.alamat').text(alamat);
-
-                if(syarat.length>0){
-                    const dataList = $('#data-list');
-                    dataList.empty();
-                    let no = 1;
-                    $.each(syarat, function(index, dt) {
-                        const sudah_upload=(dt.upload_syarat)?"Ada":"-";
-                        const is_wajib=(dt.is_wajib)?"wajib":"pilihan";
-                        const row = `<tr>
-                                        <td>${no++}</td>
-                                        <td>${dt.nama} (${is_wajib})</td>
-                                        <td>${sudah_upload}</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>`;
-                        dataList.append(row);
-                    });                        
-
-                }
-
-                // const qr_text = JSON.stringify({
-                //     id: data.id, 
-                //     api: "disposisi", 
-                // });     
-                const qr_text = window.location.href;
-                // const qr_ttd = `${data.no_surat} ${data.perihal} ${qr_link}`;
-                new QRCode(document.getElementById('qrcode_label1'), {
-                    text: qr_text,
-                    width: 100,
-                    height: 100
-                });                
-
-                new QRCode(document.getElementById('qrcode_label2'), {
-                    text: qr_text,
-                    width: 100,
-                    height: 100
-                });                
-                
-                // $('#nomor-peserta').val(pendaftar.no_pendaftaran);
-                $('#inisial').text("code app : "+pendaftar.inisial);
-            }else{
+                const result = await response.json();
+                renderDataUjian(result.data);
+            } catch (error) {
                 // window.location.replace(`${base_url}/pendaftar`);
             }
         }
+
+        function renderDataUjian(data){
+            const ujian=data.data;
+            if(ujian.length>0){
+                const dataList = $('#data-list');
+                dataList.empty();
+                let no = 1;
+                $.each(ujian, function(index, dt) {
+                    const row = `<tr>
+                                    <td>${no++}</td>
+                                    <td>${dt.ujian}</td>
+                                    <td>${dt.keterangan}</td>
+                                </tr>`;
+                    dataList.append(row);
+                });                        
+
+            }
+        }
+
+
+        async function dataInfoKartu() {
+            var url = `${base_url}/api/get-data-pengaturan-ujian/${beasiswa_id}`;
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${access_token}`, 
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const result = await response.json();
+                if(result.data.total>0){
+                    const info_cetak_kartu = result.data.data[0].cetak_kartu_ujian;
+                    $('#info-cetak-kartu-ujian').show();
+                    $('#info-cetak-kartu-ujian').html(info_cetak_kartu);
+                }
+            } catch (error) {
+                // window.location.replace(`${base_url}/pendaftar`);
+            }
+        }
+
 
     });
     </script>

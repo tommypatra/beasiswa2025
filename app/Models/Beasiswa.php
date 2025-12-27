@@ -126,4 +126,9 @@ class Beasiswa extends Model
     {
         return $this->hasOne(AdminSeleksi::class);
     }
+
+    public function materiUjian()
+    {
+        return $this->hasOne(MateriUjian::class);
+    }
 }

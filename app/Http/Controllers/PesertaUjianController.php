@@ -21,8 +21,23 @@ class PesertaUjianController extends Controller
         ])->orderBy('jadwal_ujian_id', 'asc')
             ->orderBy('pendaftar_id', 'asc');
 
+        $dataQuery->where(function ($query) use ($beasiswa_id) {
+            $query->whereHas('pendaftar', function ($q) use ($beasiswa_id) {
+                $q->where('beasiswa_id', $beasiswa_id);
+            });
+        });
+
         if ($request->filled('jadwal_ujian_id')) {
             $dataQuery->where('jadwal_ujian_id', $request->jadwal_ujian_id);
+        }
+
+        if ($request->filled('url_id')) {
+            $url_id = $request->url_id;
+            $dataQuery->where(function ($query) use ($url_id) {
+                $query->whereHas('pendaftar', function ($q) use ($url_id) {
+                    $q->where('url_id', $url_id);
+                });
+            });
         }
 
         if ($request->filled('search')) {

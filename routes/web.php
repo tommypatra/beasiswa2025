@@ -80,6 +80,7 @@ Route::get('/laporan-penerima-beasiswa/{sk_penerima_id}', [WebController::class,
 
 //untuk cetak
 Route::get('/cetak-kartu-pendaftaran/{url_id}', [WebController::class, 'cetakKartuPendaftaran'])->name('cetak-kartu-pendaftaran');
+Route::get('/cetak-kartu-ujian/{beasiswa_id}/{url_id}', [WebController::class, 'cetakKartuUjian'])->name('cetak-kartu-ujian');
 Route::get('/cetak-peserta-wawancara/{beasiswa_id}/{pewawancara_id?}', [WebController::class, 'cetakPesertaWawancara'])->name('cetak-peserta-wawancara');
 Route::get('/cetak-absen-wawancara/{beasiswa_id}/{pewawancara_id?}', [WebController::class, 'cetakAbsenWawancara'])->name('cetak-absen-wawancara');
 Route::get('/cetak-absen-ujian/{beasiswa_id}/{jadwal_ujian_id?}', [WebController::class, 'cetakAbsenUjian'])->name('cetak-absen-ujian');

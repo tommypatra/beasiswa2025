@@ -288,6 +288,12 @@ class WebController extends Controller
         return view('cetak.cetak_kartu_pendaftaran', ['url_id' => $url_id]);
     }
 
+    public function cetakKartuUjian($beasiswa_id, $url_id)
+    {
+        return view('cetak.cetak_kartu_ujian', ['beasiswa_id' => $beasiswa_id, 'url_id' => $url_id]);
+    }
+
+
     public function seleksiBeasiswa()
     {
         return view('app.seleksi_beasiswa');

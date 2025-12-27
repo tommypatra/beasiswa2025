@@ -53,6 +53,7 @@ use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\PendidikanController;
 use App\Http\Controllers\SkPenerimaController;
 use App\Http\Controllers\JadwalUjianController;
+use App\Http\Controllers\MateriUjianController;
 use App\Http\Controllers\NilaiRaportController;
 use App\Http\Controllers\PewawancaraController;
 use App\Http\Controllers\SubKegiatanController;
@@ -115,9 +116,11 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     Route::get('cari-peserta', [PesertaUjianController::class, 'index']);
 
     // Route::get('daftar-pendaftar-beasiswa/{id}', [PendaftarController::class, 'daftarPendaftar']);
-
+    Route::get('get-data-peserta-ujian/{beasiswa_id}', [PesertaUjianController::class, 'index']);
     Route::get('get-data-pengguna', [PenggunaController::class, 'index']);
     Route::get('get-data-ruangan', [RuanganController::class, 'index']);
+    Route::get('get-data-materi-ujian/{beasiswa_id}', [MateriUjianController::class, 'index']);
+    Route::get('get-data-pengaturan-ujian/{beasiswa_id}', [PengaturanUjianController::class, 'index']);
     Route::get('get-data-pendaftar/{id}', [PendaftarController::class, 'getData']);
     Route::get('get-data-mahasiswa/{id}', [MahasiswaController::class, 'show']);
     Route::get('get-data-orang-tua/{id}', [OrangTuaController::class, 'dataOrangTua']);
@@ -238,6 +241,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::resource('beasiswa/{beasiswa_id}/verifikator-pendaftar', VerifikatorPendaftarController::class);
         Route::resource('beasiswa/{beasiswa_id}/surveyor', SurveyorController::class);
         Route::resource('beasiswa/{beasiswa_id}/surveyor-peserta', SurveiPesertaController::class);
+        Route::resource('beasiswa/{beasiswa_id}/materi-ujian', MateriUjianController::class);
 
         //untuk surveyor
         Route::get('batalkan-finalisasi-surveyor/{beasiswa_id}/{id}', [SurveyorController::class, 'batalkanFinalisasiSurveyor']);

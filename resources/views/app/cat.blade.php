@@ -31,7 +31,10 @@
                     <a class="nav-link" data-bs-toggle="tab" href="#tab-sesi">Sesi</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#tab-jadwal">Jadwal Ujian</a>
+                    <a class="nav-link" data-bs-toggle="tab" href="#tab-materi">Materi</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#tab-jadwal">Jadwal</a>
                 </li>
             </ul>
 
@@ -49,6 +52,11 @@
                 <!-- Tab 3 -->
                 <div class="tab-pane fade" id="tab-sesi" >
                     @include('app.cat.sesi')
+                </div>
+
+                <!-- Tab 5 -->
+                <div class="tab-pane fade" id="tab-materi" >
+                    @include('app.cat.materi')
                 </div>
 
                 <!-- Tab 4 -->
@@ -81,6 +89,7 @@
     const endpoint_tab2=`${base_url}/api/beasiswa/${beasiswa_id}/ruangan-ujian`;
     const endpoint_tab3=`${base_url}/api/beasiswa/${beasiswa_id}/sesi-ujian`;
     const endpoint_tab4=`${base_url}/api/beasiswa/${beasiswa_id}/jadwal-ujian`;
+    const endpoint_tab5=`${base_url}/api/beasiswa/${beasiswa_id}/materi-ujian`;
 
 
     $(document).ready(function() {
@@ -128,6 +137,9 @@
                 case "#tab-sesi":
                     loadDataTab3();
                     break;
+                case "#tab-materi":
+                    loadDataTab5();
+                    break;
                 case "#tab-jadwal":
                     loadDataTab4();
                     optionSelect('#sesi_ujian_id-tab4', `${base_url}/api/beasiswa/${beasiswa_id}/sesi-ujian?limit=0`, `id`, 
@@ -137,6 +149,7 @@
                         (item) => `${item.ruangan} / ${item.gedung}`
                     );
                     break;
+            
             }
         });
 

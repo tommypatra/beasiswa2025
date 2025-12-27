@@ -45,11 +45,8 @@
                 </li>
             </ul>
         </div>
-        <button class="btn btn-success" id="btn-refresh">
+        <button class="btn btn-success" id="btn-refresh-tab4">
             <i class="ti ti-reload"></i>
-        </button>
-        <button class="btn btn-secondary" id="btn-filter">
-            <i class="ti ti-filter"></i>
         </button>
     </div>
 </div>
@@ -96,11 +93,11 @@
                     </div>
                     <div class="row">
 						<div class="col-lg-4 mb-3">
-                            <label class="form-label">Ruangan</label>
+                            <label class="form-label">Waktu Ujian</label>
                             <select name="sesi_ujian_id" id="sesi_ujian_id-tab4" class="form-control" required></select>
                         </div>
 						<div class="col-lg-4 mb-3">
-                            <label class="form-label">Waktu Ujian</label>
+                            <label class="form-label">Ruangan</label>
                             <select name="ruangan_ujian_id" id="ruangan_ujian_id-tab4" class="form-control" required></select>
                         </div>
                     </div>
@@ -178,16 +175,14 @@
                         <thead>
                             <tr>
                                 <th width="5%">No</th>
-                                <th width="35%">Nama/Nim</th>
-                                <th width="15%">Fakultas</th>
-                                <th width="15%">Program Studi</th>
-                                <th width="20%">Keterangan</th>
+                                <th width="60%">Nama/Nim</th>
+                                <th width="25%">Fakultas/Program Studi</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="data-list-peserta">
                             <tr>
-                                <td colspan="6">data tidak ditemukan</td>
+                                <td colspan="4">data tidak ditemukan</td>
                             </tr>
                         </tbody>
                     </table>
@@ -336,7 +331,7 @@
             }
         });
 
-        $('#btn-refresh').click(function(){
+        $('#btn-refresh-tab4').click(function(){
             loadDataTab4();
         });
 
@@ -503,11 +498,24 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>${dt.fakultas}</td>
-                                <td>${dt.program_studi}</td>
-                                <td></td>
+                                <td>${dt.fakultas}/ ${dt.program_studi}</td>
                                 <td>
-                                    <button class="btn btn-danger btn-hapus-penerima-tab4" data-id="${dt.peserta_ujian_id}" type="button"><iconify-icon icon="solar:trash-bin-2-outline"></iconify-icon></button>
+                                    <div class="btn-group" role="group">
+                                        <button
+                                            class="btn btn-primary btn-print-kartu-ujian-tab4"
+                                            data-url_id="${dt.url_id}"
+                                            data-id="${dt.peserta_ujian_id}"
+                                            type="button">
+                                            <iconify-icon icon="solar:printer-outline"></iconify-icon>
+                                        </button>
+
+                                        <button
+                                            class="btn btn-danger btn-hapus-penerima-tab4"
+                                            data-id="${dt.peserta_ujian_id}"
+                                            type="button">
+                                            <iconify-icon icon="solar:trash-bin-2-outline"></iconify-icon>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>`;
                     dataList.append(row);
@@ -550,6 +558,14 @@
                 showModalForm();
             });
         });
+
+        $(document).on('click', '.btn-print-kartu-ujian-tab4', function() {
+            const url_id = $(this).data('url_id');
+            const url=`${base_url}/cetak-kartu-ujian/${beasiswa_id}/${url_id}`;
+            window.open(url, '_blank');
+
+        });
+
 
         $(document).on('click', '.btn-hapus-penerima-tab4', function() {
             const id = $(this).data('id');
