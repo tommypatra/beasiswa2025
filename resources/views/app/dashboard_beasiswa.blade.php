@@ -46,19 +46,19 @@
                             <span class="badge rounded-pill fs-2 fw-medium bg-secondary-subtle text-secondary" id="tanggal-pengumuman-verifikasi-berkas">{{ date('Y-m-d') }}</span>
                         </td>
                     </tr>
-                    <tr id="baris-seleksi-cat">
+                    <tr id="baris-seleksi-cat" style="display:none;">
                         <td>Seleksi CAT</td>
                         <td>
                             <span class="badge rounded-pill fs-2 fw-medium bg-secondary-subtle text-secondary" id="tanggal-seleksi-cat">{{ date('Y-m-d') }} s/d {{ date('Y-m-d') }}</span>
                         </td>
                     </tr>
-                    <tr id="baris-survei-lapangan">
+                    <tr id="baris-survei-lapangan" style="display:none;">
                         <td>Survei Lapangan</td>
                         <td>
                             <span class="badge rounded-pill fs-2 fw-medium bg-secondary-subtle text-secondary" id="tanggal-survei-lapangan">{{ date('Y-m-d') }} s/d {{ date('Y-m-d') }}</span>
                         </td>
                     </tr>
-                    <tr id="baris-wawancara">
+                    <tr id="baris-wawancara" style="display:none;">
                         <td>Wawancara</td>
                         <td>
                             <span class="badge rounded-pill fs-2 fw-medium bg-secondary-subtle text-secondary" id="tanggal-wawancara">{{ date('Y-m-d') }} s/d {{ date('Y-m-d') }}</span>
@@ -125,6 +125,25 @@
             const response = await execAsync(`${url}`, 'GET', token);
             let beasiswa=response.data;
             $('#label-beasiswa').html(`<h4>${beasiswa.nama}</h4>`);
+            $('#tanggal-pendaftaran').text(formatTanggal(beasiswa.daftar_mulai)+' s/d '+formatTanggal(beasiswa.daftar_selesai));
+            $('#tanggal-verifikasi-berkas').text(formatTanggal(beasiswa.verifikasi_berkas_mulai)+' s/d '+formatTanggal(beasiswa.verifikasi_berkas_selesai));
+            $('#tanggal-pengumuman-verifikasi-berkas').text(formatTanggal(beasiswa.pengumuman_verifikasi_berkas));
+            $('#tanggal-pengumuman').text(formatTanggal(beasiswa.pengumuman_akhir));
+            
+            
+            if(beasiswa.ada_verifikasi_lapangan){
+                $('#baris-survei-lapangan').show();
+                $('#tanggal-survei-lapangan').text(formatTanggal(beasiswa.survei_lapangan_mulai)+' s/d '+formatTanggal(beasiswa.survei_lapangan_selesai));
+            }
+            if(beasiswa.ada_wawancara){
+                $('#baris-wawancara').show();
+                $('#tanggal-wawancara').text(formatTanggal(beasiswa.wawancara_mulai)+' s/d '+formatTanggal(beasiswa.wawancara_selesai));                        
+            }            
+            
+            if(beasiswa.pengaturan_ujian.id && beasiswa.ada_ujian_cbt){
+                $('#baris-seleksi-cat').show();
+                $('#tanggal-seleksi-cat').text(formatTanggal(beasiswa.pengaturan_ujian.tanggal_mulai)+' s/d '+formatTanggal(beasiswa.pengaturan_ujian.tanggal_selesai));
+            }
         }
 
         async function loadRekapKabupaten() {

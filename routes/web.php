@@ -83,7 +83,8 @@ Route::get('/cetak-kartu-pendaftaran/{url_id}', [WebController::class, 'cetakKar
 Route::get('/cetak-kartu-ujian/{beasiswa_id}/{url_id}', [WebController::class, 'cetakKartuUjian'])->name('cetak-kartu-ujian');
 Route::get('/cetak-peserta-wawancara/{beasiswa_id}/{pewawancara_id?}', [WebController::class, 'cetakPesertaWawancara'])->name('cetak-peserta-wawancara');
 Route::get('/cetak-absen-wawancara/{beasiswa_id}/{pewawancara_id?}', [WebController::class, 'cetakAbsenWawancara'])->name('cetak-absen-wawancara');
-Route::get('/cetak-absen-ujian/{beasiswa_id}/{jadwal_ujian_id?}', [WebController::class, 'cetakAbsenUjian'])->name('cetak-absen-ujian');
+Route::get('/cetak-absen-ujian/{beasiswa_id}/{jadwal_ujian_id?}/{format_cetak?}', [WebController::class, 'cetakAbsenUjian'])->name('cetak-absen-ujian');
+Route::get('/cetak-jadwal-ujian/{beasiswa_id}/{jadwal_ujian_id?}', [WebController::class, 'cetakJadwalUjian'])->name('cetak-jadawl-ujian');
 
 Route::get('/cetak-data-pendaftar/{beasiswa_id}', [WebController::class, 'cetakDataPendaftar'])->name('cetak-data-pendaftar');
 Route::get('/cetak-data-kelulusan/{beasiswa_id}', [WebController::class, 'cetakDataKelulusan'])->name('cetak-data-kelulusan');

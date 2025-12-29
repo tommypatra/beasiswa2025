@@ -17,6 +17,7 @@ class PesertaUjianResource extends JsonResource
         // return parent::toArray($request);
         $jadwal_ujian = $this->jadwalUjian;
         $beasiswa = $jadwal_ujian->beasiswa;
+        $sesi_ujian = $jadwal_ujian->sesiUjian;
         $ruangan = $jadwal_ujian->ruanganUjian->ruangan;
         $pendaftar = $this->pendaftar;
 
@@ -51,6 +52,7 @@ class PesertaUjianResource extends JsonResource
                 'lantai' => $ruangan->lantai,
                 'keterangan' => $ruangan->keterangan,
             ],
+            'sesi_ujian' => $sesi_ujian,
             'user_id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,

@@ -18,11 +18,13 @@
                         <i class="ti ti-plus"></i> Tambah
                     </a>
                 </li>
+
                 <li>
-                    <a class="dropdown-item" href="#" id="btn-cetak-absen-tab4">
-                        <i class="ti ti-printer"></i> Cetak Absen Peserta
+                    <a class="dropdown-item" href="#" id="btn-cetak-jadwal-tab4">
+                        <i class="ti ti-printer"></i> Cetak Jadwal
                     </a>
                 </li>
+
                 <li>
                     <a href="javascript:;" class="dropdown-item" id="btn-generate-tab4">
                         <i class="ti ti-calendar"></i> Generate Jadwal
@@ -424,11 +426,6 @@
             loadDataTab4();
         }
     
-        $('#btn-cetak-absen-tab4').click(function(){
-            const url = `${base_url}/cetak-absen-ujian/${beasiswa_id}`;
-            window.open(url, '_blank');
-        });
-
         $('#btn-cetak-peserta-tab4').click(function(){
             const url = `${base_url}/cetak-absen-ujian/${beasiswa_id}/${jadwal_ujian_id}`;
             window.open(url, '_blank');
@@ -678,6 +675,11 @@
                 `)
                 .appendTo(ul);
         };
+
+        $('#btn-cetak-jadwal-tab4').click(function(){
+            const url = `${base_url}/cetak-jadwal-ujian/${beasiswa_id}`;
+            window.open(url, '_blank');
+        });
 
 
     });

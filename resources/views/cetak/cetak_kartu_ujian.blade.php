@@ -14,6 +14,23 @@
             margin-top:10px;
         }        
 
+        .ujian-box {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            text-align: center;
+            border: 1px solid #000;
+            padding: 12px;
+            border-radius: 8px;
+            background: #fff;
+            margin: 15px auto;
+            width: 80%;
+        }
+
+        .ujian-item .label {
+            font-weight: bold;
+        }
+
         #loadingProgress {
             position: fixed;
             top: 10px;
@@ -157,6 +174,22 @@
             <h1>KARTU KARTU UJIAN TAHUN <span class="tahun"></span></h1>
             <h4 style="margin-top:1px;" class="nama-beasiswa"></h4>
             <hr>
+
+            <div class="ujian-box">
+                <div class="ujian-item">
+                    <div class="label">Tanggal Ujian</div>
+                    <div class="tanggal-ujian"></div>
+                </div>
+                <div class="ujian-item">
+                    <div class="label">Waktu / Sesi</div>
+                    <div class="waktu-ujian"></div>
+                </div>
+                <div class="ujian-item">
+                    <div class="label">Lokasi</div>
+                    <div class="lokasi-ujian"></div>
+                </div>
+            </div>
+
             <div class="row">
                 <div class="foto-peserta">
                     <img src="{{ asset('images/user-avatar.png') }}" class="user-foto">  
@@ -298,6 +331,9 @@
         function renderData(data){
             let foto_src=base_url+'/'+data.foto;
             let tanggal_update = formatTanggal(data.waktu_daftar.split('T')[0]);
+            $('.tanggal-ujian').text(formatTanggal(data.jadwal_ujian.tanggal));
+            $('.waktu-ujian').text('SESI '+data.jadwal_ujian.sesi+' / '+data.sesi_ujian.jam_mulai+' s.d '+data.sesi_ujian.jam_selesai);
+            $('.lokasi-ujian').text(data.jadwal_ujian.gedung+' / '+data.jadwal_ujian.nama);
             $('.user-foto').attr('src',foto_src);
             $('.tahun').text(data.tahun);
             $('.tanggal').text(tanggal_update);
@@ -372,8 +408,11 @@
                 const result = await response.json();
                 if(result.data.total>0){
                     const info_cetak_kartu = result.data.data[0].cetak_kartu_ujian;
-                    $('#info-cetak-kartu-ujian').show();
-                    $('#info-cetak-kartu-ujian').html(info_cetak_kartu);
+                    // console.log(info_cetak_kartu);
+                    if(info_cetak_kartu !== null){
+                        $('#info-cetak-kartu-ujian').show();
+                        $('#info-cetak-kartu-ujian').html(info_cetak_kartu);
+                    }
                 }
             } catch (error) {
                 // window.location.replace(`${base_url}/pendaftar`);

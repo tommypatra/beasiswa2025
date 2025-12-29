@@ -75,9 +75,25 @@ td, th {
                         <button class="btn btn-secondary" id="btn-cari-data">
                             <i class="ti ti-search"></i>
                         </button>
-                        <button class="btn btn-success" id="btn-cetak">
-                            <i class="ti ti-printer"></i>
-                        </button>
+
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <iconify-icon icon="solar:settings-linear" class="fs-5"></iconify-icon>
+                            </button>
+                            <ul class="dropdown-menu" style="">
+                                <li>
+                                    <a class="dropdown-item" href="#" id="btn-cetak">
+                                        <i class="ti ti-printer"></i> Cetak
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ '/daftar-peserta-cat/'.$beasiswa_id }}" class="dropdown-item" id="btn-generate-tab4">
+                                        <i class="ti ti-user"></i> Peserta CAT
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
                         <button class="btn btn-secondary" id="btn-filter">
                             <i class="ti ti-filter"></i>
                         </button>
@@ -178,7 +194,6 @@ td, th {
 @section('scriptJs')
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
 <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js" integrity="sha256-AlTido85uXPlSyyaZNsjJXeCs07eSv3r43kyCVc8ChI=" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script src="{{ asset('js/jquery-validation-1.19.5/dist/jquery.validate.min.js')}}"></script>
 <script src="{{ asset('js/crud.js') }}"></script>

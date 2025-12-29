@@ -36,6 +36,9 @@
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="tab" href="#tab-jadwal">Jadwal</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#tab-peserta">Peserta</a>
+                </li>
             </ul>
 
             <div class="tab-content mt-3" id="catTabContent">
@@ -63,6 +66,11 @@
                 <div class="tab-pane fade" id="tab-jadwal" >
                     @include('app.cat.jadwal')
                 </div>
+
+                <!-- Tab 6 -->
+                <div class="tab-pane fade" id="tab-peserta" >
+                    @include('app.cat.peserta')
+                </div>
             </div>
 
             </div>
@@ -89,8 +97,7 @@
     const endpoint_tab2=`${base_url}/api/beasiswa/${beasiswa_id}/ruangan-ujian`;
     const endpoint_tab3=`${base_url}/api/beasiswa/${beasiswa_id}/sesi-ujian`;
     const endpoint_tab4=`${base_url}/api/beasiswa/${beasiswa_id}/jadwal-ujian`;
-    const endpoint_tab5=`${base_url}/api/beasiswa/${beasiswa_id}/materi-ujian`;
-
+    const endpoint_tab6=`${base_url}/api/beasiswa/${beasiswa_id}/peserta-ujian`;
 
     $(document).ready(function() {
         initPage();
@@ -149,7 +156,9 @@
                         (item) => `${item.ruangan} / ${item.gedung}`
                     );
                     break;
-            
+                case "#tab-peserta":
+                    loadDataTab6();
+                    break;            
             }
         });
 

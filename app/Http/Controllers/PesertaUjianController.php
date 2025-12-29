@@ -17,7 +17,8 @@ class PesertaUjianController extends Controller
             'pendaftar.mahasiswa.user.identitas',
             'pendaftar.mahasiswa.programStudi.fakultas',
             'jadwalUjian.beasiswa',
-            'jadwalUjian.ruanganUjian.ruangan'
+            'jadwalUjian.sesiUjian',
+            'jadwalUjian.ruanganUjian.ruangan',
         ])->orderBy('jadwal_ujian_id', 'asc')
             ->orderBy('pendaftar_id', 'asc');
 

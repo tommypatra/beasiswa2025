@@ -49,9 +49,18 @@ class WebController extends Controller
         return view('cetak.cetak_absen_wawancara', ['beasiswa_id' => $id, 'pewawancara_id' => $pewawancara_id]);
     }
 
-    public function cetakAbsenUjian($id, $jadwal_ujian_id = null)
+    public function cetakAbsenUjian($id, $jadwal_ujian_id = null, $format_cetak = null)
     {
-        return view('cetak.cetak_absen_ujian', ['beasiswa_id' => $id, 'jadwal_ujian_id' => $jadwal_ujian_id]);
+        $blade_view = "cetak_absen_ujian";
+        if ($format_cetak == 'export') {
+            $blade_view = "cetak_peserta_ujian";
+        }
+        return view('cetak.' . $blade_view, ['beasiswa_id' => $id, 'jadwal_ujian_id' => $jadwal_ujian_id]);
+    }
+
+    public function cetakJadwalUjian($id, $jadwal_ujian_id = null)
+    {
+        return view('cetak.cetak_jadwal_ujian', ['beasiswa_id' => $id, 'jadwal_ujian_id' => $jadwal_ujian_id]);
     }
 
 

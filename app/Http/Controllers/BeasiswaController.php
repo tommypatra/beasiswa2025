@@ -19,7 +19,7 @@ class BeasiswaController extends Controller
      */
     public function index(Request $request)
     {
-        $dataQuery = Beasiswa::with(['jenisBeasiswa', 'syarat'])
+        $dataQuery = Beasiswa::with(['jenisBeasiswa', 'syarat', 'pengaturanUjian',])
             ->withCount(['pendaftar'])
             ->orderBy('daftar_mulai', 'desc')
             ->orderBy('nama', 'asc');
@@ -82,6 +82,7 @@ class BeasiswaController extends Controller
         try {
             $dataQuery = Beasiswa::with([
                 'jenisBeasiswa',
+                'pengaturanUjian',
                 'syarat',
             ])
                 ->withCount([

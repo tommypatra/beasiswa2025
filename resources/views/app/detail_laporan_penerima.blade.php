@@ -281,7 +281,7 @@
 
         function dataLoad() {
             var search = $('#search-input').val();
-            var url = `${base_url}/api/detail-laporan/${sk_penerima_id}?&page=${page}&search=${search}`;
+            var url = `${base_url}/api/detail-laporan/${sk_penerima_id}?page=${page}&search=${search}&limit=20`;
 
             fetchData(url, function(response) {
                 renderData(response);
