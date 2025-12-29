@@ -106,6 +106,9 @@ class LaporanController extends Controller
 
     public function detailLaporan(Request $request, string $skId)
     {
+        /* =========================
+     * 1. AMBIL SK + KEGIATAN
+     * ========================= */
         $sk = SkPenerima::with([
             'monitoring.kegiatan.subKegiatan' => fn($q) => $q->orderBy('urut'),
         ])->findOrFail($skId);
@@ -114,38 +117,52 @@ class LaporanController extends Controller
             ? $sk->monitoring->kegiatan->sortBy('urut')->values()
             : collect();
 
-        $subIds = $kegiatanList->flatMap->subKegiatan->pluck('id');
+        $subKegiatanIds = $kegiatanList
+            ->flatMap(fn($k) => $k->subKegiatan)
+            ->pluck('id');
 
+
+        /* =========================
+     * 2. QUERY PENERIMA (PAGINATION)
+     * ========================= */
         $penerimasQuery = Penerima::with([
             'user.identitas',
-            'user.mahasiswa.programStudi.fakultas'
+            'user.mahasiswa.programStudi.fakultas',
         ])
             ->where('sk_penerima_id', $sk->id)
             ->orderBy(
-                User::select('name')->whereColumn('users.id', 'penerimas.user_id')
+                User::select('name')
+                    ->whereColumn('users.id', 'penerimas.user_id')
             );
 
         if ($request->filled('penerima_id')) {
-            $penerimasQuery->where(function ($query) use ($request) {
-                $query->where('penerima_id', $request->penerima_id);
-            });
+            $penerimasQuery->where('penerima_id', $request->penerima_id);
         }
 
-        $limit = (int) ($request->input('limit', env('DEFAULT_LIMIT', 30)));
+        $limit = (int) $request->input('limit', env('DEFAULT_LIMIT', 30));
 
         if ($limit === 0) {
             $paginator = null;
-            $penerimasCollection = $penerimasQuery->get();
+            $penerimas = $penerimasQuery->get();
         } else {
-            $paginator = $penerimasQuery->paginate($limit)->appends($request->except('page'));
-            $penerimasCollection = $paginator->getCollection();
+            $paginator = $penerimasQuery
+                ->paginate($limit)
+                ->appends($request->except('page'));
+
+            $penerimas = $paginator->getCollection();
         }
 
-        $penerimaIds = $penerimasCollection->pluck('id');
+
+        /* =========================
+     * 3. QUERY LAPORAN (SEKALI SAJA)
+     * ========================= */
         $laporans = Laporan::query()
-            ->whereIn('penerima_id', $penerimaIds)
-            ->when($subIds->isNotEmpty(), fn($q) => $q->whereIn('sub_kegiatan_id', $subIds))
-            ->orderBy('created_at', 'desc')
+            ->whereIn('penerima_id', $penerimas->pluck('id'))
+            ->when(
+                $subKegiatanIds->isNotEmpty(),
+                fn($q) => $q->whereIn('sub_kegiatan_id', $subKegiatanIds)
+            )
+            ->orderByDesc('created_at')
             ->get([
                 'id',
                 'penerima_id',
@@ -159,68 +176,82 @@ class LaporanController extends Controller
                 'created_at',
             ]);
 
-        $lapIndex = $laporans->groupBy(['penerima_id', 'sub_kegiatan_id']);
+        /* index laporan: penerima_id + sub_kegiatan_id */
+        $lapIndex = $laporans->groupBy(fn($l) => $l->penerima_id . '-' . $l->sub_kegiatan_id);
 
-        $mapped = $penerimasCollection->map(function ($p) use ($kegiatanList, $lapIndex) {
+
+        /* =========================
+     * 4. MAPPING DATA (LURUS & JELAS)
+     * ========================= */
+        $mapped = $penerimas->map(function ($p) use ($kegiatanList, $lapIndex) {
             $u  = $p->user;
             $mh = $u?->mahasiswa;
             $ps = $mh?->programStudi;
             $fk = $ps?->fakultas;
 
-            $kegs = $kegiatanList->map(function ($k) use ($p, $lapIndex) {
-                $subs = $k->subKegiatan->map(function ($s) use ($p, $lapIndex) {
-                    $lapList = collect(data_get($lapIndex, [$p->id, $s->id], [])); // selalu Collection
+            $kegiatan = [];
 
-                    return [
+            foreach ($kegiatanList as $k) {
+                $subs = [];
+
+                foreach ($k->subKegiatan as $s) {
+                    $key = $p->id . '-' . $s->id;
+                    $laps = $lapIndex->get($key, collect());
+
+                    $subs[] = [
                         'sub_kegiatan_id'   => $s->id,
                         'sub_kegiatan_nama' => $s->nama,
-                        'laporans'          => $lapList->map(fn($lap) => [
-                            'laporan_id'        => $lap->id,
-                            'path_jenis'        => $lap->path_jenis,
-                            'path'              => $lap->path,
-                            'is_kirim'          => $lap->is_kirim,
-                            'verifikasi_hasil'  => $lap->verifikasi_hasil,
-                            'verifikasi_skor'   => $lap->verifikasi_skor,
+                        'laporans' => $laps->map(fn($lap) => [
+                            'laporan_id'         => $lap->id,
+                            'path_jenis'         => $lap->path_jenis,
+                            'path'               => $lap->path,
+                            'is_kirim'           => $lap->is_kirim,
+                            'verifikasi_hasil'   => $lap->verifikasi_hasil,
+                            'verifikasi_skor'    => $lap->verifikasi_skor,
                             'verifikasi_catatan' => $lap->verifikasi_catatan,
-                            'created_at'        => optional($lap->created_at)->toDateTimeString(),
-                        ]),
+                            'created_at'         => optional($lap->created_at)->toDateTimeString(),
+                        ])->values(),
                     ];
-                });
+                }
 
-                return [
+                $kegiatan[] = [
                     'kegiatan_id'   => $k->id,
                     'kegiatan_nama' => $k->nama,
                     'urut'          => $k->urut,
                     'sub_kegiatans' => $subs,
                 ];
-            });
+            }
 
             return [
-                'penerima_id'    => $p->id,
-                'name' => $u->name ?? '(tanpa nama)',
-                'nim'            => $mh?->nim,
-                'prodi'          => $ps?->nama,
-                'fakultas'       => $fk?->nama,
-                'foto'           => $u?->identitas?->foto ?? $u?->foto ?? '',
-                'email'          => $u?->email,
-                'no_hp'             => $u?->identitas?->no_hp ?? '',
-                'kegiatan'      => $kegs,
+                'penerima_id' => $p->id,
+                'name'        => $u->name ?? '(tanpa nama)',
+                'nim'         => $mh?->nim,
+                'prodi'       => $ps?->nama,
+                'fakultas'    => $fk?->nama,
+                'foto'        => $u?->identitas?->foto ?? $u?->foto ?? '',
+                'email'       => $u?->email,
+                'no_hp'       => $u?->identitas?->no_hp ?? '',
+                'kegiatan'    => $kegiatan,
             ];
         });
 
+
+        /* =========================
+     * 5. RESPONSE
+     * ========================= */
         if ($limit === 0) {
             return response()->json([
-                'status' => true,
+                'status'  => true,
                 'message' => 'ditemukan',
-                'data' => $mapped
+                'data'    => $mapped,
             ]);
         }
 
         $paginator->setCollection($mapped);
 
-
-        return response()->json($paginator->toArray());
+        return response()->json($paginator);
     }
+
 
 
     /**

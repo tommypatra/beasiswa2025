@@ -26,7 +26,7 @@
         <div id="detail-laporan" class="vstack gap-3 "></div>
         <!-- Pagination -->
         <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center" id="pagination"></ul>
+            <ul class="pagination justify-content-center" id="pagination2"></ul>
         </nav>
     </div>
 </div>
@@ -147,7 +147,7 @@
 
         function renderData(response) {
             const dataList = $('#detail-laporan');
-            const pagination = $('#pagination');
+            const pagination = $('#pagination2');
             const data=response.data;
             let no = (data.current_page - 1) * data.per_page + 1;
             dataList.empty();
