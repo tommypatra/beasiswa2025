@@ -241,12 +241,12 @@ class JadwalUjianController extends Controller
         $dataQuery = PesertaUjian::with(['pendaftar.beasiswa', 'jadwalUjian.ruanganUjian.ruangan', 'jadwalUjian.sesiUjian', 'pendaftar.mahasiswa.user.identitas', 'pendaftar.mahasiswa.programStudi.fakultas'])
             ->whereHas('pendaftar', function ($q) use ($request) {
                 $q->where('beasiswa_id', $request->beasiswa_id);
-            })
-            ->where(function ($query) use ($request) {
-                $query->WhereHas('pendaftar.beasiswa', function ($q) use ($request) {
-                    $q->where('is_aktif', 1);
-                });
             });
+        // ->where(function ($query) use ($request) {
+        //     $query->WhereHas('pendaftar.beasiswa', function ($q) use ($request) {
+        //         $q->where('is_aktif', 1);
+        //     });
+        // });
 
         // if (izinkanAkses('admin')) {
         //     if ($request->filled('pewawancara_id')) {
