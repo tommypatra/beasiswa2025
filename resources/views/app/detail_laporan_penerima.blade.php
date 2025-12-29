@@ -149,7 +149,7 @@
             const dataList = $('#detail-laporan');
             const pagination = $('#pagination2');
             const data=response.data;
-            let no = (data.current_page - 1) * data.per_page + 1;
+            let no = (response.current_page - 1) * response.per_page + 1;
             dataList.empty();
             pagination.empty();
 
@@ -187,7 +187,7 @@
                     </div>`;
                     dataList.append(row);
                 });
-                renderPagination(response.data, pagination);
+                renderPagination(response, pagination);
             }else{
                 const row = `<div>
                                 data tidak ditemukan
