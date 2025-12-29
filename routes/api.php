@@ -319,6 +319,12 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::delete('hapus-contoh-format-laporan/{id}', [SubKegiatanController::class, 'hapusContohFormatLaporan']);
     });
 
+    Route::middleware([
+        'cek.akses:mahasiswa,pengelola',
+    ])->group(function () {
+        Route::get('detail-laporan/{sk_penerima_id}', [LaporanController::class, 'detailLaporan']);
+    });
+
     Route::middleware(['cek.akses:mahasiswa'])->group(function () {
         Route::resource('mahasiswa', MahasiswaController::class);
         Route::resource('pendidikan-akhir', PendidikanAkhirController::class);
@@ -331,7 +337,6 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::resource('laporan', LaporanController::class);
 
         Route::get('laporan-mahasiswa/{sk_penerima_id}', [LaporanController::class, 'laporanMahasiswa']);
-        Route::get('detail-laporan/{sk_penerima_id}', [LaporanController::class, 'detailLaporan']);
 
 
         Route::get('aktifkan-nomor-rekening/{rekening_id}', [BukuRekeningController::class, 'aktifkanRekening']);
