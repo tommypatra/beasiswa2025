@@ -181,7 +181,7 @@
                     <div class="tanggal-ujian"></div>
                 </div>
                 <div class="ujian-item">
-                    <div class="label">Waktu / Sesi</div>
+                    <div class="label">Sesi/ Waktu</div>
                     <div class="waktu-ujian"></div>
                 </div>
                 <div class="ujian-item">
@@ -383,7 +383,7 @@
                     const row = `<tr>
                                     <td>${no++}</td>
                                     <td>${dt.ujian}</td>
-                                    <td>${dt.keterangan}</td>
+                                    <td>${showText(dt.keterangan)}</td>
                                 </tr>`;
                     dataList.append(row);
                 });                        
