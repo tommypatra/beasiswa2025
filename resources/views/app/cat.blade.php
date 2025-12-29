@@ -97,6 +97,7 @@
     const endpoint_tab2=`${base_url}/api/beasiswa/${beasiswa_id}/ruangan-ujian`;
     const endpoint_tab3=`${base_url}/api/beasiswa/${beasiswa_id}/sesi-ujian`;
     const endpoint_tab4=`${base_url}/api/beasiswa/${beasiswa_id}/jadwal-ujian`;
+    const endpoint_tab5=`${base_url}/api/beasiswa/${beasiswa_id}/materi-ujian`;
     const endpoint_tab6=`${base_url}/api/beasiswa/${beasiswa_id}/peserta-ujian`;
 
     $(document).ready(function() {
