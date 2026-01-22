@@ -140,12 +140,11 @@
                 $('#tanggal-wawancara').text(formatTanggal(beasiswa.wawancara_mulai)+' s/d '+formatTanggal(beasiswa.wawancara_selesai));                        
             }            
             
-            if(beasiswa.pengaturan_ujian.id && beasiswa.ada_ujian_cbt){
+            if(beasiswa.pengaturan_ujian && beasiswa.ada_ujian_cbt){
                 $('#baris-seleksi-cat').show();
                 $('#tanggal-seleksi-cat').text(formatTanggal(beasiswa.pengaturan_ujian.tanggal_mulai)+' s/d '+formatTanggal(beasiswa.pengaturan_ujian.tanggal_selesai));
             }
         }
-
         async function loadRekapKabupaten() {
             let url = `${base_url}/api/get-rekap-kabupaten/${id}`;
             let status = $('#filter-rekap-kabupaten').val(); 
