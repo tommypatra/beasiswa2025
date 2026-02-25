@@ -141,7 +141,7 @@
                             if(dr.verifikasi_hasil==1){
                                 verifikasi_hasil=`<span class="badge rounded-pill text-bg-success fs-2">MS</span>`;
                             }else if(dr.verifikasi_hasil==0){
-                                verifikasi_hasil=`<span class="badge rounded-pill text-bg-danger fs-2">Tidak Sesuai</span>`;                                
+                                verifikasi_hasil=`<span class="badge rounded-pill text-bg-danger fs-2">Tidak Sesuai</span> <span style="font-size:11px;">${dr.verifikasi_catatan}</span>`;                                
                             }
                             tombol = verifikasi_hasil;
                         }
