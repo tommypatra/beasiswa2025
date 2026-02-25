@@ -140,8 +140,8 @@
                             var verifikasi_hasil = '<span class="badge rounded-pill text-bg-warning fs-2">belum diverifikasi</span>';
                             if(dr.verifikasi_hasil==1){
                                 verifikasi_hasil=`<span class="badge rounded-pill text-bg-success fs-2">MS</span>`;
-                            }elseif(dr.verifikasi_hasil==0){
-                                verifikasi_hasil=`<span class="badge rounded-pill text-bg-info fs-2">Tidak Sesuai</span>`;                                
+                            }else if(dr.verifikasi_hasil==0){
+                                verifikasi_hasil=`<span class="badge rounded-pill text-bg-danger fs-2">Tidak Sesuai</span>`;                                
                             }
                             tombol = verifikasi_hasil;
                         }
