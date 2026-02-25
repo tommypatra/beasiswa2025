@@ -138,8 +138,10 @@
                                     <span class="badge rounded-pill text-bg-danger fs-2">belum finalisasi</span>`;
                         if(dr.is_kirim){
                             var verifikasi_hasil = '<span class="badge rounded-pill text-bg-warning fs-2">belum diverifikasi</span>';
-                            if(dr.verifikasi_hasil){
-                                verifikasi_hasil=(dr.verifikasi_hasil==1)?`<span class="badge rounded-pill text-bg-success fs-2">MS</span>`:`<span class="badge rounded-pill text-bg-info fs-2">Final</span>`;
+                            if(dr.verifikasi_hasil==1){
+                                verifikasi_hasil=`<span class="badge rounded-pill text-bg-success fs-2">MS</span>`;
+                            }elseif(dr.verifikasi_hasil==0){
+                                verifikasi_hasil=`<span class="badge rounded-pill text-bg-info fs-2">Tidak Sesuai</span>`;                                
                             }
                             tombol = verifikasi_hasil;
                         }
