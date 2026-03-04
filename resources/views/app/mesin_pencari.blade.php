@@ -309,7 +309,7 @@ $(document).ready(function () {
     async function loadRiwayatBeasiswa(){
         const filter_tahun = $('#filter-tahun').val();
         const nims = ambilSemuaNim();
-        const batches = chunkArray(nims, 1);
+        const batches = chunkArray(nims, 30);
         for(const batch of batches){
             const res = await execAsync(
                 `${base_url}/api/cari-beasiswa-mahasiswa`,
