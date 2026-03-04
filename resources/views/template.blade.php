@@ -243,6 +243,18 @@
         this.value = this.value.toUpperCase();
     });
 
+
+    function startLoading(){
+        $(".loading-progress").fadeIn(200);
+        $('button[type="submit"], input[type="submit"]').prop('disabled', true);
+    }
+
+    function stopLoading(){
+        $(".loading-progress").fadeOut(200);
+        $('button[type="submit"], input[type="submit"]').prop('disabled', false);
+    }      
+
+
     $(document).ready(function() {
       $.ajaxSetup({
         beforeSend: function(xhr) {
@@ -313,20 +325,17 @@
       $(document)
         .ajaxStart(function () {
             if (!isBatchProcess) {
-                $(".loading-progress").fadeIn(200);
-                $('button[type="submit"], input[type="submit"]').prop('disabled', true);
+                startLoading();
             }
         })
         .ajaxStop(function () {
             if (!isBatchProcess) {
-                $(".loading-progress").fadeOut(200);
-                $('button[type="submit"], input[type="submit"]').prop('disabled', false);
+                stopLoading();
             }
             $('.loading-percent').text('');
         })
         .ajaxError(function () {
-            $(".loading-progress").fadeOut(200);
-            $('button[type="submit"], input[type="submit"]').prop('disabled', false);
+            stopLoading();
             isBatchProcess = false;
             $('.loading-percent').text('');
         });

@@ -222,6 +222,7 @@ $(document).ready(function () {
     });
 
     $('#file-excel').on('change', function(e){
+        startLoading();
         const file = e.target.files[0];
         if(!file) return;
         const reader = new FileReader();
@@ -233,6 +234,9 @@ $(document).ready(function () {
             const rows = XLSX.utils.sheet_to_json(sheet, {header:1});
             renderExcelPreview(rows);
             loadRiwayatBeasiswa();
+
+            stopLoading();
+            alert("Proses selesai");            
         };
         reader.readAsArrayBuffer(file);
     });
