@@ -94,6 +94,15 @@ class BeasiswaController extends Controller
             });
         }
 
+        if ($request->filled('nim')) {
+            $nim = $request->nim;
+            if (is_array($nim)) {
+                $dataQuery->whereIn('nim', $nim);
+            } else {
+                $dataQuery->where('nim', $nim);
+            }
+        }
+
         if ($request->filled('filter_tahun')) {
             $tahun = $request->filter_tahun;
             $dataQuery->with([
@@ -109,13 +118,15 @@ class BeasiswaController extends Controller
         $default_limit = env('DEFAULT_LIMIT', 30);
         $limit = $request->filled('limit') ? $request->limit : $default_limit;
 
-        $data = $dataQuery->paginate($limit);
-
-        $resourceCollection = $data->getCollection()->map(function ($item) {
-            return new CariBeasiswaMahasiswaResource($item);
-        });
-
-        $data->setCollection($resourceCollection);
+        if ($limit > 0) {
+            // pakai pagination
+            $data = $dataQuery->paginate($limit);
+            $resourceCollection = $data->getCollection()->map(fn($item) => new CariBeasiswaMahasiswaResource($item));
+            $data->setCollection($resourceCollection);
+        } else {
+            // ambil semua data tanpa pagination
+            $data = $dataQuery->get()->map(fn($item) => new CariBeasiswaMahasiswaResource($item));
+        }
 
         return response()->json([
             'status' => true,
