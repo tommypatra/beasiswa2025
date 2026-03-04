@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\BeasiswaRequest;
+use App\Http\Resources\BeasiswaResource;
+use App\Http\Resources\CariBeasiswaMahasiswaResource;
 use App\Models\Beasiswa;
 use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Redis;
-use App\Http\Requests\BeasiswaRequest;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Resources\BeasiswaResource;
 
 class BeasiswaController extends Controller
 {
@@ -72,6 +73,55 @@ class BeasiswaController extends Controller
             DB::rollBack();
             return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat membuat data baru: ' . $e->getMessage()], 500);
         }
+    }
+
+
+    public function cariBeasiswaMahasiswa(Request $request)
+    {
+        $dataQuery = Mahasiswa::with(['programStudi.fakultas', 'user.penerima.skPenerima'])
+            ->join('users', 'users.id', '=', 'mahasiswas.user_id')
+            ->select('mahasiswas.*')
+            ->orderBy('users.name', 'asc');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $dataQuery->where(function ($q) use ($search) {
+                $q->where('nim', 'like', "%$search%")
+                    ->orWhereHas('user', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%$search%");
+                    });
+            });
+        }
+
+        if ($request->filled('filter_tahun')) {
+            $tahun = $request->filter_tahun;
+            $dataQuery->with([
+                'user.penerima' => function ($q) use ($tahun) {
+                    $q->whereHas('skPenerima', function ($sk) use ($tahun) {
+                        $sk->whereYear('tanggal_sk', $tahun);
+                    });
+                },
+                'user.penerima.skPenerima'
+            ]);
+        }
+
+        $default_limit = env('DEFAULT_LIMIT', 30);
+        $limit = $request->filled('limit') ? $request->limit : $default_limit;
+
+        $data = $dataQuery->paginate($limit);
+
+        $resourceCollection = $data->getCollection()->map(function ($item) {
+            return new CariBeasiswaMahasiswaResource($item);
+        });
+
+        $data->setCollection($resourceCollection);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ]);
     }
 
     /**

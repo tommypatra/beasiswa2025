@@ -232,6 +232,9 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         'cek.akses:admin,pengelola',
         'admin.seleksi'
     ])->group(function () {
+
+        Route::get('cari-beasiswa-mahasiswa', [BeasiswaController::class, 'cariBeasiswaMahasiswa']);
+
         Route::get('get-data-beasiswa/{beasiswa_id}', [BeasiswaController::class, 'show']);
         Route::get('get-rekap-kabupaten/{beasiswa_id}/', [PendaftarController::class, 'rekapKabupaten']);
         Route::get('daftar-pendaftar-beasiswa/{beasiswa_id}', [PendaftarController::class, 'daftarPendaftar']);

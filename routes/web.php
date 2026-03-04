@@ -64,6 +64,8 @@ Route::get('/sk-penerima-mahasiswa', [WebController::class, 'skPenerimaMahasiswa
 
 Route::get('/pewawancara/{beasiswa_id}', [WebController::class, 'pewawancara'])->name('pewawancara');
 
+
+Route::get('/mesin-pencari', [WebController::class, 'mesinPencari'])->name('mesin-pencari');
 Route::get('/survei', [WebController::class, 'survei'])->name('survei');
 Route::get('/wawancara', [WebController::class, 'wawancara'])->name('wawancara');
 Route::get('/peserta-wawancara/{id}', [WebController::class, 'pesertaWawancara'])->name('peserta-wawancara');

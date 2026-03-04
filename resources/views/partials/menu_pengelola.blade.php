@@ -7,6 +7,17 @@
 </li>
 <li class="sidebar-item menu-pengelola">
     <a class="sidebar-link justify-content-between" 
+        href="{{ route('mesin-pencari') }}" aria-expanded="false">
+        <div class="d-flex align-items-center gap-3">
+        <span class="d-flex">
+            <iconify-icon icon="solar:glasses-outline" class=""></iconify-icon>
+        </span>
+        <span class="hide-menu">Mesin Pencari</span>
+        </div>
+    </a>
+</li>
+<li class="sidebar-item menu-pengelola">
+    <a class="sidebar-link justify-content-between" 
         href="{{ route('seleksi-beasiswa') }}" aria-expanded="false">
         <div class="d-flex align-items-center gap-3">
         <span class="d-flex">
