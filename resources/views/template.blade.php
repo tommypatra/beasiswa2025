@@ -193,8 +193,10 @@
           </div>
 
           <div class="py-6 px-6 text-center">
-            <p class="mb-0 fs-4">Design and Developed by <a href="https://www.wrappixel.com/" target="_blank"
+            <p class="mb-0 fs-4">Design template by <a href="https://www.wrappixel.com/" target="_blank"
                 class="pe-1 text-primary text-decoration-underline">Wrappixel.com</a>
+                and Developed <a href="mailto:tommyirawanp@iainkendari.ac.id" target="_blank"
+                class="pe-1 text-primary text-decoration-underline">tip@iainkendari.ac.id</a>
             </p>
           </div>
 

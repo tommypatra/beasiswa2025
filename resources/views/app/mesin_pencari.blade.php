@@ -205,6 +205,13 @@ $(document).ready(function () {
         dataSearch(); 
     });
 
+    $('#search-input').on('keydown', function(e){
+        if(e.key === 'Enter'){
+            e.preventDefault();
+            dataSearch();
+        }
+    });    
+
     // Handle page change
     $(document).on('click', '.page-link', function() {
         page = $(this).data('page');
