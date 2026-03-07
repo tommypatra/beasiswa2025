@@ -62,7 +62,9 @@ class BukuRekeningController extends Controller
             $data_save = $request->validated();
             $data_save['user_id'] = auth()->user()->id;
             $data_save['foto_buku'] = upload($request->file('foto_buku'), 'foto_buku');
-
+            if (!$data_save['foto_buku']) {
+                throw new \Exception('Gagal mengunggah foto buku rekening');
+            }
 
             if ($data_save['is_aktif'] == 1) {
                 BukuRekening::where('user_id', auth()->user()->id)
@@ -123,7 +125,11 @@ class BukuRekeningController extends Controller
                 if ($data->foto_buku && Storage::disk('public')->exists($data->foto_buku)) {
                     Storage::disk('public')->delete($data->foto_buku);
                 }
+
                 $data_save['foto_buku'] = upload($request->file('foto_buku'), 'foto_buku');
+                if (!$data_save['foto_buku']) {
+                    throw new \Exception('Gagal mengunggah foto buku rekening');
+                }
             }
 
             if ($data_save['is_aktif'] == 1) {

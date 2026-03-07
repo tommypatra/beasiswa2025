@@ -62,6 +62,9 @@ class RumahController extends Controller
             // $data_save['foto_rumah'] = upload($request->file('foto_rumah'), 'foto_rumah');
             if ($request->hasFile('foto_rumah')) {
                 $data_save['foto_rumah'] = upload($request->file('foto_rumah'), 'foto_rumah');
+                if (!$data_save['foto_rumah']) {
+                    throw new \Exception('Gagal mengunggah foto rumah');
+                }
             }
 
             $data = Rumah::create($data_save);
@@ -188,6 +191,9 @@ class RumahController extends Controller
                     Storage::disk('public')->delete($data->foto_rumah);
                 }
                 $data_save['foto_rumah'] = upload($request->file('foto_rumah'), 'foto_rumah');
+                if (!$data_save['foto_rumah']) {
+                    throw new \Exception('Gagal mengunggah foto rumah');
+                }
             }
 
             $data->update($data_save);

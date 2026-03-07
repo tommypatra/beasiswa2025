@@ -64,6 +64,9 @@ class SyaratController extends Controller
             $data_save = $request->validated();
             if ($request->hasFile('contoh')) {
                 $data_save['contoh'] = upload($request->file('contoh'), 'contoh');
+                if (!$data_save['contoh']) {
+                    throw new \Exception('Gagal mengunggah file contoh');
+                }
             }
             $data = Syarat::create($data_save);
             DB::commit();
@@ -110,6 +113,9 @@ class SyaratController extends Controller
                     Storage::disk('public')->delete($data->contoh);
                 }
                 $data_save['contoh'] = upload($request->file('contoh'), 'contoh');
+                if (!$data_save['contoh']) {
+                    throw new \Exception('Gagal mengunggah file contoh');
+                }
             }
 
             $data->update($data_save);

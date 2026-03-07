@@ -59,6 +59,9 @@ class SubKegiatanController extends Controller
             $data_save = $request->validated();
             if ($request->hasFile('path_format')) {
                 $data_save['path_format'] = upload($request->file('path_format'), 'path_format');
+                if (!$data_save['path_format']) {
+                    throw new \Exception('Gagal mengunggah file contoh format laporan');
+                }
             }
 
             $data = SubKegiatan::create($data_save);
@@ -107,6 +110,9 @@ class SubKegiatanController extends Controller
                     Storage::disk('public')->delete($data->path_format);
                 }
                 $data_save['path_format'] = upload($request->file('path_format'), 'path_format');
+                if (!$data_save['path_format']) {
+                    throw new \Exception('Gagal mengunggah file contoh format laporan');
+                }
             }
 
             $data->update($data_save);

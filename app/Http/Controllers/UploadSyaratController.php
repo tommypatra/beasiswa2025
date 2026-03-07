@@ -104,6 +104,9 @@ class UploadSyaratController extends Controller
             DB::beginTransaction();
             $data_save = $request->validated();
             $data_save['dokumen'] = upload($request->file('dokumen'), 'dokumen');
+            if (!$data_save['dokumen']) {
+                throw new \Exception('Gagal mengunggah file dokumen');
+            }
 
             $data = UploadSyarat::create($data_save);
             DB::commit();

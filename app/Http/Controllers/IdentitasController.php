@@ -43,16 +43,16 @@ class IdentitasController extends Controller
         return response()->json($dataRespon);
     }
 
-    private function upload($request)
-    {
-        $file = $request->file('foto');
-        $namaFile = time() . '_' . $file->getClientOriginalName(); // Nama unik
-        $path_dokumen = 'foto/' . date('Y');
-        if (!Storage::disk('public')->exists($path_dokumen)) {
-            Storage::disk('public')->makeDirectory($path_dokumen);
-        }
-        return $file->storeAs($path_dokumen, $namaFile, 'public');
-    }
+    // private function upload($request)
+    // {
+    //     $file = $request->file('foto');
+    //     $namaFile = time() . '_' . $file->getClientOriginalName(); // Nama unik
+    //     $path_dokumen = 'foto/' . date('Y');
+    //     if (!Storage::disk('public')->exists($path_dokumen)) {
+    //         Storage::disk('public')->makeDirectory($path_dokumen);
+    //     }
+    //     return $file->storeAs($path_dokumen, $namaFile, 'public');
+    // }
 
     /**
      * Store a newly created resource in storage.
@@ -78,6 +78,10 @@ class IdentitasController extends Controller
 
             $data_save['user_id'] = auth()->user()->id;
             $data_save['foto'] = upload($request->file('foto'), 'foto');
+            if (!$data_save['foto']) {
+                throw new \Exception('Gagal mengunggah foto identitas');
+            }
+
             $respon['identitas'] = Identitas::create($data_save);
             DB::commit();
             return response()->json(['status' => true, 'message' => 'data baru berhasil dibuat', 'data' => $respon], 201);
@@ -149,7 +153,11 @@ class IdentitasController extends Controller
                     Storage::disk('public')->delete($identitas->foto);
                 }
                 $data_save['foto'] = upload($request->file('foto'), 'foto');
+                if (!$data_save['foto']) {
+                    throw new \Exception('Gagal mengunggah foto identitas');
+                }
             }
+
             $identitas->update($data_save);
             $respon['identitas'] = $identitas;
 

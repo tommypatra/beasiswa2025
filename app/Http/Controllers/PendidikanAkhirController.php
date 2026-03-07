@@ -59,6 +59,9 @@ class PendidikanAkhirController extends Controller
             // $data_save['foto_ijazah'] = upload($request->file('foto_ijazah'), 'foto_ijazah');
             if ($request->hasFile('foto_ijazah')) {
                 $data_save['foto_ijazah'] = upload($request->file('foto_ijazah'), 'foto_ijazah');
+                if (!$data_save['foto_ijazah']) {
+                    throw new \Exception('Gagal mengunggah foto ijazah');
+                }
             }
 
 
@@ -150,6 +153,9 @@ class PendidikanAkhirController extends Controller
                     Storage::disk('public')->delete($data->foto_ijazah);
                 }
                 $data_save['foto_ijazah'] = upload($request->file('foto_ijazah'), 'foto_ijazah');
+                if (!$data_save['foto_ijazah']) {
+                    throw new \Exception('Gagal mengunggah foto ijazah');
+                }
             }
 
             $data->update($data_save);

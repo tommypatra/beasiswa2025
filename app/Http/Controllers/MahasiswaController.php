@@ -68,6 +68,10 @@ class MahasiswaController extends Controller
             $data_save = $request->validated();
             $data_save['user_id'] = auth()->user()->id;
             $data_save['kartu_mahasiswa'] = upload($request->file('kartu_mahasiswa'), 'kartu_mahasiswa');
+            if (!$data_save['kartu_mahasiswa']) {
+                throw new \Exception('Gagal mengunggah kartu mahasiswa');
+            }
+
             $data = Mahasiswa::create($data_save);
             DB::commit();
             return response()->json(['status' => true, 'message' => 'data baru berhasil dibuat', 'data' => $data], 201);
@@ -122,6 +126,9 @@ class MahasiswaController extends Controller
                     Storage::disk('public')->delete($data->kartu_mahasiswa);
                 }
                 $data_save['kartu_mahasiswa'] = upload($request->file('kartu_mahasiswa'), 'kartu_mahasiswa');
+                if (!$data_save['kartu_mahasiswa']) {
+                    throw new \Exception('Gagal mengunggah kartu mahasiswa');
+                }
             }
 
             $data->update($data_save);
@@ -186,6 +193,10 @@ class MahasiswaController extends Controller
 
             //identitas
             $data_save['foto'] = upload($request->file('foto'), 'foto');
+            if (!$data_save['foto']) {
+                throw new \Exception('Gagal mengunggah foto identitas');
+            }
+
             //cari wilayah identitas
             $data_wilayah = dataWilayah($request->wilayah_desa_id);
             $data_save['desa'] = $data_wilayah['desa'];
@@ -196,6 +207,10 @@ class MahasiswaController extends Controller
 
             //mahasiswa
             $data_save['kartu_mahasiswa'] = upload($request->file('kartu_mahasiswa'), 'kartu_mahasiswa');
+            if (!$data_save['kartu_mahasiswa']) {
+                throw new \Exception('Gagal mengunggah kartu mahasiswa');
+            }
+
             $respon['mahasiswa'] = Mahasiswa::create($data_save);
 
             DB::commit();

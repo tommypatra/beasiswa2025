@@ -48,7 +48,9 @@ class MonitoringController extends Controller
             DB::beginTransaction();
             $data_save = $request->validated();
             $data_save['dokumen'] = upload($request->file('dokumen'), 'dokumen');
-
+            if (!$data_save['dokumen']) {
+                throw new \Exception('Gagal mengunggah file dokumen');
+            }
             $data = Monitoring::create($data_save);
             DB::commit();
             return response()->json(['status' => true, 'message' => 'data baru berhasil dibuat', 'data' => $data], 201);
@@ -96,6 +98,9 @@ class MonitoringController extends Controller
                     Storage::disk('public')->delete($data->dokumen);
                 }
                 $data_save['dokumen'] = upload($request->file('dokumen'), 'dokumen');
+                if (!$data_save['dokumen']) {
+                    throw new \Exception('Gagal mengunggah file dokumen');
+                }
             }
 
             $data->update($data_save);

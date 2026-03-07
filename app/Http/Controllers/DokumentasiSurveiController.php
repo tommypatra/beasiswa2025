@@ -96,6 +96,9 @@ class DokumentasiSurveiController extends Controller
             DB::beginTransaction();
             $data_save = $request->validated();
             $data_save['path'] = upload($request->file('path'), 'path');
+            if (!$data_save['path']) {
+                throw new \Exception('Gagal mengunggah file');
+            }
 
             $data = DokumentasiSurvei::create($data_save);
             DB::commit();

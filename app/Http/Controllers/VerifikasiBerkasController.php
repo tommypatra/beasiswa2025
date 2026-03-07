@@ -206,6 +206,9 @@ class VerifikasiBerkasController extends Controller
             DB::beginTransaction();
             $data_save = $request->validated();
             $data_save['dokumen'] = upload($request->file('dokumen'), 'dokumen');
+            if (!$data_save['dokumen']) {
+                throw new \Exception('Gagal mengunggah file dokumen');
+            }
 
 
             $upload_sebelumnya = UploadSyarat::where('syarat_id', $data_save['syarat_id'])

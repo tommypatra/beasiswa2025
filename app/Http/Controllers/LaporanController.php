@@ -264,6 +264,9 @@ class LaporanController extends Controller
 
             $data_save = $request->validated();
             $data_save['path'] = upload($request->file('path'), 'path');
+            if (!$data_save['path']) {
+                throw new \Exception('Gagal mengunggah file');
+            }
 
             $data = Laporan::create($data_save);
 
