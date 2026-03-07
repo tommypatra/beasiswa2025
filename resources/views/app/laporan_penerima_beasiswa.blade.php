@@ -130,7 +130,7 @@
                     laporan_upload=`<h4>Daftar Dokumen</h4>`;
                     laporan_upload+=`<ul>`;
                     $.each(dt.laporan, function(index, dr) {
-                        const filename = ?dr.path.split('/').pop():'fileupload-'+(index+1);
+                        const filename = (dr.path)?dr.path.split('/').pop():'fileupload-'+(index+1);
                         var tombol =`<span class="btn-group" role="group" >
                                         <button type="button" class="btn btn-sm btn-outline-primary btn-hapus-laporan" data-id="${dr.id}"><i class="ti ti-trash"></i></button>
                                         <button type="button" class="btn btn-sm btn-outline-primary btn-finalisasi-laporan" data-id="${dr.id}"><i class="ti ti-key"></i></button>
