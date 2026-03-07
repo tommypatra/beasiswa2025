@@ -36,30 +36,54 @@ if (!function_exists('daftarAkses')) {
     }
 }
 
-if (!function_exists('upload')) {
-    function upload(?UploadedFile $file, string $folder): ?string
-    {
-        if (!$file) {
+function upload(?UploadedFile $file, string $folder): ?string
+{
+    if (!$file || !$file->isValid()) {
+        return null;
+    }
+
+    try {
+
+        $allowedExt = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx', 'xls', 'xlsx'];
+        $ext = strtolower($file->getClientOriginalExtension());
+
+        if (!in_array($ext, $allowedExt)) {
             return null;
         }
 
-        try {
-            $ext = $file->getClientOriginalExtension();
-            $userId = auth()->check() ? auth()->id() : 'guest';
+        $allowedMime = [
+            'application/pdf',
+            'image/jpeg',
+            'image/png',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        ];
 
-            $namaFile = $userId . '_' . time() . '_' . uniqid() . '.' . $ext;
-            $path_dokumen = $folder . '/' . date('Y');
-
-            if (!Storage::disk('public')->exists($path_dokumen)) {
-                Storage::disk('public')->makeDirectory($path_dokumen);
-            }
-
-            $path = $file->storeAs($path_dokumen, $namaFile, 'public');
-
-            return $path && Storage::disk('public')->exists($path) ? 'storage/' . $path : null;
-        } catch (\Throwable $e) {
+        if (!in_array($file->getMimeType(), $allowedMime)) {
             return null;
         }
+
+        if ($file->getSize() > 5 * 1024 * 1024) {
+            return null;
+        }
+
+        $userId = auth()->check() ? auth()->id() : 'guest';
+
+        $namaFile = $userId . '_' . time() . '_' . uniqid() . '.' . $ext;
+
+        $path_dokumen = $folder . '/' . date('Y');
+
+        if (!Storage::disk('public')->exists($path_dokumen)) {
+            Storage::disk('public')->makeDirectory($path_dokumen);
+        }
+
+        $path = $file->storeAs($path_dokumen, $namaFile, 'public');
+
+        return $path && Storage::disk('public')->exists($path) ? 'storage/' . $path : null;
+    } catch (\Throwable $e) {
+        return null;
     }
 }
 
