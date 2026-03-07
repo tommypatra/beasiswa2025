@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use App\Models\PendidikanAkhir;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Redis;
+// use Illuminate\Support\Facades\Redis;
 use App\Http\Requests\MahasiswaRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\MahasiswaResource;

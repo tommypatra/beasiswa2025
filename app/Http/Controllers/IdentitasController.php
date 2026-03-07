@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Identitas;
-use App\Models\WilayahDesa;
+// use App\Models\WilayahDesa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Redis;
+// use Illuminate\Support\Facades\Redis;
 use App\Http\Requests\IdentitasRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\IdentitasResource;

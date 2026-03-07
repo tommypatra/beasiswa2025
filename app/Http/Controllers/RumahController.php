@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Requests\RumahRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\RumahResource;
-use Illuminate\Support\Facades\Redis;
+// use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\DataKondisiRumahResource;
 

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Laporan;
-use App\Models\Kegiatan;
+// use App\Models\Kegiatan;
 use App\Models\Penerima;
 use App\Models\SkPenerima;
 use App\Models\SubKegiatan;
