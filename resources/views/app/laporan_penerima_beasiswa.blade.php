@@ -130,30 +130,32 @@
                     laporan_upload=`<h4>Daftar Dokumen</h4>`;
                     laporan_upload+=`<ul>`;
                     $.each(dt.laporan, function(index, dr) {
-                        const filename = (dr.path)?dr.path.split('/').pop():'fileupload-'+index;
-                        var tombol =`<span class="btn-group" role="group" >
-                                        <button type="button" class="btn btn-sm btn-outline-primary btn-hapus-laporan" data-id="${dr.id}"><i class="ti ti-trash"></i></button>
-                                        <button type="button" class="btn btn-sm btn-outline-primary btn-finalisasi-laporan" data-id="${dr.id}"><i class="ti ti-key"></i></button>
-                                    </span>
-                                    <span class="badge rounded-pill text-bg-danger fs-2">belum finalisasi</span>`;
-                        if(dr.is_kirim){
-                            var verifikasi_hasil = '<span class="badge rounded-pill text-bg-warning fs-2">belum diverifikasi</span>';
-                            if(dr.verifikasi_hasil==1){
-                                verifikasi_hasil=`<span class="badge rounded-pill text-bg-success fs-2">MS</span>`;
-                            }else if(dr.verifikasi_hasil==0){
-                                verifikasi_hasil=`<span class="badge rounded-pill text-bg-danger fs-2">Tidak Sesuai</span> <span style="font-size:11px;">${dr.verifikasi_catatan}</span>`;                                
+                        if(dr.path){
+                            const filename = dr.path.split('/').pop();
+                            var tombol =`<span class="btn-group" role="group" >
+                                            <button type="button" class="btn btn-sm btn-outline-primary btn-hapus-laporan" data-id="${dr.id}"><i class="ti ti-trash"></i></button>
+                                            <button type="button" class="btn btn-sm btn-outline-primary btn-finalisasi-laporan" data-id="${dr.id}"><i class="ti ti-key"></i></button>
+                                        </span>
+                                        <span class="badge rounded-pill text-bg-danger fs-2">belum finalisasi</span>`;
+                            if(dr.is_kirim){
+                                var verifikasi_hasil = '<span class="badge rounded-pill text-bg-warning fs-2">belum diverifikasi</span>';
+                                if(dr.verifikasi_hasil==1){
+                                    verifikasi_hasil=`<span class="badge rounded-pill text-bg-success fs-2">MS</span>`;
+                                }else if(dr.verifikasi_hasil==0){
+                                    verifikasi_hasil=`<span class="badge rounded-pill text-bg-danger fs-2">Tidak Sesuai</span> <span style="font-size:11px;">${dr.verifikasi_catatan}</span>`;                                
+                                }
+                                tombol = verifikasi_hasil;
                             }
-                            tombol = verifikasi_hasil;
-                        }
 
-                        laporan_upload+=`
-                            <li class="mb-2">
-                                ${showText(dr.keterangan)}
-                                <div>
-                                    <a href="${base_url}/${dr.path}" target="_blank"><i class="ti ti-download"></i> ${filename}</a>
-                                    ${tombol}
-                                </div>
-                            </li>`;                    
+                            laporan_upload+=`
+                                <li class="mb-2">
+                                    ${showText(dr.keterangan)}
+                                    <div>
+                                        <a href="${base_url}/${dr.path}" target="_blank"><i class="ti ti-download"></i> ${filename}</a>
+                                        ${tombol}
+                                    </div>
+                                </li>`;    
+                        }                
                     });
                     laporan_upload+=`</ul>`;
                 }
