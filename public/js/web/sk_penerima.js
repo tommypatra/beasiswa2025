@@ -53,7 +53,6 @@ function renderData(response) {
                                 <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item btn-daftar-penerima" data-perihal="${dt.nama}" data-id="${dt.id}" href="javascript:;"><iconify-icon icon="solar:notebook-broken"></iconify-icon> Daftar Penerima</a></li>
-                                    <li><a class="dropdown-item btn-jadwal-monitoring" data-perihal="${dt.nama}" data-id="${dt.id}" href="javascript:;"><iconify-icon icon="solar:calendar-linear"></iconify-icon> Jadwal Monitoring</a></li>
                                     <li><a class="dropdown-item btn-daftar-verifikator" data-perihal="${dt.nama}" data-id="${dt.id}" href="javascript:;"><iconify-icon icon="solar:user-check-linear"></iconify-icon> Verifikator Monitoring</a></li>
                                     <li><a class="dropdown-item btn-ganti-sk" data-id="${dt.id}" href="javascript:;"><iconify-icon icon="solar:pen-new-round-outline"></iconify-icon> Ganti</a></li>
                                     <li><a class="dropdown-item btn-hapus-sk" data-id="${dt.id}" href="javascript:;"><iconify-icon icon="solar:trash-bin-2-outline"></iconify-icon> Hapus</a></li>
