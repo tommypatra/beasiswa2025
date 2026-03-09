@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+// use Illuminate\Support\Facades\Validator;
+
 use App\Models\User;
 use App\Models\UserRole;
 use App\Models\Identitas;
@@ -194,8 +196,10 @@ class PenggunaController extends Controller
             }
             $data['sk_penerima_id'] = $sk_penerima_id;
             $data['password'] = Hash::make('1235678');
-            if (!$request->email)
-                $data['email'] = $request->nim . '@iainkendari.ac.id';
+
+            $data['email'] = ($request->filled('email') && filter_var($request->email, FILTER_VALIDATE_EMAIL))
+                ? $request->email
+                : $request->nim . '@iainkendari.ac.id';
 
             $akun = User::create($data);
             $data['user_id'] = $akun->id;
