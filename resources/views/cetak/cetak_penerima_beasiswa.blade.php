@@ -142,7 +142,7 @@
                         <th width="13%">NIM</th>
                         <th width="20%">Nama</th>
                         <th width="10%">Jenis Kelamin</th>
-                        <th width="10%">HP</th>
+                        <th width="13%">HP</th>
                         <th width="15%">Fakultas</th>
                         <th width="15%">Program Studi</th>
                         <th width="10%">Bank</th>
