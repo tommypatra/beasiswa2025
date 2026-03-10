@@ -128,9 +128,12 @@ class SkPenerimaController extends Controller
                 'penerima as total_penerima',
 
                 'penerima as sudah_upload_rekening' => function ($q) {
-                    $q->whereHas('bukuRekening');
+                    $q->whereExists(function ($sub) {
+                        $sub->select(DB::raw(1))
+                            ->from('buku_rekenings')
+                            ->whereColumn('buku_rekenings.user_id', 'penerimas.user_id');
+                    });
                 },
-
                 'penerima as rekening_sinkron' => function ($q) {
                     $q->whereNotNull('buku_rekening_id');
                 }
