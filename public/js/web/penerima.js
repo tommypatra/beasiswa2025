@@ -166,8 +166,9 @@ $(document).ready(function() {
             });
     });
     
-    $('#btn-refresh-penerima').click(function() {
+    $('#btn-refresh-penerima').click(async function() {
         loadDataPenerima();
+        await statistikPenerima();
     });
 
     $(document).on('click', '.btn-daftar-penerima', function() {
