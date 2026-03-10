@@ -154,7 +154,7 @@
                 </thead>
                 <tbody id="data-list">
                     <tr>
-                        <td colspan="11">tidak ditemukan</td>
+                        <td colspan="12">tidak ditemukan</td>
                     </tr>
                 </tbody>
             </table>
