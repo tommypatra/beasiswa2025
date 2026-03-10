@@ -16,6 +16,16 @@ async function loadDataMonitoring() {
         });
 }
 
+async function statistikPenerima() {
+    const res = await asyncFunction(`${base_url}/api/statistik-penerima/${sk_penerima_id}`);
+    const data = res.data;
+
+    $('#total_penerima').text(data.total_penerima);
+    $('#sudah_upload_rekening').text(data.sudah_upload_rekening);
+    $('#belum_sinkron').text(data.sudah_upload_rekening-data.rekening_sinkron);
+    $('#rekening_sinkron').text(data.rekening_sinkron);
+}
+
 async function loadDataSK(set_default=true) {
     let search = $('#search-input').val();
     let response = await asyncFunction(`${base_url}/api/sk-penerima?page=${page_sk}&search=${search}`);

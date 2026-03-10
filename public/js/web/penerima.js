@@ -82,16 +82,6 @@ async function showModalFormPenerima() {
     await statistikPenerima();
 }
 
-async function statistikPenerima() {
-    const res = await asyncFunction(`${base_url}/api/statistik-penerima/${sk_penerima_id}`);
-    const data = res.data;
-
-    $('#total_penerima').text(data.total_penerima);
-    $('#sudah_upload_rekening').text(data.sudah_upload_rekening);
-    $('#belum_sinkron').text(data.sudah_upload_rekening-data.rekening_sinkron);
-    $('#rekening_sinkron').text(data.rekening_sinkron);
-}
-
 $(document).ready(function() {
     
     // $('#search-input-penerima').on('keypress', async function(e) {
