@@ -207,6 +207,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
 
         Route::get('daftar-pelaksana-beasiswa/{beasiswa_id?}', [AdminSeleksiController::class, 'index']);
 
+        Route::get('statistik-penerima/{id?}', [SkPenerimaController::class, 'statistik']);
         Route::resource('sk-penerima', SkPenerimaController::class);
         Route::resource('penerima', PenerimaController::class);
         Route::resource('verifikator-penerima', VerifikatorPenerimaController::class);

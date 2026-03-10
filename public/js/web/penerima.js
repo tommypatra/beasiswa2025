@@ -1,4 +1,5 @@
 var page_penerima = 1;
+var penerima_keterangan_default = '';
 
 async function loadDataPenerima() {
     let search = $('#search-input-penerima').val();
@@ -52,7 +53,10 @@ function renderDataPenerima(response) {
                         <td>${dt.program_studi}</td>
                         <td>${dt.fakultas}</td>
                         <td>${buku_rekening}</td>
-                        <td>${showText(dt.keterangan)}</td>
+                        <td>
+                            <textarea class="form-control keterangan_penerima" rows="2" 
+                            data-id="${dt.penerima_id}" data-user_id="${dt.user_id}">${showText(dt.keterangan)}</textarea>
+                        </td>
                         <td>
                             <button class="btn btn-danger btn-hapus-penerima" data-id="${dt.penerima_id}" type="button"><iconify-icon icon="solar:trash-bin-2-outline"></iconify-icon></button>
                         </td>
@@ -69,12 +73,23 @@ function renderDataPenerima(response) {
 }    
 
 //untuk show modal form
-function showModalFormPenerima() {
+async function showModalFormPenerima() {
     var fModalForm = new bootstrap.Modal(document.getElementById('modal-penerima'), {
         keyboard: false
     });
     fModalForm.show();
     loadDataPenerima();
+    await statistikPenerima();
+}
+
+async function statistikPenerima() {
+    const res = await asyncFunction(`${base_url}/api/statistik-penerima/${sk_penerima_id}`);
+    const data = res.data;
+
+    $('#total_penerima').text(data.total_penerima);
+    $('#sudah_upload_rekening').text(data.sudah_upload_rekening);
+    $('#belum_sinkron').text(data.sudah_upload_rekening-data.rekening_sinkron);
+    $('#rekening_sinkron').text(data.rekening_sinkron);
 }
 
 $(document).ready(function() {
@@ -129,6 +144,27 @@ $(document).ready(function() {
             });
         }
     });
+
+
+    // Handle on focus keterangan penerima to save default value before change
+    $(document).on('focus', '.keterangan_penerima', function() {
+        penerima_keterangan_default = $(this).val();
+    });
+
+    // Handle on change/blur keterangan penerima
+    $(document).on('blur', '.keterangan_penerima', function() {
+        const id = $(this).attr('data-id');
+        const user_id = $(this).attr('data-user_id');
+        const keterangan = $(this).val();
+        const url = `${base_url}/api/penerima/${id}`;
+
+        if (keterangan.trim() !== "" && keterangan !== penerima_keterangan_default){
+            saveData(url, 'PUT', {keterangan,sk_penerima_id,user_id}, function(response) {
+                appShowNotification(true,['Berhasil dilakukan!']);
+            });
+
+        }
+    });
     
     //hapus data
     $(document).on('click', '.btn-hapus-penerima', function() {
@@ -150,6 +186,7 @@ $(document).ready(function() {
         sk_penerima_id=id;
         page_penerima=1;
         $('#modal-penerima .judul-modal').text(perihal);
+
         showModalFormPenerima();
     });
 
@@ -238,6 +275,7 @@ $(document).ready(function() {
                 if(response.data>0){
                     appShowNotification(true,[`sinkron ${response.data} nomor rekening berhasil dilakukan`]);
                     loadDataPenerima();
+                    await statistikPenerima();
                 }else{
                     alert("tidak ada proses sinkron nomor rekening");
                 }

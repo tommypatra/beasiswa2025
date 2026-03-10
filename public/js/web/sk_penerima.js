@@ -78,11 +78,12 @@ function showModalFormSK() {
     });
     fModalForm.show();
 }
-
-
+    
 $(document).ready(function() {
     initPage();
+
     async function initPage() { // agar di load secara berurutan
+        
         await loadDataMonitoring();
         await loadDataSK();
     }
@@ -104,6 +105,8 @@ $(document).ready(function() {
         page_sk = $(this).data('page');
         loadDataSK();
     });
+
+
 
     $('#btn-refresh-sk').click(function() {
         loadDataSK();

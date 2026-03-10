@@ -224,6 +224,45 @@
                     </div>
                 </div>
 
+                <div class="row g-3" id="statistikBeasiswa">
+
+                    <div class="col-md-3">
+                        <div class="card border-primary">
+                            <div class="card-body text-center">
+                                <h6 class="text-muted mb-1">Total Penerima</h6>
+                                <h2 class="fw-bold text-primary" id="total_penerima">0</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card border-warning">
+                            <div class="card-body text-center">
+                                <h6 class="text-muted mb-1">Sudah Upload</h6>
+                                <h2 class="fw-bold text-info" id="sudah_upload_rekening">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="card border-warning">
+                            <div class="card-body text-center">
+                                <h6 class="text-muted mb-1">Belum Sinkron</h6>
+                                <h2 class="fw-bold text-warning" id="belum_sinkron">0</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card border-success">
+                            <div class="card-body text-center">
+                                <h6 class="text-muted mb-1">Sudah Sinkron</h6>
+                                <h2 class="fw-bold text-success" id="rekening_sinkron">0</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>                
 
                 <div class="d-sm-flex d-block align-items-center justify-content-between mb-3">
                     <h5 class="card-title fw-semibold">Daftar Penerima Beasiswa</h5>
@@ -268,10 +307,10 @@
                             <tr>
                                 <th width="5%">No</th>
                                 <th width="35%">Nama/Nim</th>
-                                <th width="15%">Fakultas</th>
-                                <th width="15%">Program Studi</th>
+                                <th width="10%">Fakultas</th>
+                                <th width="10%">Program Studi</th>
                                 <th width="15%">Nomor Rekening</th>
-                                <th width="20%">Keterangan</th>
+                                <th width="30%">Keterangan</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>

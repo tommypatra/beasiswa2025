@@ -120,6 +120,30 @@ class SkPenerimaController extends Controller
         }
     }
 
+    public function statistik($id)
+    {
+        $data = SkPenerima::query()
+            ->where('id', $id)
+            ->withCount([
+                'penerima as total_penerima',
+
+                'penerima as sudah_upload_rekening' => function ($q) {
+                    $q->whereHas('bukuRekening');
+                },
+
+                'penerima as rekening_sinkron' => function ($q) {
+                    $q->whereNotNull('buku_rekening_id');
+                }
+            ])
+            ->first();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Pengambilan data dilakukan',
+            'data' => $data,
+        ]);
+    }
+
     /**
      * Update the specified resource in storage.
      */
