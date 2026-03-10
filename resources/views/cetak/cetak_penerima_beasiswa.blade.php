@@ -148,11 +148,13 @@
                         <th width="10%">Bank</th>
                         <th width="10%">Nomor Rekening</th>
                         <th width="20%">Rekening Atas Nama</th>
+                        <th width="10%">Status Rekening</th>
+                        <th width="20%">Keterangan</th>
                     </tr>
                 </thead>
                 <tbody id="data-list">
                     <tr>
-                        <td colspan="9">tidak ditemukan</td>
+                        <td colspan="11">tidak ditemukan</td>
                     </tr>
                 </tbody>
             </table>
@@ -301,6 +303,8 @@
                                     <td>${label(dt.terupload_bank)}</td>
                                     <td>${label(dt.terupload_nomor)}</td>
                                     <td>${label(dt.terupload_nama_pemilik)}</td>
+                                    <td>${dt.terupload_bank?"sudah-lengkap":"belum-lengkap"}</td>
+                                    <td>${label(dt.keterangan)}</td>
                                 </tr>`;
                     dataList.append(row);
                 });                        
