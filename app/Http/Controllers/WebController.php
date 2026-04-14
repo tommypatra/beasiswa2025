@@ -24,6 +24,11 @@ class WebController extends Controller
         return view('login');
     }
 
+    public function siakad()
+    {
+        return view('siakad');
+    }
+
     public function mesinPencari()
     {
         return view('app.mesin_pencari');
