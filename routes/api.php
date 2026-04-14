@@ -196,8 +196,8 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     });
 
     Route::middleware(['cek.akses:pengelola'])->group(function () {
-        Route::post('cari-beasiswa-mahasiswa', [BeasiswaController::class, 'cariBeasiswaMahasiswa']);
 
+        Route::post('cari-beasiswa-mahasiswa', [BeasiswaController::class, 'cariBeasiswaMahasiswa']);
         // karena hanya batasi index, show, update 
         Route::middleware(['admin.seleksi'])->group(function () {
             Route::resource('seleksi-beasiswa', BeasiswaController::class)->only(['index', 'show', 'update'])
