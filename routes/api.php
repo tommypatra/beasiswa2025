@@ -196,6 +196,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     });
 
     Route::middleware(['cek.akses:pengelola'])->group(function () {
+        Route::post('cari-beasiswa-mahasiswa', [BeasiswaController::class, 'cariBeasiswaMahasiswa']);
 
         // karena hanya batasi index, show, update 
         Route::middleware(['admin.seleksi'])->group(function () {
@@ -233,8 +234,6 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         'cek.akses:admin,pengelola',
         'admin.seleksi'
     ])->group(function () {
-
-        Route::post('cari-beasiswa-mahasiswa', [BeasiswaController::class, 'cariBeasiswaMahasiswa']);
 
         Route::get('get-data-beasiswa/{beasiswa_id}', [BeasiswaController::class, 'show']);
         Route::get('get-rekap-kabupaten/{beasiswa_id}/', [PendaftarController::class, 'rekapKabupaten']);
