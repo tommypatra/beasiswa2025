@@ -295,7 +295,7 @@ class AuthController extends Controller
                             ]);
                         }
                     else
-                        foreach ([6] as $roleId) {
+                        foreach ([3, 4, 6] as $roleId) {
                             UserRole::create([
                                 'role_id' => $roleId,
                                 'user_id' => $user->id,
