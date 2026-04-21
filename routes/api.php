@@ -99,6 +99,7 @@ Route::get('cek-email', [PenggunaController::class, 'cekEmail']);
 Route::get('cek-nim', [MahasiswaController::class, 'cekNim']);
 Route::post('simpan-pendaftaran-mahasiswa', [MahasiswaController::class, 'simpanPendaftaranMahasiswa']);
 
+Route::post('cari-beasiswa-mahasiswa', [BeasiswaController::class, 'cariBeasiswaMahasiswa']);
 
 Route::middleware('jwt.auth.refresh')->group(function () {
     //endpoint umum
@@ -237,7 +238,6 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         'admin.seleksi'
     ])->group(function () {
 
-        Route::post('cari-beasiswa-mahasiswa', [BeasiswaController::class, 'cariBeasiswaMahasiswa']);
 
         Route::get('get-data-beasiswa/{beasiswa_id}', [BeasiswaController::class, 'show']);
         Route::get('get-rekap-kabupaten/{beasiswa_id}/', [PendaftarController::class, 'rekapKabupaten']);
