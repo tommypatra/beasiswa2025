@@ -343,8 +343,7 @@ class PesertaWawancaraController extends Controller
      */
     public function update(Request $request, string $beasiswa_id, string $id)
     {
-        return response()->json(['request' => $request->status, 'beasiswa_id' => $beasiswa_id, 'id' => $id], 200);
-
+        // return response()->json(['request' => $request->status, 'beasiswa_id' => $beasiswa_id, 'id' => $id], 200);
         try {
             DB::beginTransaction();
             $data = PesertaWawancara::where('id', $id)->firstOrFail();
