@@ -459,14 +459,14 @@
             let peserta_wawancara_id=$(this).data('peserta_wawancara_id');
             let status_wawancara=$(this).data('status_wawancara');
             if(status_wawancara==0){
-                const url = base_url+`/api/beasiswa/${beasiswa_id}/mulai-wawancara/${peserta_wawancara_id}`;
-                // const url = base_url+'/api/peserta-wawancara/' + peserta_wawancara_id;
-                const dataForm = new URLSearchParams();
-                dataForm.append("status", "1");
-                saveData(url, 'PUT', dataForm.toString(), function(response) {
-                    console.log(response);
-                    dataLoad();
-                });
+                // const url = base_url+`/api/beasiswa/${beasiswa_id}/mulai-wawancara/${peserta_wawancara_id}`;
+                // // const url = base_url+'/api/peserta-wawancara/' + peserta_wawancara_id;
+                // const dataForm = new URLSearchParams();
+                // dataForm.append("status", "1");
+                // saveData(url, 'PUT', dataForm.toString(), function(response) {
+                //     console.log(response);
+                //     dataLoad();
+                // });
             }
 
             $('.akhiri-wawancara').attr('data-peserta_wawancara_id', peserta_wawancara_id);
