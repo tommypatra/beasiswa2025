@@ -193,6 +193,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
 
 
         Route::resource('peserta-wawancara', PesertaWawancaraController::class);
+        Route::put('beasiswa/{beasiswa_id}/mulai-wawancara/{id}', [PesertaWawancaraController::class, 'update']);
     });
 
     Route::middleware(['cek.akses:pengelola'])->group(function () {
