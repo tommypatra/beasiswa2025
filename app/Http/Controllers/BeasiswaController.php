@@ -105,22 +105,13 @@ class BeasiswaController extends Controller
 
         if ($request->filled('filter_tahun')) {
             $tahun = $request->filter_tahun;
-
             $dataQuery->with([
                 'user.penerima' => function ($q) use ($tahun) {
                     $q->whereHas('skPenerima', function ($sk) use ($tahun) {
                         $sk->whereYear('tanggal_sk', $tahun);
                     });
                 },
-                'user.penerima.skPenerima' => function ($q) {
-                    $q->orderBy('tanggal_sk', 'desc');
-                }
-            ]);
-        } else {
-            $dataQuery->with([
-                'user.penerima.skPenerima' => function ($q) {
-                    $q->orderBy('tanggal_sk', 'desc');
-                }
+                'user.penerima.skPenerima'
             ]);
         }
 
