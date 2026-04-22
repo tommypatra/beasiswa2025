@@ -186,7 +186,7 @@ $(document).ready(function () {
         const filter_tahun = $('#filter-tahun').val();
         if(search!==''){
             const res = await execAsync(
-                `${base_url}/api/pengelola-cari-beasiswa-mahasiswa`,
+                `${base_url}/api/cari-beasiswa-mahasiswa`,
                 "POST",
                 token,
                 {
@@ -323,7 +323,7 @@ $(document).ready(function () {
         const batches = chunkArray(nims, 30);
         for(const batch of batches){
             const res = await execAsync(
-                `${base_url}/api/pengelola-cari-beasiswa-mahasiswa`,
+                `${base_url}/api/cari-beasiswa-mahasiswa`,
                 "POST",
                 token,
                 {
