@@ -20,71 +20,59 @@
 // use App\Models\PesertaWawancara;
 // use App\Http\Controllers\WilayahDesa;
 // use App\Http\Middleware\Authenticate;
-use Illuminate\Support\Facades\Route;
-// use App\Http\Requests\PenggunaRequest;
-// use App\Http\Controllers\MckController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\RumahController;
-// use App\Http\Controllers\WilayahProvinsi;
-use App\Http\Controllers\SyaratController;
-// use App\Http\Controllers\WilayahKabupaten;
-use App\Http\Controllers\LaporanController;
-use App\Http\Controllers\RuanganController;
-// use App\Http\Middleware\CekAksesMiddleware;
-use App\Http\Controllers\BeasiswaController;
-use App\Http\Controllers\FakultasController;
-use App\Http\Controllers\KegiatanController;
-use App\Http\Controllers\OrangTuaController;
-use App\Http\Controllers\PenerimaController;
-use App\Http\Controllers\PenggunaController;
-use App\Http\Controllers\PredikatController;
-use App\Http\Controllers\SurveyorController;
-use App\Http\Controllers\UserRoleController;
-use App\Http\Controllers\IdentitasController;
-use App\Http\Controllers\KelulusanController;
-// use App\Http\Controllers\PekerjaanController;
-use App\Http\Controllers\MahasiswaController;
-use App\Http\Controllers\PendaftarController;
-use App\Http\Controllers\SesiUjianController;
-// use App\Http\Controllers\SumberAirController;
-// use App\Http\Controllers\PendapatanController;
-use App\Http\Controllers\MonitoringController;
-// use App\Http\Controllers\PendidikanController;
-use App\Http\Controllers\SkPenerimaController;
-use App\Http\Controllers\JadwalUjianController;
-use App\Http\Controllers\MateriUjianController;
-use App\Http\Controllers\NilaiRaportController;
-use App\Http\Controllers\PewawancaraController;
-use App\Http\Controllers\SubKegiatanController;
-// use App\Http\Controllers\SumberBiayaController;
-use App\Http\Controllers\SurveiNilaiController;
-use App\Http\Controllers\VerifikatorController;
-use App\Http\Controllers\WilayahDesaController;
-// use App\Http\Middleware\JwtAuthenticateRefresh;
 use App\Http\Controllers\AdminSeleksiController;
+use App\Http\Controllers\SevimaProxyController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BeasiswaController;
 use App\Http\Controllers\BukuRekeningController;
-use App\Http\Controllers\PesertaUjianController;
-use App\Http\Controllers\ProgramStudiController;
-use App\Http\Controllers\RuanganUjianController;
-use App\Http\Controllers\UploadSyaratController;
-use App\Http\Controllers\JenisBeasiswaController;
-use App\Http\Controllers\PesertaSurveiController;
-use App\Http\Controllers\SoalWawancaraController;
-// use App\Http\Controllers\SumberListrikController;
-use App\Http\Controllers\SurveiPesertaController;
-// use App\Http\Controllers\StatusOrangTuaController;
-use App\Http\Controllers\WawancaraNilaiController;
-use App\Http\Controllers\PendidikanAkhirController;
-use App\Http\Controllers\PengaturanUjianController;
-use App\Http\Controllers\PesertaWawancaraController;
-use App\Http\Controllers\ReferensiPilihanController;
-use App\Http\Controllers\VerifikasiBerkasController;
-use App\Http\Controllers\WilayahKabupatenController;
 use App\Http\Controllers\DokumentasiSurveiController;
+use App\Http\Controllers\FakultasController;
+use App\Http\Controllers\IdentitasController;
+use App\Http\Controllers\JadwalUjianController;
+use App\Http\Controllers\JenisBeasiswaController;
+use App\Http\Controllers\KegiatanController;
+use App\Http\Controllers\KelulusanController;
+use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\MahasiswaController;
+use App\Http\Controllers\MateriUjianController;
+use App\Http\Controllers\MonitoringController;
+use App\Http\Controllers\NilaiRaportController;
+use App\Http\Controllers\OrangTuaController;
+use App\Http\Controllers\PendaftarController;
+use App\Http\Controllers\PendidikanAkhirController;
+use App\Http\Controllers\PenerimaController;
+use App\Http\Controllers\PengaturanUjianController;
+use App\Http\Controllers\PenggunaController;
+use App\Http\Controllers\PesertaSurveiController;
+use App\Http\Controllers\PesertaUjianController;
+use App\Http\Controllers\PesertaWawancaraController;
+use App\Http\Controllers\PewawancaraController;
+use App\Http\Controllers\PredikatController;
+use App\Http\Controllers\ProgramStudiController;
+use App\Http\Controllers\ReferensiPilihanController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\RuanganController;
+use App\Http\Controllers\RuanganUjianController;
+use App\Http\Controllers\RumahController;
+use App\Http\Controllers\SesiUjianController;
+use App\Http\Controllers\SkPenerimaController;
+use App\Http\Controllers\SoalWawancaraController;
+use App\Http\Controllers\SubKegiatanController;
+use App\Http\Controllers\SurveiNilaiController;
+use App\Http\Controllers\SurveiPesertaController;
+use App\Http\Controllers\SurveyorController;
+use App\Http\Controllers\SyaratController;
+use App\Http\Controllers\UploadSyaratController;
+use App\Http\Controllers\UserRoleController;
+use App\Http\Controllers\VerifikasiBerkasController;
+use App\Http\Controllers\VerifikatorController;
 use App\Http\Controllers\VerifikatorLaporanController;
-use App\Http\Controllers\VerifikatorPenerimaController;
 use App\Http\Controllers\VerifikatorPendaftarController;
+use App\Http\Controllers\VerifikatorPenerimaController;
+use App\Http\Controllers\WawancaraNilaiController;
+use App\Http\Controllers\WilayahDesaController;
+use App\Http\Controllers\WilayahKabupatenController;
+use Illuminate\Support\Facades\Route;
 
 Route::post('auth-cek', [AuthController::class, 'index']);
 Route::post('cek-data-akun-sia', [AuthController::class, 'cekDataAkunSia']);
@@ -358,6 +346,19 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     });
 });
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Sevima API Gateway (Universal Proxy)
+    |--------------------------------------------------------------------------
+    | Semua request ke Sevima lewat sini
+    | contoh:
+    | /api/v1/sevima/siakadcloud/v1/mahasiswa
+    |
+    */
+
+    Route::any('/sevima/{path}', [SevimaProxyController::class, 'handle'])
+        ->where('path', '.*');
 
 
 Route::fallback(function () {
