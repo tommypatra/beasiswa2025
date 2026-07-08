@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
@@ -192,11 +192,10 @@ class AuthController extends Controller
         return response()->json($respon_data, 200);
     }
 
-    function cekDataAkunSia(Request $request)
+    function cekDataAkunApi(Request $request)
     {
         try {
             DB::beginTransaction();
-
             $tmp_email = ($request->nim) ? $request->nim : $request->nip;
 
             $email = ($request->email != '') ? $request->email : $tmp_email . '@iainkendari.ac.id';
@@ -205,19 +204,26 @@ class AuthController extends Controller
                 throw new \Exception("Gagal, Email pada akun anda di SIA wajib terisi");
             }
 
-            if ($request->grup == 'mahasiswa')
+            if ($request->login_as == 'mahasiswa'){
                 $user = User::with(['identitas', 'mahasiswa'])
-                    ->whereHas('mahasiswa', function ($q) use ($request) {
-                        $q->where('nim', $request->nim);
+                    ->where(function ($q) use ($request, $email) {
+                        $q->whereHas('mahasiswa', function ($q2) use ($request) {
+                            $q2->where('nim', $request->nim);
+                        })
+                        ->orWhere('email', $email);
                     })
-                    ->first();
-            else {
+                    ->first();            
+            }else {
                 $user = User::with(['identitas', 'pegawai'])
-                    ->whereHas('pegawai', function ($q) use ($request) {
-                        $q->where('nip', $request->nip);
+                    ->where(function ($q) use ($request, $email) {
+                        $q->whereHas('pegawai', function ($q2) use ($request) {
+                            $q2->where('nip', $request->nip);
+                        })
+                        ->orWhere('email', $email);
                     })
                     ->first();
-            }
+                }
+                
 
             // dd($user->id);
             if (!$user) {
@@ -240,7 +246,7 @@ class AuthController extends Controller
                 ]);
 
                 // 3. Mahasiswa
-                if ($request->grup == 'mahasiswa') {
+                if ($request->login_as == 'mahasiswa') {
                     $prodi = ProgramStudi::where('idprodi', $request->idprodi)->first();
                     if (!$prodi) {
                         throw new \Exception("Program studi dengan kode {$request->idprodi} tidak ditemukan");
@@ -273,7 +279,7 @@ class AuthController extends Controller
                     ]);
 
                     // 4. Pegawai
-                } elseif ($request->grup == 'pegawai') {
+                } elseif ($request->login_as == 'pegawai') {
 
                     try {
                         Pegawai::create([
@@ -316,4 +322,64 @@ class AuthController extends Controller
             ], 500);
         }
     }
+
+    public function loginApi(Request $request)
+    {
+        $request->validate([
+            'user'     => 'required',
+            'password' => 'required',
+            'status'   => 'required|in:mahasiswa,dosen',
+        ]);
+
+        try {
+            // $response = Http::timeout(15)
+            //     ->withHeaders([
+            //         'X-API-KEY' => config('services.login_api.api_key'),
+            //     ])
+            //     ->post(
+            //         config('services.login_api.url') . '/login',
+            //         [
+            //             'user'     => $request->user,
+            //             'password' => $request->password,
+            //             'status'   => $request->status,
+            //         ]
+            //     );
+
+            $response = Http::asForm()
+                ->timeout(15)
+                ->withHeaders([
+                    'X-API-KEY' => config('services.login_api.api_key'),
+                ])
+                ->post(
+                    config('services.login_api.url') . '/login',
+                    [
+                        'user'     => $request->user,
+                        'password' => $request->password,
+                        'status'   => $request->status,
+                    ]
+                );                
+
+            if (!$response->json('status')) {
+                return response()->json(
+                    $response->json(),
+                    $response->status()
+                );
+            }            
+            $request->merge($response->json('data'));
+
+            return $this->cekDataAkunApi($request);    
+
+
+        } catch (\Throwable $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ], 500);
+        }
+
+    }
+
 }

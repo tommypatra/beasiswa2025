@@ -199,73 +199,19 @@
         }
     });
 
-    function cekDataAkunSia(dataPost){
-        $.ajax({
-          type: 'POST',
-          url: `${base_url}/api/cek-data-akun-sia`,
-          data:   dataPost,
-          success: function(response) {
-            if (response.status) {
-              setSession(response.data);		
-            } else {
-              appShowNotification(false,[response.message]);
-            }
-          },
-          error: function(xhr) {
-            if (xhr.responseJSON) {
-                let errorMessage = xhr.responseJSON.message || "Terjadi kesalahan. Silakan coba lagi!";
-                appShowNotification(false, [errorMessage]);
-            } else {
-                appShowNotification(false, ["Terjadi kesalahan. Silakan coba lagi!"]);
-            }
-          }
-        });   
-    }
-
-    function cekDataPegawai(dataPost){
-        appAjax("https://kkn.iainkendari.ac.id/cek-data-pegawai", dataPost).done(function(vRet) {
-            if(vRet.status) {
-                let timerInterval;
-                Swal.fire({
-                title: 'Login Berhasil!',
-                html: 'Anda akan di arahkan secara otomatis dalam <b></b> milliseconds, silahkan menunggu',
-                timer: 2000,
-                icon: 'success',
-                allowOutsideClick: false,
-                timerProgressBar: true,
-                didOpen: () => {
-                    Swal.showLoading()
-                    const b = Swal.getHtmlContainer().querySelector('b')
-                    timerInterval = setInterval(() => {
-                    b.textContent = Swal.getTimerLeft()
-                    }, 100)
-                },
-                willClose: () => {
-                    clearInterval(timerInterval)
-                }
-                }).then((result) => {
-                    if (result.dismiss === Swal.DismissReason.timer) {
-                        location.href = "app/dashboard";
-                    }
-                })
-            }
-        });
-    }
 
     function login(form){
 			$('#daftar-hakakses').html('');
 			$.ajax({
 				type: 'POST',
-				url: `https://sia.iainkendari.ac.id/api/kkn/login`,
+        url: `${base_url}/api/login-api`,
 				data: $(form).serialize(),
 				success: function(response) {
-					if (response.status) {
-            response.data.grup = response.grup;
-            const dataPost = $.param(response.data);
-            cekDataAkunSia(dataPost);
-					} else {
-						appShowNotification(false,[response.message]);
-					}
+            if (response.status) {
+              setSession(response.data);		
+            } else {
+              appShowNotification(false,[response.message]);
+            }
 				},
 				error: function(xhr) {
           if (xhr.responseJSON) {

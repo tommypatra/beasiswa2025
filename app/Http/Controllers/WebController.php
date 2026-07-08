@@ -29,9 +29,9 @@ class WebController extends Controller
         return view('app.mesin_pencari');
     }
 
-    public function loginSia()
+    public function loginApi()
     {
-        return view('login_sia');
+        return view('login_api');
     }
 
     public function verifikasiLaporan()

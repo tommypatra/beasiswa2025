@@ -75,8 +75,9 @@ use App\Http\Controllers\WilayahKabupatenController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('auth-cek', [AuthController::class, 'index']);
-Route::post('cek-data-akun-sia', [AuthController::class, 'cekDataAkunSia']);
+Route::post('cek-data-akun-api', [AuthController::class, 'cekDataAkunApi']);
 Route::get('cetak-kartu-pendaftaran/{url_id}', [PendaftarController::class, 'dataPendaftar']);
+Route::post('login-api', [AuthController::class, 'loginApi']);
 
 Route::get('data-program-studi', [ProgramStudiController::class, 'index']);
 Route::get('data-fakultas', [FakultasController::class, 'index']);

@@ -42,4 +42,9 @@ return [
         'redirect' => env('GOOGLE_REDIRECT')
     ],
 
+    'login_api' => [
+        'url'     => env('LOGIN_API_URL'),
+        'api_key' => env('LOGIN_API_KEY'),
+    ],    
+
 ];
