@@ -23,7 +23,11 @@ return new class extends Migration
             $table->foreign('beasiswa_id')->references('id')->on('beasiswas')->restrictOnDelete();
 
             $table->unique(['beasiswa_id', 'sesi']);
-            $table->unique(['beasiswa_id', 'tanggal', 'ruangan_ujian_id', 'sesi_ujian_id']);
+            // $table->unique(['beasiswa_id', 'tanggal', 'ruangan_ujian_id', 'sesi_ujian_id']);
+            $table->unique(
+                ['beasiswa_id', 'tanggal', 'ruangan_ujian_id', 'sesi_ujian_id'],
+                'uk_jadwal_ujian'
+            );            
             $table->timestamps();
         });
     }
