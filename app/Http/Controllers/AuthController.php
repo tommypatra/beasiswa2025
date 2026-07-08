@@ -209,8 +209,8 @@ class AuthController extends Controller
                     ->where(function ($q) use ($request, $email) {
                         $q->whereHas('mahasiswa', function ($q2) use ($request) {
                             $q2->where('nim', $request->nim);
-                        })
-                        ->orWhere('email', $email);
+                        });
+                        // ->orWhere('email', $email);
                     })
                     ->first();            
             }else {
@@ -218,8 +218,8 @@ class AuthController extends Controller
                     ->where(function ($q) use ($request, $email) {
                         $q->whereHas('pegawai', function ($q2) use ($request) {
                             $q2->where('nip', $request->nip);
-                        })
-                        ->orWhere('email', $email);
+                        });
+                        // ->orWhere('email', $email);
                     })
                     ->first();
                 }
@@ -374,9 +374,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'status' => false,
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
+                'message' => 'Terjadi kesalahan saat proses login'
             ], 500);
         }
 

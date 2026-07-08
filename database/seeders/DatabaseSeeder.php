@@ -41,7 +41,7 @@ class DatabaseSeeder extends Seeder
 
         //buat user
         $dtdef = [
-            ['name' => 'Admin', 'email' => 'tommyirawan.patra@gmail.com'],
+            ['name' => 'Admin', 'email' => 'admin@app.com'],
             ['name' => 'Aleesya', 'email' => 'aleesya@app.com'],
             ['name' => 'Al Fath', 'email' => 'alfath@app.com'],
             ['name' => 'Arumi', 'email' => 'arumi@app.com'],
