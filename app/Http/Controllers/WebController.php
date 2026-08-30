@@ -19,6 +19,12 @@ class WebController extends Controller
         return view('app.ruangan');
     }
 
+
+    public function loginSiakad()
+    {
+        return view('login-siakad');
+    }
+
     public function loginAdmin()
     {
         return view('login');

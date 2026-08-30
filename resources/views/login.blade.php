@@ -22,7 +22,7 @@
         font-weight: bold;
         font-size: 14px;
         z-index: 99999;
-        display: none; 
+        display: none;
         box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         transition: opacity 0.3s ease;
     }
@@ -56,7 +56,7 @@
                     <div class="alert alert-danger">
                         {{ session('error') }}
                     </div>
-                @endif                    
+                @endif
 
                 <form id="login-form">
                   <div class="mb-3">
@@ -77,12 +77,12 @@
                     {{-- <a class="text-primary fw-bold" href="./index.html">Forgot Password ?</a> --}}
                   </div>
                   <button type="submit" data-method="masuk" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">Masuk</button>
-                  <a href="{{ url('/login') }}" class="btn btn-success w-100 py-8 fs-4 mb-4 rounded-2">Masuk Dengan Akun SIA</a>
+                  <a href="{{ url('/login-siakad') }}" class="btn btn-success w-100 py-8 fs-4 mb-4 rounded-2">Masuk Dengan Akun SIAKAD</a>
                   <a href="{{ route('google.login') }}" class="btn btn-danger w-100 py-8 fs-4 mb-4 rounded-2">Masuk Dengan Google</a>
-                  <div class="d-flex align-items-center justify-content-center">
+                  {{-- <div class="d-flex align-items-center justify-content-center">
                     <p class="fs-4 mb-0 fw-bold">Belum ada akun?</p>
                     <a class="text-primary fw-bold ms-2" href="{{ route('daftar-baru','mahasiswa') }}">Daftar Akun disini</a>
-                  </div>
+                  </div> --}}
                 </form>
               </div>
             </div>
@@ -104,7 +104,7 @@
 		</div>
     </div>
 </div>
-<!-- AKHIR MODAL -->	
+<!-- AKHIR MODAL -->
 
   <script src="{{ asset('template/materialm/assets/libs/jquery/dist/jquery.min.js') }}"></script>
   <script src="{{ asset('template/materialm/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
@@ -113,7 +113,7 @@
   <script src="{{ asset('js/app.js')}}"></script>
 <!-- solar icons -->
   <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
-  <script>   
+  <script>
 	$(document).ready(function() {
         var csrfToken = $('meta[name="csrf-token"]').attr('content');
         var access_token=localStorage.getItem('access_token');
@@ -162,7 +162,7 @@
 
 		var myModalAkses = new bootstrap.Modal(document.getElementById('modal-pilih-akses'), {
 			backdrop: 'static', // nda bisa klik diluar modal
-			keyboard: false     // tombol esc tidak berfungsi untuk tutup modal  
+			keyboard: false     // tombol esc tidak berfungsi untuk tutup modal
 		});
 
     $("#login-form").validate({
@@ -197,7 +197,7 @@
 				data: $(form).serialize(),
 				success: function(response) {
 					if (response.status) {
-						setSession(response.data);		
+						setSession(response.data);
 					} else {
 						appShowNotification(false,[response.message]);
 					}
@@ -210,7 +210,7 @@
               appShowNotification(false, ["Terjadi kesalahan. Silakan coba lagi!"]);
           }
         }
-			});            
+			});
         }
 
 		function setSession(param){
@@ -222,7 +222,7 @@
 			localStorage.setItem('id', param.user_id);
 			localStorage.setItem('nama', param.user_name);
 			showModalAkses();
-		}	
+		}
 
 
 		function showModalAkses() {
@@ -244,7 +244,7 @@
 			if (response.status) {
 				setSession(response.data);
 			}
-		@endif   
+		@endif
 
     });
   </script>

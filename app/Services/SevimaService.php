@@ -2,265 +2,302 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Throwable;
 
 class SevimaService
 {
-    protected $baseUrl;
-    protected $keys;
+    protected string $baseUrl;
+    protected int $timeout;
+    protected int $maxRequest;
+    protected int $windowSeconds;
 
     public function __construct()
     {
-        $this->baseUrl = config('sevima.base_url');
-        $this->keys = config('sevima.keys');
+        $this->baseUrl = rtrim(config('sevima.base_url'), '/');
+        $this->timeout = config('sevima.timeout', 30);
+        $this->maxRequest = config('sevima.max_request', 30);
+        $this->windowSeconds = config('sevima.window_seconds', 60);
     }
 
-    private function poolPath()
+    public function get(string $uri, array $query = []): array
     {
-        return storage_path('app/sevima_pool.json');
+        return $this->request('GET', $uri, $query);
     }
 
-    private function poolState()
+    public function post(string $uri, array $data = []): array
     {
-        $file = $this->poolPath();
+        return $this->request('POST', $uri, $data);
+    }
 
-        if (!file_exists($file)) {
-            $init = [
-                'active' => 0,
-                'cooldowns' => array_fill(0, count($this->keys), 0),
-                'usages' => array_fill(0, count($this->keys), 0),
-                'window_start' => time()
-            ];
-            file_put_contents($file, json_encode($init));
+    protected function request(string $method, string $uri, array $data = []): array
+    {
+        $keyCount = $this->activeKeyCount();
+
+        if ($keyCount === 0) {
+            return $this->error(
+                503,
+                'Tidak ada API Key Sevima yang aktif.'
+            );
         }
 
-        $state = json_decode(file_get_contents($file), true);
+        $triedKeys = [];
 
-        // self repair
-        if (count($state['cooldowns']) != count($this->keys)) {
-            $state['cooldowns'] = array_fill(0, count($this->keys), 0);
-        }
+        for ($i = 0; $i < $keyCount; $i++) {
+            $key = $this->getAvailableKey($triedKeys);
 
-        if (!isset($state['usages']) || count($state['usages']) != count($this->keys)) {
-            $state['usages'] = array_fill(0, count($this->keys), 0);
-        }
+            if (!$key) {
+                $wait = $this->getNextAvailableWait();
 
-        if (!isset($state['window_start'])) {
-            $state['window_start'] = time();
-        }
-
-        return $state;
-    }
-
-    private function savePoolState($state)
-    {
-        ksort($state['cooldowns']);
-        ksort($state['usages']);
-        file_put_contents($this->poolPath(), json_encode($state));
-    }
-
-    private function markUsage($index)
-    {
-        $state = $this->poolState();
-
-        if (time() - $state['window_start'] >= 60) {
-            $state['usages'] = array_fill(0, count($this->keys), 0);
-            $state['window_start'] = time();
-        }
-
-        $state['usages'][$index]++;
-        $this->savePoolState($state);
-    }
-
-    private function markRateLimited($index, $seconds = 65)
-    {
-        $state = $this->poolState();
-        $state['cooldowns'][$index] = time() + $seconds;
-        $this->savePoolState($state);
-    }
-
-    private function activeKeyIndex()
-    {
-        $state = $this->poolState();
-        $now = time();
-        $total = count($this->keys);
-        $start = $state['active'];
-
-        // pass 1: normal
-        for ($i = 0; $i < $total; $i++) {
-            $idx = ($start + $i) % $total;
-
-            if (
-                $state['cooldowns'][$idx] <= $now &&
-                $state['usages'][$idx] < 20
-            ) {
-                $state['active'] = $idx;
-                $this->savePoolState($state);
-                return $idx;
+                return $this->error(
+                    429,
+                    'Semua API Key Sevima sedang mencapai batas request.',
+                    [
+                        'retry_after' => $wait,
+                    ]
+                );
             }
+
+            $triedKeys[] = $key->id;
+
+            $response = $this->sendRequest(
+                $method,
+                $uri,
+                $data,
+                $key
+            );
+
+            if ($response['status'] === 429) {
+                $this->markRateLimit($key);
+                continue;
+            }
+
+            return $response;
         }
 
-        // pass 2: fallback least used
-        $best = false;
-        $bestUsage = PHP_INT_MAX;
+        $wait = $this->getNextAvailableWait();
 
-        for ($i = 0; $i < $total; $i++) {
-            $idx = ($start + $i) % $total;
+        return $this->error(
+            429,
+            'Semua API Key Sevima sedang mencapai batas request.',
+            [
+                'retry_after' => $wait,
+            ]
+        );
+    }
 
-            if ($state['cooldowns'][$idx] <= $now) {
-                if ($state['usages'][$idx] < $bestUsage) {
-                    $bestUsage = $state['usages'][$idx];
-                    $best = $idx;
+    protected function getAvailableKey(array $excludedIds = [])
+    {
+        return DB::transaction(function () use ($excludedIds) {
+            $now = now();
+
+            $keys = DB::table('sevima_api')
+                ->where('is_active', 1)
+                ->when(
+                    !empty($excludedIds),
+                    fn ($query) => $query->whereNotIn('id', $excludedIds)
+                )
+                ->orderBy('usage_count')
+                ->orderBy('last_used_at')
+                ->orderBy('key_index')
+                ->lockForUpdate()
+                ->get();
+
+            foreach ($keys as $key) {
+                if ($key->cooldown_until) {
+                    $cooldown = \Carbon\Carbon::parse(
+                        $key->cooldown_until
+                    );
+
+                    if ($cooldown->isFuture()) {
+                        continue;
+                    }
+                }
+
+                $windowStart = $key->window_start
+                    ? \Carbon\Carbon::parse($key->window_start)
+                    : null;
+
+                if (
+                    !$windowStart ||
+                    $windowStart->copy()
+                        ->addSeconds($this->windowSeconds)
+                        ->isPast()
+                ) {
+                    DB::table('sevima_api')
+                        ->where('id', $key->id)
+                        ->update([
+                            'usage_count' => 1,
+                            'window_start' => $now,
+                            'last_used_at' => $now,
+                            'cooldown_until' => null,
+                        ]);
+
+                    $key->usage_count = 1;
+                    $key->window_start = $now;
+                    $key->last_used_at = $now;
+                    $key->cooldown_until = null;
+
+                    return $key;
+                }
+
+                if ((int) $key->usage_count < $this->maxRequest) {
+                    $usage = (int) $key->usage_count + 1;
+
+                    DB::table('sevima_api')
+                        ->where('id', $key->id)
+                        ->update([
+                            'usage_count' => $usage,
+                            'last_used_at' => $now,
+                            'cooldown_until' => null,
+                        ]);
+
+                    $key->usage_count = $usage;
+                    $key->last_used_at = $now;
+                    $key->cooldown_until = null;
+
+                    return $key;
                 }
             }
-        }
 
-        if ($best !== false) {
-            $state['active'] = $best;
-            $this->savePoolState($state);
-            return $best;
-        }
-
-        return false;
+            return null;
+        });
     }
 
-    private function headers($index)
+    protected function markRateLimit(object $key): void
     {
+        if (!$key->window_start) {
+            return;
+        }
+
+        $windowEnd = \Carbon\Carbon::parse(
+            $key->window_start
+        )->addSeconds($this->windowSeconds);
+
+        DB::table('sevima_api')
+            ->where('id', $key->id)
+            ->update([
+                'cooldown_until' => $windowEnd,
+            ]);
+    }
+
+    protected function getNextAvailableWait(): int
+    {
+        $now = now();
+        $waitTimes = [];
+
+        $keys = DB::table('sevima_api')
+            ->where('is_active', 1)
+            ->get();
+
+        foreach ($keys as $key) {
+            if ($key->cooldown_until) {
+                $cooldown = \Carbon\Carbon::parse(
+                    $key->cooldown_until
+                );
+
+                if ($cooldown->isFuture()) {
+                    $waitTimes[] = $now->diffInSeconds($cooldown);
+                    continue;
+                }
+            }
+
+            if (!$key->window_start) {
+                return 0;
+            }
+
+            if ((int) $key->usage_count < $this->maxRequest) {
+                return 0;
+            }
+
+            $windowEnd = \Carbon\Carbon::parse(
+                $key->window_start
+            )->addSeconds($this->windowSeconds);
+
+            if ($windowEnd->isFuture()) {
+                $waitTimes[] = $now->diffInSeconds($windowEnd);
+            }
+        }
+
+        return empty($waitTimes)
+            ? 0
+            : max(1, min($waitTimes));
+    }
+
+
+protected function sendRequest(string $method, string $uri, array $data, object $key): array
+{
+    $url = $this->baseUrl . '/' . ltrim($uri, '/');
+
+    try {
+        $http = Http::timeout($this->timeout)
+            ->withOptions([
+                'curl' => [
+                    CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
+                ],
+            ])
+            ->withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'X-App-Key' => $key->app_key,
+                'X-Secret-Key' => $key->secret_key,
+            ]);
+
+        if (strtoupper($method) === 'GET') {
+            $response = $http->get($url, $data);
+        } else {
+            $response = $http->post($url, $data);
+        }
+
+        $body = $response->json();
+
         return [
-            'X-App-Key' => $this->keys[$index]['app_key'],
-            'X-Secret-Key' => $this->keys[$index]['secret_key'],
-            'Accept' => 'application/json',
+            'success' => $response->successful(),
+            'status' => $response->status(),
+            'message' => $this->getMessage($body),
+            'data' => $body,
+        ];
+    } catch (Throwable $e) {
+        return [
+            'success' => false,
+            'status' => 500,
+            'message' => 'Gagal terhubung ke API Sevima.',
+            'data' => null,
+            'error' => $e->getMessage(),
         ];
     }
+}
 
-    private function request($url, $method = 'GET', $body = null)
+    protected function activeKeyCount(): int
     {
-        $maxRetry = count($this->keys) * 5;
-        $retry = 0;
-        $queueStart = time();
+        return DB::table('sevima_api')
+            ->where('is_active', 1)
+            ->count();
+    }
 
-        while (true) {
-
-            $index = $this->activeKeyIndex();
-
-            // semua key sibuk → queue
-            if ($index === false) {
-                if (time() - $queueStart > 180) {
-                    logger()->error('Queue >180 sec');
-                }
-
-                usleep(500000);
-                continue;
-            }
-
-            try {
-                $http = Http::withHeaders($this->headers($index))
-                    ->timeout(30);
-
-                $response = match ($method) {
-                    'POST' => $http->post($url, $body),
-                    default => $http->get($url),
-                };
-
-            } catch (\Exception $e) {
-                logger()->error('Curl error key ' . $index);
-
-                $retry++;
-                usleep(500000);
-                continue;
-            }
-
-            $status = $response->status();
-
-            // 429 rate limit
-            if ($status == 429) {
-                logger()->error('429 key ' . $index);
-
-                $this->markRateLimited($index, 65);
-
-                $retry++;
-                if ($retry < $maxRetry) {
-                    usleep(300000);
-                    continue;
-                }
-
-                $retry = 0;
-                usleep(rand(500000, 900000));
-                continue;
-            }
-
-            // auth fail
-            if (in_array($status, [401, 403])) {
-                logger()->error('Auth fail key ' . $index);
-
-                $this->markRateLimited($index, 1800);
-                usleep(100000);
-                continue;
-            }
-
-            $decoded = $response->json();
-
-            if (!$decoded) {
-                return [
-                    'error' => 'Response tidak valid',
-                    'raw' => $response->body()
-                ];
-            }
-
-            // error dari API
-            if (isset($decoded['errors'])) {
-                $detail = $decoded['errors']['detail'] ?? 'Error';
-
-                if (str_contains($detail, 'API key tidak ditemukan')) {
-                    logger()->error('Invalid key ' . $index);
-
-                    $this->markRateLimited($index, 1800);
-                    usleep(100000);
-                    continue;
-                }
-
-                return ['error' => $detail];
-            }
-
-            // sukses
-            $retry = 0;
-            $this->markUsage($index);
-
-            // normalize response
-            if (isset($decoded['attributes'])) {
-                return $decoded['attributes'];
-            }
-
-            if (isset($decoded['data']) && is_array($decoded['data'])) {
-                return [
-                    'data' => $decoded['data'],
-                    'meta' => $decoded['meta'] ?? null,
-                    'urls' => $decoded['urls'] ?? null
-                ];
-            }
-
-            return [
-                'message' => 'Format response tidak dikenali',
-                'raw' => $decoded
-            ];
+    protected function getMessage($data): string
+    {
+        if (!is_array($data)) {
+            return 'Response tidak valid.';
         }
+
+        return $data['message']
+            ?? $data['errors']['message']
+            ?? $data['errors']['detail']
+            ?? 'Request selesai.';
     }
 
-    public function get($endpoint)
-    {
-        return $this->request($this->baseUrl . $endpoint);
-    }
-
-    public function post($endpoint, $body)
-    {
-        return $this->request($this->baseUrl . $endpoint, 'POST', $body);
-    }
-
-    public function login($email, $password)
-    {
-        return $this->post('siakadcloud/v1/user/login', [
-            'email' => $email,
-            'password' => $password
-        ]);
+    protected function error(
+        int $status,
+        string $message,
+        array $extra = []
+    ): array {
+        return array_merge([
+            'success' => false,
+            'status' => $status,
+            'message' => $message,
+            'data' => null,
+        ], $extra);
     }
 }

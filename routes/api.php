@@ -21,7 +21,7 @@
 // use App\Http\Controllers\WilayahDesa;
 // use App\Http\Middleware\Authenticate;
 use App\Http\Controllers\AdminSeleksiController;
-use App\Http\Controllers\SevimaProxyController;
+use App\Http\Controllers\AuthSevimaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BeasiswaController;
 use App\Http\Controllers\BukuRekeningController;
@@ -74,10 +74,20 @@ use App\Http\Controllers\WilayahDesaController;
 use App\Http\Controllers\WilayahKabupatenController;
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| Sevima API Gateway (Universal Proxy)
+|--------------------------------------------------------------------------
+*/
+
 Route::post('auth-cek', [AuthController::class, 'index']);
 Route::post('cek-data-akun-api', [AuthController::class, 'cekDataAkunApi']);
 Route::get('cetak-kartu-pendaftaran/{url_id}', [PendaftarController::class, 'dataPendaftar']);
 Route::post('login-api', [AuthController::class, 'loginApi']);
+
+Route::post('login-siakad', [AuthSevimaController::class, 'login']);
+Route::get('prodi', [AuthSevimaController::class, 'prodi']);
+Route::get('test-sevima-key', [AuthSevimaController::class, 'testSevima']);
 
 Route::get('data-program-studi', [ProgramStudiController::class, 'index']);
 Route::get('data-fakultas', [FakultasController::class, 'index']);
@@ -188,7 +198,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
 
     Route::middleware(['cek.akses:pengelola'])->group(function () {
 
-        // karena hanya batasi index, show, update 
+        // karena hanya batasi index, show, update
         Route::middleware(['admin.seleksi'])->group(function () {
             Route::resource('seleksi-beasiswa', BeasiswaController::class)->only(['index', 'show', 'update'])
                 ->parameters([
@@ -348,18 +358,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
 });
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Sevima API Gateway (Universal Proxy)
-    |--------------------------------------------------------------------------
-    | Semua request ke Sevima lewat sini
-    | contoh:
-    | /api/v1/sevima/siakadcloud/v1/mahasiswa
-    |
-    */
 
-    Route::any('/sevima/{path}', [SevimaProxyController::class, 'handle'])
-        ->where('path', '.*');
 
 
 Route::fallback(function () {
