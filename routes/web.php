@@ -10,13 +10,15 @@ Route::get('/auth/callback', [AuthController::class, 'handleGoogleCallback']);
 // Route::get('/', [WebController::class, 'loginApi']);
 // Route::get('/login-email', [WebController::class, 'loginAdmin'])->name('login-email');
 // Route::get('/login-siakad', [WebController::class, 'loginSiakad'])->name('login-siakad');
-Route::get('/', [WebController::class, 'loginSiakad'])->name('login-siakad');
+// Route::get('/login', [WebController::class, 'loginApi'])->name('login');
+
+Route::get('/', [WebController::class, 'loginSiakad']);
+Route::get('/login', [WebController::class, 'loginSiakad'])->name('login');
 
 Route::get('/sevima/{nim}', function ($nim, \App\Services\SevimaService $sevima) {
     return response()->json($sevima->get("/siakadcloud/v1/mahasiswa/{$nim}"));
 });
 
-Route::get('/login', [WebController::class, 'loginApi'])->name('login');
 Route::get('/ruangan', [WebController::class, 'ruangan'])->name('ruangan');
 Route::get('/dashboard', [WebController::class, 'dashboard'])->name('dashboard');
 Route::get('/pekerjaan', [WebController::class, 'pekerjaan'])->name('pekerjaan');
