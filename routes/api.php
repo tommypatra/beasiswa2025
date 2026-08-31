@@ -85,6 +85,7 @@ Route::post('cek-data-akun-api', [AuthController::class, 'cekDataAkunApi']);
 Route::get('cetak-kartu-pendaftaran/{url_id}', [PendaftarController::class, 'dataPendaftar']);
 Route::post('login-api', [AuthController::class, 'loginApi']);
 
+Route::post('login-google', [AuthSevimaController::class, 'loginGoogle']);
 Route::post('login-siakad', [AuthSevimaController::class, 'login']);
 Route::get('prodi', [AuthSevimaController::class, 'prodi']);
 Route::get('test-sevima-key', [AuthSevimaController::class, 'testSevima']);

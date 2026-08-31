@@ -35,16 +35,20 @@ return [
         ],
     ],
 
-
     'google' => [
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_APP_SECRET'),
         'redirect' => env('GOOGLE_REDIRECT')
     ],
 
+    'google2' => [
+        'client_id' => env('GOOGLE_CLIENT_ID2'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET2'),
+    ],
+
     'login_api' => [
         'url'     => env('LOGIN_API_URL'),
         'api_key' => env('LOGIN_API_KEY'),
-    ],    
+    ],
 
 ];

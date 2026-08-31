@@ -22,7 +22,117 @@ class AuthSevimaController extends Controller
     {
     }
 
-    public function login(Request $request): JsonResponse
+    public function loginGoogle(Request $request): JsonResponse
+    {
+        $credential = $request->input('credential');
+
+        if (!$credential) {
+            return $this->errorResponse('Credential Google tidak ditemukan.', 401);
+        }
+
+        $clientId = config('services.google2.client_id');
+
+        if (!$clientId) {
+            return $this->errorResponse('Konfigurasi Google belum tersedia.', 500);
+        }
+
+        $ch = curl_init("https://oauth2.googleapis.com/tokeninfo?id_token=" . urlencode($credential));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        $response = curl_exec($ch);
+
+        if (curl_errno($ch)) {
+            curl_close($ch);
+            return $this->errorResponse('Tidak dapat menghubungi server Google.', 401);
+        }
+
+        curl_close($ch);
+
+        $google = json_decode($response, true);
+
+        if (!$google || isset($google['error'])) {
+            return $this->errorResponse('Login Google gagal.', 401);
+        }
+        if (($google['aud'] ?? '') !== $clientId) {
+            return $this->errorResponse('Login Google gagal.', 401);
+        }
+        if (($google['iss'] ?? '') !== 'https://accounts.google.com' && ($google['iss'] ?? '') !== 'accounts.google.com') {
+            return $this->errorResponse('Login Google gagal.', 401);
+        }
+        if (($google['email_verified'] ?? '') !== 'true') {
+            return $this->errorResponse('Email Google belum terverifikasi.', 401);
+        }
+
+        $email = trim((string) ($google['email'] ?? ''));
+        if (!$email) {
+            return $this->errorResponse('Email Google tidak ditemukan.', 401);
+        }
+
+        $sevimaUser = $this->cekEmailGoogle($email);
+        $attributes = $sevimaUser['attributes'] ?? null;
+        try {
+            if (!is_array($attributes)) {
+                throw new \RuntimeException('Data akun SIAKAD tidak valid.');
+            }
+            return $this->prosesLogin($attributes);
+        } catch (Throwable $e) {
+            report($e);
+            return $this->syncFailedResponse($e);
+        }
+    }
+
+    protected function cekEmailGoogle(string $email): array
+    {
+        $response = $this->sevima->get('/siakadcloud/v1/user', ['f-email' => $email]);
+
+        if (!$response['success']) {
+            throw new \RuntimeException($response['message'] ?? 'Response SIAKAD tidak valid.');
+        }
+
+        $data = $response['data']['data'] ?? [];
+
+        if (!is_array($data) || empty($data)) {
+            throw new \RuntimeException('Akun Google tidak ditemukan di SIAKAD.');
+        }
+
+        $attributes = $data[0]['attributes'] ?? null;
+
+        if (!is_array($attributes)) {
+            throw new \RuntimeException('Data akun SIAKAD tidak valid.');
+        }
+
+        $userRoles = $attributes['relation']['user-role'] ?? [];
+
+        $attributes['role'] = collect($userRoles)->map(function ($role) {
+            return [
+                'id_role' => $role['id_role'] ?? null,
+                'id_pegawai' => $role['id_pegawai'] ?? null,
+                'nip' => $role['nip'] ?? null,
+                'nama_role' => $role['nama_role'] ?? null,
+                'id_satker' => $role['id_satker'] ?? null,
+                'user_id' => $role['user_id'] ?? null,
+            ];
+        })->toArray();
+
+        return $attributes;
+    }
+
+    // protected function cekEmailGoogle(string $email): array
+    // {
+    //     $response = $this->sevima->get('/siakadcloud/v1/user', ['f-email' => $email]);
+
+    //     if (!$response['success']) {
+    //         throw new \RuntimeException($response['message'] ?? 'Response SIAKAD tidak valid.');
+    //     }
+    //     $users = $response['data']['data'] ?? [];
+    //     if (count($users)<1) {
+    //         throw new \RuntimeException('Akun Google '.$email.' tidak ditemukan di SIAKAD.');
+    //     }
+
+    //     return $users[0];
+    // }
+
+    public function login(Request $request)
     {
         $validated = $request->validate(['email' => ['required', 'email'], 'password' => ['required', 'string']]);
 
@@ -33,6 +143,14 @@ class AuthSevimaController extends Controller
         }
 
         $attributes = $response['data']['attributes'] ?? null;
+
+        return $this->prosesLogin($attributes);
+    }
+
+    public function prosesLogin($attributes): JsonResponse
+    {
+
+        // dd($attributes);
 
         if (!is_array($attributes)) {
             return $this->errorResponse('Data akun SIAKAD tidak valid.', 422);

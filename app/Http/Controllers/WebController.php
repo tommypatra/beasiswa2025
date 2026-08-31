@@ -22,7 +22,9 @@ class WebController extends Controller
 
     public function loginSiakad()
     {
-        return view('login-siakad');
+        $clientId = config('services.google2.client_id');
+        $d['client_id'] = $clientId;
+        return view('login-siakad',$d);
     }
 
     public function loginAdmin()
