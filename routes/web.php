@@ -7,10 +7,10 @@ use App\Http\Controllers\AuthController;
 Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('google.login');
 Route::get('/auth/callback', [AuthController::class, 'handleGoogleCallback']);
 
-Route::get('/', [WebController::class, 'loginApi']);
-Route::get('/login-email', [WebController::class, 'loginAdmin'])->name('login-email');
-Route::get('/login-siakad', [WebController::class, 'loginSiakad'])->name('login-siakad');
-
+// Route::get('/', [WebController::class, 'loginApi']);
+// Route::get('/login-email', [WebController::class, 'loginAdmin'])->name('login-email');
+// Route::get('/login-siakad', [WebController::class, 'loginSiakad'])->name('login-siakad');
+Route::get('/', [WebController::class, 'loginSiakad'])->name('login-siakad');
 
 Route::get('/sevima/{nim}', function ($nim, \App\Services\SevimaService $sevima) {
     return response()->json($sevima->get("/siakadcloud/v1/mahasiswa/{$nim}"));
