@@ -15,30 +15,36 @@
     const base_url = '{{ url("/") }}';
   </script>
 <style>
-    .loading-progress {
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        background: rgba(51, 51, 51, 0.9);
-        color: #fff;
-        padding: 6px;
-        border-radius: 6px;
-        font-weight: bold;
-        font-size: 14px;
-        z-index: 99999;
+    .login-loading {
         display: none;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-        transition: opacity 0.3s ease;
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: rgba(255, 255, 255, 0.75);
+
+        align-items: center;
+        justify-content: center;
+
+        cursor: wait;
     }
-    .loading-progress img {
-        height: 30px;
+
+    .login-loading-box {
+        background: #fff;
+        padding: 30px 40px;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,.15);
+        min-width: 260px;
     }
-  </style>
+</style>
+
 </head>
 
 <body>
   <!--  Body Wrapper -->
-  <div class="loading-progress">Loading <img src="{{ url('images/loading-2.gif') }}"></div>
+
+  {{-- <div class="loading-progress">Loading <img src="{{ url('images/loading-2.gif') }}"></div> --}}
+<div id="content-login" style="display:none;">
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
     data-sidebar-position="fixed" data-header-position="fixed">
     <div
@@ -92,41 +98,6 @@
                             <div class="g_id_signin"></div>
                         </div>
 
-                        <script>
-                            function handleCredentialResponse(response){
-                                $.ajax({
-                                    url: `${base_url}/api/login-google`,
-                                    type: "POST",
-                                    data: {
-                                        credential: response.credential
-                                    },
-                                    dataType: "json",
-                                    success:function(r){
-                                        alert(r.message);
-                                        if(r.status){
-                                            location.href = `${base_url}/dashboard`;
-                                        }
-                                    },
-                                    error: function(xhr) {
-
-                                        let message = 'Terjadi kesalahan.';
-
-                                        if (xhr.responseJSON && xhr.responseJSON.message) {
-                                            message = xhr.responseJSON.message;
-                                        }
-
-                                        alert(message);
-
-                                    }
-
-                                });
-                            }
-                        </script>
-
-
-
-
-
                   </div>
 
                 </form>
@@ -137,6 +108,23 @@
       </div>
     </div>
   </div>
+</div>
+
+<div id="login-loading" class="login-loading">
+    <div class="login-loading-box">
+        <div class="spinner-border text-primary mb-3" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+
+        <div class="fw-semibold">
+            Sedang login...
+        </div>
+
+        <small class="text-muted">
+            Mohon tunggu sebentar
+        </small>
+    </div>
+</div>
 
 <!-- MULAI MODAL -->
 <div class="modal fade" id="modal-pilih-akses" role="dialog">
@@ -160,11 +148,185 @@
 <!-- solar icons -->
   <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
   <script>
+    function handleCredentialResponse(response){
+        showLoginLoading('Sedang login dengan Google...');
+        $.ajax({
+            url: `${base_url}/api/login-google`,
+            type: "POST",
+            data: {
+                credential: response.credential
+            },
+            dataType: "json",
+            success:function(response){
+                hideLoginLoading();
+                if (response.status) {
+                    setSession(response.data);
+                } else {
+                    appShowNotification(false, [
+                        response.message || 'Login gagal.'
+                    ]);
+                }
+            },
+            error: function(xhr) {
+                hideLoginLoading();
+                let message = 'Terjadi kesalahan.';
+
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+
+                alert(message);
+
+            }
+
+        });
+    }
+
+    function showLoginLoading(message = 'Sedang login...') {
+        $('#login-loading').css('display', 'flex');
+        $('#login-loading .fw-semibold').text(message);
+    }
+
+    function hideLoginLoading() {
+        $('#login-loading').hide();
+    }
+
+    var myModalAkses = new bootstrap.Modal(document.getElementById('modal-pilih-akses'), {
+        backdrop: 'static', // nda bisa klik diluar modal
+        keyboard: false     // tombol esc tidak berfungsi untuk tutup modal
+    });
+
+    function setSession(param){
+        localStorage.setItem('access_token', param.access_token);
+        localStorage.setItem('akses', param.akses);
+        localStorage.setItem('email', param.user_email);
+        localStorage.setItem('foto', param.foto);
+        localStorage.setItem('hakakses', JSON.stringify(param.daftar_akses));
+        localStorage.setItem('id', param.user_id);
+        localStorage.setItem('nama', param.user_name);
+        showModalAkses();
+    }
+
+    function showAkses() {
+
+        let daftar_akses = localStorage.getItem('hakakses');
+
+        if (!daftar_akses) {
+            return;
+        }
+
+        try {
+            daftar_akses = JSON.parse(daftar_akses);
+        } catch (e) {
+            return;
+        }
+
+        let html = '';
+
+        daftar_akses.forEach(function (akses) {
+
+            html += `
+                <div class="mb-3">
+                    <button
+                        type="button"
+                        class="btn btn-outline-primary w-100 text-start p-3 pilih-akses"
+                        data-user-role-id="${akses.user_role_id}"
+                        data-role-id="${akses.role_id}"
+                    >
+                        <div class="fw-bold fs-4">
+                            ${akses.role}
+                        </div>
+
+                        <small class="text-muted">
+                            Pilih akses sebagai ${akses.role}
+                        </small>
+                    </button>
+                </div>
+            `;
+        });
+
+        $('#daftar-akses').html(html);
+    }
+
+    function showModalAkses() {
+        $('#daftar-akses').html('');
+
+        let daftar_akses = localStorage.getItem('hakakses');
+
+        if (!daftar_akses) {
+            window.location.replace(base_url + '/dashboard');
+            return;
+        }
+
+        try {
+            daftar_akses = JSON.parse(daftar_akses);
+        } catch (e) {
+            localStorage.removeItem('hakakses');
+            window.location.replace(base_url + '/dashboard');
+            return;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | HANYA 1 AKSES
+        |--------------------------------------------------------------------------
+        */
+
+        if (!Array.isArray(daftar_akses) || daftar_akses.length <= 1) {
+            window.location.replace(base_url + '/dashboard');
+            return;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | LEBIH DARI 1 AKSES → TAMPILKAN MODAL
+        |--------------------------------------------------------------------------
+        */
+
+        showAkses();
+
+        myModalAkses.show();
+    }
+
+    $(document).on('click', '.pilih-akses', function () {
+
+        const userRoleId = $(this).data('user-role-id');
+        const roleId = $(this).data('role-id');
+
+        /*
+        | Simpan akses yang dipilih
+        */
+
+        localStorage.setItem('akses', roleId);
+        localStorage.setItem('user_role_id', userRoleId);
+
+        /*
+        | Tutup modal
+        */
+
+        myModalAkses.hide();
+
+        /*
+        | Masuk dashboard
+        */
+
+        window.location.replace(
+            base_url + '/dashboard'
+        );
+    });
+
+
+
 	$(document).ready(function() {
+        $('#content-login').hide();
+
         var csrfToken = $('meta[name="csrf-token"]').attr('content');
         var access_token=localStorage.getItem('access_token');
 
+        showLoginLoading('Cek status login...');
+
         if(access_token){
+
             $.ajax({
                 headers: {
                     'Authorization': 'Bearer ' + access_token
@@ -184,13 +346,18 @@
                     }
                     if (xhr.status === 401) {
                         localStorage.clear();
+                        $('#content-login').show();
                     }
                 },
                 error: function(xhr, status, error) {
                     localStorage.clear();
+                    $('#content-login').show();
                 }
             });
+        }else{
+            $('#content-login').show();
         }
+        hideLoginLoading();
 
         // $(document)
         //     .ajaxStart(function () {
@@ -206,10 +373,6 @@
         //         $('button[type="submit"], input[type="submit"]').prop('disabled', false);
         //     });
 
-        var myModalAkses = new bootstrap.Modal(document.getElementById('modal-pilih-akses'), {
-            backdrop: 'static', // nda bisa klik diluar modal
-            keyboard: false     // tombol esc tidak berfungsi untuk tutup modal
-        });
 
         $("#login-form").validate({
             rules: {
@@ -233,10 +396,12 @@
         function login(form) {
             $('#daftar-hakakses').html('');
 
-            const $button = $('#login-form button[type="submit"]');
+            // const $button = $('#login-form button[type="submit"]');
 
-            $button.prop('disabled', true);
-            $(".loading-progress").stop(true, true).fadeIn(200);
+            // $button.prop('disabled', true);
+            // $(".loading-progress").stop(true, true).fadeIn(200);
+
+            showLoginLoading('Sedang login...');
 
             $.ajax({
                 type: 'POST',
@@ -245,6 +410,7 @@
                 success: function(response) {
                     // console.log(response.data);
                     // return;
+                    hideLoginLoading();
                     if (response.status) {
                         setSession(response.data);
                     } else {
@@ -254,6 +420,7 @@
                     }
                 },
                 error: function(xhr) {
+                    hideLoginLoading();
                     let errorMessage = 'Terjadi kesalahan. Silakan coba lagi!';
 
                     if (xhr.responseJSON) {
@@ -265,129 +432,12 @@
                     appShowNotification(false, [errorMessage]);
                 },
                 complete: function() {
-                    $button.prop('disabled', false);
-                    $(".loading-progress").stop(true, true).fadeOut(200);
+                    // $button.prop('disabled', false);
+                    // $(".loading-progress").stop(true, true).fadeOut(200);
                 }
             });
         }
-        function setSession(param){
-            localStorage.setItem('access_token', param.access_token);
-            localStorage.setItem('akses', param.akses);
-            localStorage.setItem('email', param.user_email);
-            localStorage.setItem('foto', param.foto);
-            localStorage.setItem('hakakses', JSON.stringify(param.daftar_akses));
-            localStorage.setItem('id', param.user_id);
-            localStorage.setItem('nama', param.user_name);
-            showModalAkses();
-        }
 
-        function showAkses() {
-
-            let daftar_akses = localStorage.getItem('hakakses');
-
-            if (!daftar_akses) {
-                return;
-            }
-
-            try {
-                daftar_akses = JSON.parse(daftar_akses);
-            } catch (e) {
-                return;
-            }
-
-            let html = '';
-
-            daftar_akses.forEach(function (akses) {
-
-                html += `
-                    <div class="mb-3">
-                        <button
-                            type="button"
-                            class="btn btn-outline-primary w-100 text-start p-3 pilih-akses"
-                            data-user-role-id="${akses.user_role_id}"
-                            data-role-id="${akses.role_id}"
-                        >
-                            <div class="fw-bold fs-4">
-                                ${akses.role}
-                            </div>
-
-                            <small class="text-muted">
-                                Pilih akses sebagai ${akses.role}
-                            </small>
-                        </button>
-                    </div>
-                `;
-            });
-
-            $('#daftar-akses').html(html);
-        }
-
-        function showModalAkses() {
-            $('#daftar-akses').html('');
-
-            let daftar_akses = localStorage.getItem('hakakses');
-
-            if (!daftar_akses) {
-                window.location.replace(base_url + '/dashboard');
-                return;
-            }
-
-            try {
-                daftar_akses = JSON.parse(daftar_akses);
-            } catch (e) {
-                localStorage.removeItem('hakakses');
-                window.location.replace(base_url + '/dashboard');
-                return;
-            }
-
-            /*
-            |--------------------------------------------------------------------------
-            | HANYA 1 AKSES
-            |--------------------------------------------------------------------------
-            */
-
-            if (!Array.isArray(daftar_akses) || daftar_akses.length <= 1) {
-                window.location.replace(base_url + '/dashboard');
-                return;
-            }
-
-            /*
-            |--------------------------------------------------------------------------
-            | LEBIH DARI 1 AKSES → TAMPILKAN MODAL
-            |--------------------------------------------------------------------------
-            */
-
-            showAkses();
-
-            myModalAkses.show();
-        }
-
-        $(document).on('click', '.pilih-akses', function () {
-
-            const userRoleId = $(this).data('user-role-id');
-            const roleId = $(this).data('role-id');
-
-            /*
-            | Simpan akses yang dipilih
-            */
-
-            localStorage.setItem('akses', roleId);
-            localStorage.setItem('user_role_id', userRoleId);
-
-            /*
-            | Tutup modal
-            */
-
-            myModalAkses.hide();
-
-            /*
-            | Masuk dashboard
-            */
-
-            window.location.replace(
-                base_url + '/dashboard'
-            );
-        });
 
     });
   </script>

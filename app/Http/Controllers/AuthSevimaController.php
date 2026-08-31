@@ -69,16 +69,7 @@ class AuthSevimaController extends Controller
         }
 
         $sevimaUser = $this->cekEmailGoogle($email);
-        $attributes = $sevimaUser['attributes'] ?? null;
-        try {
-            if (!is_array($attributes)) {
-                throw new \RuntimeException('Data akun SIAKAD tidak valid.');
-            }
-            return $this->prosesLogin($attributes);
-        } catch (Throwable $e) {
-            report($e);
-            return $this->syncFailedResponse($e);
-        }
+        return $this->prosesLogin($sevimaUser);
     }
 
     protected function cekEmailGoogle(string $email): array
