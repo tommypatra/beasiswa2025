@@ -78,10 +78,12 @@
                     {{-- <a class="text-primary fw-bold" href="./index.html">Forgot Password ?</a> --}}
                   </div>
                   <button type="submit" data-method="masuk" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">Masuk</button>
+
                   <div class="d-flex align-items-center justify-content-center">
                     <p class="fs-4 mb-0 fw-bold">silahkan login menggunakan akun SIAKAD masing masing</p>
-                    <a class="text-primary fw-bold ms-2" href="{{ url('/login-email') }}">Login pakai email disini</a>
+                    {{-- <a class="text-primary fw-bold ms-2" href="{{ url('/login-email') }}">Login pakai email disini</a> --}}
                   </div>
+
                 </form>
               </div>
             </div>
@@ -273,7 +275,7 @@
             });
 
             $('#daftar-akses').html(html);
-        }        
+        }
 
         function showModalAkses() {
             $('#daftar-akses').html('');
@@ -340,7 +342,7 @@
             window.location.replace(
                 base_url + '/dashboard'
             );
-        });        
+        });
 
     });
   </script>

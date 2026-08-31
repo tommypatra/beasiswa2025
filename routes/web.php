@@ -8,7 +8,7 @@ Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('g
 Route::get('/auth/callback', [AuthController::class, 'handleGoogleCallback']);
 
 // Route::get('/', [WebController::class, 'loginApi']);
-// Route::get('/login-email', [WebController::class, 'loginAdmin'])->name('login-email');
+Route::get('/login-email', [WebController::class, 'loginAdmin'])->name('login-email');
 // Route::get('/login-siakad', [WebController::class, 'loginSiakad'])->name('login-siakad');
 // Route::get('/login', [WebController::class, 'loginApi'])->name('login');
 
