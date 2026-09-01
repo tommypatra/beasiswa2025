@@ -42,6 +42,11 @@
                         <input name="name" id="name" type="text" class="form-control" disabled required>
                         jika nama anda salah, hubungi admin untuk merubah
                     </div>
+                    <div class="col-sm-12 mb-3">
+                        <label class="form-label">Disabilitas</label>
+                        <input name="disabilitas" id="disabilitas" type="text" class="form-control uppercase">
+                        contoh disabilitas : Tuli, Tuna Netra, Tuna Rungu, Tuna Daksa, dll
+                    </div>
                     <div class="col-sm-5 mb-3">
                         <label class="form-label">Jenis Kelamin</label>
                         <select name="jenis_kelamin" id="jenis_kelamin" class="form-control" required>
@@ -73,12 +78,12 @@
                     <div class="col-sm-4 mb-3">
                         <label class="form-label">Kabupaten/ Kota</label>
                         <input name="wilayah_kabupaten" id="wilayah_kabupaten" data-id="" type="text" class="form-control" required>
-                        wajib ketik dan pilih kabupaten/ kota
+                        ketik kab/kota, tunggu pilihan dan pilih kabupaten/ kota
                     </div>
                     <div class="col-sm-4 mb-3">
                         <label class="form-label">Kelurahan/ Desa</label>
                         <input name="wilayah_desa" id="wilayah_desa" data-id="" type="text" class="form-control" required>
-                        ketik nama desa setelah itu wajib di pilih kelurahan/desa
+                        ketik desa/kelurahan, tunggu pilihan dan pilih kelurahan/desa
                     </div>
                     <div class="col-sm-4 mb-3">
                         <label class="form-label">Nomor HP/WA</label>
@@ -89,7 +94,7 @@
                     <label class="form-label">Foto Pengguna</label>
                     <input type="file" id="foto" name="foto" accept="image/png, image/jpeg, image/jpg, image/gif">
                     <br>
-                    <img id="previewImage" class="preview" >                
+                    <img id="previewImage" class="preview" >
                 </div>
             </div>
             <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
@@ -120,7 +125,7 @@
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${token}`, 
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });
@@ -146,6 +151,7 @@
                 $('#tempat_lahir').val(data.identitas.tempat_lahir);
                 $('#tanggal_lahir').val(data.identitas.tanggal_lahir);
                 $('#no_hp').val(data.identitas.no_hp);
+                $('#disabilitas').val(data.identitas.disabilitas);
                 $('#alamat').val(data.identitas.alamat);
                 $('#inisial').val(data.identitas.inisial);
 
@@ -154,7 +160,7 @@
                     let kabupaten = desa.wilayah_kecamatan.wilayah_kabupaten;
                     $('#wilayah_kabupaten').val(kabupaten.nama);
                     $('#wilayah_kabupaten').attr('data-id',kabupaten.id);
-    
+
                     $('#wilayah_desa').val(desa.desa);
                     $('#wilayah_desa').attr('data-id',desa.id);
                 }
@@ -171,6 +177,7 @@
             $('#tempat_lahir').val("");
             $('#tanggal_lahir').val("{{ date('Y-m-d') }}");
             $('#no_hp').val("");
+            $('#disabilitas').val("");
             $('#inisial').val("");
             $('#alamat').val("");
             $('#previewImage').hide("");
@@ -242,7 +249,7 @@
                     appShowNotification(true, ['berhasil dilakukan!']);
                     if(response.data.user)
                         localStorage.setItem('nama', response.data.user.name);
-                    
+
                     if(response.data.identitas)
                         localStorage.setItem('foto', `${response.data.identitas.foto}`);
 
@@ -266,8 +273,8 @@
                         response($.map(respon.data.data, function (item) {
                             // console.log(item)
                             return {
-                                label: item.nama, 
-                                value: item.nama, 
+                                label: item.nama,
+                                value: item.nama,
                                 id: item.id
                             };
                         }));
@@ -277,7 +284,7 @@
             minLength: 3,
             select: function (event, ui) {
                 // console.log(ui);
-                $(this).val(ui.item.value); 
+                $(this).val(ui.item.value);
                 $(this).attr("data-id", ui.item.id);
                 return false;
             }
@@ -302,8 +309,8 @@
                     success: function (respon) {
                         response($.map(respon.data.data, function (item) {
                             return {
-                                label: item.desa, 
-                                value: item.desa, 
+                                label: item.desa,
+                                value: item.desa,
                                 id: item.id
                             };
                         }));
@@ -312,7 +319,7 @@
             },
             minLength: 3,
             select: function (event, ui) {
-                $(this).val(ui.item.value); 
+                $(this).val(ui.item.value);
                 $(this).attr("data-id", ui.item.id);
                 return false;
             }
