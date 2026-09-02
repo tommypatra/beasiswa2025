@@ -8,8 +8,8 @@
     max-width: 300px;
 }
 .list-data {
-    list-style: disc;  
-    padding-left: 20px; 
+    list-style: disc;
+    padding-left: 20px;
 }
 </style>
 @endsection
@@ -32,21 +32,21 @@
     </div>
 </div>
 
-<div class="col-lg-12 mb-2" id="identitas-pendaftar"></div>    
+<div class="col-lg-12 mb-2" id="identitas-pendaftar"></div>
 </div>
 
 <div class="row">
-    <div id="syarat-dokumen"></div>   
+    <div id="syarat-dokumen"></div>
 </div>
-<div class="row" id="area-finalisasi" style="display: none;"> 
+<div class="row" id="area-finalisasi" style="display: none;">
     <div class="col-lg-12 mb-3" >
         <h5>Persetujuan Pendaftaran : </h5>
         <ul class="list-data">
-            <li>Pastikan seluruh dokumen dan data yang dikirim bersifat final</li> 
+            <li>Pastikan seluruh dokumen dan data yang dikirim bersifat final</li>
             <li>Dengan menekan tombol <b>"Pendaftaran Selesai"</b> maka proses pendaftaran <b>"Dinyatakan Selesai"</b></li>
-            <li>Setelah pendaftaran selesai, seluruh data dan dokumen tidak bisa diubah lagi</li> 
+            <li>Setelah pendaftaran selesai, seluruh data dan dokumen tidak bisa diubah lagi</li>
             <li>jika suatu saat terbukti melakukan manipulasi data maka saya siap dikenakan sanksi akademik atau pidana atas perbuatan tersebut.</li>
-        </ul>                                 
+        </ul>
     </div>
     <div class="col-lg-6 mb-3">
         <button type="button" class="btn btn-warning" id="btn-pendaftaran-selesai" disabled>Pendaftaran Selesai</button>
@@ -63,6 +63,8 @@
 <script type="text/javascript">
 const endpoint = base_url + '/api/upload-syarat';
 const id = '{{ $id }}';
+const mahasiswa_id = localStorage.getItem('mahasiswa_id');
+
 var beasiswa_id;
 var page = 1;
 var siap_finaliasi=true;
@@ -80,10 +82,10 @@ async function dataLoad() {
     } catch (error) {
         console.error("Terjadi kesalahan:", error);
     }
-}       
+}
 
 function renderData(data){
-    
+
     if (data.mahasiswa) {
         let beasiswa = data.beasiswa;
         let syarat = data.syarat;
@@ -125,8 +127,8 @@ function renderData(data){
                                         <div>
                                             <h6 class="mb-1 fs-3">Dokumen Upload ${dt.nama}</h6>
                                             <p class="mb-0 fs-2 d-flex align-items-center gap-1">
-                                                <a href="${base_url}/${dt.upload_syarat.dokumen}" target="_blank"><span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1"><i class="ti ti-download"></i> Download</span></a>                                                    
-                                                <a href="javascript:;" data-id="${upload_syarat_id}" class="hapus-upload-syarat"><span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1"><i class="ti ti-trash"></i> Hapus</span></a>                                                    
+                                                <a href="${base_url}/${dt.upload_syarat.dokumen}" target="_blank"><span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1"><i class="ti ti-download"></i> Download</span></a>
+                                                <a href="javascript:;" data-id="${upload_syarat_id}" class="hapus-upload-syarat"><span class="badge rounded-pill border border-muted fw-bold text-muted fs-2 py-1"><i class="ti ti-trash"></i> Hapus</span></a>
                                             </p>
                                         </div>
                                     </div>
@@ -141,15 +143,15 @@ function renderData(data){
                                 <div class="card-body">
                                     <div class="d-sm-flex d-block align-items-center justify-content-between">
                                         <div>
-                                            <h5 class="card-title fw-semibold">${dt.nama} ${sudah_upload}</h5>                                            
+                                            <h5 class="card-title fw-semibold">${dt.nama} ${sudah_upload}</h5>
                                         </div>
                                         <div class="d-flex gap-2">
                                             <span class="badge rounded-pill fs-2 bg-secondary-subtle text-secondary">${dt.jenis}</span>
-                                            ${is_wajib}                                            
+                                            ${is_wajib}
                                         </div>
                                     </div>
                                     <div class="mb-2" style="font-style:italic;">
-                                        ${dt.deskripsi}                                        
+                                        ${dt.deskripsi}
                                     </div>
                                     ${contoh}
                                     <div class="row mb-2 ">
@@ -158,12 +160,12 @@ function renderData(data){
                                         </div>
                                         <div class="col-lg-12 mb-3">
                                             ${upload_syarat}
-                                        </div>                                            
+                                        </div>
                                     </div>
                                 </div>
                             </div>`;
         });
-        
+
         $('#syarat-dokumen').html(konten_syarat);
         // alert(siap_finaliasi)
         if(siap_finaliasi){
@@ -191,7 +193,7 @@ function renderData(data){
 $(document).ready(function() {
     initPage();
 
-    
+
     // Handle page change
     $('#btn-refresh').click(function() {
         dataLoad();
@@ -203,10 +205,12 @@ $(document).ready(function() {
         const beasiswa_id = $(this).data('beasiswa_id');
 
         var formData = new FormData();
-        formData.append("beasiswa_id", beasiswa_id);            
-        formData.append("pendaftar_id", id);            
-        formData.append("syarat_id", syarat_id);            
-        formData.append("dokumen", $(this)[0].files[0]);   
+        formData.append("beasiswa_id", beasiswa_id);
+        formData.append("mahasiswa_id", mahasiswa_id);
+
+        formData.append("pendaftar_id", id);
+        formData.append("syarat_id", syarat_id);
+        formData.append("dokumen", $(this)[0].files[0]);
 
         saveData(`${base_url}/api/upload-syarat`, 'POST', formData, function(response) {
             appShowNotification(true,['berhasil terupload!']);
@@ -227,7 +231,7 @@ $(document).ready(function() {
             }
         }
     });
-    
+
     $(document).on('click', '.hapus-upload-syarat', function(){
         const id = $(this).data('id');
         deleteData(endpoint, id, function() {
@@ -250,7 +254,7 @@ $(document).ready(function() {
         }
 
     });
-    
+
 
 });
 </script>

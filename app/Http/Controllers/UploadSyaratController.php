@@ -193,7 +193,7 @@ class UploadSyaratController extends Controller
                 return response()->json(['status' => false, 'message' => 'akses anda ditolak'], 403);
             }
             //validasi status pendaftaran
-            $validasi = validasiPendaftaran($data->syarat->beasiswa_id);
+            $validasi = validasiPendaftaran($data->syarat->beasiswa_id,$data->pendaftar->mahasiswa_id);
             if (!$validasi->pendaftaran_aktif) {
                 return response()->json(['status' => false, 'message' => 'pendaftaran telah tertutup'], 422);
             }

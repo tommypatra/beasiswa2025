@@ -41,7 +41,7 @@ class UploadSyaratRequest extends FormRequest
 
     protected function withValidator($validator)
     {
-        $data = validasiPendaftaran($this->input('beasiswa_id'));
+        $data = validasiPendaftaran($this->input('beasiswa_id'),$this->input('mahasiswa_id'));
 
         $validator->after(function ($validator) use ($data) {
             if (!$data->pendaftaran_aktif) {
