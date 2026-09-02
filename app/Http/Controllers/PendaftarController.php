@@ -491,7 +491,7 @@ class PendaftarController extends Controller
                 return response()->json(['status' => false, 'message' => 'akses anda ditolak'], 403);
             }
             //validasi status pendaftaran
-            $validasi = validasiPendaftaran($data->beasiswa_id);
+            $validasi = validasiPendaftaran($data->beasiswa_id,$data->mahasiswa_id);
             if (!$validasi->pendaftaran_aktif) {
                 return response()->json(['status' => false, 'message' => 'pendaftaran telah tertutup'], 422);
             }
