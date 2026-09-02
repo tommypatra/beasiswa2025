@@ -80,11 +80,13 @@
                         <input name="wilayah_kabupaten" id="wilayah_kabupaten" data-id="" type="text" class="form-control" required>
                         ketik kab/kota, tunggu pilihan dan pilih kabupaten/ kota
                     </div>
+
                     <div class="col-sm-4 mb-3">
                         <label class="form-label">Kelurahan/ Desa</label>
                         <input name="wilayah_desa" id="wilayah_desa" data-id="" type="text" class="form-control" required>
                         ketik desa/kelurahan, tunggu pilihan dan pilih kelurahan/desa
                     </div>
+
                     <div class="col-sm-4 mb-3">
                         <label class="form-label">Nomor HP/WA</label>
                         <input name="no_hp" id="no_hp" type="text" class="form-control numberonly" required>

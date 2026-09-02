@@ -22,6 +22,12 @@ class AuthSevimaController extends Controller
     {
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | LOGIN GOOGLE
+    |--------------------------------------------------------------------------
+    */
+
     public function loginGoogle(Request $request): JsonResponse
     {
         $credential = $request->input('credential');
@@ -36,9 +42,13 @@ class AuthSevimaController extends Controller
             return $this->errorResponse('Konfigurasi Google belum tersedia.', 500);
         }
 
-        $ch = curl_init("https://oauth2.googleapis.com/tokeninfo?id_token=" . urlencode($credential));
+        $ch = curl_init(
+            "https://oauth2.googleapis.com/tokeninfo?id_token=" . urlencode($credential)
+        );
+
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
         $response = curl_exec($ch);
 
         if (curl_errno($ch)) {
@@ -53,31 +63,49 @@ class AuthSevimaController extends Controller
         if (!$google || isset($google['error'])) {
             return $this->errorResponse('Login Google gagal.', 401);
         }
+
         if (($google['aud'] ?? '') !== $clientId) {
             return $this->errorResponse('Login Google gagal.', 401);
         }
-        if (($google['iss'] ?? '') !== 'https://accounts.google.com' && ($google['iss'] ?? '') !== 'accounts.google.com') {
+
+        if (
+            ($google['iss'] ?? '') !== 'https://accounts.google.com' &&
+            ($google['iss'] ?? '') !== 'accounts.google.com'
+        ) {
             return $this->errorResponse('Login Google gagal.', 401);
         }
+
         if (($google['email_verified'] ?? '') !== 'true') {
             return $this->errorResponse('Email Google belum terverifikasi.', 401);
         }
 
         $email = trim((string) ($google['email'] ?? ''));
+
         if (!$email) {
             return $this->errorResponse('Email Google tidak ditemukan.', 401);
         }
 
         $sevimaUser = $this->cekEmailGoogle($email);
+
         return $this->prosesLogin($sevimaUser);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | CEK EMAIL GOOGLE DI SEVIMA
+    |--------------------------------------------------------------------------
+    */
+
     protected function cekEmailGoogle(string $email): array
     {
-        $response = $this->sevima->get('/siakadcloud/v1/user', ['f-email' => $email]);
+        $response = $this->sevima->get('/siakadcloud/v1/user', [
+            'f-email' => $email
+        ]);
 
         if (!$response['success']) {
-            throw new \RuntimeException($response['message'] ?? 'Response SIAKAD tidak valid.');
+            throw new \RuntimeException(
+                $response['message'] ?? 'Response SIAKAD tidak valid.'
+            );
         }
 
         $data = $response['data']['data'] ?? [];
@@ -94,40 +122,41 @@ class AuthSevimaController extends Controller
 
         $userRoles = $attributes['relation']['user-role'] ?? [];
 
-        $attributes['role'] = collect($userRoles)->map(function ($role) {
-            return [
-                'id_role' => $role['id_role'] ?? null,
-                'id_pegawai' => $role['id_pegawai'] ?? null,
-                'nip' => $role['nip'] ?? null,
-                'nama_role' => $role['nama_role'] ?? null,
-                'id_satker' => $role['id_satker'] ?? null,
-                'user_id' => $role['user_id'] ?? null,
-            ];
-        })->toArray();
+        $attributes['role'] = collect($userRoles)
+            ->map(function ($role) {
+                return [
+                    'id_role' => $role['id_role'] ?? null,
+                    'id_pegawai' => $role['id_pegawai'] ?? null,
+                    'nip' => $role['nip'] ?? null,
+                    'nim' => $role['nim'] ?? null,
+                    'periode_masuk' => $role['periode_masuk'] ?? null,
+                    'nama_role' => $role['nama_role'] ?? null,
+                    'id_satker' => $role['id_satker'] ?? null,
+                    'user_id' => $role['user_id'] ?? null,
+                ];
+            })
+            ->toArray();
 
         return $attributes;
     }
 
-    // protected function cekEmailGoogle(string $email): array
-    // {
-    //     $response = $this->sevima->get('/siakadcloud/v1/user', ['f-email' => $email]);
-
-    //     if (!$response['success']) {
-    //         throw new \RuntimeException($response['message'] ?? 'Response SIAKAD tidak valid.');
-    //     }
-    //     $users = $response['data']['data'] ?? [];
-    //     if (count($users)<1) {
-    //         throw new \RuntimeException('Akun Google '.$email.' tidak ditemukan di SIAKAD.');
-    //     }
-
-    //     return $users[0];
-    // }
+    /*
+    |--------------------------------------------------------------------------
+    | LOGIN EMAIL + PASSWORD
+    |--------------------------------------------------------------------------
+    */
 
     public function login(Request $request)
     {
-        $validated = $request->validate(['email' => ['required', 'email'], 'password' => ['required', 'string']]);
+        $validated = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string'],
+        ]);
 
-        $response = $this->sevima->post('/siakadcloud/v1/user/login', ['email' => $validated['email'], 'password' => $validated['password']]);
+        $response = $this->sevima->post('/siakadcloud/v1/user/login', [
+            'email' => $validated['email'],
+            'password' => $validated['password'],
+        ]);
 
         if (!$response['success']) {
             return $this->sevimaLoginFailed($response);
@@ -138,11 +167,14 @@ class AuthSevimaController extends Controller
         return $this->prosesLogin($attributes);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | PROSES LOGIN
+    |--------------------------------------------------------------------------
+    */
+
     public function prosesLogin($attributes): JsonResponse
     {
-
-        // dd($attributes);
-
         if (!is_array($attributes)) {
             return $this->errorResponse('Data akun SIAKAD tidak valid.', 422);
         }
@@ -160,12 +192,17 @@ class AuthSevimaController extends Controller
         $jenisAkun = $this->detectAccountType($roles);
 
         if (!$jenisAkun) {
-            return $this->errorResponse('Jenis akun SIAKAD Anda belum didukung oleh sistem ini.', 403);
+            return $this->errorResponse(
+                'Jenis akun SIAKAD Anda belum didukung oleh sistem ini.',
+                403
+            );
         }
 
         try {
             $result = DB::transaction(function () use ($attributes, $roles, $jenisAkun) {
-                return $jenisAkun === 'mahasiswa' ? $this->syncMahasiswa($attributes, $roles) : $this->syncPegawai($attributes, $roles, $jenisAkun);
+                return $jenisAkun === 'mahasiswa'
+                    ? $this->syncMahasiswa($attributes, $roles)
+                    : $this->syncPegawai($attributes, $roles, $jenisAkun);
             });
         } catch (Throwable $e) {
             report($e);
@@ -176,7 +213,11 @@ class AuthSevimaController extends Controller
             $token = auth()->guard('api')->login($result['user']);
         } catch (Throwable $e) {
             report($e);
-            return $this->errorResponse('Data berhasil disinkronkan, tetapi sesi login gagal dibuat.', 500);
+
+            return $this->errorResponse(
+                'Data berhasil disinkronkan, tetapi sesi login gagal dibuat.',
+                500
+            );
         }
 
         $daftarAkses = daftarAkses($result['user']->id);
@@ -185,26 +226,73 @@ class AuthSevimaController extends Controller
             return $this->errorResponse('Akses akun belum tersedia.', 403);
         }
 
-        $foto = Identitas::where('user_id', $result['user']->id)->value('foto') ?: 'images/user-avatar.png';
+        $foto = Identitas::where('user_id', $result['user']->id)
+            ->value('foto') ?: 'images/user-avatar.png';
+
+        /*
+        |--------------------------------------------------------------------------
+        | RESPONSE DASAR
+        |--------------------------------------------------------------------------
+        */
+
+        $dataResponse = [
+            'user_id' => $result['user']->id,
+            'user_name' => $result['user']->name,
+            'user_email' => $result['user']->email,
+            'access_token' => $token,
+            'foto' => $foto,
+            'daftar_akses' => $daftarAkses,
+            'akses' => collect($daftarAkses)->min('role_id'),
+        ];
+
+        /*
+        |--------------------------------------------------------------------------
+        | DATA MAHASISWA
+        |--------------------------------------------------------------------------
+        | Hanya ditambahkan jika akun adalah mahasiswa.
+        */
+
+        if ($jenisAkun === 'mahasiswa') {
+            $mahasiswa = Mahasiswa::query()
+                ->join('program_studis', 'program_studis.id', '=', 'mahasiswas.program_studi_id')
+                ->where('mahasiswas.user_id', $result['user']->id)
+                ->get([
+                    'mahasiswas.id as mahasiswa_id',
+                    'mahasiswas.nim',
+                    'mahasiswas.tahun_masuk',
+                    'program_studis.nama as program_studi_nama',
+                ])
+                ->map(fn($item) => [
+                    'mahasiswa_id' => $item->mahasiswa_id,
+                    'nim' => $item->nim,
+                    'tahun_masuk' => $item->tahun_masuk,
+                    'program_studi' => $item->program_studi_nama,
+                ])
+                ->values()
+                ->toArray();
+
+            $dataResponse['mahasiswa'] = $mahasiswa;
+        }
 
         return response()->json([
             'status' => true,
             'message' => 'Login successful',
-            'data' => [
-                'user_id' => $result['user']->id,
-                'user_name' => $result['user']->name,
-                'user_email' => $result['user']->email,
-                'access_token' => $token,
-                'foto' => $foto,
-                'daftar_akses' => $daftarAkses,
-                'akses' => collect($daftarAkses)->min('role_id'),
-            ],
+            'data' => $dataResponse,
         ]);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | DETECT ACCOUNT TYPE
+    |--------------------------------------------------------------------------
+    */
+
     protected function detectAccountType(array $roles): ?string
     {
-        $roleIds = collect($roles)->pluck('id_role')->filter()->map(fn ($role) => strtolower(trim((string) $role)));
+        $roleIds = collect($roles)
+            ->pluck('id_role')
+            ->filter()
+            ->map(fn($role) => strtolower(trim((string) $role)));
 
         if ($roleIds->contains('mhs')) {
             return 'mahasiswa';
@@ -221,6 +309,12 @@ class AuthSevimaController extends Controller
         return null;
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | SYNC MAHASISWA
+    |--------------------------------------------------------------------------
+    */
+
     protected function syncMahasiswa(array $attributes, array $roles): array
     {
         $email = trim((string) ($attributes['email'] ?? ''));
@@ -230,7 +324,9 @@ class AuthSevimaController extends Controller
             throw new \RuntimeException('Email akun SIAKAD tidak ditemukan.');
         }
 
-        $mhsRoles = collect($roles)->filter(fn ($role) => strtolower(trim((string) ($role['id_role'] ?? ''))) === 'mhs')->values();
+        $mhsRoles = collect($roles)
+            ->filter(fn($role) => strtolower(trim((string) ($role['id_role'] ?? ''))) === 'mhs')
+            ->values();
 
         if ($mhsRoles->isEmpty()) {
             throw new \RuntimeException('Data mahasiswa tidak ditemukan dari SIAKAD.');
@@ -249,7 +345,9 @@ class AuthSevimaController extends Controller
             }
 
             if (!$sevimaProdiId) {
-                throw new \RuntimeException("Prodi untuk NIM {$nim} tidak ditemukan dari SIAKAD.");
+                throw new \RuntimeException(
+                    "Prodi untuk NIM {$nim} tidak ditemukan dari SIAKAD."
+                );
             }
 
             $prodi = ProgramStudi::where('sevima_prodi_id', $sevimaProdiId)->first();
@@ -272,13 +370,22 @@ class AuthSevimaController extends Controller
             ];
         }
 
+        $dataMahasiswa = collect($dataMahasiswa)
+            ->unique('nim')
+            ->values()
+            ->toArray();
+
         $userIds = array_values(array_unique($userIds));
 
         if (count($userIds) > 1) {
-            throw new \RuntimeException('Data NIM Anda terhubung ke akun yang berbeda. Silakan hubungi pengelola.');
+            throw new \RuntimeException(
+                'Data NIM Anda terhubung ke akun yang berbeda. Silakan hubungi pengelola.'
+            );
         }
 
-        $user = !empty($userIds) ? User::find($userIds[0]) : User::where('email', $email)->first();
+        $user = !empty($userIds)
+            ? User::find($userIds[0])
+            : User::where('email', $email)->first();
 
         if (!$user) {
             $user = User::create([
@@ -291,32 +398,59 @@ class AuthSevimaController extends Controller
         }
 
         foreach ($dataMahasiswa as $item) {
-            $this->syncSingleMahasiswa($user, $item['nim'], $item['periode_masuk'], $item['prodi']);
+            $this->syncSingleMahasiswa(
+                $user,
+                $item['nim'],
+                $item['periode_masuk'],
+                $item['prodi']
+            );
         }
 
         $this->ensureIdentitas($user);
         $this->syncApplicationRoles($user->id, 'mahasiswa');
 
-        return ['user' => $user->fresh(), 'jenis_akun' => 'mahasiswa'];
+        return [
+            'user' => $user->fresh(),
+            'jenis_akun' => 'mahasiswa',
+        ];
     }
 
-    protected function syncSingleMahasiswa(User $user, string $nim, ?string $periodeMasuk, ProgramStudi $prodi): Mahasiswa
-    {
+    /*
+    |--------------------------------------------------------------------------
+    | SYNC SINGLE MAHASISWA
+    |--------------------------------------------------------------------------
+    */
+
+    protected function syncSingleMahasiswa(
+        User $user,
+        string $nim,
+        ?string $periodeMasuk,
+        ProgramStudi $prodi
+    ): Mahasiswa {
         $mahasiswa = Mahasiswa::where('nim', $nim)->first();
 
         if ($mahasiswa) {
-            if ($mahasiswa->user_id && (int) $mahasiswa->user_id !== (int) $user->id) {
-                throw new \RuntimeException("NIM {$nim} sudah terhubung dengan akun lain.");
+            if (
+                $mahasiswa->user_id &&
+                (int) $mahasiswa->user_id !== (int) $user->id
+            ) {
+                throw new \RuntimeException(
+                    "NIM {$nim} sudah terhubung dengan akun lain."
+                );
             }
 
             $mahasiswa->update([
                 'user_id' => $user->id,
                 'program_studi_id' => $prodi->id,
-                'tahun_masuk' => $periodeMasuk ? (int) substr($periodeMasuk, 0, 4) : $mahasiswa->tahun_masuk,
+                'tahun_masuk' => $periodeMasuk
+                    ? (int) substr($periodeMasuk, 0, 4)
+                    : $mahasiswa->tahun_masuk,
             ]);
 
             if (!$mahasiswa->kartu_mahasiswa) {
-                $mahasiswa->update(['kartu_mahasiswa' => 'images/kartumhs.png']);
+                $mahasiswa->update([
+                    'kartu_mahasiswa' => 'images/kartumhs.png',
+                ]);
             }
 
             return $mahasiswa->fresh();
@@ -325,16 +459,29 @@ class AuthSevimaController extends Controller
         return Mahasiswa::create([
             'nim' => $nim,
             'kartu_mahasiswa' => 'images/kartumhs.png',
-            'tahun_masuk' => $periodeMasuk ? (int) substr($periodeMasuk, 0, 4) : null,
+            'tahun_masuk' => $periodeMasuk
+                ? (int) substr($periodeMasuk, 0, 4)
+                : null,
             'program_studi_id' => $prodi->id,
             'user_id' => $user->id,
         ]);
     }
 
-    protected function syncPegawai(array $attributes, array $roles, string $jenisAkun): array
-    {
+    /*
+    |--------------------------------------------------------------------------
+    | SYNC PEGAWAI / DOSEN
+    |--------------------------------------------------------------------------
+    */
+
+    protected function syncPegawai(
+        array $attributes,
+        array $roles,
+        string $jenisAkun
+    ): array {
         $email = trim((string) ($attributes['email'] ?? ''));
-        $nama = trim((string) ($attributes['nama'] ?? '')) ?: ($jenisAkun === 'dosen' ? 'Dosen' : 'Pegawai');
+        $nama = trim((string) ($attributes['nama'] ?? '')) ?: (
+            $jenisAkun === 'dosen' ? 'Dosen' : 'Pegawai'
+        );
 
         if (!$email) {
             throw new \RuntimeException('Email akun SIAKAD tidak ditemukan.');
@@ -342,10 +489,16 @@ class AuthSevimaController extends Controller
 
         $targetRole = $jenisAkun === 'dosen' ? 'dosen' : 'peg';
 
-        $roleUtama = collect($roles)->first(fn ($role) => strtolower(trim((string) ($role['id_role'] ?? ''))) === $targetRole);
+        $roleUtama = collect($roles)->first(
+            fn($role) => strtolower(trim((string) ($role['id_role'] ?? ''))) === $targetRole
+        );
 
         if (!$roleUtama) {
-            throw new \RuntimeException($jenisAkun === 'dosen' ? 'Data dosen tidak ditemukan dari SIAKAD.' : 'Data pegawai tidak ditemukan dari SIAKAD.');
+            throw new \RuntimeException(
+                $jenisAkun === 'dosen'
+                    ? 'Data dosen tidak ditemukan dari SIAKAD.'
+                    : 'Data pegawai tidak ditemukan dari SIAKAD.'
+            );
         }
 
         $nip = trim((string) ($roleUtama['nip'] ?? ''));
@@ -360,7 +513,9 @@ class AuthSevimaController extends Controller
             $user = User::find($pegawai->user_id);
 
             if (!$user) {
-                throw new \RuntimeException("User untuk NIP {$nip} tidak ditemukan.");
+                throw new \RuntimeException(
+                    "User untuk NIP {$nip} tidak ditemukan."
+                );
             }
 
             $this->syncUser($user, $nama, $email);
@@ -379,8 +534,13 @@ class AuthSevimaController extends Controller
         }
 
         if ($pegawai) {
-            if ($pegawai->user_id && (int) $pegawai->user_id !== (int) $user->id) {
-                throw new \RuntimeException("NIP {$nip} sudah terhubung dengan akun lain.");
+            if (
+                $pegawai->user_id &&
+                (int) $pegawai->user_id !== (int) $user->id
+            ) {
+                throw new \RuntimeException(
+                    "NIP {$nip} sudah terhubung dengan akun lain."
+                );
             }
 
             $pegawai->update(['user_id' => $user->id]);
@@ -394,15 +554,28 @@ class AuthSevimaController extends Controller
         $this->ensureIdentitas($user);
         $this->syncApplicationRoles($user->id, $jenisAkun);
 
-        return ['user' => $user->fresh(), 'jenis_akun' => $jenisAkun];
+        return [
+            'user' => $user->fresh(),
+            'jenis_akun' => $jenisAkun,
+        ];
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SYNC USER
+    |--------------------------------------------------------------------------
+    */
 
     protected function syncUser(User $user, string $nama, string $email): void
     {
-        $emailUser = User::where('email', $email)->where('id', '!=', $user->id)->first();
+        $emailUser = User::where('email', $email)
+            ->where('id', '!=', $user->id)
+            ->first();
 
         if ($emailUser) {
-            throw new \RuntimeException("Email SIAKAD {$email} sudah terhubung dengan akun lain.");
+            throw new \RuntimeException(
+                "Email SIAKAD {$email} sudah terhubung dengan akun lain."
+            );
         }
 
         $user->update([
@@ -411,51 +584,80 @@ class AuthSevimaController extends Controller
         ]);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | IDENTITAS
+    |--------------------------------------------------------------------------
+    */
+
     protected function ensureIdentitas(User $user): Identitas
     {
-        return Identitas::firstOrCreate(['user_id' => $user->id], [
-            'tempat_lahir' => null,
-            'inisial' => null,
-            'tanggal_lahir' => null,
-            'jenis_kelamin' => null,
-            'no_hp' => null,
-            'foto' => 'images/user-avatar.png',
-            'alamat' => null,
-            'desa' => null,
-            'kecamatan' => null,
-            'kabupaten' => null,
-            'provinsi' => null,
-            'wilayah_desa_id' => null,
-        ]);
+        return Identitas::firstOrCreate(
+            ['user_id' => $user->id],
+            [
+                'tempat_lahir' => null,
+                'inisial' => null,
+                'tanggal_lahir' => null,
+                'jenis_kelamin' => null,
+                'no_hp' => null,
+                'foto' => 'images/user-avatar.png',
+                'alamat' => null,
+                'desa' => null,
+                'kecamatan' => null,
+                'kabupaten' => null,
+                'provinsi' => null,
+                'wilayah_desa_id' => null,
+            ]
+        );
     }
 
-protected function syncApplicationRoles(int $userId, string $jenisAkun): void
-{
-    $roles = match ($jenisAkun) {
-        'mahasiswa' => ['Mahasiswa'],
-        'dosen' => ['Pewawancara'],
-        'pegawai' => ['Surveyor'],
-        default => [],
-    };
+    /*
+    |--------------------------------------------------------------------------
+    | ROLE APLIKASI
+    |--------------------------------------------------------------------------
+    */
 
-    if (empty($roles)) {
-        throw new \RuntimeException('Kategori akun tidak valid.');
+    protected function syncApplicationRoles(int $userId, string $jenisAkun): void
+    {
+        $roles = match ($jenisAkun) {
+            'mahasiswa' => ['Mahasiswa'],
+            'dosen' => ['Pewawancara'],
+            'pegawai' => ['Surveyor'],
+            default => [],
+        };
+
+        if (empty($roles)) {
+            throw new \RuntimeException('Kategori akun tidak valid.');
+        }
+
+        if (UserRole::where('user_id', $userId)->exists()) {
+            return;
+        }
+
+        $roleIds = DB::table('roles')
+            ->whereIn('nama', $roles)
+            ->pluck('id')
+            ->toArray();
+
+        if (count($roleIds) !== count($roles)) {
+            throw new \RuntimeException(
+                'Role aplikasi belum lengkap di database.'
+            );
+        }
+
+        foreach ($roleIds as $roleId) {
+            UserRole::firstOrCreate([
+                'user_id' => $userId,
+                'role_id' => $roleId,
+            ]);
+        }
     }
 
-    if (UserRole::where('user_id', $userId)->exists()) {
-        return;
-    }
-
-    $roleIds = DB::table('roles')->whereIn('nama', $roles)->pluck('id')->toArray();
-
-    if (count($roleIds) !== count($roles)) {
-        throw new \RuntimeException('Role aplikasi belum lengkap di database.');
-    }
-
-    foreach ($roleIds as $roleId) {
-        UserRole::firstOrCreate(['user_id' => $userId, 'role_id' => $roleId]);
-    }
-}
+    /*
+    |--------------------------------------------------------------------------
+    | LOGIN SEVIMA GAGAL
+    |--------------------------------------------------------------------------
+    */
 
     protected function sevimaLoginFailed(array $response): JsonResponse
     {
@@ -463,34 +665,64 @@ protected function syncApplicationRoles(int $userId, string $jenisAkun): void
         $message = strtolower((string) ($response['message'] ?? ''));
 
         if (in_array($status, [401, 422])) {
-            return $this->errorResponse('Email atau password SIAKAD salah.', 401);
+            return $this->errorResponse(
+                'Email atau password SIAKAD salah.',
+                401
+            );
         }
 
         if ($status === 403 && str_contains($message, 'whitelist')) {
-            return $this->errorResponse('Layanan SIAKAD tidak dapat diakses dari server ini.', 403);
+            return $this->errorResponse(
+                'Layanan SIAKAD tidak dapat diakses dari server ini.',
+                403
+            );
         }
 
         if ($status === 403) {
-            return $this->errorResponse('Akses ke layanan SIAKAD ditolak.', 403);
+            return $this->errorResponse(
+                'Akses ke layanan SIAKAD ditolak.',
+                403
+            );
         }
 
         if ($status === 429) {
-            return $this->errorResponse('Layanan SIAKAD sedang sibuk. Silakan coba beberapa saat lagi.', 429);
+            return $this->errorResponse(
+                'Layanan SIAKAD sedang sibuk. Silakan coba beberapa saat lagi.',
+                429
+            );
         }
 
         if ($status >= 500) {
-            return $this->errorResponse('Layanan SIAKAD sedang mengalami gangguan.', 500);
+            return $this->errorResponse(
+                'Layanan SIAKAD sedang mengalami gangguan.',
+                500
+            );
         }
 
         return $this->errorResponse('Login SIAKAD gagal.', 500);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | SYNC GAGAL
+    |--------------------------------------------------------------------------
+    */
+
     protected function syncFailedResponse(Throwable $e): JsonResponse
     {
         report($e);
 
-        return $this->errorResponse('Data akun belum dapat disinkronkan. Silakan coba login kembali.', 500);
+        return $this->errorResponse(
+            'Data akun belum dapat disinkronkan. Silakan coba login kembali.',
+            500
+        );
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ERROR RESPONSE
+    |--------------------------------------------------------------------------
+    */
 
     protected function errorResponse(string $message, int $status): JsonResponse
     {

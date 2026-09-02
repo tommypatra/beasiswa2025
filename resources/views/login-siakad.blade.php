@@ -138,6 +138,17 @@
 		</div>
     </div>
 </div>
+
+<div class="modal fade" id="modal-pilih-mahasiswa" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Pilih Data Mahasiswa</h5>
+            </div>
+            <div class="modal-body" id="daftar-mahasiswa"></div>
+        </div>
+    </div>
+</div>
 <!-- AKHIR MODAL -->
 
   <script src="{{ asset('template/materialm/assets/libs/jquery/dist/jquery.min.js') }}"></script>
@@ -147,7 +158,8 @@
   <script src="{{ asset('js/app.js')}}"></script>
 <!-- solar icons -->
   <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
-  <script>
+
+<script>
     function handleCredentialResponse(response){
         showLoginLoading('Sedang login dengan Google...');
         $.ajax({
@@ -170,15 +182,11 @@
             error: function(xhr) {
                 hideLoginLoading();
                 let message = 'Terjadi kesalahan.';
-
                 if (xhr.responseJSON && xhr.responseJSON.message) {
                     message = xhr.responseJSON.message;
                 }
-
                 alert(message);
-
             }
-
         });
     }
 
@@ -192,8 +200,13 @@
     }
 
     var myModalAkses = new bootstrap.Modal(document.getElementById('modal-pilih-akses'), {
-        backdrop: 'static', // nda bisa klik diluar modal
-        keyboard: false     // tombol esc tidak berfungsi untuk tutup modal
+        backdrop: 'static',
+        keyboard: false
+    });
+
+    var myModalMahasiswa = new bootstrap.Modal(document.getElementById('modal-pilih-mahasiswa'), {
+        backdrop: 'static',
+        keyboard: false
     });
 
     function setSession(param){
@@ -204,11 +217,65 @@
         localStorage.setItem('hakakses', JSON.stringify(param.daftar_akses));
         localStorage.setItem('id', param.user_id);
         localStorage.setItem('nama', param.user_name);
+
+        if (Array.isArray(param.mahasiswa) && param.mahasiswa.length > 0) {
+            localStorage.setItem('daftar_mahasiswa', JSON.stringify(param.mahasiswa));
+            setMahasiswa(param.mahasiswa[0]);
+
+            if (param.mahasiswa.length > 1) {
+                showModalMahasiswa(param.mahasiswa);
+                return;
+            }
+        } else {
+            localStorage.removeItem('daftar_mahasiswa');
+            localStorage.removeItem('mahasiswa_id');
+            localStorage.removeItem('nim');
+        }
+
         showModalAkses();
     }
 
-    function showAkses() {
+    function setMahasiswa(mahasiswa){
+        if (!mahasiswa) {
+            return;
+        }
 
+        localStorage.setItem('mahasiswa_id', mahasiswa.mahasiswa_id);
+        localStorage.setItem('nim', mahasiswa.nim);
+    }
+
+    function showModalMahasiswa(daftarMahasiswa){
+        $('#daftar-mahasiswa').html('');
+
+        let html = '';
+
+        daftarMahasiswa.forEach(function(mahasiswa, index) {
+            html += `
+                <div class="mb-3">
+                    <button
+                        type="button"
+                        class="btn btn-outline-primary w-100 text-start p-3 pilih-mahasiswa"
+                        data-index="${index}"
+                    >
+                        <div class="fw-bold fs-5">
+                            ${mahasiswa.nim}
+                        </div>
+                        <div class="mt-1">
+                            ${mahasiswa.program_studi || '-'}
+                        </div>
+                        <small class="text-muted">
+                            Tahun masuk: ${mahasiswa.tahun_masuk || '-'}
+                        </small>
+                    </button>
+                </div>
+            `;
+        });
+
+        $('#daftar-mahasiswa').html(html);
+        myModalMahasiswa.show();
+    }
+
+    function showAkses() {
         let daftar_akses = localStorage.getItem('hakakses');
 
         if (!daftar_akses) {
@@ -224,7 +291,6 @@
         let html = '';
 
         daftar_akses.forEach(function (akses) {
-
             html += `
                 <div class="mb-3">
                     <button
@@ -236,7 +302,6 @@
                         <div class="fw-bold fs-4">
                             ${akses.role}
                         </div>
-
                         <small class="text-muted">
                             Pilih akses sebagai ${akses.role}
                         </small>
@@ -266,58 +331,42 @@
             return;
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | HANYA 1 AKSES
-        |--------------------------------------------------------------------------
-        */
-
         if (!Array.isArray(daftar_akses) || daftar_akses.length <= 1) {
             window.location.replace(base_url + '/dashboard');
             return;
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | LEBIH DARI 1 AKSES → TAMPILKAN MODAL
-        |--------------------------------------------------------------------------
-        */
-
         showAkses();
-
         myModalAkses.show();
     }
 
-    $(document).on('click', '.pilih-akses', function () {
+    $(document).on('click', '.pilih-mahasiswa', function () {
+        const index = $(this).data('index');
+        const daftarMahasiswa = JSON.parse(localStorage.getItem('daftar_mahasiswa') || '[]');
+        const mahasiswa = daftarMahasiswa[index];
 
+        if (!mahasiswa) {
+            return;
+        }
+
+        setMahasiswa(mahasiswa);
+        myModalMahasiswa.hide();
+        showModalAkses();
+    });
+
+    $(document).on('click', '.pilih-akses', function () {
         const userRoleId = $(this).data('user-role-id');
         const roleId = $(this).data('role-id');
-
-        /*
-        | Simpan akses yang dipilih
-        */
 
         localStorage.setItem('akses', roleId);
         localStorage.setItem('user_role_id', userRoleId);
 
-        /*
-        | Tutup modal
-        */
-
         myModalAkses.hide();
 
-        /*
-        | Masuk dashboard
-        */
-
-        window.location.replace(
-            base_url + '/dashboard'
-        );
+        window.location.replace(base_url + '/dashboard');
     });
 
-
-
-	$(document).ready(function() {
+    $(document).ready(function() {
         $('#content-login').hide();
 
         var csrfToken = $('meta[name="csrf-token"]').attr('content');
@@ -326,7 +375,6 @@
         showLoginLoading('Cek status login...');
 
         if(access_token){
-
             $.ajax({
                 headers: {
                     'Authorization': 'Bearer ' + access_token
@@ -357,22 +405,8 @@
         }else{
             $('#content-login').show();
         }
+
         hideLoginLoading();
-
-        // $(document)
-        //     .ajaxStart(function () {
-        //         $(".loading-progress").fadeIn(200);
-        //         $('button[type="submit"], input[type="submit"]').prop('disabled', true);
-        //     })
-        //     .ajaxStop(function () {
-        //         $(".loading-progress").fadeOut(200);
-        //         $('button[type="submit"], input[type="submit"]').prop('disabled', false);
-        //     })
-        //     .ajaxError(function () {
-        //         $(".loading-progress").fadeOut(200);
-        //         $('button[type="submit"], input[type="submit"]').prop('disabled', false);
-        //     });
-
 
         $("#login-form").validate({
             rules: {
@@ -388,19 +422,12 @@
                 }
             },
             submitHandler: function (form) {
-            login(form);
+                login(form);
             }
         });
 
-
         function login(form) {
             $('#daftar-hakakses').html('');
-
-            // const $button = $('#login-form button[type="submit"]');
-
-            // $button.prop('disabled', true);
-            // $(".loading-progress").stop(true, true).fadeIn(200);
-
             showLoginLoading('Sedang login...');
 
             $.ajax({
@@ -408,8 +435,6 @@
                 url: `${base_url}/api/login-siakad`,
                 data: $(form).serialize(),
                 success: function(response) {
-                    // console.log(response.data);
-                    // return;
                     hideLoginLoading();
                     if (response.status) {
                         setSession(response.data);
@@ -424,23 +449,16 @@
                     let errorMessage = 'Terjadi kesalahan. Silakan coba lagi!';
 
                     if (xhr.responseJSON) {
-                        errorMessage =
-                            xhr.responseJSON.message ||
-                            errorMessage;
+                        errorMessage = xhr.responseJSON.message || errorMessage;
                     }
 
                     appShowNotification(false, [errorMessage]);
-                },
-                complete: function() {
-                    // $button.prop('disabled', false);
-                    // $(".loading-progress").stop(true, true).fadeOut(200);
                 }
             });
         }
-
-
     });
-  </script>
+</script>
+
 </body>
 
 </html>

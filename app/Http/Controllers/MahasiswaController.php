@@ -42,6 +42,11 @@ class MahasiswaController extends Controller
             $dataQuery->where('user_id', $user_id);
         }
 
+        if ($request->filled('mahasiswa_id')) {
+            $mahasiswa_id = $request->mahasiswa_id;
+            $dataQuery->where('id', $mahasiswa_id);
+        }
+
         $default_limit = env('DEFAULT_LIMIT', 30);
         $limit = $request->filled('limit') ? $request->limit : $default_limit;
         $data = $dataQuery->paginate($limit);

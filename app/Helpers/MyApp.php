@@ -175,11 +175,21 @@ if (!function_exists('pembalik')) {
 
 
 if (!function_exists('validasiPendaftaran')) {
-    function validasiPendaftaran($beasiswa_id)
+    function validasiPendaftaran($beasiswa_id,$mahasiswa_id)
     {
         $user_id = auth()->id();
-        $user = User::with(["identitas", "nilaiRaport", "orangTua", "rumah", "mahasiswa", "pendidikanAkhir"])->where("id", $user_id)->first();
+        $user = User::with([
+            "identitas",
+            "nilaiRaport",
+            "orangTua",
+            "rumah",
+            "mahasiswa" => function ($query) use ($mahasiswa_id) {
+                $query->where("id", $mahasiswa_id);
+            },
+            "pendidikanAkhir"
+        ])->where("id", $user_id)->first();
 
+        // dd($user);
         $beasiswa = Beasiswa::where('id', $beasiswa_id)->first();
 
         $data['user'] = $user;
@@ -234,7 +244,7 @@ if (!function_exists('validasiPendaftaran')) {
         }
 
         $tahun = $beasiswa->tahun;
-        $mahasiswa_id = $user->mahasiswa->id;
+        $mahasiswa_id_db = $user->mahasiswa->id;
 
         $data_pendaftaran = Pendaftar::where('beasiswa_id', $beasiswa_id)
             ->whereHas('mahasiswa', fn($q) => $q->where('user_id', $user_id))

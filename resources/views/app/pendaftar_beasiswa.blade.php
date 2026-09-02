@@ -99,7 +99,7 @@ td, th {
                         </button>
                     </div>
                 </div>
-                
+
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
@@ -143,7 +143,7 @@ td, th {
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-sm-6 mb-3">
-                            <label class="form-label">Pendaftaran</label>                            
+                            <label class="form-label">Pendaftaran</label>
                             <select id="status-pendaftaran" name="status-pendaftaran" class="form-control" required>
                                 <option value="semua">SEMUA</option>
                                 <option value="selesai">SELESAI</option>
@@ -154,7 +154,7 @@ td, th {
                     </div>
                     <div class="row">
                         <div class="col-sm-6 mb-3">
-                            <label class="form-label">Verifikasi</label>                            
+                            <label class="form-label">Verifikasi</label>
                             <select id="status-verifikasi" name="status-verifikasi" class="form-control" required>
                                 <option value="semua">SEMUA</option>
                                 <option value="ms">MEMENUHI</option>
@@ -202,6 +202,8 @@ td, th {
 <script type="text/javascript">
     const endpoint = base_url+'/api/surveyor';
     const id = "{{ $beasiswa_id }}";
+    const mahasiswa_id = localStorage.getItem('mahasiswa_id');
+
     var page = 1;
     $(document).ready(function() {
         initPage();
@@ -267,9 +269,9 @@ td, th {
             if (dt.is_finalisasi == 1) {
                 return `<div class="badge rounded-pill fs-2 text-bg-success text-dark" ${popoverAttr}>
                             Selesai ${dt.progress_upload_syarat}%
-                            
+
                         </div>
-                        <div class="badge rounded-pill fs-2 text-bg-secondary">${dt.no_pendaftaran} 
+                        <div class="badge rounded-pill fs-2 text-bg-secondary">${dt.no_pendaftaran}
                             <a href="${base_url}/cetak-kartu-pendaftaran/${dt.url_id}" target="_blank">
                                 <iconify-icon icon="solar:printer-outline"></iconify-icon>
                             </a>
@@ -292,14 +294,14 @@ td, th {
             let status=``;
             let catatan = showText(dt.catatan_verifikasi);
             if (!dt.is_finalisasi) return status;
-            
-            if (dt.hasil_verifikasi === null){ 
+
+            if (dt.hasil_verifikasi === null){
                 catatan=``;
                 status= `<div class="badge rounded-pill fs-2 text-bg-warning text-dark">Belum Diproses <a href="javascript:;" class="btn-batalkan-finalisasi" data-pendaftar_id="${dt.pendaftar_id}" data-nama="${dt.nama}"><iconify-icon icon="solar:close-square-outline" class=""></iconify-icon></a></div>`;
             }
-            else if (dt.hasil_verifikasi === 1) 
+            else if (dt.hasil_verifikasi === 1)
                 status= `<div class="badge rounded-pill fs-2 text-bg-success">Memenuhi</div>`;
-            else if (dt.hasil_verifikasi === 0) 
+            else if (dt.hasil_verifikasi === 0)
                 status= `<div class="badge rounded-pill fs-2 text-bg-danger">TMS</div>`;
             return `${status} <div class="fs-2">${catatan}</div>`;
         }
@@ -322,9 +324,9 @@ td, th {
                     const row = `<tr>
                                     <td>${no++}</td>
                                     <td>
-                                        ${dt.nama}/  
+                                        ${dt.nama}/
                                         ${dt.nim}/
-                                        ${dt.program_studi} 
+                                        ${dt.program_studi}
                                     </td>
                                     <td>${status_pendaftaran}</td>
                                     <td><div>${showText(dt.verifikator)}</div> ${status_verifikasi}</td>
@@ -339,9 +341,9 @@ td, th {
                 const row = `<tr>
                                 <td colspan="5">data tidak ditemukan</td>
                             </tr>`;
-                dataList.append(row);                
+                dataList.append(row);
             }
-        }    
+        }
 
         async function dataLoad() {
             var search = $('#search-input').val();
@@ -354,7 +356,7 @@ td, th {
             fetchData(url, function(response) {
                 renderData(response);
             },true);
-        }    
+        }
 
         // Handle page change
         $(document).on('click', '.page-link', function() {
@@ -362,7 +364,7 @@ td, th {
             dataLoad();
         });
 
-        
+
        // Handle page change
         $(document).on('click', '.btn-batalkan-finalisasi', async function() {
             let pendaftar_id = $(this).attr('data-pendaftar_id');
@@ -417,7 +419,7 @@ td, th {
         // $(document).on('input', '#search-input', function() {
         //     console.log('Event input berjalan');
         //     dataLoad();
-        // });      
+        // });
 
         $('#btn-filter').click(function(){
             var fModalForm = new bootstrap.Modal(document.getElementById('modal-filter'), {

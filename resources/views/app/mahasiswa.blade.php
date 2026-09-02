@@ -54,7 +54,7 @@
                     <label class="form-label">Kartu Mahasiswa</label>
                     <input type="file" id="kartu_mahasiswa" name="kartu_mahasiswa" accept="image/png, image/jpeg, image/jpg, image/gif">
                     <br>
-                    <img id="previewImage" class="preview" >                
+                    <img id="previewImage" class="preview" >
                 </div>
             </div>
             <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
@@ -72,6 +72,7 @@
 
 <script type="text/javascript">
     const endpoint = base_url + '/api/mahasiswa';
+    const mahasiswa_id = localStorage.getItem('mahasiswa_id');
     var page = 1;
 
     async function initPage() { // agar di load secara berurutan
@@ -81,12 +82,12 @@
     }
 
     async function dataLoad() {
-        var url = endpoint + '?user_id=' + user_id;
+        var url = `${endpoint}?user_id=${user_id}&&mahasiswa_id=${mahasiswa_id}`;
         try {
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${token}`, 
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });

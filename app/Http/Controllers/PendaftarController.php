@@ -250,11 +250,12 @@ class PendaftarController extends Controller
 
     public function index(Request $request)
     {
+
         $dataQuery = Beasiswa::with(['jenisBeasiswa', 'syarat'])
             ->withCount(['pendaftar'])
             ->with(['pendaftar' => function ($query) use ($request) {
-                $mahasiswa = Mahasiswa::where('user_id', auth()->user()->id)->first();
-                $query->where('mahasiswa_id', $mahasiswa->id); //->where('is_batal', 0);
+                // $mahasiswa = Mahasiswa::where('id',$mahasiswa_id)->where('user_id', auth()->user()->id)->first();
+                $query->where('mahasiswa_id', $request->mahasiswa_id); //->where('is_batal', 0);
             }])
             ->orderBy('daftar_mulai', 'desc')
             ->orderBy('nama', 'asc');
@@ -369,10 +370,10 @@ class PendaftarController extends Controller
                 },
             ])
                 ->selectRaw(
-                    '*, 
-                    CASE 
-                        WHEN NOW() BETWEEN daftar_mulai AND daftar_selesai THEN true 
-                    ELSE false 
+                    '*,
+                    CASE
+                        WHEN NOW() BETWEEN daftar_mulai AND daftar_selesai THEN true
+                    ELSE false
                     END as is_pendaftaran_aktif'
                 )->firstOrFail();
 
@@ -402,7 +403,7 @@ class PendaftarController extends Controller
             ];
             $data->update($dataUpdate);
 
-            //hapus 
+            //hapus
             $dataVerifikator = VerifikatorPendaftar::where('pendaftar_id', $id)->firstOrFail();
             $dataVerifikator->delete();
 

@@ -169,6 +169,7 @@
     const gambar_beasiswa = "{{ asset('images/beasiswa.webp') }}";
     const logo_iain = "{{ asset('images/logo.png') }}";
     const endpoint = base_url + '/api/pendaftar';
+    const mahasiswa_id = localStorage.getItem('mahasiswa_id');
 
     var page = 1;
     $(document).ready(function() {
@@ -242,7 +243,7 @@
                                                ${dt.jenis_beasiswa.nama}
                                             </span>
                                             <img src="${logo_iain}" alt="materialM-img" class="img-fluid rounded-circle position-absolute bottom-0 start-0 mb-n9 ms-9" width="40" height="40" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Georgeanna Ramero">
-                                        </div>      
+                                        </div>
 
                                         <div class="card-body">
                                             <span class="badge text-bg-light fs-2 py-1 px-2 lh-sm mb-3">Tahun ${dt.tahun}</span>
@@ -259,7 +260,7 @@
                                             dokumen upload : ${dokumen_upload}
                                             </div>
                                             <div>
-                                            kebutuhan data : 
+                                            kebutuhan data :
                                             ${butuh_data_nilai_raport}
                                             ${butuh_data_orang_tua}
                                             ${butuh_data_pendidikan_akhir}
@@ -277,7 +278,7 @@
                                                 <div class="d-flex align-items-center fs-3 ms-auto">
                                                     <i class="ti ti-calendar text-dark"></i> ${waktuLalu(timestamp)}
                                                 </div>
-                                            </div>    
+                                            </div>
 
                                         </div>
                                     </div>
@@ -295,7 +296,7 @@
 
         function dataLoad() {
             var search = $('#search-input').val();
-            var url = `${endpoint}?page=${page}&search=${search}&limit=${vLimit}`;
+            var url = `${endpoint}?page=${page}&search=${search}&limit=${vLimit}&mahasiswa_id=${mahasiswa_id}`;
 
             fetchData(url, function(response) {
                 renderData(response);
@@ -323,6 +324,7 @@
             const id = $(this).data('id');
             const dataform = {
                 beasiswa_id: id,
+                mahasiswa_id: mahasiswa_id,
             };
             saveData(endpoint, 'POST', dataform, function(response) {
                 appShowNotification(true, ['berhasil dilakukan!']);
@@ -339,6 +341,7 @@
                 async: false,
                 data:{
                     beasiswa_id:beasiswa_id,
+                    mahasiswa_id:mahasiswa_id,
                 },
                 success: function(response) {
                     dataLoad();
@@ -348,7 +351,7 @@
                     appShowNotification(false, [xhr.responseJSON.message]);
                 }
             });
-        });        
+        });
 
         $(document).on('click', '.batalkan-pendaftaran', function() {
             const id = $(this).data('id');
@@ -362,6 +365,7 @@
                         data:{
                             alasan:alasan,
                             beasiswa_id:beasiswa_id,
+                            mahasiswa_id:mahasiswa_id,
                         },
                         async: false,
                         success: function(response) {
