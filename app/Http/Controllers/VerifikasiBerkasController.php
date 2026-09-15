@@ -94,7 +94,7 @@ class VerifikasiBerkasController extends Controller
                     $dataQuery->where('hasil', 0);
                     break;
                 case 'selesai':
-                    $dataQuery->whereNotNull('hasil');
+                    $dataQuery->where('hasil','>=', 0);
                     break;
                 case 'belum':
                     $dataQuery->whereNull('hasil');
