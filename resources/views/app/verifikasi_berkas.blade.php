@@ -47,7 +47,7 @@
                 </button>
             </div>
         </div>
-        
+
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
@@ -107,7 +107,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
@@ -154,7 +154,7 @@
                                 <tbody id="data-list-peserta">
                                 </tbody>
                             </table>
-                        </div>                                                            
+                        </div>
                     </div>
                 </div>
             </div>
@@ -179,16 +179,16 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row"> 
+                    <div class="row">
                         <div class="col-lg-4 flex-column align-items-center justify-content-center text-center">
                             <div class="input-group mb-3">
                                 <input type="text" id="cari-mahasiswa" name="cari-mahasiswa" class="form-control" placeholder="Cari nama mahasiswa...">
                                 <button type="button" class="btn btn-success" id="btn-cari-mahasiswa">
                                     <i class="bi bi-search"></i> Cari
                                 </button>
-                            </div>                            
+                            </div>
                             <div class="card">
-                                <div class="card-body">                                
+                                <div class="card-body">
                                     <h5 id="info-halaman"></h5>
                                     <img src="{{ asset('images/user-avatar.png') }}" alt="Foto Mahasiswa" class="mahasiswa-photo">
                                     <h5 class="mt-2 mahasiswa-nama">Nama</h5>
@@ -199,27 +199,27 @@
                                     <div class="d-flex justify-content-between w-100 mt-2">
                                         <div id="peserta-sebelumnya" class="btn btn-outline-primary">Previous</div>
                                         <div id="peserta-berikutnya" class="btn btn-primary">Next</div>
-                                    </div>                                
+                                    </div>
                                 </div>
                             </div>
                             <div class="card">
-                                <div class="card-body">                                
+                                <div class="card-body">
                                     <h5>Syarat</h5>
                                     <div id="syarat-list"></div>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="col-lg-8">
-                            <div class="card" id="validasi-syarat">                            
-                                <div class="card-body">                                
+                            <div class="card" id="validasi-syarat">
+                                <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h5 class="mb-0">Syarat Upload <span id="info-syarat"></span></h5>
                                         <div>
                                             <div class="btn btn-outline-primary btn-sm btn-syarat-sebelumnya"> << </div>
                                             <div class="btn btn-primary btn-sm btn-syarat-berikutnya"> >> </div>
                                         </div>
-                                    </div>                                    
+                                    </div>
                                     <div id="syarat-upload"></div>
                                     <div id="refresh-dokumen"></div>
                                     <div id="download-dokumen"></div>
@@ -237,16 +237,16 @@
                                                     </select>
                                                 </div>
 
-                                                <div class="col-lg-4 mb-3"> 
+                                                <div class="col-lg-4 mb-3">
                                                     <input type="number" class="form-control" id="verifikasi_berkas_skor" placeholder="skor" name="verifikasi_berkas_skor" required>
                                                     <i>wajib di isi 0 - 100</i>
                                                 </div>
-    
+
                                                 <div class="col-lg-12 mb-3">
                                                     <textarea class="form-control" name="verifikasi_berkas_catatan" id="verifikasi_berkas_catatan" rows="3"></textarea>
                                                 </div>
                                             </div>
-                        
+
                                             <div class="mt-1">
                                                 <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
                                                 <div class="btn btn-outline-primary btn-syarat-sebelumnya" > << </div>
@@ -258,8 +258,8 @@
                                 </div>
                             </div>
 
-                            <div class="card" id="validasi-final" style="display:none">                            
-                                <div class="card-body">                                
+                            <div class="card" id="validasi-final" style="display:none">
+                                <div class="card-body">
                                     <form id="form-validasi-final" >
                                         <div class="d-flex justify-content-between align-items-center">
                                             <h5 class="mb-0">Validasi Final</h5>
@@ -267,7 +267,7 @@
                                                 <div class="btn btn-outline-primary btn-sm btn-syarat-sebelumnya"> << </div>
                                                 <div class="btn btn-primary btn-sm btn-syarat-berikutnya"> >> </div>
                                             </div>
-                                        </div>                                    
+                                        </div>
                                         <input type="hidden" id="verifikator_pendaftar_id" name="verifikator_pendaftar_id">
                                         <div class="row">
                                             <div class="col-lg-8 mb-3">
@@ -284,7 +284,7 @@
                                                 <textarea class="form-control" name="catatan" id="catatan" rows="3"></textarea>
                                             </div>
                                         </div>
-                    
+
                                         <div class="mt-1">
                                             <button type="submit" class="btn btn-primary" id="btn-simpan-final">Simpan</button>
                                         </div>
@@ -320,7 +320,7 @@
     var page_peserta = 1;
 
     var current_page_verifikasi = 1;
-    var total_page_verifikasi = 1;    
+    var total_page_verifikasi = 1;
     var beasiswa_id;
     var verifikator_id;
     var pendaftar_id;
@@ -332,7 +332,7 @@
     var is_verifikasi_berkas_aktif=false;
 
     $(document).ready(function() {
-        
+
         toggleArea('#btn-filter-peserta', '#filter-panel', { animation: 'fade' });
 
         $('#btn-apply-filter').on('click', function() {
@@ -372,7 +372,7 @@
                                         ${dt.beasiswa.nama}
                                     </td>
                                     <td>
-                                        ${dt.beasiswa.verifikasi_berkas_mulai} sd 
+                                        ${dt.beasiswa.verifikasi_berkas_mulai} sd
                                         ${dt.beasiswa.verifikasi_berkas_selesai}
                                     </td>
                                     <td>
@@ -394,9 +394,9 @@
                 const row = `<tr>
                                 <td colspan="6">data tidak ditemukan</td>
                             </tr>`;
-                dataList.append(row);                
+                dataList.append(row);
             }
-        }    
+        }
 
         //untuk daftar peserta
         async function dataLoadPeserta() {
@@ -433,11 +433,11 @@
                                         <div class="d-flex gap-2">
                                             <img src="${base_url}/${dt.foto}" width="70px" >
                                             <div>
-                                                ${dt.user.name}/<br>  
+                                                ${dt.user.name}/<br>
                                                 NIM. <a href="https://sia.iainkendari.ac.id/data/detail/${dt.mahasiswa.nim}" target="_blank">${dt.mahasiswa.nim}</a>/<br>
                                                 Prodi. ${dt.program_studi.nama}
-                                            </div>                                    
-                                        </div>                                    
+                                            </div>
+                                        </div>
                                     </td>
                                     <td>${hasil}</td>
                                     <td class="text-center">
@@ -453,27 +453,27 @@
                 const row = `<tr>
                                 <td colspan="5">data tidak ditemukan</td>
                             </tr>`;
-                dataList.append(row);                
+                dataList.append(row);
             }
-        }    
+        }
 
         $(document).on('click', '.btn-daftar-verifikasi', function() {
             verifikator_id = $(this).data('verifikator_id');
             beasiswa_id = $(this).data('beasiswa_id');
             is_verifikasi_berkas_aktif = $(this).data('is_verifikasi_berkas_aktif');
-            dataLoadPeserta();      
-        }); 
+            dataLoadPeserta();
+        });
 
         $(document).on('click', '.btn-mulai-verifikasi', function() {
-            $('#cari-mahasiswa').val('');            
-            showModal('modal-form');            
+            $('#cari-mahasiswa').val('');
+            showModal('modal-form');
             pendaftar_id = $(this).data('pendaftar_id');
             // beasiswa_id = $(this).data('beasiswa_id');
             // is_verifikasi_berkas_aktif = $(this).data('is_verifikasi_berkas_aktif');
             syarat_index = 0;
             pesertaVerifikasi(1);
-            // dataLoadPeserta();      
-        }); 
+            // dataLoadPeserta();
+        });
 
         $('#btn-refresh').click(function() {
             dataLoad();
@@ -509,7 +509,7 @@
 
         $('#cari-mahasiswa').on('keypress', function(e) {
             if (e.which === 13) {
-                e.preventDefault(); 
+                e.preventDefault();
                 pesertaVerifikasi(1);
             }
         });
@@ -553,7 +553,7 @@
             try {
                 const search = $('#cari-mahasiswa').val();
                 let respon_peserta = await execAsync(`${base_url}/api/peserta-verifikasi?search=${search}&page=${halaman}&limit=1&beasiswa_id=${beasiswa_id}&pendaftar_id=${pendaftar_id}`, 'GET', token);
-                
+
                 if(respon_peserta.data.data.length<1){
                     alert('data peserta tidak ditemukan');
                     return;
@@ -587,7 +587,7 @@
                 $('.mahasiswa-nama').html(nama_peserta);
 
 
-                total_page_verifikasi = respon_peserta.data.last_page; 
+                total_page_verifikasi = respon_peserta.data.last_page;
                 current_page_verifikasi = respon_peserta.data.current_page;
 
                 $("#info-halaman").text(`Peserta ke ${current_page_verifikasi} dari ${total_page_verifikasi}`);
@@ -605,7 +605,7 @@
                 //untuk render syarat
                 // syarat_index = 0;
                 if (syarat.status) {
-                    lengkap=true;                    
+                    lengkap=true;
                     $("#syarat-list").empty();
                     let listHtml = `<ul class="list-group list-group-flush">`;
                     syarat.data.forEach((item, index) => {
@@ -618,16 +618,16 @@
                         }
 
                         let opsi_pilihan_instrumen = opsi_instrumen(item.instrumen_opsi);
-                        
+
                         let opsi_found = opsi_pilihan_instrumen.find(
                             o => o.skor == item.upload_syarat?.verifikasi_berkas_hasil
                         ) ?? null;
-                        
+
                         // console.log(opsi_pilihan_instrumen);
 
                         let keterangan_upload = (!item.upload_syarat) ? `<span class="badge bg-info fs-2">tidak upload</span>`:
-                                                (item.upload_syarat?.verifikasi_berkas_hasil == null) ? `<span class="badge bg-warning fs-2">belum periksa</span>` : 
-                                                (item.upload_syarat.verifikasi_berkas_hasil) ? `<span class="badge bg-success fs-2">${opsi_found.label}</span>` : `<span class="badge bg-danger fs-2">TMS</span>`; 
+                                                (item.upload_syarat?.verifikasi_berkas_hasil == null) ? `<span class="badge bg-warning fs-2">belum periksa</span>` :
+                                                (item.upload_syarat.verifikasi_berkas_hasil) ? `<span class="badge bg-success fs-2">${opsi_found.label}</span>` : `<span class="badge bg-danger fs-2">TMS</span>`;
                         listHtml += `<li class="list-group-item syarat-item" data-index="${index}" style="cursor:pointer;">
                                         <div class="d-flex align-items-center w-100">
                                             <div class="d-flex flex-column text-start">
@@ -652,7 +652,7 @@
             } catch (error) {
                 console.error("Terjadi kesalahan:", error);
             }
-        }       
+        }
 
         $('#peserta-sebelumnya').click(function(){
             syarat_index = 0;
@@ -667,7 +667,7 @@
                 pesertaVerifikasi(current_page_verifikasi + 1);
             }
         });
-        
+
         $('.btn-syarat-sebelumnya').click(function(){
             syarat_index--;
             syaratSebelumnya();
@@ -691,14 +691,14 @@
 
         $('.btn-syarat-berikutnya').click(function(){
             syarat_index++;
-            syaratBerikutnya();        
+            syaratBerikutnya();
         });
 
         $(document).on("click",".syarat-item",function() {
             syarat_index = $(this).data("index");
             showSyarat();
         });
-        
+
         function resetFormSyarat(){
             $('#syarat-upload').trigger('reset');
             $('#syarat-upload input[type="hidden"]').val('');
@@ -709,11 +709,11 @@
         }
 
         function showFinal(){
-            $('#verifikator_pendaftar_id').val(peserta.id); 
-            $('#hasil').val(peserta.hasil); 
-            $('#total_skor').val(peserta.total_skor); 
-            
-            $('#catatan').val(peserta.catatan); 
+            $('#verifikator_pendaftar_id').val(peserta.id);
+            $('#hasil').val(peserta.hasil);
+            $('#total_skor').val(peserta.total_skor);
+
+            $('#catatan').val(peserta.catatan);
             $('#validasi-final').show();
             $('#validasi-syarat').hide();
 
@@ -721,12 +721,12 @@
             $("#hasil").prop("disabled", true);
             $("#total_skor").prop("disabled", true);
             $("#catatan").prop("disabled", true);
-            $("#btn-simpan-final").prop("disabled", true);                
+            $("#btn-simpan-final").prop("disabled", true);
             if(is_verifikasi_berkas_aktif){
                 $("#hasil").prop("disabled", false);
                 $("#total_skor").prop("disabled", false);
                 $("#catatan").prop("disabled", false);
-                $("#btn-simpan-final").prop("disabled", false);                
+                $("#btn-simpan-final").prop("disabled", false);
             }
 
         }
@@ -740,7 +740,7 @@
             $('#syarat-upload').empty();
             if (syarat_index < 0 || syarat_index >= data_syarat.length) {
                 syarat_index = 0;
-            }    
+            }
 
             let data = data_syarat[syarat_index];
             let contohPath = data.contoh ? `<a href="${base_url}/${data.contoh}" class="btn btn-sm btn-success mt-2" target="_blank">Contoh Format Dokumen</a>` : "";
@@ -754,7 +754,7 @@
             let syarat = `  <div>
                                 <h2>${data.nama} (${wajib})</h2>
                                 <div >
-                                    <div class="accordion-body">                                        
+                                    <div class="accordion-body">
                                         <p>Deskripsi : ${data.deskripsi}</p>
                                         <p>${contohPath}</p>
                                         <div id="kontrol-gambar" style="text-align:center; margin-top:10px; display:none;">
@@ -762,13 +762,13 @@
                                             <button type="button" class="btn btn-sm btn-secondary" onclick="rotateImage('preview-img',90)">⟳ Putar Kanan</button>
                                             <button type="button" class="btn btn-sm btn-secondary" onclick="zoomImage('preview-img',1.2)">🔍 Zoom In</button>
                                             <button type="button" class="btn btn-sm btn-secondary" onclick="zoomImage('preview-img',0.8)">🔎 Zoom Out</button>
-                                        </div>                                        
-                                        <div id="dokumen-embed" 
+                                        </div>
+                                        <div id="dokumen-embed"
                                             style="margin-top:10px; height:500px; width:100%; border:1px solid #ccc; overflow:auto;">
                                         </div>
                                     </div>
                                 </div>
-                            </div>`;   
+                            </div>`;
             $('#syarat-upload').html(syarat);
 
             //untuk pengaturan opsi instrumen
@@ -801,17 +801,17 @@
                 $(`#verifikasi_berkas_catatan`).val(data.upload_syarat.verifikasi_berkas_catatan);
                 $(`#verifikasi_berkas_skor`).val(data.upload_syarat.verifikasi_berkas_skor);
 
-                
+
                 $('#refresh-dokumen').html(`
                     <div class="mt-2">
-                        <a href="javascript:;" class="refresh-dokumen">Refresh Dokumen</a> | 
+                        <a href="javascript:;" class="refresh-dokumen">Refresh Dokumen</a> |
                         <a href="${url}" target="_blank">Download Manual</a>
                     </div>`);
 
                 rotation = 0;
                 scale = 1;
                 $('#dokumen-embed').html('<a href="javascript:;" class="refresh-dokumen" style="color:blue;">klik disini untuk melihat preview dokumen</a>');
-                
+
                 if (jenis=='pdf') {
                     $('#kontrol-gambar').hide();
                     if(preview_file)
@@ -820,10 +820,10 @@
                     if(preview_file){
                         $('#dokumen-embed').html(`
                             <div style="text-align:center;">
-                                <img id="preview-img" src="${url}" 
+                                <img id="preview-img" src="${url}"
                                 style="max-width:95%; display:block; margin:0 auto; transition: transform 0.3s;"
                             >
-                            </div>                    
+                            </div>
                         `);
                         $('#kontrol-gambar').show();
                     }
@@ -837,7 +837,7 @@
                 $('#dokumen-embed').html('<p style="color:red;">Tidak ada file diupload.</p>');
             }
         }
-        
+
         //validasi dan save, jika id ada maka PUT/edit jika tidak ada maka POST/simpan baru
         $("#form").validate({
             rules: {
@@ -851,7 +851,7 @@
                 verifikasi_berkas_catatan: {
                     required: "Catatan wajib diisi jika tidak memenuhi syarat."
                 }
-            },            
+            },
             submitHandler: function(form) {
                 const id = $('#id').val();
                 let url = `${base_url}/api/simpan-validasi-syarat/${id}`;
@@ -860,10 +860,10 @@
                 data.push({ name: 'verifikator_id', value: verifikator_id });
 
                 // konversi ke URL-encoded string kembali
-                let postData = $.param(data);                
+                let postData = $.param(data);
 
                 saveData(url, 'PUT', postData, function (response) {
-                    appShowNotification(true, ["simpan validasi berhasil dilakukan!"]);
+                    //appShowNotification(true, ["simpan validasi berhasil dilakukan!"]);
                     syarat_index++;
                     pesertaVerifikasi(current_page_verifikasi);
                 });
@@ -873,8 +873,8 @@
         $(document).on("change","#verifikasi_berkas_hasil",function(){
             let bobot = parseFloat($(this).attr('data-bobot')) || 0;
             let nilai = parseFloat($(this).val()) || 0;
-            let total_pilihan = $(this).find("option[value!='']").length;            
-            let skor_akhir = (nilai / (total_pilihan - 1)) * bobot;            
+            let total_pilihan = $(this).find("option[value!='']").length;
+            let skor_akhir = (nilai / (total_pilihan - 1)) * bobot;
             $('#verifikasi_berkas_skor').val(skor_akhir.toFixed(2));
         });
 
@@ -927,7 +927,7 @@
                 appShowNotification(true, [response.message]);
                 pesertaVerifikasi();
             });
-        });        
+        });
 
 
         $(document).on("click",".refresh-dokumen",function(){
@@ -947,15 +947,15 @@
                 catatan: {
                     required: "Catatan wajib diisi jika tidak memenuhi syarat."
                 }
-            },            
+            },
             submitHandler: function(form) {
-                const id = $('#verifikator_pendaftar_id').val();   
-                
+                const id = $('#verifikator_pendaftar_id').val();
+
                 let data = $(form).serializeArray();
                 data.push({ name: 'verifikator_id', value: verifikator_id });
 
                 // konversi ke URL-encoded string kembali
-                let postData = $.param(data);                
+                let postData = $.param(data);
 
                 if(!lengkap){
                     appShowNotification(false, ["masih ada syarat wajib yang belum divalidasi!"]);
@@ -974,11 +974,11 @@
                         current_page_verifikasi=1;
                     }
                     pesertaVerifikasi(current_page_verifikasi);
-                    dataLoadPeserta();                    
+                    dataLoadPeserta();
                     dataLoad();
                 });
             }
-        });       
+        });
 
     });
 </script>
