@@ -40,6 +40,7 @@ class DaftarPendaftarResource extends JsonResource
         $verifikator = $this->verifikatorPendaftar?->verifikator?->user;
 
         $pendidikan_akhir = $this->mahasiswa->user->pendidikanAkhir;
+        $orang_tua = $this->mahasiswa->user->orangTua;
         $user = $this->mahasiswa->user;
 
 
@@ -58,6 +59,7 @@ class DaftarPendaftarResource extends JsonResource
             'akreditasi_sekolah' => $pendidikan_akhir?->akreditasi,
             'nim' => $mahasiswa->nim,
             'tahun_masuk' => $mahasiswa->tahun_masuk,
+            'orang_tua' => $orang_tua->bapak_nama.' / '.$orang_tua->ibu_nama,
             'alamat' => $identitas->alamat,
             'desa' => $identitas->desa,
             'jenis_kelamin' => $identitas->jenis_kelamin,

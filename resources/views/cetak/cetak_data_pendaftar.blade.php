@@ -12,7 +12,7 @@
             size: A4;
             /* margin: 5mm; */
             margin-top:10px;
-        }        
+        }
 
         #loadingProgress {
             position: fixed;
@@ -25,12 +25,12 @@
             font-weight: bold;
             font-size: 14px;
             z-index: 9999;
-            display: none; 
+            display: none;
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
             transition: opacity 0.3s ease;
         }
 
-        
+
         body {
             font-family: Arial, sans-serif;
         }
@@ -67,7 +67,7 @@
             justify-content: center;
             gap: 20px;
             margin-top: 10px;
-        }  
+        }
 
         .content {
             margin-top: 20px;
@@ -106,7 +106,7 @@
             /* Contoh tambahan: pastikan tabel tidak melebar keluar */
             /* table {
                 width: 100%;
-                table-layout: fixed; 
+                table-layout: fixed;
                 word-wrap: break-word;
             } */
 
@@ -115,7 +115,7 @@
                 box-shadow: none;
                 page-break-after: always;
             }
-        }        
+        }
     </style>
     <script>
         const base_url="{{ url('/') }}";
@@ -129,7 +129,7 @@
             <img src="{{ asset('images/logo.png') }}" alt="SNPMB Logo">
             <h1>DATA PESERTA BEASISWA TAHUN <span id="tahun-beasiswa"></span></h1>
             <h4 style="margin-top:1px;" id="nama-beasiswa"></h4>
-            <hr>    
+            <hr>
         </div>
 
         <button id="copyTableBtn" onclick="copyTable2()">Copy ke Excel</button>
@@ -145,6 +145,7 @@
                         <th width="15%">Tempat/Tanggal Lahir</th>
                         <th width="5%">Tahun Masuk</th>
                         <th width="15%">Fakultas/ Program Studi</th>
+                        <th width="20%">Orang Tua</th>
                         <th width="25%">Alamat</th>
                         <th width="15%">Kecamatan</th>
                         <th width="15%">Kabupaten</th>
@@ -160,7 +161,7 @@
                 </thead>
                 <tbody id="data-list">
                     <tr>
-                        <td colspan="18">tidak ditemukan</td>
+                        <td colspan="19">tidak ditemukan</td>
                     </tr>
                 </tbody>
             </table>
@@ -176,7 +177,7 @@
     <script>
     const g_limit = 50;
     let g_nomor = 1;
-        
+
     function label($string){
         return ($string)?$string:"";
     }
@@ -189,8 +190,8 @@
         window.getSelection().addRange(range)
         document.execCommand('copy')
         alert("berhasil tersalin");
-    }   
-    
+    }
+
     function copyTable() {
         let text = "";
         const rows = document.querySelectorAll("#mytable tr");
@@ -214,13 +215,13 @@
         function forceLogout(){
             localStorage.clear();
             window.location.replace(`${base_url}/login`);
-        }        
+        }
 
 
         $.ajaxSetup({
             beforeSend: function(xhr) {
             xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-            },          
+            },
             complete: function(xhr) {
                 //baca respon jika ada authorization maka refresh token
                 let responHeader = xhr.getResponseHeader('Authorization');
@@ -268,7 +269,7 @@
                     const response = await fetch(url, {
                         method: 'GET',
                         headers: {
-                            'Authorization': `Bearer ${token}`, 
+                            'Authorization': `Bearer ${token}`,
                             'Content-Type': 'application/json'
                         }
                     });
@@ -329,7 +330,7 @@
                                     <td>${status_kelulusan}</td>
                                 </tr>`;
                     dataList.append(row);
-                });                        
+                });
             }
         }
 
