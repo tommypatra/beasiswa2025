@@ -316,6 +316,7 @@
                                     <td>${dt.tempat_lahir}/ ${dt.tanggal_lahir}</td>
                                     <td>${dt.tahun_masuk}</td>
                                     <td>${dt.fakultas}/ ${dt.program_studi} </td>
+                                    <td>${dt.orang_tua}</td>
                                     <td>${dt.alamat} ${dt.desa}</td>
                                     <td>${dt.kecamatan}</td>
                                     <td>${dt.kabupaten}</td>
