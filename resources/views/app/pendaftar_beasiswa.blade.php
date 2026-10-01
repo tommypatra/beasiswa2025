@@ -107,6 +107,7 @@ td, th {
                                 <th rowspan="2" width="5%">No</th>
                                 <th rowspan="2" width="45%">Data Mahasiswa</th>
                                 <th colspan="3" class="text-center">Status</th>
+                                <th rowspan="2" class="text-center">Aksi</th>
                             </tr>
                             <tr>
                                 <th width="10%">Pendaftaran</th>
@@ -185,6 +186,8 @@ td, th {
         </form>
     </div>
 </div>
+
+
 <!-- AKHIR MODAL -->
 
 
@@ -321,17 +324,23 @@ td, th {
                     const status_verifikasi=getStatusVerifikasi(dt);
                     const cbt=``;
 
+                    const tag_info = (dt.tag)?`<div>Afirmasi ${dt.tag_nama}</div>`:``;
+
                     const row = `<tr>
                                     <td>${no++}</td>
                                     <td>
                                         ${dt.nama}/
                                         ${dt.nim}/
                                         ${dt.program_studi}
+                                        ${tag_info}
+
                                     </td>
                                     <td>${status_pendaftaran}</td>
                                     <td><div>${showText(dt.verifikator)}</div> ${status_verifikasi}</td>
                                     <td>${status_lulus}</td>
-                                    <td>${cbt}</td>
+                                    <td>
+                                        <button class="btn btn-primary btn-beri-tanda" data-tag_nama="${dt.tag_nama}" data-pendaftar_id="${dt.pendaftar_id}">Tanda</button>
+                                    </td>
                                 </tr>`;
                     dataList.append(row);
                 });
@@ -339,7 +348,7 @@ td, th {
                 renderPagination(response.data, pagination);
             }else{
                 const row = `<tr>
-                                <td colspan="5">data tidak ditemukan</td>
+                                <td colspan="6">data tidak ditemukan</td>
                             </tr>`;
                 dataList.append(row);
             }
@@ -364,6 +373,24 @@ td, th {
             dataLoad();
         });
 
+        // Handle btn beri tanda
+        $(document).on('click', '.btn-beri-tanda', function() {
+            const pendaftar_id = $(this).data('pendaftar_id');
+            const url = `${base_url}/api/update-tag-pendaftar/${pendaftar_id}`;
+            const tag_nama = prompt('Masukkan tanda:');
+            const tag = tag_nama !== '' ? 1 : 0;
+            const dataPost = {
+                tag_nama:tag_nama,
+                tag:tag
+            };
+
+            saveData(url, 'PUT', dataPost, function(response) {
+                if(response.status){
+                    dataLoad();
+                }
+            });
+
+        });
 
        // Handle page change
         $(document).on('click', '.btn-batalkan-finalisasi', async function() {

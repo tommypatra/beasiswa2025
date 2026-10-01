@@ -244,6 +244,9 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         Route::get('daftar-pendaftar-beasiswa/{beasiswa_id}', [PendaftarController::class, 'daftarPendaftar']);
         Route::resource('beasiswa/{beasiswa_id}/syarat', SyaratController::class);
         Route::resource('beasiswa/{beasiswa_id}/verifikator', VerifikatorController::class);
+
+        Route::put('update-tag-pendaftar/{id}', [PendaftarController::class, 'updateTag']);
+
         //untuk verifikator
         Route::resource('beasiswa/{beasiswa_id}/verifikator-pendaftar', VerifikatorPendaftarController::class);
         Route::resource('beasiswa/{beasiswa_id}/surveyor', SurveyorController::class);

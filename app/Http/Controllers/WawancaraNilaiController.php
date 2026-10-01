@@ -28,6 +28,8 @@ class WawancaraNilaiController extends Controller
                 }
             ])
                 ->where("beasiswa_id", $request->beasiswa_id)
+                ->orderBy('nomor', 'asc')
+                ->orderBy('id', 'asc')
                 ->paginate(1);
 
             return response()->json([
@@ -49,7 +51,7 @@ class WawancaraNilaiController extends Controller
      */
     public function index(Request $request)
     {
-        $dataQuery = WawancaraNilai::with(['beasiswa'])->orderBy('beasiswa_id', 'asc')->orderBy('nomor', 'asc');
+        $dataQuery = WawancaraNilai::with(['beasiswa'])->orderBy('beasiswa_id', 'asc')->orderBy('nomor', 'asc')->orderBy('id', 'asc');
 
         if ($request->filled('search')) {
             $dataQuery->where('nama', 'like', '%' . $request->search . '%');

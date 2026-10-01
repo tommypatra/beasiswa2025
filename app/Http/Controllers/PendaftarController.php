@@ -83,7 +83,8 @@ class PendaftarController extends Controller
             'kelulusan',
             'mahasiswa.programStudi.fakultas',
             'mahasiswa.user.identitas',
-            'mahasiswa.user.pendidikanAkhir'
+            'mahasiswa.user.pendidikanAkhir',
+            'mahasiswa.user.orangTua'
         ])->where('beasiswa_id', $id_beasiswa)->orderBy('created_at', 'desc');
 
         if ($request->filled('search')) {
@@ -457,6 +458,41 @@ class PendaftarController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['status' => false, 'message' => 'terjadi kesalahan saat memperbarui : ' . $e->getMessage(), 'data' => null], 500);
+        }
+    }
+
+    public function updateTag(Request $request, string $id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $validated = $request->validate([
+                'tag' => ['required', 'boolean'],
+                'tag_nama' => ['nullable', 'string', 'max:255'],
+            ]);
+
+            // Jika tag = 0, kosongkan tag_nama
+            if ((int) $validated['tag'] === 0) {
+                $validated['tag_nama'] = null;
+            }
+            $data = Pendaftar::where('id', $id)->firstOrFail();
+            $data->update($validated);
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Berhasil diperbarui',
+                'data' => $data
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Terjadi kesalahan saat memperbarui: ' . $e->getMessage(),
+                'data' => null
+            ], 500);
         }
     }
 
