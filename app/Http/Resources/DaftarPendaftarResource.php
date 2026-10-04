@@ -46,6 +46,8 @@ class DaftarPendaftarResource extends JsonResource
 
         return [
             'pendaftar_id' => $this->id,
+            'tag' => $this->tag,
+            'tag_nama' => $this->tag_nama,
             'url_id' => $this->url_id,
             'user_id' => $user->id,
             'identitas_id' => $identitas->id,

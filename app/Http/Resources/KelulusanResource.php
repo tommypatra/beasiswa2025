@@ -39,6 +39,8 @@ class KelulusanResource extends JsonResource
         return [
             'id' => $this->id,
             'pendaftar_id' => $this->pendaftar_id,
+            'tag' => $this->tag,
+            'tag_nama' => $this->tag_nama,
             'no_pendaftaran' => $pendaftar->no_pendaftaran,
             'user_id' => $user->id,
             'mahasiswa' => [
