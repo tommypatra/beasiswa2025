@@ -335,11 +335,17 @@ td, th {
                                         ${tag_info}
 
                                     </td>
-                                    <td>${status_pendaftaran}</td>
+                                    <td>
+                                        ${dt.is_show && dt.tag_nama?.trim()
+                                        ? `<span class="badge bg-primary">${dt.tag_nama}</span>`
+                                        : ''}
+                                        ${status_pendaftaran}
+                                    </td>
                                     <td><div>${showText(dt.verifikator)}</div> ${status_verifikasi}</td>
                                     <td>${status_lulus}</td>
                                     <td>
-                                        <button class="btn btn-primary btn-beri-tanda" data-tag_nama="${dt.tag_nama}" data-pendaftar_id="${dt.pendaftar_id}">Tanda</button>
+                                        <button class="btn btn-primary btn-beri-tanda ${dt.is_show ? '' : 'd-none'}" data-tag_nama="${dt.tag_nama}" data-pendaftar_id="${dt.pendaftar_id}">Tanda</button>
+
                                     </td>
                                 </tr>`;
                     dataList.append(row);
@@ -376,20 +382,31 @@ td, th {
         // Handle btn beri tanda
         $(document).on('click', '.btn-beri-tanda', function() {
             const pendaftar_id = $(this).data('pendaftar_id');
+            const tagNama = $(this).data('tag_nama');
             const url = `${base_url}/api/update-tag-pendaftar/${pendaftar_id}`;
-            const tag_nama = prompt('Masukkan tanda:');
-            const tag = tag_nama !== '' ? 1 : 0;
+
+            const tag_nama = prompt(
+                'Masukkan tanda:',
+                tagNama !== null ? tagNama : ''
+            );
+
+            // Jika klik Cancel, jangan lanjutkan
+            if (tag_nama === null) {
+                return;
+            }
+
+            const tag = tag_nama.trim() !== '' ? 1 : 0;
+
             const dataPost = {
-                tag_nama:tag_nama,
-                tag:tag
+                tag_nama: tag_nama,
+                tag: tag
             };
 
             saveData(url, 'PUT', dataPost, function(response) {
-                if(response.status){
+                if (response.status) {
                     dataLoad();
                 }
             });
-
         });
 
        // Handle page change

@@ -30,7 +30,7 @@
 }
 
 .list {
-    list-style-type: decimal;    
+    list-style-type: decimal;
     margin-left: 20px;
     padding-left: 20px;
 }
@@ -71,7 +71,7 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <div class="progress" style="display: none;">
                     <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;">0%</div>
                 </div>
@@ -122,11 +122,11 @@
                     <div class="col-lg-5 mb-3">
                         <label class="form-label">Status Lulus</label>
                         <select name="status_lulus" id="status_lulus" class="form-control filter-item">
-                            <option value="">-- Pilih --</option>                            
-                            <option value="1">Lulus</option>                            
-                            <option value="0">Tidak Lulus</option>                            
-                            <option value="2">Belum Dinilai</option>                            
-                        </select>                
+                            <option value="">-- Pilih --</option>
+                            <option value="1">Lulus</option>
+                            <option value="0">Tidak Lulus</option>
+                            <option value="2">Belum Dinilai</option>
+                        </select>
                     </div>
                 </div>
                 <div class="row">
@@ -136,28 +136,28 @@
                     </div>
                     <div class="col-lg-5 mb-3">
                         <label class="form-label">Urut Data 1</label>
-                        <select name="sort1" id="sort1" class="form-control data-filter" required>                            
-                        </select>                
+                        <select name="sort1" id="sort1" class="form-control data-filter" required>
+                        </select>
                     </div>
                     <div class="col-lg-5 mb-3">
                         <label class="form-label">Urut Data 2</label>
-                        <select name="sort2" id="sort2" class="form-control data-filter" >                            
-                        </select>                
+                        <select name="sort2" id="sort2" class="form-control data-filter" >
+                        </select>
                     </div>
                     <div class="col-lg-5 mb-3">
                         <label class="form-label">Urut Data 3</label>
-                        <select name="sort3" id="sort3" class="form-control data-filter" >                            
-                        </select>                
+                        <select name="sort3" id="sort3" class="form-control data-filter" >
+                        </select>
                     </div>
                     <div class="col-lg-5 mb-3">
                         <label class="form-label">Urut Data 4</label>
-                        <select name="sort4" id="sort4" class="form-control data-filter" >                            
-                        </select>                
+                        <select name="sort4" id="sort4" class="form-control data-filter" >
+                        </select>
                     </div>
                     <div class="col-lg-5 mb-3">
                         <label class="form-label">Urut Data 5</label>
-                        <select name="sort5" id="sort5" class="form-control data-filter" >                            
-                        </select>                
+                        <select name="sort5" id="sort5" class="form-control data-filter" >
+                        </select>
                     </div>
                 </div>
             <div class="modal-footer">
@@ -197,7 +197,7 @@
         { value: "nilai_cbt", text: "CBT" },
         // { value: "nilai_survei", text: "Survei" },
     ];
-    
+
     const opsiFilter = {
         status_lulus: [
             { value: "", text: "-- Pilih --" },
@@ -207,7 +207,7 @@
         ],
         // tanggal_mulai: { type: "date" },
         // tanggal_selesai: { type: "date" }
-    };    
+    };
 
     $(document).ready(function() {
         init();
@@ -229,7 +229,7 @@
                         text: item.text
                     })
                 );
-            });            
+            });
         }
 
                 //untuk show modal form
@@ -258,20 +258,20 @@
             pagination.empty();
             if (data.length > 0) {
                 $.each(data, function(index, dt) {
-                    let status_lulus = dt.status?.is_lulus; 
+                    let status_lulus = dt.status?.is_lulus;
                     let disabled_input = today < tgl_pengumuman ? '' : 'disabled';
 
                     const row = `<tr>
                                     <td>${no++}</td>
                                     <td>
                                         <div>
-                                            ${dt.mahasiswa.nama}/  
+                                            ${dt.mahasiswa.nama}/
                                             NIM ${dt.mahasiswa.nim}/
                                             ${dt.mahasiswa.program_studi}
                                         </div>
                                     </td>
                                     <td>
-                                        ${dt.mahasiswa.kabupaten} - ${dt.mahasiswa.provinsi} 
+                                        ${dt.mahasiswa.kabupaten} - ${dt.mahasiswa.provinsi}
                                         <div>
                                             <span class="badge bg-secondary fs-2">${dt.mahasiswa.no_hp}</span>
                                         </div>
@@ -280,18 +280,21 @@
                                         </div>
                                     </td>
                                     <td>
+                                        ${dt.is_show && dt.tag_nama?.trim()
+                                        ? `<span class="badge bg-primary">${dt.tag_nama}</span>`
+                                        : ''}
                                         <select name="is_lulus" class="form-control w-auto status-kelulusan mb-2" data-id="${dt.id}" ${disabled_input}>
                                             <option value="" ${status_lulus === null || status_lulus === "" ? "selected" : ""}>-PILIH-</option>
                                             <option value="1" ${status_lulus === 1 ? "selected" : ""}>LULUS</option>
                                             <option value="0" ${status_lulus === 0 ? "selected" : ""}>TIDAK LULUS</option>
-                                        </select>                                           
+                                        </select>
 
                                         <span class="badge rounded-pill fs-2 fw-medium bg-primary">Ekonomi : ${showText(dt.nilai.ekonomi)}</span>
                                         <span class="badge rounded-pill fs-2 fw-medium bg-primary">Pendidikan : ${showText(dt.nilai.pendidikan)}</span>
                                         <span class="badge rounded-pill fs-2 fw-medium bg-primary">Berkas : ${showText(dt.nilai.berkas)}</span>
                                         <span class="badge rounded-pill fs-2 fw-medium bg-primary">CBT : ${showText(dt.nilai.cbt)}</span>
                                         <span class="badge rounded-pill fs-2 fw-medium bg-primary">Survei : ${showText(dt.nilai.survei)}</span>
-                                        <span class="badge rounded-pill fs-2 fw-medium bg-primary">Wawancara : ${showText(dt.nilai.wawancara)}</span>                                        
+                                        <span class="badge rounded-pill fs-2 fw-medium bg-primary">Wawancara : ${showText(dt.nilai.wawancara)}</span>
                                     </td>
                                 </tr>`;
                     dataList.append(row);
@@ -301,10 +304,10 @@
                 const row = `<tr>
                                 <td colspan="12">data tidak ditemukan</td>
                             </tr>`;
-                dataList.append(row);                
+                dataList.append(row);
             }
-        }    
-        
+        }
+
         async function loadDataBeasiswa() {
             let url = `${base_url}/api/get-data-beasiswa/${beasiswa_id}`;
             const response = await execAsync(`${url}`, 'GET', token);
@@ -320,7 +323,7 @@
         async function dataLoad() {
             const search = $('#search-input').val();
             const status_lulus = $('#status_lulus').val();
-            
+
             const sort1 = $('#sort1').val();
             const sort2 = $('#sort2').val();
             const sort3 = $('#sort3').val();
@@ -329,7 +332,7 @@
             const sort6 = $('#sort6').val();
 
             var url = `${endpoint}?page=${page}&search=${search}`;
-            
+
             // loop semua filter
             $(".filter-item").each(function () {
                 const key = $(this).attr("name");
@@ -361,7 +364,7 @@
 
             const url = `${base_url}/cetak-data-kelulusan/${beasiswa_id}?${params.toString()}`;
             window.open(url, '_blank');
-        });         
+        });
 
         // Handle page change
         $(document).on('click', '.page-link', function() {
@@ -415,7 +418,7 @@
                         beasiswa: data_init.beasiswa,
                         beasiswa_id:beasiswa_id,
                         pendaftar_id: pendaftarId,
-                    };                    
+                    };
                     const res = await execNewAsync(url, 'POST', token, dataPost);
 
                     if (res.error) {
@@ -472,7 +475,7 @@
         // $(document).on('input', '#search-input', function() {
         //     console.log('Event input berjalan');
         //     dataLoad();
-        // });      
+        // });
 
         $('#catatan').summernote({
             height: 100,

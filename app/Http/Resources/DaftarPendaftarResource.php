@@ -48,6 +48,8 @@ class DaftarPendaftarResource extends JsonResource
             'pendaftar_id' => $this->id,
             'tag' => $this->tag,
             'tag_nama' => $this->tag_nama,
+            'is_show' => $beasiswa->is_show,
+
             'url_id' => $this->url_id,
             'user_id' => $user->id,
             'identitas_id' => $identitas->id,

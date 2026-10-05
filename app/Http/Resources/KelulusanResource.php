@@ -18,13 +18,14 @@ class KelulusanResource extends JsonResource
         // return parent::toArray($request);
 
         $pendaftar = $this->pendaftar;
+        $beasiswa = $pendaftar->beasiswa;
+
         $mahasiswa = $pendaftar->mahasiswa;
         $user = $mahasiswa->user;
         $identitas = $user->identitas;
         $programStudi = $mahasiswa->programStudi;
         $fakultas = $programStudi ? $programStudi->fakultas : null;
         $surveiPeserta = $pendaftar->surveiPeserta;
-
         // Ambil wawancara tanpa closure map (pakai array_map biasa)
         $wawancara = [];
         foreach ($pendaftar->pesertaWawancara as $peserta) {
@@ -39,8 +40,9 @@ class KelulusanResource extends JsonResource
         return [
             'id' => $this->id,
             'pendaftar_id' => $this->pendaftar_id,
-            'tag' => $this->tag,
-            'tag_nama' => $this->tag_nama,
+            'tag' => $pendaftar->tag,
+            'tag_nama' => $pendaftar->tag_nama,
+            'is_show' => $beasiswa->is_show,
             'no_pendaftaran' => $pendaftar->no_pendaftaran,
             'user_id' => $user->id,
             'mahasiswa' => [

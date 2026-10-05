@@ -13,7 +13,7 @@
             size: A4;
             /* margin: 5mm; */
             margin-top:10px;
-        }        
+        }
 
         #loadingProgress {
             position: fixed;
@@ -26,12 +26,12 @@
             font-weight: bold;
             font-size: 14px;
             z-index: 9999;
-            display: none; 
+            display: none;
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
             transition: opacity 0.3s ease;
         }
 
-        
+
         body {
             font-family: Arial, sans-serif;
         }
@@ -68,7 +68,7 @@
             justify-content: center;
             gap: 20px;
             margin-top: 10px;
-        }  
+        }
 
         .content {
             margin-top: 20px;
@@ -107,7 +107,7 @@
             /* Contoh tambahan: pastikan tabel tidak melebar keluar */
             /* table {
                 width: 100%;
-                table-layout: fixed; 
+                table-layout: fixed;
                 word-wrap: break-word;
             } */
 
@@ -116,7 +116,7 @@
                 box-shadow: none;
                 page-break-after: always;
             }
-        }        
+        }
     </style>
     <script>
         const base_url="{{ url('/') }}";
@@ -130,7 +130,7 @@
             <img src="{{ asset('images/logo.png') }}" alt="SNPMB Logo">
             <h1>DATA KELULUSAN BEASISWA TAHUN <span id="tahun-beasiswa"></span></h1>
             <h4 style="margin-top:1px;" id="nama-beasiswa"></h4>
-            <hr>    
+            <hr>
         </div>
         <button id="copyTableBtn" onclick="copyTable2()">Copy ke Excel</button>
         <div class="content">
@@ -191,8 +191,8 @@
     let g_nomor = 1;
     let pendaftar_id;
     let urlParams = new URLSearchParams(window.location.search);
-    let status_lulus = urlParams.get('status_lulus');            
-        
+    let status_lulus = urlParams.get('status_lulus');
+
 
     function label($string){
         return ($string)?$string:"";
@@ -206,8 +206,8 @@
         window.getSelection().addRange(range)
         document.execCommand('copy')
         alert("berhasil tersalin");
-    }   
-    
+    }
+
     function copyTable() {
         let text = "";
         const rows = document.querySelectorAll("#mytable tr");
@@ -231,13 +231,13 @@
         function forceLogout(){
             localStorage.clear();
             window.location.replace(`${base_url}/login`);
-        }        
+        }
 
 
         $.ajaxSetup({
             beforeSend: function(xhr) {
             xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-            },          
+            },
             complete: function(xhr) {
                 //baca respon jika ada authorization maka refresh token
                 let responHeader = xhr.getResponseHeader('Authorization');
@@ -252,7 +252,7 @@
                 }
             }
         });
-        
+
         cekAkses();
         initPage();
 
@@ -308,7 +308,7 @@
                     const response = await fetch(url, {
                         method: 'GET',
                         headers: {
-                            'Authorization': `Bearer ${token}`, 
+                            'Authorization': `Bearer ${token}`,
                             'Content-Type': 'application/json'
                         }
                     });
@@ -356,7 +356,7 @@
 
                         daftar_nilai=`<${listTag}>`;
                         $.each(dt.wawancara, function(data, dw) {
-                            
+
                             if(dw.nilai){
                                 const link = `${base_url}/cetak-hasil-wawancara/${beasiswa_id}/${dw.pewawancara_id}/${dt.pendaftar_id}`;
                                 daftar_nilai+=`<li><a href="${link}" target="_blank">${dw.pewawancara} : ${showText(dw.nilai)}</a></li>`;
@@ -366,7 +366,7 @@
                         });
                         daftar_nilai+=`</${listTag}>`;
                     }
-    
+
 
                     let hasil_survei='';
                     if(dt.survei.hasil!==null){
@@ -385,7 +385,14 @@
                     }
                     const row = `<tr>
                                     <td>${g_nomor++}</td>
-                                    <td>${dt.mahasiswa.nama}/ ${dt.mahasiswa.nim}</td>
+                                    <td>
+                                        ${dt.mahasiswa.nama}/ ${dt.mahasiswa.nim}
+                                        <div>
+                                            ${dt.is_show && dt.tag_nama?.trim()
+                                            ? `<span class="badge bg-primary">${dt.tag_nama}</span>`
+                                            : ''}
+                                        </div>
+                                    </td>
                                     <td>${dt.mahasiswa.jenis_kelamin}</td>
                                     <td>${dt.mahasiswa.fakultas}/ ${dt.mahasiswa.program_studi}</td>
                                     <td>${label(dt.nilai.ekonomi)}</td>
@@ -399,7 +406,7 @@
                                     <td>${status_kelulusan}</td>
                                 </tr>`;
                     dataList.append(row);
-                });                        
+                });
             }
         }
 
