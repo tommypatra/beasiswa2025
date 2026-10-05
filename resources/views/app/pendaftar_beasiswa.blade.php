@@ -324,7 +324,6 @@ td, th {
                     const status_verifikasi=getStatusVerifikasi(dt);
                     const cbt=``;
 
-                    const tag_info = (dt.tag)?`<div>Afirmasi ${dt.tag_nama}</div>`:``;
 
                     const row = `<tr>
                                     <td>${no++}</td>
@@ -332,8 +331,6 @@ td, th {
                                         ${dt.nama}/
                                         ${dt.nim}/
                                         ${dt.program_studi}
-                                        ${tag_info}
-
                                     </td>
                                     <td>
                                         ${dt.is_show && dt.tag_nama?.trim()
