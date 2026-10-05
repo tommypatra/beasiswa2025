@@ -387,11 +387,9 @@
                                     <td>${g_nomor++}</td>
                                     <td>
                                         ${dt.mahasiswa.nama}/ ${dt.mahasiswa.nim}
-                                        <div>
-                                            ${dt.is_show && dt.tag_nama?.trim()
-                                            ? `<span class="badge bg-primary">${dt.tag_nama}</span>`
-                                            : ''}
-                                        </div>
+                                        ${dt.is_show && dt.tag_nama?.trim()
+                                        ? `<br><span class="badge bg-primary">${dt.tag_nama}</span>`
+                                        : ''}
                                     </td>
                                     <td>${dt.mahasiswa.jenis_kelamin}</td>
                                     <td>${dt.mahasiswa.fakultas}/ ${dt.mahasiswa.program_studi}</td>
