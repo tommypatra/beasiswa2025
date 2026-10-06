@@ -193,6 +193,28 @@
     let urlParams = new URLSearchParams(window.location.search);
     let status_lulus = urlParams.get('status_lulus');
 
+    function initPopover() {
+        $('[data-bs-toggle="popover"]').popover({
+            html: true,
+            trigger: 'manual',
+            placement: 'top',
+            sanitize: false
+        }).on("mouseenter", function () {
+            let _this = this;
+            $(this).popover("show");
+            $(".popover").on("mouseleave", function () {
+                $(_this).popover('hide');
+            });
+        }).on("mouseleave", function () {
+            let _this = this;
+            setTimeout(function () {
+                if (!$(".popover:hover").length) {
+                    $(_this).popover("hide");
+                }
+            }, 200);
+        });
+    }
+
 
     function label($string){
         return ($string)?$string:"";
@@ -334,6 +356,8 @@
                     hasNext = false;
                 }
             }
+            initPopover();
+
 
         }
 
@@ -346,10 +370,53 @@
             loadDokumentasi();
         })
 
+        function getStatusPendaftaran(dt) {
+            // buat list dokumen yg sudah diupload
+            let uploadList = "";
+            if (dt.upload_detail && dt.upload_detail.length > 0) {
+                uploadList = `<ul class="list-unstyled m-0">`;
+                dt.upload_detail.forEach(u => {
+                    uploadList += `<li>
+                        <a href="${base_url}/${u.dokumen}" target="_blank">${u.nama}</a>
+                    </li>`;
+                });
+                uploadList += `</ul>`;
+            } else {
+                uploadList = "<em>Belum ada dokumen</em>";
+            }
+
+            const popoverAttr = `data-bs-toggle="popover" data-bs-html="true" data-bs-content='${uploadList}'`;
+
+            if (dt.is_batal) {
+                return `<div class="badge rounded-pill fs-2 text-bg-danger" ${popoverAttr}>
+                            Batal ${dt.progress_upload_syarat}%
+                        </div>
+                        <div class="fs-2">${showText(dt.alasan_batal)}</div>`;
+            }
+
+            if (dt.is_finalisasi == 1) {
+                return `<div class="badge rounded-pill fs-2 text-bg-success text-dark" ${popoverAttr}>
+                            Selesai ${dt.progress_upload_syarat}%
+
+                        </div>
+                        <div class="badge rounded-pill fs-2 text-bg-secondary">${dt.no_pendaftaran}
+                            <a href="${base_url}/cetak-kartu-pendaftaran/${dt.url_id}" target="_blank">
+                                <iconify-icon icon="solar:printer-outline"></iconify-icon>
+                            </a>
+                        </div>`;
+            }
+
+            return `<div ${popoverAttr}>
+                        Dokumen
+                    </div>`;
+        }
+
         function renderData(dataRespon,dataList){
             if(dataRespon.length>0){
                 $.each(dataRespon, function(data, dt) {
                     const status_kelulusan = dt.status.is_lulus == 1 ? "Lulus"  : dt.status.is_lulus == 0  ? "Tidak Lulus" : "";
+                    const status_pendaftaran=getStatusPendaftaran(dt);
+
                     let daftar_nilai=``;
                     if(dt.wawancara.length>0){
                         let listTag = dt.wawancara.length > 1 ? "ol" : "ul";
@@ -395,10 +462,16 @@
                                     <td>${dt.mahasiswa.fakultas}/ ${dt.mahasiswa.program_studi}</td>
                                     <td>${label(dt.nilai.ekonomi)}</td>
                                     <td>${label(dt.nilai.pendidikan)}</td>
-                                    <td>${label(dt.nilai.berkas)}</td>
+                                    <td>
+                                        ${label(dt.nilai.berkas)}
+                                        ${status_pendaftaran}
+                                    </td>
                                     <td>${label(dt.nilai.cbt)}</td>
                                     <td>${label(dt.nilai.survei)}</td>
-                                    <td>${hasil_survei}</td>
+                                    <td>
+                                        ${dt.mahasiswa.kabupaten}<br>
+                                        ${hasil_survei}
+                                    </td>
                                     <td>${daftar_nilai}</td>
                                     <td>${label(dt.nilai.wawancara)}</td>
                                     <td>${status_kelulusan}</td>

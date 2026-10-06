@@ -29,7 +29,8 @@ class KelulusanController extends Controller
     {
         $dataQuery = Kelulusan::with([
             'pendaftar.surveiPeserta',
-            'pendaftar.beasiswa',
+            'pendaftar.beasiswa.syarat',
+            'pendaftar.uploadSyarat.syarat',
             'pendaftar.pesertaWawancara.pewawancara.user',
             'pendaftar.mahasiswa.user.identitas',
             // 'pendaftar.verifikatorPendaftar',

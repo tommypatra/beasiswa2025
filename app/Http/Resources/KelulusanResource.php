@@ -26,6 +26,25 @@ class KelulusanResource extends JsonResource
         $programStudi = $mahasiswa->programStudi;
         $fakultas = $programStudi ? $programStudi->fakultas : null;
         $surveiPeserta = $pendaftar->surveiPeserta;
+
+        $syarat = $beasiswa->syarat ?? collect();
+        $upload = $pendaftar->uploadSyarat ?? collect();
+        $jumlahSyaratWajib = $syarat->where('is_wajib', 1)->count();
+        $jumlahUploadWajib = $upload->filter(function ($u) {
+            return $u->syarat && $u->syarat->is_wajib == 1;
+        })->count();
+
+        $upload_detail = $upload->map(function ($u) {
+            return [
+                'nama'    => $u->syarat?->nama,
+                'dokumen' => $u->dokumen,
+            ];
+        })->values();
+
+        $progress = $jumlahSyaratWajib > 0 ? round(($jumlahUploadWajib / $jumlahSyaratWajib) * 100, 2) : 0;
+
+
+
         // Ambil wawancara tanpa closure map (pakai array_map biasa)
         $wawancara = [];
         foreach ($pendaftar->pesertaWawancara as $peserta) {
@@ -45,6 +64,9 @@ class KelulusanResource extends JsonResource
             'is_show' => $beasiswa->is_show,
             'no_pendaftaran' => $pendaftar->no_pendaftaran,
             'user_id' => $user->id,
+            'upload_detail' => $upload_detail,
+            'progress_upload_syarat' => $progress,
+
             'mahasiswa' => [
                 'nama' => $user->name,
                 'email' => $user->email,
