@@ -407,7 +407,7 @@
             }
 
             return `<div ${popoverAttr}>
-                        Dokumen
+                        ${dt.nilai.berkas??0}
                     </div>`;
         }
 
@@ -463,7 +463,6 @@
                                     <td>${label(dt.nilai.ekonomi)}</td>
                                     <td>${label(dt.nilai.pendidikan)}</td>
                                     <td>
-                                        ${label(dt.nilai.berkas)}
                                         ${status_pendaftaran}
                                     </td>
                                     <td>${label(dt.nilai.cbt)}</td>
