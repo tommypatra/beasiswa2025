@@ -15,6 +15,8 @@ use App\Http\Resources\PendaftarResource;
 use App\Http\Requests\PendaftaranBatalRequest;
 use App\Http\Resources\DaftarPendaftarResource;
 use App\Http\Resources\DetailPendaftarResource;
+use App\Http\Resources\RincianDetailPendaftarResource;
+
 use App\Http\Requests\PendaftaranKembaliRequest;
 use App\Http\Resources\CetakIdentitasKartuPendaftaranResource;
 
@@ -70,6 +72,39 @@ class PendaftarController extends Controller
             'status' => true,
             'message' => 'Rekap per kabupaten berhasil diambil',
             'data' => $rekap,
+        ]);
+    }
+
+    public function rincianDetailPendaftar($pendaftar_id)
+    {
+        $data = Pendaftar::with([
+            'beasiswa.jenisBeasiswa',
+            'beasiswa.syarat',
+            'uploadSyarat.syarat',
+            'kelulusan',
+            'mahasiswa.programStudi.fakultas',
+            'mahasiswa.user.identitas',
+            'mahasiswa.user.orangTua.pekerjaanBapak',
+            'mahasiswa.user.orangTua.pekerjaanIbu',
+            'mahasiswa.user.orangTua.pendidikanBapak',
+            'mahasiswa.user.orangTua.pendidikanIbu',
+            'mahasiswa.user.orangTua.pendapatanBapak',
+            'mahasiswa.user.orangTua.pendapatanIbu',
+            'mahasiswa.user.rumah.pilihanKepemilikanRumah',
+            'mahasiswa.user.rumah.pilihanMck',
+            'mahasiswa.user.rumah.pilihanListrik',
+            'mahasiswa.user.rumah.pilihanSumberAir',
+            'mahasiswa.user.rumah.pilihanSumberListrik',
+            'mahasiswa.user.pendidikanAkhir',
+            'mahasiswa.user.nilaiRaport',
+        ])
+        ->where('id', $pendaftar_id)
+        ->firstOrFail();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Pengambilan detail pendaftar berhasil',
+            'data' => new RincianDetailPendaftarResource($data),
         ]);
     }
 

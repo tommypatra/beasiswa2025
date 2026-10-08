@@ -453,7 +453,8 @@
                     const row = `<tr>
                                     <td>${g_nomor++}</td>
                                     <td>
-                                        ${dt.mahasiswa.nama}/ ${dt.mahasiswa.nim}
+                                        <a href="${base_url}/cetak-detail-pendaftar/${dt.pendaftar_id}" target="_blank">${dt.mahasiswa.nama}/ ${dt.mahasiswa.nim}</a>
+
                                         ${dt.is_show && dt.tag_nama?.trim()
                                         ? `<br><span class="badge bg-primary">${dt.tag_nama}</span>`
                                         : ''}

@@ -239,6 +239,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
     ])->group(function () {
 
 
+        Route::get('get-rincian-detail-pendaftar/{pendaftar_id}', [PendaftarController::class, 'rincianDetailPendaftar']);
         Route::get('get-data-beasiswa/{beasiswa_id}', [BeasiswaController::class, 'show']);
         Route::get('get-rekap-kabupaten/{beasiswa_id}/', [PendaftarController::class, 'rekapKabupaten']);
         Route::get('daftar-pendaftar-beasiswa/{beasiswa_id}', [PendaftarController::class, 'daftarPendaftar']);
