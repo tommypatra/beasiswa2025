@@ -107,7 +107,7 @@ td, th {
                                 <th rowspan="2" width="5%">No</th>
                                 <th rowspan="2" width="45%">Data Mahasiswa</th>
                                 <th colspan="3" class="text-center">Status</th>
-                                <th rowspan="2" class="text-center">Aksi</th>
+                                <th rowspan="2" class="text-center"></th>
                             </tr>
                             <tr>
                                 <th width="10%">Pendaftaran</th>
@@ -330,7 +330,8 @@ td, th {
                                     <td>
                                         ${dt.nama}/
                                         ${dt.nim}/
-                                        ${dt.program_studi}
+                                        ${dt.program_studi}/
+                                        ${dt.email}
                                     </td>
                                     <td>
                                         ${dt.is_show && dt.tag_nama?.trim()
