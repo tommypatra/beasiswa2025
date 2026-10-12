@@ -328,7 +328,7 @@ td, th {
                     const row = `<tr>
                                     <td>${no++}</td>
                                     <td>
-                                        ${dt.nama}/
+                                        <a href="${base_url}/cetak-detail-pendaftar/${dt.pendaftar_id}/" class="text-decoration-none" target="_blank">${dt.nama}</a>/
                                         ${dt.nim}/
                                         ${dt.program_studi}/
                                         ${dt.email}

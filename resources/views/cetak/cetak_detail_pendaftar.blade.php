@@ -97,10 +97,6 @@
                         <div class="info-label">UKT</div>
                         <div id="ukt" class="info-value"></div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="info-label">Email</div>
-                        <div id="email" class="info-value"></div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -119,12 +115,24 @@
                         <div id="jenis-kelamin" class="info-value"></div>
                     </div>
                     <div class="col-md-4">
+                        <div class="info-label">NIK</div>
+                        <div id="nik" class="info-value">-</div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-label">Email</div>
+                        <div id="email" class="info-value"></div>
+                    </div>
+                    <div class="col-md-4">
                         <div class="info-label">Nomor HP</div>
                         <div id="no-hp" class="info-value"></div>
                     </div>
                     <div class="col-12">
                         <div class="info-label">Alamat</div>
                         <div id="alamat-lengkap" class="info-value"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-label">Kode POS</div>
+                        <div id="kode-pos" class="info-value">-</div>
                     </div>
                     <div class="col-md-4">
                         <div class="info-label">Disabilitas</div>
@@ -312,6 +320,7 @@
 <script src="{{ asset('js/app.js') }}"></script>
 
 <script>
+var nim = null;
 $(document).ready(function() {
     const token = localStorage.getItem('access_token');
     loadDetail();
@@ -338,13 +347,43 @@ $(document).ready(function() {
             const response = await execAsync(url, 'GET', token);
             const detail = response?.data;
             if (!response?.status || !detail) throw new Error(response?.message || 'Data pendaftar tidak ditemukan.');
+            nim = detail?.mahasiswa?.nim || null;
             renderDetail(detail);
             $('#loading').addClass('d-none');
             $('#detail-content').removeClass('d-none');
+
+            if (nim) {
+                loadSiakad(nim).catch(error => {
+                    console.warn('Gagal mengambil data SIAKAD:', error);
+                });
+            }
+
         } catch (error) {
             $('#loading').addClass('d-none');
             $('#error-container').removeClass('d-none');
             $('#error-message').text(error?.message || 'Gagal mengambil data pendaftar.');
+        }
+    }
+
+
+    async function loadSiakad(nim) {
+        if (!nim) return null;
+
+        const url = `${base_url}/api/get-data-mahasiswa-siakad/${encodeURIComponent(nim)}`;
+
+        try {
+            const response = await execAsync(url, 'GET', token);
+            if (!response?.success || !response?.data?.attributes) {
+                throw new Error(response?.message || 'Data SIAKAD tidak tersedia.');
+            }
+            const atribut = response.data.attributes;
+            dataSiakad = atribut;
+            $('#nik').text(atribut.nik || '-');
+            $('#kode-pos').text(atribut.kode_pos_domisili || '-');
+            return atribut;
+        } catch (error) {
+            console.warn('Gagal mengambil data SIAKAD:', error);
+            return null;
         }
     }
 

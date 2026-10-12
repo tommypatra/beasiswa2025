@@ -43,6 +43,7 @@ use App\Http\Controllers\PendidikanAkhirController;
 use App\Http\Controllers\PenerimaController;
 use App\Http\Controllers\PengaturanUjianController;
 use App\Http\Controllers\PenggunaController;
+use App\Http\Controllers\SevimaController;
 use App\Http\Controllers\PesertaSurveiController;
 use App\Http\Controllers\PesertaUjianController;
 use App\Http\Controllers\PesertaWawancaraController;
@@ -175,6 +176,7 @@ Route::middleware('jwt.auth.refresh')->group(function () {
         'cek.akses:admin,pewawancara,pengelola',
         'admin.seleksi'
     ])->group(function () {
+        Route::get('get-data-mahasiswa-siakad/{nim}', [SevimaController::class, 'mahasiswaDetail']);
         Route::get('cetak-absen-wawancara/{beasiswa_id}', [PewawancaraController::class, 'cetakAbsenWawancara']);
         Route::get('cetak-wawancara/{beasiswa_id}', [PewawancaraController::class, 'cetakWawancara']);
     });

@@ -34,4 +34,17 @@ class SevimaController extends Controller
 
         return response()->json($response);
     }
+
+    public function mahasiswaDetail(String $nim)
+    {
+        $response = $this->sevima->get("/siakadcloud/v1/mahasiswa/{$nim}");
+
+        if (!$response['success']) {
+            throw new \RuntimeException(
+                $response['message'] ?? 'Response SIAKAD tidak valid.'
+            );
+        }
+
+        return response()->json($response);
+    }
 }
