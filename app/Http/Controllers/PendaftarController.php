@@ -128,10 +128,12 @@ class PendaftarController extends Controller
             $dataQuery->where(function ($query) use ($search) {
                 $query->whereHas('mahasiswa.user', function ($q) use ($search) {
                     $q->where('name', 'like', '%' . $search . '%');
+                })
+                ->orWhereHas('mahasiswa', function ($q) use ($search) {
+                    $q->where('nim', 'like', '%' . $search . '%');
                 });
             });
         }
-
 
         if ($request->filled('pendaftaran')) {
             $pendaftaran = $request->pendaftaran;

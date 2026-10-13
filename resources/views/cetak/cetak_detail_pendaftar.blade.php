@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="{{ asset('images/logo.png') }}">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         body { background:#f5f6f8; }
         .profile-photo { width:100px; height:125px; object-fit:cover; }
@@ -21,6 +21,21 @@
             body { background:#fff; }
             .card { box-shadow:none!important; }
         }
+
+        .bi-copy {
+            font-size: 14px;
+            width: 16px;
+            height: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-left: 4px;
+            vertical-align: middle;
+            color: #adb5bd;
+        }
+
+
     </style>
 
     <script>
@@ -60,8 +75,8 @@
                         <img id="foto-mahasiswa" src="{{ asset('images/logo.png') }}" class="profile-photo rounded border border-3 border-white" alt="Foto">
                     </div>
                     <div class="col">
-                        <h3 id="nama-mahasiswa" class="mb-1"></h3>
-                        <div>NIM: <span id="nim-mahasiswa"></span></div>
+                        <h3 id="nama-mahasiswa" class="mb-1 copy"></h3>
+                        <div>NIM: <span id="nim-mahasiswa" class="copy"></span></div>
                         <div class="mt-2">
                             <span id="status-pendaftaran" class="badge"></span>
                             <span id="nomor-pendaftaran" class="badge bg-light text-dark"></span>
@@ -108,7 +123,8 @@
                 <div class="row g-3">
                     <div class="col-md-4">
                         <div class="info-label">Tempat, Tanggal Lahir</div>
-                        <div id="ttl" class="info-value"></div>
+                        <div id="tempat-lahir" class="info-value copy"></div>
+                        <div id="tanggal-lahir" class="info-value copy"></div>
                     </div>
                     <div class="col-md-4">
                         <div class="info-label">Jenis Kelamin</div>
@@ -116,23 +132,23 @@
                     </div>
                     <div class="col-md-4">
                         <div class="info-label">NIK</div>
-                        <div id="nik" class="info-value">-</div>
+                        <div id="nik" class="info-value copy">-</div>
                     </div>
                     <div class="col-md-4">
                         <div class="info-label">Email</div>
-                        <div id="email" class="info-value"></div>
+                        <div id="email" class="info-value copy"></div>
                     </div>
                     <div class="col-md-4">
                         <div class="info-label">Nomor HP</div>
-                        <div id="no-hp" class="info-value"></div>
+                        <div id="no-hp" class="info-value copy"></div>
                     </div>
                     <div class="col-12">
                         <div class="info-label">Alamat</div>
-                        <div id="alamat-lengkap" class="info-value"></div>
+                        <div id="alamat-lengkap" class="info-value copy"></div>
                     </div>
                     <div class="col-md-4">
                         <div class="info-label">Kode POS</div>
-                        <div id="kode-pos" class="info-value">-</div>
+                        <div id="kode-pos" class="info-value copy">-</div>
                     </div>
                     <div class="col-md-4">
                         <div class="info-label">Disabilitas</div>
@@ -160,7 +176,7 @@
                     <div class="col-md-6">
                         <h6 class="fw-semibold">Ibu</h6>
                         <table class="table table-sm table-bordered mb-0">
-                            <tr><th width="35%">Nama</th><td id="ibu-nama"></td></tr>
+                            <tr><th width="35%">Nama</th><td id="ibu-nama" class="copy"></td></tr>
                             <tr><th>Status</th><td id="ibu-status"></td></tr>
                             <tr><th>Pekerjaan</th><td id="ibu-pekerjaan"></td></tr>
                             <tr><th>Pendidikan</th><td id="ibu-pendidikan"></td></tr>
@@ -321,9 +337,34 @@
 
 <script>
 var nim = null;
+
+
 $(document).ready(function() {
     const token = localStorage.getItem('access_token');
     loadDetail();
+
+    $(document).on('click', '.copy', async function () {
+        const text = $(this).clone()
+            .children()
+            .remove()
+            .end()
+            .text()
+            .trim();
+
+        if (!text || text === '-') return;
+
+        await navigator.clipboard.writeText(text);
+    });
+
+    function initCopy() {
+        $('.copy').each(function () {
+            if (!$(this).find('.bi-copy').length) {
+                $(this).append(
+                    ' <i class="bi bi-copy" style="cursor:pointer" title="Salin"></i>'
+                );
+            }
+        });
+    }
 
     function forceLogout() {
         localStorage.removeItem('access_token');
@@ -356,6 +397,8 @@ $(document).ready(function() {
                 loadSiakad(nim).catch(error => {
                     console.warn('Gagal mengambil data SIAKAD:', error);
                 });
+            }else{
+                initCopy();
             }
 
         } catch (error) {
@@ -380,6 +423,7 @@ $(document).ready(function() {
             dataSiakad = atribut;
             $('#nik').text(atribut.nik || '-');
             $('#kode-pos').text(atribut.kode_pos_domisili || '-');
+            initCopy();
             return atribut;
         } catch (error) {
             console.warn('Gagal mengambil data SIAKAD:', error);
@@ -421,7 +465,8 @@ $(document).ready(function() {
         $('#ukt').text(formatRupiah(mahasiswa.ukt));
         $('#email').text(mahasiswa.email || '-');
 
-        $('#ttl').text(`${identitas.tempat_lahir || '-'}, ${formatDate(identitas.tanggal_lahir)}`);
+        $('#tempat-lahir').text(identitas.tempat_lahir || '-');
+        $('#tanggal-lahir').text(identitas.tanggal_lahir || '-');
         $('#jenis-kelamin').text(identitas.jenis_kelamin === 'L' ? 'Laki-laki' : identitas.jenis_kelamin === 'P' ? 'Perempuan' : '-');
         $('#no-hp').text(identitas.no_hp || '-');
         $('#disabilitas').text(identitas.disabilitas || 'Tidak ada');
