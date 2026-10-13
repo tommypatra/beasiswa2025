@@ -98,7 +98,7 @@
                     </div>
                     <div class="col-md-4">
                         <div class="info-label">Program Studi</div>
-                        <div id="program-studi" class="info-value"></div>
+                        <div id="program-studi" class="info-value copy"></div>
                     </div>
                     <div class="col-md-4">
                         <div class="info-label">Fakultas</div>
