@@ -35,7 +35,8 @@ class KelulusanController extends Controller
             'pendaftar.mahasiswa.user.identitas',
             // 'pendaftar.verifikatorPendaftar',
             'pendaftar.mahasiswa.programStudi.fakultas'
-        ]);
+        ])->orderBy('is_lulus', 'desc');
+
         $filters = $request->input('filter', []);
 
         foreach ($filters as $key => $val) {

@@ -91,8 +91,8 @@
                             <option value="0">Meninggal</option>
                         </select>
                     </div>
-                </div>   
-                
+                </div>
+
                 <hr>
                 <div class="row">
                     <div class="col-lg-6 mb-3">
@@ -100,7 +100,7 @@
                         <input name="tanggungan" id="tanggungan" type="number" class="form-control" required>
                     </div>
                 </div>
-                
+
                 <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
             </form>
         </div>
@@ -192,7 +192,7 @@
                     const response = await fetch(url, {
                         method: 'GET',
                         headers: {
-                            'Authorization': `Bearer ${token}`, 
+                            'Authorization': `Bearer ${token}`,
                             'Content-Type': 'application/json'
                         }
                     });
